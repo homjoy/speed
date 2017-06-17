@@ -1,0 +1,15 @@
+<%#budget/detail.tpl.html %>
+<script type="text/html" id="budgetDetail">
+    <div class="panel-body">
+        <div class="info-head">
+            {{include 'budget-detail-tpl'}}
+        </div>
+        <div class="info-body">
+            <hr class="line-horizontal"/>
+            <a href="javascript:void(0);" class="history-icon active approval-history" data-budget-id="{{budgetApplication.BudgetApplicationFormEntity.id}}" data-task_id="{{taskid || 1}}" data-projectName="fms">审批记录</a>
+            {{include 'approval-history-timeline'}}
+        </div>
+    </div>
+</script>
+
+<%#partial/approval_history_timeline.html%>

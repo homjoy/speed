@@ -1,0 +1,132 @@
+<%#head.html %>
+<div id="container" class="effect mainnav-lg">
+    <%#navbar.html %>
+<!--此页面已停用-->
+    <div class="boxed">
+        <!--CONTENT CONTAINER-->
+        <!--===================================================-->
+        <div id="content-container" >
+            <ol class="breadcrumb">
+                <li><a href="/home">主页</a></li>
+                <li><a href="/it">IT服务</a></li>
+                <li class="active">账号密码</li>
+            </ol>
+                <div id="page-content" class="no-padding panel">
+                
+
+                <div class="panel-body" style="min-width:580px">
+                    <div class="row">
+                        <div class="col-lg-1 col-sm-1 col-xs-1"></div>
+                        <div class="col-lg-10 col-sm-10 col-xs-10">
+                            <div class="list-group list-group-nav">
+                                <a class="list-group-item active" href="/it">账号密码</a>
+                                <a class="list-group-item " href="/it/wifi/">访客wifi</a>
+                                <a class="list-group-item " href="/home/window/?f=svn&s=Request">SVN权限</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-lg-5 col-lg-offset-3 col-md-6 col-md-offset-2 col-sm-7 col-sm-offset-0 col-xs-7 col-xs-offset-0 user_right">
+
+                            <div class="password_fix tap">
+                                <form class="form-horizontal speed" id="form_password_fix" >
+                                    <div class="form-group" >
+                                        <label  class="col-lg-3 col-sm-3 col-xs-3 control-label">密码类型</label>
+                                        <div class="col-lg-9 col-sm-9 col-xs-9">
+                                            <select class="form-control" id="password-type">
+                                                <option value="" selected>请选择</option>
+                                                <option value="vpn">VPN密码</option>
+                                                <option value="wifi">WIFI密码</option>
+                                            </select>
+                                        </div>
+
+                                    </div>
+                                    <!--<div class="form-group">-->
+                                    <!--<label  class="col-lg-3 col-sm-3 col-xs-3 control-label">旧密码</label>-->
+                                    <!--<div class="col-lg-9 col-sm-9 col-xs-9col-lg-5 col-sm-5 col-xs-5">-->
+                                    <!--<input type="password" name="" data-bv-notempty class="form-control"  value="">-->
+                                    <!--</div>-->
+                                    <!--</div>-->
+                                    <div class="form-group">
+                                        <label for="" class="col-lg-3 col-sm-3 col-xs-3 control-label">新密码</label>
+                                        <div class="col-lg-9 col-sm-9 col-xs-9">
+                                            <input type="password" name="new_pwd" data-bv-notempty class="form-control new_password" style="z-index: -1 !important;" value="">
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="" class="col-lg-3 col-sm-3 col-xs-3 control-label">确认新密码</label>
+                                        <div class="col-lg-9 col-sm-9 col-xs-9">
+                                            <input type="password" name="check_pwd" data-bv-notempty class="form-control new_password_again" value="">
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="" class="col-lg-3 col-sm-3 col-xs-3 control-label ">验证码</label>
+                                        <div class="col-lg-5 col-sm-5 col-xs-5 ">
+                                            <input type="text" name="sms_captcha" data-bv-notempty class="form-control" value="">
+                                        </div>
+                                        <div class="col-lg-4 col-sm-4 col-xs-4">
+                                            <button type="button" class="send_message btn-small btn-beauty btn">获取验证码</button>
+                                        </div>
+                                    </div>
+                                    <div class="form-group btn_line">
+                                        <label class="col-lg-3 col-sm-3 col-xs-3 "></label>
+                                        <div class="col-lg-5 col-sm-5 col-xs-5">
+                                            <button type="submit" class="btn btn-beauty save_password ">保存</button>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+
+
+                        </div>
+                        <div class="col-lg-3 col-md-3 col-sm-3 col-xs-3">
+                            <div>
+                                <p class="wifi-notice hide">用于登陆名为MLSBJ-11F/MLSBJ-10F/MLSBJ-9F/MLSBJ-7F/MLSBJ-6F等公司无线网络</p>
+                            </div>
+                            <div class="password_notice hide">
+                                <p>1.长度<span>不小于8位、不能有空格</span></p>
+                                <p>2.必须包含一个<span>大写字母、小写字母、数字、符号</span>[]()~!@#$%^*=,._-之一</p>
+                                <p>3.不能<span>与用户名相同</span>、不能是<span>用户名的子集</span>、用户名也不能是<span>密码的子集(不区分大小写)</span></p>
+                                <p>4.举个例子：<span>Mls@me520, @mLis123, 88#MLS.com</span>, 仅供参考格式，勿参考内容！</p>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+                <div class="row">
+                    <div class="safe-notice">
+                        <div class="vpn_notice hide">
+                            <label>vpn配置方法</label>
+                            <span>windows系统</span><a href="<%=this.OLD_SPEED_URL%>words/words_down?id=163&_from_<%=this.userInfo.data.user.user_id%>"><i class="glyphicon glyphicon-download"></i></a>
+                            <span>苹果电脑</span><a href="<%=this.OLD_SPEED_URL%>words/words_down?id=161&_from_<%=this.userInfo.data.user.user_id%>"><i class="glyphicon glyphicon-download"></i></a>
+                            <span>安卓手机</span><a href="<%=this.OLD_SPEED_URL%>words/words_down?id=167&_from_<%=this.userInfo.data.user.user_id%>"><i class="glyphicon glyphicon-download"></i></a>
+                            <span>苹果手机</span><a href="<%=this.OLD_SPEED_URL%>words/words_down?id=165&_from_<%=this.userInfo.data.user.user_id%>"><i class="glyphicon glyphicon-download"></i></a>
+                        </div>
+                        <div class="notice">
+                            <h4>注意</h4>
+                            <p>(1)凡是以IT部门/管理员/老板/上级或其他任何名义向员工索要密码的行为都是骗子，<br/>&nbsp;&nbsp;&nbsp;&nbsp;请不要相信对方，也不要按对方要求进行操作</p>
+                            <p>(2)如怀疑本人密码以被他人获取/窃取，应当第一时间登陆speed系统修改本人密码</p>
+                            <p class="indent">遇到以上问题请立即通知<a type="button" class="btn btn-danger btn-xs" href="mailto:it@meilishuo.com?subject=密码已被他人获取/窃取&cc=speed-rd@meilishuo.com&body=什么密码，在什么时候被谁窃取？">技术部门</a></p>
+                        </div>
+                    </div>
+
+                </div>
+
+
+            </div>
+
+            <%#footer.html%>
+        </div>
+
+        <%#mainnav.html%>
+    </div>
+
+</div>
+
+
+<%! $_ENGINE_SELF.callFn("useModule")("<<<_use:
+        fml.use('speed/common/base');
+fml.use('speed/it/index');
+_use:", this._JSstack , this._JSmods); %>
+
+<%#foot.html%>

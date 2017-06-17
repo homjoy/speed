@@ -1,0 +1,68 @@
+@extends('layouts.master')
+@section('content')
+
+<div class="panel panel-default">
+    <!-- Default panel contents -->
+    <div class="panel-heading" style="overflow: hidden; line-height: 32px;">
+        【{{$role_info['role_name']}}】权限列表
+    </div>
+    <!-- Table -->
+    <div class="easy-tree">
+        <form action="/auth/tree/batch_permissions_add" method="post" name="post_permissions" id="post_permissions">
+            <input type="hidden" value="{{$role_info['role_id']}}" name="role_id"/>
+
+            <?php
+            if (empty($tree)) {
+                echo '<ul><li></li></ul>';
+            } else {
+                $dept = $tree;
+
+                function dept_ul_li($dept, $has_permissions) {
+                    $dept_str = '<ul >';
+                    foreach ($dept as $key => $val) {
+                        $dept_str .= "<li data-depart_id='" . $val['tree_id'] . "'>"  . '<input ';
+                        if (in_array($val['tree_id'], $has_permissions)) {
+                            $dept_str .=' checked ';
+                        }
+                        $dept_str .= ' type="checkbox" name="tree_id[]" value="' . $val['tree_id'] . '"/> ' . $val['tree_name'];
+                        if ($val['child']) {
+                            $dept_str .= dept_ul_li($val['child'], $has_permissions);
+                        }
+                    }
+                    $dept_str .= '</li></ul>';
+                    return $dept_str;
+                }
+
+                $ul_li = dept_ul_li($dept, $has_permissions);
+                echo $ul_li;
+            }
+            ?>
+            <button type="button" class="btn btn-success form-control" id="btn_submit" style="width: auto;">保存</button>
+        </form>
+    </div>
+    <!-- 添加/编辑 分类 -->
+
+</div>
+<script>
+
+$('#btn_submit').click(function () {
+    $.ajax({
+        method: "POST",
+        url: "/auth/tree/batch_permissions_add",
+        data: $('#post_permissions').serialize(),
+        success: function (msg) {
+            msg = JSON.parse(msg);
+            if (msg.code == 200) {
+                show_message(msg.code, msg);
+
+                setTimeout("location.reload()", 1500);
+            } else {
+                var ret = [];
+                ret['error_msg'] = msg['error_msg'];
+                show_message(msg.code, ret);
+            }
+        }
+    })
+})
+</script>
+@endsection

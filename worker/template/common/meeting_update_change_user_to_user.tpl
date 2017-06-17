@@ -1,0 +1,1 @@
+Hi! {{username}}：由于种种原因，{{initiator}}刚刚取消了对你的“{{meeting_topic}}”会议邀请，记得调整自己的时间安排哦！

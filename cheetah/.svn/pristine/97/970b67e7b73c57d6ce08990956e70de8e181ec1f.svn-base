@@ -1,0 +1,122 @@
+fml.define('fms/reimburse/modules/BusinessTrip', ['jquery', 'plugin/artTemplate', "component/notify", 'fms/reimburse/modules/Base'], function (require, exports) {
+    "use strict";
+    var $ = require('jquery'), Template = require('plugin/artTemplate'), notify = require("component/notify");
+
+    var BaseModule = require('fms/reimburse/modules/Base');
+    var $form = $(".form-apply");
+
+
+    /**
+     * @param options
+     * @constructor
+     */
+    function Module(options) {
+        options = options || {};
+        this.templateName = 'business-trip-tpl';
+        this.detail = options.values || {};
+        this.options = options;
+        this.$block = null;
+        this.templateData = this.formatData();
+
+        this.render();
+        this.bindEvent();
+    }
+
+    /**
+     *
+     */
+    Module.prototype = {
+        render: function () {
+            var templateData = this.templateData;
+            templateData.constant = this.detail.constant;
+            $form.find('[data-module=BusinessTrip]').replaceWith(Template(this.templateName, templateData));
+            this.$block = $form.find('.business-trip');
+
+        },
+        formatData: function () {
+            //通用费用报销.
+            if (this.detail['ExpenseCommon'] && this.detail['ExpenseCommon'].MlsExpenseCommon) {
+                var ctripNo = this.detail['ExpenseCommon'].MlsExpenseCommon['ctripRequestNo'];
+                console.log('ctripNo',ctripNo);
+                if(!ctripNo){
+                    this.$block.find('[name=ctripRequestNo]').val(ctripNo);
+                }
+                return this.detail['ExpenseCommon'].MlsExpenseCommon;
+            }
+            return {};
+        },
+        bindEvent: function () {
+            var that = this;
+            BaseModule.bindBlockWantedSummary.call(this);
+
+            this.$block.find('[name=ctripRequestNo]').on("change", function (e) {
+                var value = $(this).val();
+                if (!value) {
+                    return;
+                }
+                that.loadTripDetail(value);
+            });
+        },
+        loadTripDetail: function (tripNo) {
+            var that = this;
+
+            $.post('/aj/reimburse/ctrip_detail', {ctripNo: tripNo}, function (resp) {
+                if (resp.rcode != 200 || !resp.data) {
+                    that.$block.find('[name=ctripDays]').val('');
+                    that.$block.find('[name=ctripReason]').val('');
+                    return notify.error('加载出差数据出错.');
+                }
+
+
+                that.$block.find('[name=ctripDays]').val(resp.data.days);
+                that.$block.find('[name=ctripReason]').val(resp.data.reason);
+
+
+                var dataLen = resp.data.data && resp.data.data.length > 0 ? resp.data.data.length : 0;
+                if (!dataLen) {
+                    return;
+                }
+
+                $form.find('.transport-fee .detail-control').remove();
+
+                $.each(resp.data.data, function (index, traffic) {
+                    var row = $form.find('.transport-fee .detail-control').eq(index);
+                    if (row.length) {
+                        row.find('[name=billDate]').val(traffic.ctripDateStr);
+                        row.find('[name=departure]').val(traffic.departure);
+                        row.find('[name=destination]').val(traffic.destination);
+                        row.find('[name=tools]').val(traffic.tools);
+                    } else {
+                        row = Template('transport-fee-row', {
+                            billDateStr: traffic.ctripDateStr,
+                            departure: traffic.departure,
+                            destination: traffic.destination,
+                            tools: traffic.tools,
+                            constant: that.detail.constant
+                        });
+                        $form.find('.transport-fee .detail-foot').before(row);
+                    }
+                })
+
+            }, 'json');
+
+        },
+        validate: function () {
+
+            var paramArray =[['ctripRequestNo','ctripDays', 'ctripReason'],'singleLine'];
+            return BaseModule.bindCheckValidateResult.apply(this,paramArray);
+        },
+        //序列化为数组.
+        serializeArray: function (prefix) {
+            prefix = prefix || '';
+            var that = this;
+            var fields = ['ctripRequestNo','ctripDays', 'ctripReason'];
+
+            return $.map(fields, function (name) {
+                return {name: prefix + name, value: that.$block.find('[name=' + name + ']').val()};
+            });
+        }
+    };
+
+    return Module;
+});

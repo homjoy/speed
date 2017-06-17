@@ -1,0 +1,128 @@
+/*
+ ajax请求转发
+ */
+function aj() {
+    return this;
+}
+var controlFns = {
+    index: function (params) {
+        var php = {
+            'userChange': 'fms::/switchuser'
+        };
+        this.ajaxTo(php[params]);
+    },
+    user: function (params) {
+        // 个人中心接口
+        var php = {
+            'login': 'fms::/login',
+            'search': 'fms::/userinfo/queryUserInfo'
+        };
+        this.ajaxTo(php[params]);
+    }
+    , contract: function (params) {
+        // 合同申请单
+        var php = {
+            'drafts': 'fms::/contractapplication/saveContractApplicationFirstDraftJson',//保存草稿
+            'submit': 'fms::/contractapplication/saveContractApplicationCommitJson',//提交
+            'saveDrafts': 'fms::/contractapplication/saveContractApplicationDraftNotFirstJson',//保存草稿
+            'submitEdit': 'fms::/contractapplication/saveContractApplicationCommitOthersJson',//提交
+            'searchContract': 'fms::/contract/passContractInforByCid', //查询主合同相关信息
+            'searchPrimaryContract': 'fms::/contract/queryAllContractByCContractCode' //tokeninput 查询主合同编号
+            //查询合同编码对应的签订公司
+            , 'machSignCompany': 'fms::/dictionary/getCompanyNameJson'
+        };
+        this.ajaxTo(php[params]);
+    }
+    , pay: function (params) {
+        //付款申请表
+        var php = {
+            'drafts': 'fms::/contractpayrequest/saveContractPayRequestAsDraft',//保存草稿
+            'submit': 'fms::/contractpayrequest/saveContractPayRequestBillCommit',//提交
+            'contractInfo': 'fms::/contractpayrequest/showContractInfoJson'//查询合同信息
+        };
+        this.ajaxTo(php[params]);
+    }
+    , budget: function (params) {
+        //预算申请表
+        var php = {
+            'drafts': '',//保存草稿
+            'submit': '',//提交
+            'budgetItem': 'fms::/budgetrequest/showBudgetitemByDepartJson'//预算项目选择
+        };
+        this.ajaxTo(php[params]);
+    }
+    , query: function (params) {
+        // 查询界面
+        var php = {
+            'depart': 'fms::/departmentbase/getDepartmentBaseByUserJson',//查询部门
+            'qcon': 'fms::/contract/queryContractInformationJson', //异步查询合同
+            'searchPayList':'fms::/contractpayrequest/queryContractPayListJson'//查询付款单据
+        };
+        this.ajaxTo(php[params]);
+    }
+    , filing: function (params) {
+        // 归档界面
+        var php = {
+            'archives': 'fms::/contractapplication/showSuccAndFileContractJson',
+            'view': 'fms::/contractapplication/showContractInformation', //跳转到-view页面
+            'waitSave': 'fms::/contract/contractFiling', //待归档
+            'overSave': 'fms::/contract/updateContract' //已归档数据
+        };
+        this.ajaxTo(php[params]);
+    }
+    , myApproval: function (params) {
+        var php = {
+            //合同列表
+            'contractList': 'fms::/contract/tasklistJson',
+            'contractInfo': 'fms::/userbillrequest/showContractApplicationInformationJson',
+            //合同审批
+            'operate': 'fms::/contract/complete',
+            //合同批量审批
+            'batch': 'fms::/contract/batchcomplete',
+            'getTmpl': 'fms::/contract/dealTaskJson',
+
+            // //付款审批/驳回同一个接口。
+            ////同意 para approveState=true 驳回 para approveState=false
+            'approvalPay': 'fms::/contractpayrequest/batchcomplete',
+            'payList': 'fms::/contractpayrequest/tasklistJson',//左侧列表
+            'payInfo': 'fms::/contractpayrequest/showContractPayAllJson' //右边详情页
+        };
+        this.ajaxTo(php[params]);
+    }
+    , myapply: function (params) {
+        var php = {
+            //合同
+            'hurry': 'fms::/contract/remindapprovebatch', //催审
+            'contractRevoke': 'fms::/contract/revokecontractbill', //撤销
+            'del': 'fms::/userbillrequest/deleteBillRequestDraft', //删除
+            //合同列表
+            'contractList' : 'fms::/contractapplication/queryContractApplicationRequestJson',
+            //合同详情
+            'contractDetail': 'fms::/userbillrequest/showContractApplicationInformationJson',
+
+            //付款催审
+            'payRemind': 'fms::/contractpayrequest/remindapprove',
+            //付款撤销申请
+            'payRevoke': 'fms::/contractpayrequest/revokeContractPay', //撤销
+            //付款列表
+            'payList': 'fms::/contractpayrequest/showContractPayRequestJson',
+            //付款详情
+            'payInfo': 'fms::/contractpayrequest/showContractPayAllJson' //右边详情页
+            /*'approvalRecord':'fms::/contractpayrequest/showContractPayHistoryJson', //审批记录
+             'attachment':'fms::/contractpayrequest/showContractPayDraftAttachJson' //收款附件接口*/
+        };
+
+        this.ajaxTo(php[params]);
+    }
+    , mymanage: function (params) {
+        var php = {
+            'mail': 'fms::/contract/notifyGetContractEmail'
+            , 'payList': 'fms::/contractpayrequest/showContractPaySuccessJson'
+            , 'confirmPay': 'fms::/contractpayrequest/confirmContractPay'
+            , 'rejectPay': 'fms::/contractpayrequest/rejectContractPay'
+        };
+        this.ajaxTo(php[params]);
+    }
+
+};
+exports.__create = controller.__create(aj, controlFns);

@@ -1,0 +1,146 @@
+<%#head.html %>
+<div id="container" class="effect mainnav-lg">
+    <%#navbar.html %>
+
+    <div class="boxed">
+        <!--CONTENT CONTAINER-->
+        <!--===================================================-->
+        <div id="content-container" >
+            <ol class="breadcrumb">
+                <li><a href="/home">主页</a></li>
+                <li><a href="/it"> 人力资源</a></li>
+                <li class="active">请假</li>
+            </ol>
+            <div id="page-content" class="no-padding panel">
+
+                <div class="panel-body" style="min-width:580px">
+                    <%#/document/navbarRow.html %>
+
+                    <div class="row" >
+                        <label for="" class="col-lg-1 col-sm-1 col-xs-1"></label>
+                        <ul class="nav nav-tabs col-lg-10 col-sm-10 col-xs-10" style="margin-bottom: 30px">
+                            <li role="presentation" class="active"><a href="#wifi" aria-controls="wifi" role="tab" data-toggle="tab">请假</a></li>
+                            <li role="presentation" class=""><a href="/document/leaveApproval/" >请假审批</a></li>
+                            <li role="presentation" class=""><a href="/document/leaveNotice/" >请假须知</a></li>
+                        </ul>
+                    </div>
+                    <div class="tab-content">
+                        <div role="tabpanel" class="tab-pane row active" id="wifi">
+                            <div class="col-lg-1 col-sm-1 col-xs-1"></div>
+                            <div class="col-lg-10 col-sm-10 col-xs-10 user_right">
+                                <div class="password_fix tap">
+                                    <% if (this.LeaveRequest.code==200){ %>
+                                    <form class="form-horizontal speed" id="form_password_fix" >
+                                        <div class="form-group">
+                                            <label  class="col-lg-2 col-sm-2 col-xs-2 control-label">申请人</label>
+                                            <div class="col-lg-4 col-sm-4 col-xs-4">
+                                                <input type="text" disabled class="form-control" value="<%=this.LeaveRequest.data.name_cn %>">
+                                            </div>
+                                            <label for="" class="col-lg-2 col-sm-2 col-xs-3 control-label">部门</label>
+                                            <div class="col-lg-4 col-sm-4 col-xs-3">
+                                                <input type="text" disabled class="form-control" value="<%=this.LeaveRequest.data.depart_name %>">
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group" >
+                                            <label class="col-lg-2 col-sm-2 col-xs-2 control-label">请假类型</label>
+                                            <div class="col-lg-4 col-sm-4 col-xs-4 select-div">
+                                                <input type="text" data-bv-notempty class="form-control select-input" placeholder="请选择" readonly>
+                                                <ul class="select-ul hide">
+                                                        <% this.LeaveRequest.data.leave_type.forEach(function(type,index){ %>
+                                                            <li info="<%=index%>"><%=type%></li>
+                                                        <% })%>
+                                                </ul>
+                                                <input type="hidden" name="" data-bv-notempty class="form-control select-input-hide" >
+                                            </div>
+                                        </div>
+                                        <!--<div class="form-group">-->
+                                            <!--<div class=" col-lg-6 col-md-6 col-sm-6" style="margin:0 2%">-->
+                                                <!--<label class=" col-lg-4 control-label ">-->
+                                                    <!--<input type="radio" name="meeting_type" value="1" checked="checked">-->
+                                                    <!--普通会议-->
+                                                <!--</label>-->
+                                                <!--<label class=" col-lg-4 control-label">-->
+                                                    <!--<input type="radio" name="meeting_type" value="2"> 视频会议-->
+                                                <!--</label>-->
+                                                <!--<label class=" col-lg-4 control-label">-->
+                                                    <!--<input type="radio" name="meeting_type" value="3"> 电话会议-->
+                                                <!--</label>-->
+                                            <!--</div>-->
+                                        <!--</div>-->
+                                        <div class="form-group">
+                                            <label class="col-sm-2 col-lg-2 col-xs-2 control-label">开始日期</label>
+                                            <div class="col-lg-4 col-sm-4 col-xs-4">
+                                                <div class="input-group">
+                                                    <input class="form-control form_datetime" readonly id="input_start" value="">
+                                                    <div class="input-group-btn">
+                                                        <button type="button" class="btn btn-default dropdown-toggle toggle-half start" time="" data-toggle="dropdown">全天 <span class="caret"></span></button>
+                                                        <ul class="dropdown-menu">
+                                                            <li><a class="select-half" time="" href="javascript:void(0);">全天</a></li>
+                                                            <li class="divider"></li>
+                                                            <li><a class="select-half" href="javascript:void(0);" time="AM">上午</a></li>
+                                                            <li><a class="select-half" href="javascript:void(0);" time="PM">下午</a></li>
+                                                        </ul>
+                                                    </div><!-- /btn-group -->
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="" class="col-sm-2 col-lg-2 col-xs-2 control-label">结束日期</label>
+                                            <div class="col-lg-4 col-sm-4 col-xs-4">
+                                                <div class="input-group">
+                                                    <input class="form-control form_datetime" readonly id="input_end" value="">
+                                                    <div class="input-group-btn">
+                                                        <button type="button" class="btn btn-default dropdown-toggle toggle-half end" disabled time="" data-toggle="dropdown">全天 <span class="caret"></span></button>
+                                                        <ul class="dropdown-menu">
+                                                            <li><a class="select-half" time="" href="#">全天</a></li>
+                                                            <li class="divider"></li>
+                                                            <li><a class="select-half" href="#" time="AM">上午</a></li>
+                                                            <li><a class="select-half" href="#" time="PM">下午</a></li>
+                                                        </ul>
+                                                    </div><!-- /btn-group -->
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="" class="col-lg-2 col-sm-2 col-xs-2 control-label">请假天数</label>
+                                            <div class="col-lg-4 col-sm-4 col-xs-4">
+                                                <input type="text" name="company" data-bv-notempty class="form-control new_password_again"  value="">
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="" class="col-lg-2 col-sm-2 col-xs-2 control-label ">请假理由</label>
+                                            <div class="col-lg-10 col-sm-10 col-xs-10">
+                                                <textarea name="reason" data-bv-notempty id="" cols="30" rows="5" placeholder="公司名称或学校" class="form-control"></textarea>
+                                            </div>
+                                        </div>
+                                        <div class="form-group btn_line">
+                                            <label class="col-lg-3 col-sm-3 col-xs-3 "></label>
+                                            <div class="col-lg-5 col-sm-5 col-xs-5">
+                                                <button type="submit" class="btn btn-beauty save_password ">提交</button>
+                                            </div>
+                                        </div>
+                                    </form>
+                                    <%}%>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            <%#footer.html%>
+        </div>
+
+        <%#mainnav.html%>
+    </div>
+
+</div>
+
+
+<%! $_ENGINE_SELF.callFn("useModule")("<<<_use:
+        fml.use('speed/common/base');
+fml.use('speed/document/leaverequest');
+_use:", this._JSstack , this._JSmods); %>
+
+<%#foot.html%>

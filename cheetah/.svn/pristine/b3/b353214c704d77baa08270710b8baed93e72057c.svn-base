@@ -1,0 +1,5 @@
+<%#head.html%>
+<div>
+	demo page
+</div>
+<%#foot.html%>

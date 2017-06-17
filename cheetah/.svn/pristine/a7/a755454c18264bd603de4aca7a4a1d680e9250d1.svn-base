@@ -1,0 +1,61 @@
+<%#head.html%>
+		<div class="page-hd">
+			<span><img src="<%= this.PICTURE_URL  %>img/speed/bg-img/icon.png" ></span>
+			<span><img src="<%= this.PICTURE_URL  %>img/speed/bg-img/speed.png" ></span>
+		</div>
+		<div class="card-container login">
+			<a class="card-corner" data-switch="card-download"></a>
+			<div class="container-bd">
+				<div class="card card-login animated flipInX active">
+					<form class="form-horizontal" method="post">
+						<div class="input-row"><div class="error-message"></div></div>
+						<div class="input-row addon-user">
+							<input type="text" id="username" name="username" class="form-control" placeholder="公司邮箱前缀" autofocus>
+						</div>
+						<div class="input-row addon-lock">
+							<input type="password" id="password" name="password" class="form-control" placeholder="邮箱密码" autocomplete="off">
+						</div>
+						<div class="input-row addon-message">
+							<input type="text" id="verify-code" name="captcha" class="form-control" maxlength="6">
+							<a href="javascript:void(0);" id="send-verify-code" class="btn btn-default">发送短信验证码</a>
+						</div>
+						<div class="input-row text-right">
+							<a id="link-forget-password" href="javascript:void(0);" data-switch="card-forget">忘记密码</a>
+						</div>
+						<div class="text-center">
+							<button type="submit" class="btn btn-sign-in">登录</button>
+						</div>
+					</form>
+				</div>
+				<div class="card card-download animated bounceIn">
+					<h3 class="download-title">下载APP</h3>
+
+					<p>
+						<span class="download-tips">请扫描右侧<br>客户端二维码</span>
+						<img src="<%= this.PICTURE_URL  %>img/speed/bg-img/ma.png" width="140" height="140">
+					</p>
+				</div>
+				<div class="card card-forget animated fadeIn">
+					<h3 class="forget-title">忘记密码，请联系</h3>
+					<dl>
+						<dt>北京</dt>
+						<dd>
+							<div><span>李冠良</span>13041180216</div>
+							<div><span>张新新</span>18146501751</div>
+						</dd>
+						<dt>上海</dt><dd><span>陶淳</span>13564156610</dd>
+						<dt>杭州</dt><dd><span>陶淳</span>13564156610</dd>
+						<dt>广州</dt><dd><span>黄岳鹏</span>13560036718</dd>
+					</dl>
+				</div>
+			</div>
+			<div class="container-bottom">
+				<div class="triangle"></div>
+				<div class="shadow-border left"></div>
+				<div class="shadow-border right"></div>
+			</div>
+		</div>
+<%! $_ENGINE_SELF.callFn("useModule")("<<<_use:
+		fml.use('speed/user/login');
+_use:", this._JSstack , this._JSmods); %>
+<%#foot.html%>

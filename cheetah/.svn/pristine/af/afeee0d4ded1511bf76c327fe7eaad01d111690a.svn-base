@@ -1,0 +1,23 @@
+/*付款申请单*/
+.view-con {
+    display: none;
+    text-align: right;
+}
+.file-zone {
+    cursor:pointer;
+}
+.dropzone {
+    border: none !important;
+    background-color: #eee !important;
+    color: #c09853;
+    min-height: 0 !important;
+    padding: 0 !important;
+}
+.relative {
+    position: relative;
+}
+.file-button-pos {
+      position: absolute;
+    bottom: 8px;
+    margin-left: -100px;
+}

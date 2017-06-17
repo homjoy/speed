@@ -1,0 +1,43 @@
+//#page-content{
+//  background: #fff;
+//  margin: 20px 25px 0;
+//  padding: 20px 30px;
+//
+//}
+body{
+  font-family:'Microsoft YaHei', '微软雅黑',sans-serif;
+}
+
+#page-content{
+  background: #fff;
+  margin:0px 25px;
+  padding: 20px 30px;
+  //各种圆角。。
+  -webkit-border-radius: 5px;
+  -moz-border-radius: 5px;
+  border-radius: 5px;
+}
+
+#download-client{
+  .head-list{
+    > li:first-child{
+      a:hover{background: #fff;}
+    }
+  }
+}
+
+#footer{
+  .pad-lft{
+    padding-left: 25px;
+  }
+  .pad-rgt{
+    padding-right: 25px;
+  }
+}
+//
+//@media (min-width:768px){
+//  #page-content{background: #fff;margin:10px 20px 0;}
+//}
+//@media (min-width:992px){
+//  #page-content{background: #fff;margin: 20px 30px 0;}
+//}

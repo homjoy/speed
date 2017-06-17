@@ -1,0 +1,120 @@
+<?php
+namespace Admin\Modules\Hr\Leave;
+use Libs\Util\Format;
+use Admin\Modules\Common\BaseModule;
+use Admin\Package\Common\Response;
+use Admin\Package\Hr_leave\LeaveList;
+use Admin\Package\Log\Log;
+/**
+ * Created by hongzhou@meilishuo.com
+ * User: MLS  AjaxLeaveUpdate
+ * Date: 15/11/25
+ * Time: 下午12:18
+ */
+class AjaxLeaveUpdate extends BaseModule {
+
+    protected $params = array();
+    protected $errors = array();
+    public static $VIEW_SWITCH_JSON = TRUE;
+    public static $LEAVE_TYPE= 1;
+    public function run() {
+        $this->_init();
+        $len =   $old = array();
+        if($this->post()->hasError()){
+            $return = Response::gen_error(10001, '', $this->post()->getErrors());
+            return $this->app->response->setBody($return);
+        }
+        if($this->params['end_date']< $this->params['start_date']){
+            $return = Response::gen_error(30001,'请仔细核对时间');
+            return $this->app->response->setBody($return);
+        }
+        if($this->params['end_date']== $this->params['start_date'] && $this->params['start_half'] =='PM' &&$this->params['end_half']=='AM'){
+            $return = Response::gen_error(30001,'请仔细核对时间');
+            return $this->app->response->setBody($return);
+        }
+        if($this->params['end_half']!=='PM' &&$this->params['end_half']!=='AM'){
+            $return = Response::gen_error(30001,'请仔细核对时间');
+            return $this->app->response->setBody($return);
+        }
+        if($this->params['start_half']!=='PM' &&$this->params['start_half']!=='AM'){
+            $return = Response::gen_error(30001,'请仔细核对时间');
+            return $this->app->response->setBody($return);
+        }
+        $old = LeaveList::getInstance()->getLeaveList(array('order_id'=>$this->params['order_id']));
+//计算天数
+        $len = LeaveList::getInstance()->getLeaveLength($this->params);
+        $this->params['length'] =$len;
+//修改入库
+        $result =LeaveList::getInstance()->updateLeaveInfo($this->params);
+        if ($result === FALSE) {
+            $return = Response::gen_error(50001,'没有修改成功');
+        }else{
+            $return = Response::gen_success('修改成功');
+        }
+ //记录logs
+        $this->doLog($this->params,$old);
+        $this->app->response->setBody($return);
+    }
+
+    protected function doLog($new_param=array(),$old_param=array()){
+        if(empty($old_param)){
+            $old =array('无数据');
+        }else{
+            $old =$old_param;
+        }
+        $old = json_encode($old);
+        $new =$new_param;
+        $new = json_encode($new);
+        $ret = Log::getInstance()->createLogs(array('user_id'=>$this->user['id'],'handle_id'=>$new_param['order_id'],
+            'before_data'=>$old,'after_data'=>$new,'handle_type'=>self::$LEAVE_TYPE));
+        return $ret;
+    }
+    /**
+     * 参数初始化
+     */
+    protected function _init(){
+        $data = $this->request->POST;
+        $data_check = array(
+            'order_id' => array(
+                'required'	=> true,
+                'type'	=> 'integer',
+            ),
+            'status' => array(      //1新建2待接收3处理中4完成5驳回0失效
+                'required'	=> true,
+                'type'	=> 'integer',
+            ),
+            'absence_type' => array(  // 1事假2年假3病假4带薪病假5婚假6丧假7产假8陪产假9产检假10流产假
+                'type'	=> 'integer',
+            ),
+            'start_date' => array(
+                'required'	=> true,
+                'type'	=> 'datetime',
+            ),
+            'start_half' => array(
+                'type'	=> 'string',
+                'required'	=> true,
+            ),
+            'end_date' => array(
+                'required'	=> true,
+                'type'	=> 'datetime',
+            ),
+            'end_half' => array(
+                'type'	=> 'string',
+                'required'	=> true,
+            ),
+            'memo' => array(
+                'type'	=> 'string',
+            ),
+            'length' => array(
+                'type'	=> 'integer',
+            ),
+            'create_reason' => array(
+                'type'	=> 'string',
+             )
+        );
+//数据校验
+        $data_check     = array_intersect_key($data_check,$data);
+        $this->rules    =  $data_check;
+        $this->params   = $this->post()->safe();
+    }
+}

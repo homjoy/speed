@@ -1,0 +1,17 @@
+<?php
+
+namespace Libs\Serviceclient\Api;
+
+/**
+ * worker 接口配置.
+ */
+class JointApiList extends \Libs\Serviceclient\Api\ApiList {
+
+    /**
+     * @var array
+     */
+    protected static $apiList = array(
+
+    );
+
+}

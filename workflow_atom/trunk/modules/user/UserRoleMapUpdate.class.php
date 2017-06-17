@@ -1,0 +1,92 @@
+<?php 
+namespace WorkFlowAtom\Modules\User;
+
+use WorkFlowAtom\Modules\Common\BaseModule;
+use WorkFlowAtom\Package\Common\Response;
+use WorkFlowAtom\Package\User\UserRoleMap;
+use Libs\Util\Format;
+
+/**
+ * 修改用户角色映射
+ * @author jingjingzhang@meilishuo.com
+ * @date 2015-7-15 
+ */
+
+class UserRoleMapUpdate extends BaseModule {
+
+	protected $user_role = array();
+	protected $errors = array();
+	private $sample;
+
+	public function run() {
+
+		$this->_init();
+
+		$this->sample = UserRoleMap::getInstance()->getFields();
+
+		//参数校验
+        if($this->post()->hasError()){
+        	$return = Response::gen_error(10001, '', $this->errors);
+        	return $this->app->response->setBody($return);
+        }
+
+        if (empty($this->user_role['map_id']) || empty($this->user_role['user_id']) || empty($this->user_role['role_id'])) {
+        	$return = Response::gen_error(10001);
+        	return $this->app->response->setBody($return);
+        }
+
+		//获取参数
+        $queryParams = array();
+        foreach ($this->user_role as $key => $value) {
+            if (!empty($value)) {
+                $queryParams[$key] = $value;
+            }
+        }
+        if ($this->user_role['status'] !== '') {
+            $queryParams['status'] = $this->user_role['status'];
+        }
+
+        $result = UserRoleMap::getInstance()->update($queryParams);
+
+		if ($result === FALSE) {
+			$return =  Response::gen_error(50001);
+		} else if (empty($result)) {
+			$return = Response::gen_error(50004);
+		} else {
+			$return = Response::gen_success(Format::outputData($this->user_role, $this->sample));
+		}
+
+		$this->app->response->setBody($return);
+	}
+
+	/**
+     * 参数初始化
+     */
+	private function _init() {
+
+		$this->rules = array(
+			'map_id'  => array(
+				'required'   => TRUE,
+                'type'       => 'integer',
+                'maxLength'  => 11,
+			),
+			'user_id' => array(
+				'required'   => TRUE,
+                'type'       => 'integer',
+                'maxLength'  => 11,
+			),
+			'role_id' => array(
+				'required'   => TRUE,
+                'type'       => 'integer',
+                'maxLength'  => 5,
+			),
+			'status'  => array(
+				'type'    => 'integer',
+				'default' => 1,
+			),
+		);
+
+		$this->user_role = $this->post()->safe();
+		$this->errors = $this->post()->getErrors();
+	}
+}

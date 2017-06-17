@@ -1,0 +1,93 @@
+//placeholder居中显示
+input::-webkit-input-placeholder {
+  text-align: center
+}
+
+
+.table-adjust{
+  overflow:auto;
+  min-height: 205px;
+  max-height: 360px;
+
+}
+
+#itemChange{
+  .item-pos{
+    margin-top: -13px;
+    margin-left: 71px;
+    margin-bottom: 39px;
+  }
+  .removeItem,
+  .addItem {
+    display: inline-block;
+    height: 22px;
+    line-height: 22px;
+    i {
+      display: inline-block;
+      font-size: 16px;
+      width: 26px;
+      height: 22px;
+      line-height: 22px;
+      text-align: center;
+      color: #fff;
+      border-radius: 5px;
+    }
+  }
+
+  .removeItem {
+    i {
+      background-color: #d9544f;
+    }
+  }
+  .addItem {
+    i {
+      background-color: #96c662;
+    }
+  } 
+}
+
+
+.panel{
+  //width: 1050px;
+  //height: 1138px;
+  padding: 46px 64px 0 64px;
+  .panel-heading{
+    &:after{
+      border-bottom: none;
+    }
+    .panel-title{
+      padding: 0;
+      text-align: center;
+      font-size: 24px;
+      line-height: 24px;
+      .panel-body{
+        div.row{
+          width:1000px;
+        }
+      }
+    }
+  }
+}
+
+.department{
+  position:relative;
+}
+
+.select-tree{
+  text-align: center;
+}
+
+.ztree-wrap{
+  position: absolute;
+  z-index: 99999999;
+  top: 41px;
+  left: 8px;
+  width: 92%;
+  background-color: #FFF;
+  border:1px solid #e2e2e2;
+  display: none;
+  //height: 220px;
+  max-height: 300px;
+  overflow-y: scroll;
+  text-align: center;
+}

@@ -1,0 +1,83 @@
+<%#head.html%>
+<div id="container" class="effect mainnav-lg">
+    <%#navbar.html%>
+    <div class="boxed">
+        <div id="content-container">
+            <div id="page-content">
+                <div class="panel">
+                    <div class="panel-body">
+                        <ul class="nav nav-tabs slope" role="tablist">
+                            <li role="presentation"><a href="/myapproval/contractApproval/">合同</a></li>
+                            <li role="presentation" class="active"><a href="javascript:void(0);">付款</a></li>
+                            <!--<li role="presentation"><a href="javascript:void(0);">预算</a></li>-->
+                        </ul>
+                        <div class="tab-content">
+                            <div role="tabpanel" class="tab-pane active" id="slope-home">
+                                <div class="row search-head" style="text-align: center;">
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <%#sidebar.html%>
+    </div>
+    <%#footer.html%>
+</div>
+
+
+<script type="text/html" id="left-table">
+    <table class="table">
+        <tr>
+            <th></th>
+            <th class="hidden-narrow"></th>
+            <th class="hidden-narrow">申请人</th>
+            <th class="hidden-narrow">单据编号</th>
+            <th>收款单位</th>
+            <th>金额</th>
+            <th class="hidden-narrow">日期</th>
+        </tr>
+        {{each data as info}}
+        <tr class="show-info tr-{{info.status_eng}}" data-cpb-id="{{info.cabid}}" dbl-open="/pay/applyView/?cpbId={{info.cabid}}">
+            <td>
+                <input type="checkbox" data-task_id="{{info.taskid}}" data-cpb-id="{{info.cabid}}" value="{{info.cabId}}"/>
+            </td>
+            <td class="hidden-narrow"><img class="avatar" src="{{info.applyuseravatar}}"/></td>
+            <td class="hidden-narrow">
+                <div>{{info.applyusername}}</div>
+                <div >{{info.applydeptname}}</div>
+            </td>
+            <td class="hidden-narrow">{{info.applyno}}</td>
+            <td>
+                <div>{{info.customerCompany}}</div>
+                <div class="hidden-fat text-muted"><span>{{info.applydate}}</span><span class="text-muted">{{info.applyusername}}</span></div>
+            </td>
+            <td>
+                <div>{{info.amount | currencyFormat}}</div>
+                <div class="hidden-fat text-muted">{{info.applydeptname}}</div>
+            </td>
+            <td class="hidden-narrow text-muted">{{info.applydate}}</td>
+        </tr>
+        {{/each}}
+    </table>
+</script>
+
+<%#myapply/payDetail.tpl.html %>
+<script type="text/html" id="right-show">
+    <div class="panel-heading ">
+        <span>申请详情</span>
+        {{if canApproveFlag == 1 && contractPay.cpbApprovalState != 3}}
+        <a href="javascript:void(0);" data-cpb-id="{{contractPay.cpbId}}" data-task_id="{{taskid}}" class="btn btn-danger single list-reject btn-xs">驳回</a>
+        <a href="javascript:void(0);" data-cpb-id="{{contractPay.cpbId}}" data-task_id="{{taskid}}" data-formkey="{{formkey}}" class="btn btn-success single list-agree btn-xs">同意</a>
+        {{/if}}
+    </div>
+    {{ include 'payDetail'}}
+</script>
+
+
+<%! $_ENGINE_SELF.callFn( "useModule")( "<<<_use:
+        fml.use('fms/myapproval/payApproval');
+_use:", this._JSstack , this._JSmods); %>
+<%#foot.html%>

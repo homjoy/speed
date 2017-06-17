@@ -1,0 +1,30 @@
+function query() {
+    return this;
+}
+var controlFns = {
+	'index':function(){
+		var php = {
+            //'depart':'/departmentbase/getDepartmentBaseInformation'
+            // 'infoList':'/contract/queryContractInformationJson'
+        };
+		this.bindDefault(php);
+        this.bridgeMuch(php);
+        this.listenOver(function (data) { 
+            data._CSSLinks = ['plugin/dataTables.bootstrap','plugin/jquery.dataTables','plugin/zTree','fms/common/common','fms/query/query'];
+            this.render('query/index.html', data);
+        });
+	}
+    ,'pay':function(){
+		var php = {
+            //'depart':'/departmentbase/getDepartmentBaseInformation'
+            // 'infoList':'/contract/queryContractInformationJson'
+        };
+		this.bindDefault(php);
+        this.bridgeMuch(php);
+        this.listenOver(function (data) {
+            data._CSSLinks = ['plugin/dataTables.bootstrap','plugin/jquery.dataTables','plugin/zTree','fms/common/common','fms/query/query'];
+            this.render('query/pay.html', data);
+        });
+	}
+};
+exports.__create = controller.__create(query, controlFns);

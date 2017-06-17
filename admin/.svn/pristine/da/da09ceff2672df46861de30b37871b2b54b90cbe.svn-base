@@ -1,0 +1,178 @@
+<script src="http://cdn.bootcss.com/html5shiv/3.7.0/html5shiv.min.js"></script>
+<script src="http://cdn.bootcss.com/respond.js/1.3.0/respond.min.js"></script><!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta name="description" content="">
+	<meta name="author" content="">
+	
+	<title>美丽说后台管理</title>
+	
+	<!-- Bootstrap core CSS -->
+	<link rel="stylesheet" href="/static/bootstrap/css/bootstrap.min.css">
+	
+	<!-- Custom styles for this template -->
+	<link rel='stylesheet' href='/static/css/cupertino/jquery-ui-1.10.4.custom.min.css' />
+	<link rel="stylesheet" href="/static/css/main.css" />
+	<link rel="stylesheet" href="/static/font-awesome/css/font-awesome.css" />
+
+	<script type='text/javascript' src="/static/js/jquery-2.1.4.min.js"></script>
+	<script type='text/javascript' src="/static/js/jquery-ui-1.10.4.custom.min.js"></script>
+	<script type='text/javascript' src="/static/bootstrap/js/bootstrap.min.js"></script>
+	
+	<!-- Just for debugging purposes. Don't actually copy this line! -->
+	<!--[if lt IE 9]><script src="/static/js/ie8-responsive-file-warning.js"></script><![endif]-->
+	
+	<!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+	<!--[if lt IE 9]>
+	<script src="http://cdn.bootcss.com/html5shiv/3.7.0/html5shiv.min.js"></script>
+	<script src="http://cdn.bootcss.com/respond.js/1.3.0/respond.min.js"></script>
+
+
+	<![endif]-->
+</head>
+
+<body>
+
+<link type="text/css" rel="stylesheet" href="/static/css/backtotop.css">
+<script src="/static/js/backtotop.js"></script>
+<style type="text/css">
+.dropdown-submenu {
+    position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+    top: 0;
+    left: 100%;
+    margin-top: -6px;
+    margin-left: -1px;
+    border-radius: 0 6px 6px 6px;
+    border-radius: 0 6px 6px;
+    border-radius: 0 6px 6px 6px;
+}
+
+.dropdown-submenu:hover>.dropdown-menu {
+    display: block;
+}
+
+.dropdown-submenu>a:after {
+    display: block;
+    content: " ";
+    float: right;
+    width: 0;
+    height: 0;
+    border-color: transparent;
+    border-style: solid;
+    border-width: 5px 0 5px 5px;
+    border-left-color: #ccc;
+    margin-top: 5px;
+    margin-right: -10px;
+}
+
+.dropdown-submenu:hover>a:after {
+    border-left-color: #fff;
+}
+
+.dropdown-submenu.pull-left {
+    float: none;
+}
+
+.dropdown-submenu.pull-left>.dropdown-menu {
+    left: -100%;
+    margin-left: 10px;
+    border-radius: 6px 0 6px 6px;
+    border-radius: 6px 0 6px 6px;
+    border-radius: 6px 0 6px 6px;
+}
+
+</style>
+	<!-- Static navbar -->
+	<div class="navbar navbar-default navbar-fixed-top" role="navigation">
+		<div class="container">
+			<div class="navbar-header">
+				<a class="navbar-brand" href="/"><img src="http://i.meilishuo.net/css/images/header/logo_n4.png"></a>
+			</div>
+			<div class="navbar-collapse collapse">
+				<ul class="nav navbar-nav">
+					<li><a href="/">管理后台首页</a></li>
+					@section('topNav')
+						@if ($treeInfo)
+						@foreach ($treeInfo as $k => $t)
+							<li class="dropdown">
+								<a href="#" class="dropdown-toggle" data-toggle="dropdown">{{ $t['tree_name'] }} <b class="caret"></b></a>
+								@if ($t['child_info'] && !empty($t['child_info']))
+									<ul class="dropdown-menu">
+									@foreach ($t['child_info'] as $l)
+										@if ($l['child_info'] && !empty($l['child_info']))
+											<li class="dropdown-submenu">
+												<a href="#" class="dropdown-toggle" data-toggle="dropdown">{{ $l['tree_name'] }}</a>
+												<ul class="dropdown-menu">
+													@foreach ($l['child_info'] as $c)
+														@if ($c['child_info'] && !empty($c['child_info']))
+															<li class="dropdown-submenu">
+																<a href="#" class="dropdown-toggle" data-toggle="dropdown">{{ $c['tree_name'] }}</a>
+																<ul class="dropdown-menu">
+																	@foreach ($c['child_info'] as $d)
+																		<li><a href="{{ $d['tree_url'] }}">{{ $d['tree_name'] }}</a></li>
+																	@endforeach
+																</ul>
+															</li>
+														@else
+															<li><a href="{{ $c['tree_url'] }}">{{ $c['tree_name'] }}</a></li>
+														@endif
+													@endforeach
+												</ul>
+											</li>
+										@else
+											<li><a href="{{ $l['tree_url'] }}">{{ $l['tree_name'] }}</a></li>
+										@endif
+									@endforeach
+									</ul>
+								@endif
+							</li>
+						@endforeach
+						@endif
+					@show
+				</ul>
+				<ul class="nav navbar-nav navbar-right">
+					<li class="dropdown ">
+						<a href="#" class="dropdown-toggle" data-toggle="dropdown"> <img src="{{ $userInfo['avatar_small'] }}" class="img-40 img-circle" /> {{ $userInfo['name'] }} <b class="caret"></b></a>
+						<ul class="dropdown-menu">
+							<li><a href="/auth/logout"><span class="glyphicon glyphicon-off"></span> 退出</a></li>
+						</ul>
+					</li>
+					<li class=""><a href="/help">帮助</a></li>
+				</ul>
+			</div>
+		</div>
+	</div>
+	<div style="top:50px; z-index: 100; position: fixed; width:100%;">
+		<div class="text-center container" style="width:400px;">
+			<div class="alert alert-danger" id="message-container" style="display: none;">
+			</div>
+		</div>
+	</div>
+	<div class="container" id="container">
+		@if( (isset($code) && $code != 200) || ( isset($error_code) && $error_code != 0) )
+		<div role="alert" class="alert alert-danger">
+			<strong>{{ $error_msg }}</strong> {{ $error_detail or '' }}
+		</div>
+		@endif
+		@yield('content')
+        <p id="back-to-top"><a href="#top" >▲</a></p>
+	</div>
+
+	<div id="footer">
+		<div class="container">
+			<span class="text-muted">2014 &copy; Meilishuo.com</span>
+		</div>
+	</div>
+
+	<!-- Bootstrap core JavaScript
+	================================================== -->
+	<!-- Placed at the end of the document so the pages load faster -->
+	<script type='text/javascript' src="/static/js/jquery.form.min.js"></script>
+	<script type='text/javascript' src="/static/js/main.js"></script>
+</body>
+</html>

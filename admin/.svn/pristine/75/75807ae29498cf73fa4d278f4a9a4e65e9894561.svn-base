@@ -1,0 +1,92 @@
+<?php
+
+namespace Admin\Package\Message_send;
+
+/**
+ * 会议室通用方法
+ *
+ * @package Admin\Package\Workflow
+ * @author  guojiezhu@meilishuo.com
+ * @since   2015-11-05
+ */
+
+class MessageSend extends \Admin\Package\Common\BasePackage
+{
+
+	private static $instance = null;
+
+	private function __construct() { }
+
+	public static function getInstance()
+	{
+		if (is_null(self::$instance)) {
+			self::$instance = new self();
+
+		}
+
+		return self::$instance;
+	}
+
+	/**
+	 * 获取消息列表
+	 * @param array $params
+	 *
+	 * @return bool
+	 */
+	public function getMessageList($params = array()){
+		$ret = $this->getClient()->call('atom', 'message_send/message_list_get', $params);
+		$ret = self::parseRemoteData($ret);
+
+		return $ret;
+	}
+
+	/**
+	 * 创建信息发送
+	 *
+	 * @param array $params
+	 *
+	 * @return bool
+	 */
+	public function MessageListCreate($params = array())
+	{
+		$ret = $this->getClient()->call('atom', 'message_send/message_list_add', $params);
+		$ret = self::parseRemoteData($ret);
+
+		return $ret;
+	}
+
+
+
+		/**
+	 * 创建发送人员的列表
+	 *
+	 * @param array $params
+	 *
+	 * @return bool
+	 */
+	public function MessageUserListCreate($params = array())
+	{
+		$ret = $this->getClient()->call('atom', 'message_send/message_user_list_add', $params);
+		$ret = self::parseRemoteData($ret);
+
+		return $ret;
+	}
+
+
+	/**
+	 * 创建发送人员的列表
+	 *
+	 * @param array $params
+	 *
+	 * @return bool
+	 */
+	public function MessageUserListBatchCreate($params = array())
+	{
+		$ret = $this->getClient()->call('atom', 'message_send/message_user_list_add', $params);
+		$ret = self::parseRemoteData($ret);
+
+		return $ret;
+	}
+
+
+}

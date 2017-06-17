@@ -1,0 +1,64 @@
+<%#head.html %>
+<div id="container" class="effect mainnav-lg">
+    <%#navbar.html %>
+
+
+    <div class="boxed">
+
+        <!--CONTENT style=""CONTAINER-->
+        <!--===================================================-->
+        <div id="content-container">
+            <div id="message-container" style=" ">
+                <div class="text-center container" style="">
+                    <div class="alert alert-danger" id="message-alert"></div>
+                </div>
+            </div>
+            <ol class="breadcrumb">
+                <li><a href="/home">首页</a></li>
+                <li class="active"><a href="javascript:void(0);">我的时间</a></li>
+            </ol>
+            <div id="page-content">
+                <div class="panel">
+                    <%#time/shares.html%>
+                    <input type="hidden" id="room_id" value="<%= this.room_id%>">
+                    <div id='calendar' style=""></div>
+                    <input type="hidden" id="book_time">
+                    <input type="hidden" id="iw" value="<%= this.iw%>">
+                    <!-- /.modal -->
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <% if(this.user_time_manage.code==200){ %>
+                            <blockquote>
+                                <a href='/time/share_time/'><img src="<%= this.PICTURE_URL  %>img/speed/gongxiang.png"> 共享我的时间</a>
+                                <a href='webcal://<%= this.host %>/time/subscribe/?token=<%=this.user_time_manage.data.token %>'><img
+                                        src="<%= this.PICTURE_URL  %>img/speed/xiazai.png">订阅日历
+                                </a>
+                                <br/>或者通过下面的地址手动订阅 <abbr style="">http://<%= this.host
+                                %>/time/subscribe/?token=<%=this.user_time_manage.data.token
+                                %></abbr>
+                            </blockquote>
+                            <%}%>
+
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+            <%#footer.html%>
+        </div>
+        <%#mainnav.html%>
+    </div>
+</div>
+
+<%#time/modal.html %>
+
+<script id="switch-view" type="text/html">
+    <a class="fc-button btn-calendar active" href="javascript:void(0);">日历</a>
+    <span class="line"></span>
+    <a class="fc-button btn-list" href="/time/my/?user_id=<%=this.params.userId || '' %>&iw=<%=this.params.iw || 0%>">列表</a>
+</script>
+<%! $_ENGINE_SELF.callFn("useModule")("<<<_use:
+        fml.use('speed/common/base');
+        fml.use('speed/time/index');
+_use:", this._JSstack , this._JSmods); %>
+<%#foot.html%>

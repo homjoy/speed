@@ -1,0 +1,141 @@
+@import "shares";
+
+#container.mainnav-sm #navbar {
+  padding-left: 50px;
+  left: 0;
+}
+
+// 我的时间
+.panel {
+  box-shadow: none
+}
+
+div.panel.panel-default > div {
+  background: white;
+  border: none;
+}
+
+blockquote {
+  display: block;
+  margin: 0;
+  padding: 18px 0 0 0;
+  font-size: 12px;
+  border: none !important;
+  a {
+    display: inline-block;
+    margin-bottom: 7px;
+    img {
+      margin-right: 5px;
+    }
+    font-size: 14px;
+    color: #ff6e9d;
+    &:first-child {
+      margin-right: 70px;
+    }
+    &:hover {
+      color: #ff6e9d;
+    }
+  }
+  abbr {
+    border-bottom: 1px dotted #999;
+    font-size: 12px;
+    margin-top: 3px;
+    color: #6a6a6a;
+  }
+}
+
+// 悬停
+#tip {
+  position: absolute;
+  width: 250px;
+  max-width: 400px;
+  text-align: left;
+  padding: 4px;
+  border: 0;
+  /*border-radius: 6px;  */
+  z-index: 1000;
+  background-color: white;
+  border: 1px solid #999999;
+  -webkit-box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+}
+
+#tip ul {
+  margin: 0;
+  padding: 0;
+  li {
+    font-family: Arial, '微软雅黑', 'Microsoft YaHei';
+    font-size: 14px;
+    list-style: none !important;
+    padding-left: 10px;
+  }
+}
+
+@media (min-width: 550px) and (max-width: 700px) {
+  .fc-header-title h2 {
+    font-size: 20px
+  }
+}
+
+@media (min-width: 500px) and (max-width: 549px) {
+  .fc-header-title h2 {
+    font-size: 16px
+  }
+}
+
+@media (max-width: 499px) {
+  .fc-header-title h2 {
+    display: none;
+  }
+}
+
+#container {
+  min-height: 100%;
+  position: absolute;
+  width: 100%
+}
+
+
+#calendar{
+  margin-top:10px;
+
+
+  .fc-header-right{
+    position: relative;
+  }
+
+
+  .btn-calendar,
+  .btn-list{
+    border:none;
+    width:30px;
+    height: 30px;
+    text-indent: 9999px;
+  }
+  .btn-calendar{
+    height: 29px;
+    background: url(../../../img/speed/time/rilinormal.png) center no-repeat;
+    &.active{
+      background: url(../../../img/speed/time/riliclick.png) center no-repeat;
+    }
+  }
+  .line{
+    position: relative;
+    top:3px;
+    display: inline-block;
+    margin:0 3px 0 5px;
+    width:1px;
+    height: 25px;
+    background-color: #ccd6e1;
+  }
+
+  .btn-list{
+    margin-top:1px;
+    margin-right:24px;
+    height: 27px;
+    background: url(../../../img/speed/time/liebiaonormal.png) center no-repeat;
+    &.active{
+      background: url(../../../img/speed/time/liebiaoclick.png) center no-repeat;
+    }
+  }
+}

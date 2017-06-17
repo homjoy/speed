@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>美丽说后台管理</title>
+    <!--STYLESHEET-->
+    <!--=================================================-->
+    <script src="http://cdn.bootcss.com/html5shiv/3.7.0/html5shiv.min.js"></script>
+    <script src="http://cdn.bootcss.com/respond.js/1.3.0/respond.min.js"></script>
+    <!--Open Sans Font [ OPTIONAL ] -->
+    <!--Nifty Stylesheet [ REQUIRED ]-->
+    <link href="/static/nifty/css/nifty.min.css" rel="stylesheet">
+    <!--Font Awesome [ OPTIONAL ]-->
+    <link href="/static/nifty/css/font-awesome.min.css" rel="stylesheet">
+    <!--Demo script [ DEMONSTRATION ]-->
+    <link rel="stylesheet" href="/static/bootstrap/css/bootstrap.min.css">
+    <link rel='stylesheet' href='/static/css/cupertino/jquery-ui-1.10.4.custom.min.css' />
+    <link rel="stylesheet" href="/static/css/main.css">
+    <!-- Custom styles for this template -->
+
+    <script type='text/javascript' src="/static/js/jquery-2.1.4.min.js"></script>
+    <script type='text/javascript' src="/static/js/jquery-ui-1.10.4.custom.min.js"></script>
+    <script type='text/javascript' src="/static/bootstrap/js/bootstrap.min.js"></script>
+    <!--SCRIPT-->
+    <!--=================================================-->
+
+    <?php /*<!--Page Load Progress Bar [ OPTIONAL ]-->*/ ?>
+    <?php /*<link href="/static/nifty/css/pace.min.css" rel="stylesheet">*/ ?>
+    <?php /*<script src="/static/nifty/js/pace.min.js"></script>*/ ?>
+
+
+    <style>
+        .form-inline{
+            float: left;
+            width: 100%;
+        }
+        .bgWhite>a{
+            color: #fff !important;
+            box-shadow: inset 4px 0 0 0 #2986b8;
+            -webkit-transition: background-color 0.2s, padding-left 0.3s, box-shadow 0.4s;
+            transition: background-color 0.2s, padding-left 0.3s, box-shadow 0.4s
+        }
+        #mainnav-container .mainnav-toggle {
+            padding: 20px  0px 0 0px;
+            height: 90px;
+            width: 60px;
+            display: block;
+            color: #ffffff;
+            background-size: 18px 10px;
+        }
+    </style>
+
+</head>
+
+<!--TIPS-->
+<!--You may remove all ID or Class names which contain "demo-", they are only used for demonstration. -->
+
+<body>
+<div id="container" class="effect mainnav-lg  mainnav-fixed">
+    <!--NAVBAR-->
+    <!--===================================================-->
+    <header id="navbar">
+        <div id="navbar-container" class="boxed">
+
+            <!--Brand logo & name-->
+            <!--================================-->
+            <div class="navbar-header-fyc"><a href="/"> <img src="http://static.speed.meilishuo.com/img/speed/logo.png"
+                                                             alt="Speed Logo" class="brand-icon-fyc"> </a></div>
+
+            <!--================================-->
+            <!--End brand logo & name-->
+
+
+            <!--Navbar Dropdown-->
+            <!--================================-->
+            <div class="navbar-content clearfix"  style="margin-left:200px">
+
+                <ul class="nav navbar-top-links pull-right">
+
+                    <!--User dropdown-->
+                    <!--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
+                    <li id="dropdown-user" class="dropdown">
+                        <a href="#" data-toggle="dropdown" class="dropdown-toggle text-right">
+                                    <span class="pull-right">
+                                        <img class="img-circle img-user media-object"
+                                             src="<?php echo e($userInfo['avatar_small']); ?>"
+                                             alt="<?php echo e($userInfo['name']); ?> ">
+                                    </span>
+                            <div class="username "><?php echo e($userInfo['name']); ?></div>
+                        </a>
+
+
+                        <div class="dropdown-menu dropdown-menu-right with-arrow panel-default"> <ul class="head-list head-list-user"> <li> <a href="/help">
+                                        <i class="fa fa-question-circle fa-fw fa-lg"></i> 帮助
+                                    </a> </li>  <li> <a href="/auth/logout">   <i class="fa  glyphicon glyphicon-log-out"></i><span>退出登录</span> </a> </li> </ul> </div>
+
+                    </li>
+                    <!--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
+                    <!--End user dropdown-->
+
+                </ul>
+            </div>
+            <!--================================-->
+            <!--End Navbar Dropdown-->
+
+        </div>
+    </header>
+    <!--===================================================-->
+    <!--END NAVBAR-->
+
+    <div class="boxed">
+        <div style="top:0px; z-index: 100; position: fixed; width:85%;">
+            <div class="text-center container" style="width:400px;">
+                <div class="alert alert-danger" id="message-container" style="display: none;">
+                </div>
+            </div>
+        </div>
+        <?php if( (isset($code) && $code != 200) || ( isset($error_code) && $error_code != 0) ): ?>
+            <div role="alert" class="alert alert-danger">
+                <strong><?php echo e($error_msg); ?></strong> <?php echo e(isset($error_detail) ? $error_detail : ''); ?>
+
+            </div>
+            <?php endif; ?>
+        <!--CONTENT CONTAINER-->
+        <!--===================================================-->
+        <div id="content-container">
+
+            <ol class="breadcrumb">
+                <li><a href="/">首页</a></li>
+                <?php if(!empty($breadCrumbs) ): ?>
+                    <?php foreach($breadCrumbs as $break_key=>$break_value): ?>
+                        <?php if($break_value['url'] =='/'): ?>
+                        <li ><?php echo e($break_value['tree_name']); ?></li>
+                        <?php else: ?>
+                        <li  ><a href="<?php echo e($break_value['url']); ?>"><?php echo e($break_value['tree_name']); ?></a></li>
+                        <?php endif; ?>
+                    <?php endforeach; ?>
+
+                <?php endif; ?>
+            </ol>
+
+
+         <div id="page-content"  style="min-height:500px !important;"><div class="row"><div class="col-xs-12"><?php echo $__env->yieldContent('content'); ?> </div> </div></div>
+
+
+
+        </div>
+        <!--===================================================-->
+        <!--END CONTENT CONTAINER-->
+
+
+        <!--MAIN NAVIGATION-->
+        <!--===================================================-->
+        <nav id="mainnav-container">
+            <div id="mainnav">
+                <div id="mainnav-shortcut"> <ul class="nav navbar-top-links pull-left"> <!--Navigation toogle button--> <!--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~--> <li class="tgl-menu-btn" data-original-title="" title=""> <a class="mainnav-toggle" href="#"><i class="glyphicon glyphicon-list"></i></a> </li> <!--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~--> <!--End Navigation toogle button--> </ul> </div>
+
+                <!--Menu-->
+                <!--================================-->
+                <div id="mainnav-menu-wrap">
+                    <div class="nano">
+                        <div class="nano-content">
+
+                            <ul id="mainnav-menu" class="list-group">
+                                <li  class="first_menu">
+                                    <a href="/">
+                                        <i class="fa fa-dashboard"></i>
+                                                <span class="menu-title">
+                                                    <strong>首页</strong>
+                                                </span>
+                                    </a>
+                                </li>
+                                <!--Category name-->
+                                <?php if(isset($pathUrl) && !empty($pathUrl)): ?>
+                                    <input type="hidden" id="path_url" value="<?php echo e($pathUrl); ?>">
+                                <?php else: ?>
+                                    <input type="hidden" id="path_url" value="">
+                                    <?php endif; ?>
+                                    <?php
+
+                                    function show_path_url($tree_info)
+                                    {
+
+                                        foreach ($tree_info as $key => $value) {
+
+                                            if ( !empty($value['child_info']) && $value['child_info'] ) {
+                                                echo '<li><a href="#"><i class="fa fa-th"></i> <strong>' . $value['tree_name'] . '</strong> <i class="arrow"></i></a>';
+                                                echo '<ul class="collapse" parentid="' . $value['tree_id'] . '">';
+                                                show_path_url($value['child_info']);
+                                                echo '</ul></li>';
+
+                                            } else {
+                                                    echo '<li treeurl="' . $value['tree_url'] . '"> <a href="' . $value['tree_url'] . '">' . $value['tree_name'] . '</a> </li>';
+
+                                            }
+                                        }
+
+                                    }
+                                    show_path_url($treeInfo);
+                                    ?>
+
+
+
+                            </ul>
+
+
+                        </div>
+                    </div>
+                </div>
+                <!--================================-->
+                <!--End menu-->
+
+            </div>
+        </nav>
+
+    </div>
+
+
+    <!-- FOOTER -->
+    <!--===================================================-->
+    <footer id="footer"> <div class="hide-fixed pull-right pad-rgt">v2.0</div> <div class=" pull-right">  </div> <p class="pad-lft"> © MEILISHUO 2013-2016</p></footer>
+    <!--===================================================-->
+    <!-- END FOOTER -->
+
+
+    <!-- SCROLL TOP BUTTON -->
+    <!--===================================================-->
+    <button id="scroll-top" class="btn"><i class="fa fa-chevron-up"></i></button>
+    <!--===================================================-->
+
+
+</div>
+<!--===================================================-->
+<script src="/static/nifty/js/nifty.min.js"></script>
+<!--Bootstrap Select [ OPTIONAL ]-->
+<script src="/static/nifty/js/bootstrap-select.min.js"></script>
+<script type='text/javascript' src="/static/js/jquery.form.min.js"></script>
+<script type='text/javascript' src="/static/js/main.js"></script>
+<script>
+    $(function() {
+        var path_url = window.location.pathname;
+        var urlList = <?php if(isset($urlList) && !empty($urlList)) {echo json_encode($urlList);} ?>;
+        // console.log(urlList);
+        var current_url = "<?php if(!empty($currentUrl)): ?><?php echo e($currentUrl); ?><?php endif; ?>";
+        path_url = (current_url !='') ? current_url : path_url;
+        if (path_url) {
+            if (path_url != '/') {
+                var this_obj = $("li[treeurl='"+path_url+"']");
+                this_obj.addClass('active-link');
+                this_obj.parents('ul').addClass('in');
+                this_obj.parents('li').addClass('bgWhite');
+            }else{
+                $('.first_menu').addClass('active-link');
+            }
+        }
+    })
+</script>
+
+</body>
+</html>

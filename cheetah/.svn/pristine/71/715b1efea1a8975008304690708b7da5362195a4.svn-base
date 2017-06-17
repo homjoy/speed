@@ -1,0 +1,112 @@
+"use strict";
+fml.use('component/menu',function(menu){
+    "use strict";
+    menu.init();
+    menu.highlight();
+});
+
+fml.use('speed/meeting/checkin', function (checkin) {
+    $.post('/aj/meeting/getCheckIn',{},function(resp){
+        if(resp.code == 200){
+            $.each(resp.data || [],function(i,value){
+                checkin(value);
+            })
+        }
+    },'json');
+});
+
+fml.define('speed/common/base', ['jquery','plugin/cookie'], function (require , exports) {
+    var $ = require('jquery');
+    var Cookies = require('plugin/cookie');
+
+    $.getJSON('/aj/check/check_all', function (ret) {
+        if (ret.code == 200) {
+            var data = ret.data;
+            var total = data.total;
+            if (total != 0) {
+                $('.badge').html(total);
+                var str = '';
+                for (var i = 0; i < data.data.length; i++) {
+                    str += '<li>' +
+                        '<a href="' + data.data[i].href + '" class="media" target="_Blank' + i + '">' +
+                        '<span class="media-left left" >' +
+                        data.data[i].name +
+                        '</span>' +
+                        '<span class=" label-success message_to_do right">' + data.data[i].count + '</span>' +
+                            // '<div class="media-body">'+
+                            //   '<div class="text-nowrap">Jackson sent you a message</div>'
+                            //   <small class="text-muted">Yesterday</small>
+                            // </div>
+                        '</a>' +
+                        '</li>';
+
+                }
+                $('.head-list-append').append(str).parent();
+            } else {
+                $('.head-list-append').parent().hide();
+            }
+        }else{
+            $('.head-list-append').parent().hide();
+        }
+    });
+
+    //退出
+    $('#logout').on('click', function () {
+        var ck = Cookies.get('speed_token');
+        $.get('/aj/logout/do_logout', {'speed_token': ck}, function (ret) {
+            if (ret.code == 200) {
+                Cookies.remove('speed_token');
+                self.location = '/user/login/';
+            } else {
+                $('#logout_error').text(ret.error_msg);
+                return;
+            }
+        }, 'json');
+    });
+
+    if(!SPEED.user.mls_id){
+        $.niftyNoty({
+            type:"danger",
+            icon:"fa fa-bolt fa-lg",
+            title: '没有填写美丽说ID的小伙伴要抓紧啦，8月1日用户体验金才能妥妥的躺到你的账户哦！！！',
+            message:"",
+            timer:99999999
+        });
+        $("#page-alert").on("click",function(){
+            var current = window.location.pathname;
+            if(current === '/user/' || current === '/user'){
+                return false;
+            }
+            window.location.href = '/user/';
+        })
+    }
+});
+
+
+// 输入框提交，show_message
+function show_message(code, message) {
+    // console.log('comein show_message');
+    if (message == '') {
+
+        return false;
+    }
+    ;
+    // console.log(message);
+    $('#message-alert').html("<strong>" + message + "</strong>");
+    if (code == 400) {
+        // console.log(400);
+        $('#message-alert').removeClass("alert-success");
+        $('#message-alert').addClass("alert-danger");
+    } else if (code == 200) {
+        // console.log($('#message-alert').val());
+        $('#message-alert').removeClass("alert-danger");
+        $('#message-alert').addClass("alert-success");
+    }
+    ;
+    $('#message-container').slideDown();
+    setTimeout(hide_message, 2000);
+}
+
+function hide_message() {
+    $('#message-container').slideUp();
+}

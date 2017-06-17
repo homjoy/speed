@@ -1,0 +1,62 @@
+<?php
+namespace Admin\Modules\Meeting;
+
+use Admin\Modules\Common\BaseModule;
+use Admin\Package\Common\Response;
+use Admin\Package\Company\City;
+use Admin\Package\Meeting\Meeting;
+use Admin\Package\Meeting\RoomService;
+use Admin\Package\Company\Office;
+use Admin\Package\Log\Log;
+
+/**
+ * AjaxRoomInfo
+ * Class
+ *
+ * @package Admin\Modules\Meeting
+ */
+class AjaxRoomInfo extends BaseModule {
+
+    protected $errors = NULL;
+    private   $params = NULL;
+    public static $VIEW_SWITCH_JSON = TRUE;
+    public function run() {
+
+        $this->_init();
+        if( $this->post()->hasError()){
+            $return = Response::gen_error(10001,$this->errors);
+            return $this->app->response->setBody($return);
+        }
+        //city
+        $meet_info =Meeting::getInstance()->meetingRoomGet($this->params);
+        $meet_info = is_array($meet_info)?array_pop($meet_info):'';
+        $meet_info =isset($meet_info['city_id'])?$meet_info['city_id']:'';
+        $city =City::getInstance()->cityGet(array('city_id'=>$meet_info));
+        //room_service_rule
+        $room_service_rule =RoomService::getInstance()->roomServiceRuleGet($this->params);
+        $service_id = isset($room_service_rule['service_id'])?$room_service_rule['service_id']:'';
+        //room_service
+        $room_service =RoomService::getInstance()->roomServiceGet(array('service_id'=>$service_id));
+
+
+        $return =array_merge($city,$room_service_rule);
+        $return = array_merge($return,$room_service);
+        $this->app->response->setBody($return);
+    }
+
+    private function _init() {
+
+        $this->rules = array(
+            'room_id'  => array(
+                'required'	=> true,
+                'allowEmpty' => FALSE,
+                'type'    => 'integer',
+            )
+
+        );
+        $this->params = $this->post()->safe();
+        $this->errors = $this->post()->getErrors();
+    }
+
+
+}

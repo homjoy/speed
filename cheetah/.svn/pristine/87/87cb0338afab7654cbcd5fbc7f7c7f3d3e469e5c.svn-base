@@ -1,0 +1,31 @@
+function user() {
+	return this;
+}
+var controlFns = {
+	'index' : function(){
+		//this.user()
+	}
+	,'login' : function(){
+		var php = {
+			//'' : ''
+		};
+        this.bindDefault(php);
+		this.bridgeMuch(php);
+		this.listenOver(function(data){
+			data._CSSLinks = ['fms/user/login'];
+			this.render('user/login.html' , data);
+		})
+	}
+	// ,'login1' : function(){
+	// 	var php = {
+			
+	// 	};
+ //        this.bindDefault(php);
+	// 	this.bridgeMuch(php);
+	// 	this.listenOver(function(data){
+	// 		data._CSSLinks = ['fms/user/login'];
+	// 		this.render('user/login.html' , data);
+	// 	})
+	// }
+};
+exports.__create = controller.__create(user, controlFns);

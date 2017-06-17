@@ -1,0 +1,54 @@
+function time() {
+	return this;
+}
+var controlFns = {
+	'index' : function(){
+		this.time_manage()
+	}
+	,'time_manage' : function(){
+		// 预定，查看我的时间，携带用户信息，url
+		var user_id = this.req.__get.user_id;
+		var iw = this.req.__get.iw;
+		// var url = '/meeting/mytime_meeting_show/?user_id='+user_id+'&iw='+iw;
+		var php = {
+			'user_share_list':'/routine/user_share_list',
+
+			'company_rooms':'/meeting/get_room',
+			'city' : '/company/city_info',
+			'part_div' : '/meeting/get_room?service_id=1',
+			'part_div_telephone' : '/meeting/get_room?service_id=5',
+			'user_time_manage':'/routine/user_time_manage',
+			'xinzhongguan' : '/meeting/get_room?office_id=1',
+			'yuanzhongyuelai' : '/meeting/get_room?office_id=3',
+			'shanghai' : '/meeting/get_room?office_id=5',
+			'hangzhou' : '/meeting/get_room?office_id=7',
+			'guangzhou' : '/meeting/get_room?office_id=9'
+		}
+
+        this.bindDefault(php);
+		this.bridgeMuch(php);
+		this.listenOver(function(data){
+			data.user_id = user_id;
+			data.iw=iw;
+			data.noBasecss = true;
+			data._CSSLinks = ['meeting/fullcalendar','tokeninput','bootstrap','bootstrap-datetimepicker.min','left_nav','font-awesome.min','nifty.meeting_time','common'];
+			this.render('meeting/time.html' , data);
+		})
+	}
+	,'subscribe' : function(){
+		// 预定，查看我的时间，携带用户信息，url
+		// subscribe : function(params) {
+	// 	var php = {
+	// 		'mytime' : '/routine/user_time_calendar'
+	// 	}
+	// 	this.ajaxTo(php[params]);
+	// }
+
+		var php = {
+			'mytime' : '/routine/user_time_calendar'
+		}
+
+        this.ajaxTo(php['mytime']);
+	}
+};
+exports.__create = controller.__create(time, controlFns);

@@ -1,0 +1,213 @@
+@image-base: "../../../img";
+#page-content{
+  padding:0;
+
+  > .panel{
+    box-shadow: none;
+    border-radius: 5px;
+  }
+}
+
+
+.floor_pic {
+  img {
+    margin-left: 5px
+  }
+  position: absolute;
+  right: 34px;
+  top: 30px;
+  color:#5bbefa;
+  &:hover{
+    color:#1e80c4;
+  }
+}
+
+#container {
+  min-height: 1px;
+  position: static;
+}
+
+table {
+  font-size: 14px;
+  text-align: left !important;
+}
+
+#container .table thead{
+  font-size: 13px;
+  color: #535353;
+
+  th{
+   border-bottom: none;
+  }
+}
+
+
+td {
+  vertical-align: middle !important;
+  max-width: 250px
+}
+
+.phone {
+  padding: 0 35px 35px;
+  margin-top:-3px;
+  .im-name,.callphonenum{min-width:120px;}
+  .qr{min-width: 75px !important;text-align: center;}
+  .avatarth{ min-width:52px}
+
+  .phone-info{
+    display: inline-block;
+    margin-top: 30px;
+    margin-bottom: 30px;
+    padding-left: 30px;
+    transform: translateX(-36px);
+
+    font-size: 14px;
+    border-left: 5px solid #FE6898;
+  }
+
+  .people_num {
+    color: #FE6898;
+    text-align: right;
+    margin:0;
+    margin-left: 50px;
+    padding-bottom: 5px;
+    .people{
+      display: inline-block;
+      width: 19px;
+      height: 20px;
+      margin: 0 5px -5px 0;
+      background: transparent url('@{image-base}/speed/yemianrenshu.png') center 0 no-repeat;
+    }
+  }
+
+}
+
+.min-height {
+  position: relative;
+  min-height: 350px;
+}
+
+.avatar, .head_img {
+  height: 200px;
+  width: 200px
+}
+
+.contact_head, .hover-big {
+  width: 30px;
+  height: 30px;
+  border-radius: 15px;
+  cursor: pointer;
+}
+
+.notice_person{
+  float: left;
+  text-indent: 5px;
+  color:#a0a0a0;
+  font-size: 12px;
+  a{
+    color:#a0a0a0;
+  }
+}
+#content-container {
+  padding-bottom: 0;
+  position: absolute;
+  width: 100%;
+  height: 100%;
+}
+
+.head_td, .mail_td {
+  text-align: center;
+}
+
+.mail_td {
+  cursor: pointer;
+}
+
+#page-content {
+  min-height: 80%
+}
+
+.cuowutishi {
+  height: 163px;
+  width: 488px;
+  margin: 0 auto;
+  margin-top: 10px;
+  padding: 50px;
+  text-align: left;
+  img {
+    float: left;
+    margin-left: 64px
+  }
+  span {
+    float: left;
+    font-size: 12px;
+    color: #a0a0a0;
+    text-align: center;
+    margin-top: 30px;
+    margin-left: 10px
+  }
+}
+
+#footer {
+  position: static;
+  padding-left: 0 !important
+}
+
+.telephone {
+  cursor: pointer;
+  width: 120px;
+  // display: inline-block;
+}
+
+.popover-content img {
+  display: block;
+}
+
+.mail_contact {
+  max-width: 20%;
+  a {
+    max-width: 250px;
+    color: #54a1dc !important;
+    text-align: left;
+  }
+}
+
+.mail_contact a:hover, .speedim:hover {
+  color: #2a6496 !important;
+}
+
+.QQ_weixin {
+  display: block;
+  text-align: center;
+}
+
+.speedim {
+  display: inline-block;
+  /*width: 80px;*/
+  height: 20px;
+  background: url("@{image-base}/speed/paopao.png") 0px no-repeat !important;
+  text-indent: 22px;
+  &:hover {
+    background: url("@{image-base}/speed/paopaohover.png") 0px no-repeat !important;
+  }
+}
+
+.dibiao {
+  background: url("@{image-base}/speed/dibiao icon.png") no-repeat !important;
+  width: 15px;
+  display: inline-block;
+  height: 17px;
+  margin: 0 6px -3px 0;
+}
+
+.popover {
+  position: absolute;
+}
+
+#userlist{
+
+  tbody{
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+  }
+}
+

@@ -1,0 +1,254 @@
+<!--===================================================-->
+<nav id="mainnav-container">
+    <div id="mainnav">
+        <div id="mainnav-shortcut">
+            <ul class="nav navbar-top-links pull-left">
+                <!--Navigation toogle button-->
+                <!--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
+                <li class="tgl-menu-btn">
+                    <a class="mainnav-toggle" href="#"></a>
+                </li>
+                <!--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
+                <!--End Navigation toogle button-->
+            </ul>
+        </div>
+        <!--Menu-->
+        <!--================================-->
+        <div id="mainnav-menu-wrap">
+            <div class="nano">
+                <div class="nano-content">
+                    <ul id="mainnav-menu" class="list-group">
+                        <li>
+                            <a href="/home">
+                                <img src="<%= this.PICTURE_URL  %>img/speed/home/left_shouye.png" class="left_img">
+											<span class="menu-title" style="">首页</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="/time">
+                                <img src="<%= this.PICTURE_URL  %>img/speed/home/left_wode.png" class="left_img">
+											<span class="menu-title">我的时间</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="/contacts">
+                                <img src="<%= this.PICTURE_URL  %>img/speed/home/left_tongxun.png" class="left_img">
+											<span class="menu-title">通讯录</span>
+                            </a>
+                        </li>
+
+
+                        <!-- <li class="list-divider"></li> -->
+                        <!-- 会议室预定 -->
+                        <li>
+                            <a href="/meeting">
+                                <img src="<%= this.PICTURE_URL  %>img/speed/home/left_huiyi.png" class="left_img">
+                                <span class="menu-title">会议室预定</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="/home/window/?f=document&s=all">
+                                <img src="<%= this.PICTURE_URL  %>img/speed/home/left_renli.png" class="left_img">
+                                <span class="menu-title">人力资源</span>
+                            </a>
+                        </li>
+                            <% /*
+                                <!-- <li><a href="http://speed.meilishuo.com/document/all">查看全部</a></li>
+                                <li>
+                                    <a href="#">请假<i class="arrow"></i></a>
+                                    <ul class="collapse">
+                                        <li><a href="http://speed.meilishuo.com/document/requestAbsence">请假</a></li>
+                                        <li><a href="http://speed.meilishuo.com/document/absenceApprove">请假审批</a></li>
+                                    </ul>
+                                </li>
+                                <li>
+                                    <a href="#">离职<i class="arrow"></i></a>
+                                    <ul class="collapse">
+                                        <li><a href="http://speed.meilishuo.com/document/requestDimission">离职申请</a></li>
+                                        <li><a href="http://speed.meilishuo.com/document/DimissionApprove?">离职审批</a></li>
+                                        <li><a href="http://speed.meilishuo.com/document/HandOverApprove?">交接审批</a></li>
+                                    </ul>
+                                </li>
+
+                                <li>
+                                    <a href="#">岗位调动<i class="arrow"></i></a>
+                                    <ul class="collapse">
+                                        <li><a href="http://speed.meilishuo.com/document/requestChange">申请换岗</a></li>
+                                        <li><a href="http://speed.meilishuo.com/document/changeApprove?">换岗审批</a></li>
+                                    </ul>
+                                </li>
+                                <li><a href="http://speed.meilishuo.com/document/Positive_approve_list">转正</a></li>
+                                <li><a href="http://speed.meilishuo.com/document/jd">职位描述</a></li>
+                                <li><a href="http://speed.meilishuo.com/document/hrRecommend">简历推荐</a></li> -->
+                        */ %>
+
+                        <!-- 行政 -->
+                        <li>
+                            <a href="/home/window/?f=executive&s=all">
+                                <img src="<%= this.PICTURE_URL  %>img/speed/home/left_xingzheng.png" class="left_img">
+                                <span class="menu-title">行政中心</span>
+                                <!--<i class="arrow"></i>-->
+                            </a>
+                            <% /*
+                            <ul class="collapse">
+                                <!-- <li><a href="http://speed.meilishuo.com/executive/all">查看全部</a></li>
+                                <li>
+                                    <a href="#">办公用品<i class="arrow"></i></a>
+                                    <ul class="collapse">
+                                        <li><a href="http://speed.meilishuo.com/executive/requestStationery">办公用品申请</a></li>
+                                        <li><a href="http://speed.meilishuo.com/executive/stationeryApprove?">办公用品审批</a></li>
+
+                                    </ul>
+                                </li>
+                                <li>
+                                    <a href="#">名片申请<i class="arrow"></i></a>
+                                    <ul class="collapse">
+                                        <li><a href="http://speed.meilishuo.com/executive/requestCard">名片申请</a></li>
+                                        <li><a href="http://speed.meilishuo.com/executive/cardApprove?">名片审批</a></li>
+                                    </ul>
+                                </li>
+
+                                <li>
+                                    <a href="#">签证申请<i class="arrow"></i></a>
+                                    <ul class="collapse">
+                                        <li><a href="http://speed.meilishuo.com/executive/visaRequest">签证申请</a></li>
+                                        <li><a href="http://speed.meilishuo.com/executive/visaApprove?">签证审批</a></li>
+                                        <li><a href="http://speed.meilishuo.com/executive/visaHelp?">签证须知</a></li>
+                                    </ul>
+                                </li>
+
+                                <li>
+                                    <a href="#">出差申请<i class="arrow"></i></a>
+                                    <ul class="collapse">
+                                        <li><a href="http://speed.meilishuo.com/executive/requestTravel">出差申请</a></li>
+                                        <li><a href="http://speed.meilishuo.com/executive/travelApprove?">出差审批</a></li>
+                                        <li><a href="http://speed.meilishuo.com/executive/travelTotal?">出差天数</a></li>
+                                    </ul>
+                                </li>
+                                <li>
+                                    <a href="#">固定资产申请<i class="arrow"></i></a>
+                                    <ul class="collapse">
+                                        <li><a href="http://speed.meilishuo.com/executive/assets_request">固定资产申请</a></li>
+                                        <li><a href="http://speed.meilishuo.com/executive/assets_approve?">固定资产审批</a></li>
+
+                                    </ul>
+                                </li> -->
+                                <li><a href="/home/window/?f=executive&s=all">查看全部</a></li>
+                                <li>
+                                    <a href="#">办公用品<i class="arrow"></i></a>
+                                    <ul class="collapse">
+                                        <li><a href="/home/window/?f=executive&s=requestStationery">办公用品申请</a></li>
+                                        <li><a href="/home/window/?f=executive&s=stationeryApprove?">办公用品审批</a></li>
+
+                                    </ul>
+                                </li>
+                                <li>
+                                    <a href="#">名片申请<i class="arrow"></i></a>
+                                    <ul class="collapse">
+                                        <li><a href="/home/window/?f=executive&s=requestCard">名片申请</a></li>
+                                        <li><a href="/home/window/?f=executive&s=cardApprove?">名片审批</a></li>
+                                    </ul>
+                                </li>
+
+                                <li>
+                                    <a href="#">签证申请<i class="arrow"></i></a>
+                                    <ul class="collapse">
+                                        <li><a href="/home/window/?f=executive&s=visaRequest">签证申请</a></li>
+                                        <li><a href="/home/window/?f=executive&s=visaApprove?">签证审批</a></li>
+                                        <li><a href="/home/window/?f=executive&s=visaHelp?">签证须知</a></li>
+                                    </ul>
+                                </li>
+
+                                <li>
+                                    <a href="#">出差申请<i class="arrow"></i></a>
+                                    <ul class="collapse">
+                                        <li><a href="/home/window/?f=executive&s=requestTravel">出差申请</a></li>
+                                        <li><a href="/home/window/?f=executive&s=travelApprove?">出差审批</a></li>
+                                        <li><a href="/home/window/?f=executive&s=travelTotal?">出差天数</a></li>
+                                    </ul>
+                                </li>
+                                <li>
+                                    <a href="#">固定资产申请<i class="arrow"></i></a>
+                                    <ul class="collapse">
+                                        <li><a href="/home/window/?f=executive&s=assets_request">固定资产申请</a></li>
+                                        <li><a href="/home/window/?f=executive&s=assets_approve?">固定资产审批</a></li>
+                                    </ul>
+                                </li>
+                            </ul>
+                            */ %>
+                        </li>
+                        <!--IT服务-->
+
+                            <% /*
+                            <ul class="collapse">
+                                <li><a href="/home/window/?f=redmine&s=request">redmine权限</a></li>
+                                <li><a href="/home/window/?f=svn&s=Request">SVN权限</a></li>
+                                <li><a href="/home/window/?f=user&s=profile?k=wifi">员工WIFI</a></li>
+                                <li><a href="/home/window/?f=user&s=wifi">访客WIFI</a></li>
+                            </ul>
+                            */ %>
+
+                        <li>
+                            <a href="/it">
+                                <img src="<%= this.PICTURE_URL  %>img/speed/home/left_IT.png" class="left_img">
+                                <span class="menu-title">
+                                    IT服务
+                                </span>
+                            </a>
+                        </li>
+                        <!--IT服务-->
+
+
+                        <!--办公文档-->
+                        <li>
+                            <a href="/home/window/?f=words&s=show_all">
+                                <img src="<%= this.PICTURE_URL  %>img/speed/home/left_bangong.png" class="left_img">
+											<span class="menu-title">办公文档</span>
+                                <!--<i class="arrow"></i>-->
+                            </a>
+                            <% /*
+                            <ul class="collapse">
+                                <!--<li><a href="http://speed.meilishuo.com/words/show_all">公共文档</a></li>
+                                <li><a href="http://speed.meilishuo.com/words/show_by_type?type=1">人力文档</a></li>
+                                <li><a href="http://speed.meilishuo.com/words/show_by_type?type=3">行政文档</a></li>
+                                <li><a href="http://speed.meilishuo.com/words/show_by_type?type=5">财务法务文档</a></li>
+                                 <li class="list-divider"></li> /home/window/?f=executive&s=assets_approve
+                                <li><a href="http://speed.meilishuo.com/words/show_by_type?type=9">IT文档</a></li>
+                                <li><a href="http://speed.meilishuo.com/words/show_by_type?type=7">其它文档</a></li>-->
+                                <li><a href="/home/window/?f=words&s=show_all">公共文档</a></li>
+                                <li><a href="/home/window/?f=words&s=show_by_type?type=1">人力文档</a></li>
+                                <li><a href="/home/window/?f=words&s=show_by_type?type=3">行政文档</a></li>
+                                <li><a href="/home/window/?f=words&s=show_by_type?type=5">财务法务文档</a></li>
+                                <li><a href="/home/window/?f=words&s=show_by_type?type=9">IT文档</a></li>
+                                <li><a href="/home/window/?f=words&s=show_by_type?type=7">其它文档</a></li>
+                            </ul>
+                            */ %>
+                        </li>
+                        <!--办公文档-->
+                        <li>
+                            <a href="http://redmine.meilishuo.com/welcome" target="_Blank">
+                                <img src="<%= this.PICTURE_URL  %>img/speed/home/left_wiki.png" class="left_img">
+											<span class="menu-title">wiki</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="http://home.meilishuo.com/index.php?app=homeapi&mod=AutoLogin" target="_Blank">
+                                <img src="<%= this.PICTURE_URL  %>img/speed/home/left_home.png" class="left_img">
+											<span class="menu-title">home</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="<%= this.domain.fms  %>" target="_Blank">
+                                <img src="<%= this.PICTURE_URL  %>img/speed/home/left_caiwu.png" class="left_img">
+											<span class="menu-title">财务中心</span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <!--================================-->
+        <!--End menu-->
+
+    </div>
+</nav>

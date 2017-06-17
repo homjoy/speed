@@ -1,0 +1,379 @@
+// Colours
+@primaryColor: #4ECDC4;
+@secondaryColor: #FF6B6B;
+@tertiaryColor: #C7F464;
+@darkColor: darken(#556270, 20);
+@midColor: lighten(@darkColor, 50);
+@lightColor: #fff;
+
+// Font stuff
+@decorativeFont: "Pacifico", Georgia;
+@baseFontSize: 16px;
+
+// Atomic unit
+@atom : 0.5em;
+
+// Breakpoint widths
+@mediumWidth : 40em;
+@largeWidth : 50em;
+@extraLargeWidth : 65em;
+
+// Media query breakpoints (see http://static.lukew.com/unified_device_design.png)
+@palmBreakpoint : ~"screen and (max-width: @{mediumWidth})";
+@lapBreakpoint : ~"screen and (min-width: @{mediumWidth})";
+@deskBreakpoint : ~"screen and (min-width: @{largeWidth})";
+@wideDeskBreakpoint: ~"screen and (min-width: @{extraLargeWidth})";
+
+// Grids
+@gridGutter : 1em;
+
+// Widgets
+@navBreakpoint : @lapBreakpoint;
+
+.transition(@properties : all, @duration: 0.2s, @timing: linear) {
+  -webkit-transition: @properties @duration @timing;
+  -moz-transition: @properties @duration @timing;
+  -o-transition: @properties @duration @timing;
+  transition: @properties @duration @timing;
+}
+
+.selection(@bgColor, @color, @shadow: transparent) {
+  ::selection {
+    background-color: @bgColor !important;
+    color: @color !important;
+    text-shadow: 1px 1px 1px @shadow;
+  }
+  ::-moz-selection {
+    background-color: @bgColor !important;
+    color: @color !important;
+    text-shadow: 1px 1px 1px @shadow;
+  }
+}
+
+.tabs(@size) {
+  -moz-tab-size: @size;
+  -o-tab-size: @size;
+  tab-size: @size;
+}
+
+.hyphens(@what) {
+  -webkit-hyphens: @what;
+  -moz-hyphens: @what;
+  -ms-hyphens: @what;
+  hyphens: @what;
+}
+
+.wrap() {
+  white-space: pre-wrap; /* css-3 */
+  white-space: -moz-pre-wrap; /* Mozilla, since 1999 */
+  white-space: -pre-wrap; /* Opera 4-6 */
+  white-space: -o-pre-wrap; /* Opera 7 */
+  word-wrap: break-word; /* Internet Explorer 5.5+ */
+}
+
+//
+///////////////////
+// Font families //
+///////////////////
+
+@bodyFont : Helvetica, Arial, sans-serif;
+
+html {
+  font-size: inherit;
+}
+
+body {
+  font-family: @bodyFont;
+  line-height: 1.5;
+  font-size: 14px;
+  background-color: @lightColor;
+  color: @darkColor;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: @bodyFont;
+  font-weight: bold;
+  color: darken(@darkColor, 5);
+  text-rendering: optimizelegibility;
+}
+
+h1,
+h2,
+h3,
+h4,
+.alpha,
+.beta,
+.gamma,
+.delta {
+  line-height: 1.25;
+}
+
+///////////////////////////////////////
+// Double-stranded typographic scale //
+///////////////////////////////////////
+
+h1, .alpha {
+  font-size: 2em; // 32px
+}
+
+h2, .beta {
+  font-size: 1.5em; // 24px
+}
+
+h3, .gamma {
+  font-size: 1.25em; // 20px
+  font-weight: normal;
+}
+
+h4, .delta {
+  font-size: 1.125em; // 18px
+}
+
+.peta {
+  font-size: 5.25em; // 84px
+}
+
+.tera {
+  font-size: 4.5em; // 72px
+}
+
+.giga {
+  font-size: 3.5em; // 56px
+}
+
+.mega {
+  font-size: 2.5em; // 40px
+}
+
+.micro {
+  font-size: 0.9em; // 14px
+}
+
+.nano {
+  font-size: 0.8em; // 13px
+}
+
+.pico {
+  font-size: 0.75em;
+}
+
+.feature {
+  background-color: @primaryColor;
+  padding: 5em 0 2em 0;
+
+  @media @deskBreakpoint {
+    padding-top: 5.5em; //
+    padding-bottom: 2.5em;
+  }
+
+  a {
+    text-decoration: underline;
+    color: @darkColor;
+  }
+
+  strong {
+    color: @lightColor;
+    font-weight: normal;
+    text-shadow: 1px 1px 1px @darkColor;
+  }
+
+  text-align: center;
+
+  .title {
+
+    .mega;
+
+    @media (min-width: 30em) {
+      .tera;
+    }
+    @media @wideDeskBreakpoint {
+      .peta;
+    }
+    color: @lightColor;
+    text-shadow: 1px 1px 1px fade(#000, 50);
+    line-height: 1;
+    display: block;
+  }
+
+  .subtitle {
+
+    font-size: 1em;
+
+    @media (min-width: 30em) {
+      .delta;
+    }
+
+    font-weight: normal;
+    color: @darkColor;
+    margin: 0;
+  }
+}
+
+@spacing: 1.5em;
+.main {
+  max-width: 60em;
+  margin: 1.5em auto 0;
+  padding: 0 @spacing;
+
+  &.wide {
+    max-width: 51em;
+  }
+}
+
+.block {
+  margin-bottom: @spacing*4;
+
+  &.mini {
+    margin-bottom: @atom;
+  }
+}
+
+pre, code {
+  font-family: Consolas, Monaco, 'Andale Mono', monospace;
+  direction: ltr;
+  text-align: left;
+  white-space: pre;
+  word-spacing: normal;
+
+  .tabs(4);
+  .hyphens(none);
+}
+
+pre {
+  overflow: auto;
+  padding: 1em;
+  margin: 1.5em 0;
+}
+
+code {
+  .micro;
+  //tends to be a bit big so let's shrink a lil'!
+  @media @deskBreakpoint{
+    .nano;
+  }
+}
+
+/* Inline code */
+:not(pre) > code[class*="language-"] {
+  .wrap();
+}
+
+/*修复与nifty 主题的.tag样式冲突的问题*/
+.token.tag {
+  background-color: transparent;
+  padding: 0;
+  -webkit-border-radius: 0;
+  -moz-border-radius: 0;
+  border-radius: 0;
+  border: 0;
+  font-size: 13px;
+}
+
+/**
+ * okaidia theme for JavaScript, CSS and HTML
+ * Loosely based on Monokai textmate theme by http://www.monokai.nl/
+ * @author ocodia
+ */
+
+code[class*="language-"],
+pre[class*="language-"] {
+  color: #f8f8f2;
+  text-shadow: 0 1px rgba(0, 0, 0, 0.3);
+  font-family: Consolas, Monaco, 'Andale Mono', monospace;
+  direction: ltr;
+  text-align: left;
+  white-space: pre;
+  word-spacing: normal;
+
+  .tabs(4);
+  .hyphens(none);
+}
+
+/* Code blocks */
+pre[class*="language-"] {
+  border-radius: 0.3em;
+}
+
+:not(pre) > code[class*="language-"],
+pre[class*="language-"] {
+  background: darken(@darkColor, 5);
+}
+
+/* Inline code */
+:not(pre) > code[class*="language-"] {
+  padding: .1em;
+  border-radius: .3em;
+}
+
+/*  语法高亮  */
+.token.comment,
+.token.prolog,
+.token.doctype,
+.token.cdata {
+  color: slategray;
+}
+
+.token.punctuation {
+  color: #f8f8f2;
+}
+
+.namespace {
+  opacity: .7;
+}
+
+.token.property,
+.token.tag {
+  color: @secondaryColor;
+}
+
+.token.boolean,
+.token.number {
+  color: #ae81ff;
+}
+
+.token.selector,
+.token.attr-name,
+.token.string {
+  color: @tertiaryColor;
+}
+
+.token.operator,
+.token.entity,
+.token.url,
+.language-css .token.string,
+.style .token.string {
+  color: #f8f8f2;
+}
+
+.token.atrule,
+.token.attr-value {
+  color: #e6db74;
+}
+
+.token.keyword {
+  color: @primaryColor;
+}
+
+.token.regex,
+.token.important {
+  color: #fd971f;
+}
+
+.token.important {
+  font-weight: bold;
+}
+
+.token.entity {
+  cursor: help;
+}
+
+.block {
+  section {
+    margin-bottom: 2em;
+  }
+}

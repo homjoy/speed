@@ -1,0 +1,21 @@
+<?php
+
+namespace WorkFlowApi\Config\Web;
+
+class Remote extends \Frame\Config {
+
+    public static function config()
+    {
+        return array(
+            'atom' => array(
+                'http://atom.newspeed.meilishuo.com',
+                'http://atom.newspeed.meilishuo.com',
+            ),
+            'workflowatom' => array(
+                'http://test.atom.workflow.meilishuo.com',
+            ),
+        );
+    }
+
+}
+

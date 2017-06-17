@@ -1,0 +1,33 @@
+fml.define("speed/document/leaveApplication",['jquery','component/approval'],function(require,exports){
+    var $ = require('query');
+    var approval = require('component/approval');
+
+    var option={
+        leftwidth:'326px',
+        urlLeft: '/aj/document/leave_list_get',
+        urlRight :'/aj/document/get_approve_request',
+        url1:'/aj/document/leave_revoke',
+        url2:'/aj/document/leave_revoke',
+        urlApproval:'/aj/document/approve_leave_info',
+        urlApplicationHistory:'/aj/document/history_leave_list',
+        tokeninputurl:'/aj/address/ajax_search_name',
+        timeSearch:true,
+        departSearch:false,
+        usernameSearch:false,
+        approveStatusSearch:true,
+        identifierSearch:false,
+        headercheckOthers:''
+
+    }
+    approval.approval(option);
+    //$.ajax({
+    //    url:"../../page/jsonleft/",
+    //    type:"get",
+    //    data:"",
+    //    datatype:"json",
+    //    succecss:function(data){
+    //        console.log('cool');
+    //        console.log(data);
+    //    }
+    //});
+});

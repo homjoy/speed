@@ -1,0 +1,364 @@
+fml.define('fms/common/utils', ['jquery'], function (require, exports) {
+    var $ = require('jquery');
+
+    exports.formTemplate = {
+        '/contract/dealTask/defaultapprove': '<form><textarea placeholder="不超过200字" class="form-control approval-info" style="min-height:80px"></textarea></form>',
+        '/contract/dealTask/needapprove': '<form><textarea placeholder="不超过200字" class="form-control approval-info" style="min-height:80px"></textarea>'
+        + '<div class="checkbox"><label><input type="checkbox" id="isChecked" name="is_check" value="1" checked/>是否需要进一步审批</label></form>',
+        '/contract/dealTask/branchapprove': '<form class="approval-form">'
+        + '<div class="form-group"><textarea placeholder="不超过200字" class="form-control approval-info" style="min-height:80px"></textarea></div>'
+        + '<div class="from-group"><label class="control-label">合同签订公司</label>'
+        + '<select id="cabContractCode" name="cabContractCode" class="form-control">'
+        + '<option value="">请选择</option>'
+        + '<option value="MLBJ">美丽说（北京）网络科技有限公司</option>'
+        + '<option value="SHYL">上海优璃服饰有限公司</option>'
+        + '<option value="GZHD">广州花钿时装有限公司</option>'
+        + '<option value="GDSM">广东速美信息技术有限公司</option>'
+        + '</select>'
+        + '</div>'
+        + '</form>'
+    };
+
+    /**
+     * 设置打印范围
+     * @param beginTag
+     * @param endTag
+     */
+    exports.printPreview = function (beginTag, endTag) {
+        beginTag = beginTag || '<!--startprint-->';
+        endTag = endTag || '<!--endprint-->';
+        var bodyHtml = window.document.body.innerHTML;
+        var printHtml = bodyHtml.substr(bodyHtml.indexOf(beginTag) + beginTag.length);
+        printHtml = printHtml.substring(0, printHtml.indexOf(endTag));
+        window.document.body.innerHTML = printHtml;
+        window.print();
+        //回到正常页面.
+        window.history.go(0);
+    };
+
+
+    /**
+     * 构造task提交参数
+     * @param taskId
+     * @param params
+     * @returns {*}
+     */
+    exports.buildTaskParams = function (taskId, params) {
+        //数据格式不正确
+        if (!taskId || !params || !params.length) {
+            return {};
+        }
+
+        var keys = [],
+            values = [],
+            types = [];
+        $.each(params, function (index, param) {
+            keys.push(param.key);
+            values.push(param.value);
+            types.push(param.type);
+        });
+
+        var object = {
+            'var.keys': keys.join(','),
+            'var.values': values.join(','),
+            'var.types': types.join(',')
+        };
+
+        if (!$.isArray(taskId)) {
+            object.taskid = taskId;
+        } else {
+            object.taskids = taskId.join(',');
+        }
+
+        return object;
+    };
+    /**
+     * 表单元素 name属性处理
+     * @param form
+     * @returns {*}
+     */
+    exports.dealAttrName = function (form) {
+        var a = form.find('input,select,textarea');
+        $.each(a, function (i, v) {
+            var oName = $(v).attr('name'),
+                newName,
+                oVal = $(v).val();
+            if (oName) {
+                newName = oName.replace('_', '.');
+                $(v).attr('name', newName);
+            }
+        });
+        return form;
+    };
+
+
+    /**
+     *
+     * @param form      需要处理的表单.
+     * @param prefix    字段前缀
+     * @param exclude   排除的字段.
+     * @returns {*}
+     */
+    exports.wrapForm = function (form, prefix, exclude) {
+        var $form = $(form);
+        var fields = $form.serializeArray();
+        prefix = prefix || '';
+        exclude = exclude || [];
+        if (!prefix) {
+            return $.param(fields);
+        }
+        var wrappedFields = [];
+
+        $.each(fields, function (index, value) {
+            if ($.inArray(value.name, exclude) === -1) {
+                value.name = prefix + value.name;
+            }
+            wrappedFields.push(value);
+        });
+
+        return $.param(wrappedFields);
+    };
+
+    /**
+     *
+     * @param options
+     * @returns {*}
+     */
+    exports.wrapFormFilter = function (options) {
+        var $form = $(options.form);
+        var fields = $form.serializeArray();
+        var prefix = options.prefix || '';
+        var exclude = options.exclude || [];
+        if (!prefix) {
+            return fields;
+        }
+        var wrappedFields = [];
+        var field;
+        $.each(fields, function (index, value) {
+            field = value;
+            if ($.inArray(value.name, exclude) === -1) {
+                field.name = prefix + value.name;
+                if (options.filter) {
+                    field = options.filter(value);
+                }
+            }
+            wrappedFields.push(field);
+        });
+
+        return wrappedFields;
+    };
+
+    /**
+     * 生成dataTables选项.
+     */
+    exports.buildDTOptions = function (options) {
+        var defaultOptions = {
+            "oLanguage": { //语言设置
+                "sLengthMenu": "每页显示  _MENU_ 条记录",
+                "sInfo": "从 _START_ 到 _END_ /共 _TOTAL_ 条数据",
+                "oPaginate": {
+                    "sFirst": "首页",
+                    "sPrevious": "前一页",
+                    "sNext": "后一页",
+                    "sLast": "尾页"
+                },
+                "sZeroRecords": "抱歉， 没有找到",
+                "sInfoEmpty": "没有数据",
+                "sInfoFiltered": "(从_MAX_条记录中搜索)"
+            },
+            "aaSorting": [
+                [1, 'desc']
+            ],
+            "bWidth": false,
+            "bProcessing": true,
+            "bDestroy": true
+        };
+
+        return $.extend(defaultOptions, options);
+    };
+
+
+    /**
+     * 将普通数字格式化成货币显示
+     * 例如: 12345678 格式化为 123,456,78.00
+     */
+    exports.formatCurrency = function formatCurrency(number) {
+        if (typeof number !== 'string') {
+            number = number.toString();
+        }
+        number = number.trim();
+        if (/[^0-9\.\d{2}]/.test(number)) return number;
+        number = number.replace(/^(\d*)$/, "$1.");
+        number = (number + "00").replace(/(\d*\.\d\d)\d*/, "$1");
+        number = number.replace(".", ",");
+        var re = /(\d)(\d{3},)/;
+        while (re.test(number))
+            number = number.replace(re, "$1,$2");
+        number = number.replace(/,(\d\d)$/, ".$1");
+        return number.replace(/^\./, "0.");
+    };
+
+
+    /**
+     * 增加文件上传
+     * @param id
+     * @param success
+     * @param failed
+     * @returns {boolean}
+     */
+    exports.uploadFile = function (id, success, failed) {
+        var fileInput = document.getElementById(id);
+        failed = failed || function () {
+            };
+        if (!fileInput) {
+            failed('不存在的上传文件输入框!');
+            return false;
+        }
+        var xhr = new XMLHttpRequest();
+        xhr.onreadystatechange = function (e) {
+            if (xhr.readyState == 4) {
+                if (xhr.status == 200) {
+                    var ret = $.parseJSON(xhr.responseText);
+                    if (success && typeof success == 'function') {
+                        success(ret);
+                        return true;
+                    }
+                } else {
+                    failed('上传失败!')
+                }
+            }
+        };
+
+        xhr.open("post", "/upload/file", true);
+        var formData = new FormData(fileInput);
+        xhr.send(formData); //提交表单
+    };
+
+    /**
+     * dropzone 附件预览模板
+     * @type {string}
+     */
+    exports.dzPreviewTemplate = '<div class="dz-preview dz-file-preview">'
+        + '<div class="dz-details">'
+        + '<div class="dz-filename"><span data-dz-name></span></div>'
+        + '<div class="dz-progress"><span class="dz-upload" data-dz-uploadprogress></span></div>'
+        + '<div class="dz-success-mark"><span>✔</span></div>'
+        + '<div class="dz-error-mark"><span>✘</span></div>'
+        + '<div class="dz-error-message"><span data-dz-errormessage></span></div>'
+        + '</div>';
+
+    /**
+     * 多文件上传
+     * @param element
+     * @param options
+     * @returns {*|jQuery}
+     */
+    exports.multiUpload = function (element, options) {
+        var fileArr = [];
+        var fileMap = {};
+
+        //默认选项.
+        var zoneOptions = {
+            url: '/upload/file',
+            paramName: 'upload',
+            autoDiscover: false,
+            addRemoveLinks: true,
+            dictRemoveLinks: 'x',
+            dictCancelUpload: 'x',
+            dictDefaultMessage: '文件拖到或点击此处实现上传，支持pdf/doc/docx/xlsx/xls/ppt/pptx/rar/zip格式',
+            dictRemoveFile: '删除文件',
+            maxFiles: 10,
+            dictMaxFilesExceeded: '不能超过10个',
+            //关闭自动上传功能，默认会true会自动上传
+            //也就是添加一张图片向服务器发送一次请求
+            autoProcessQueue: true,
+            acceptedFiles: 'application/pdf,.doc,.docx,.xlsx,.xls,.ppt,.pptx,.zip,.rar'
+        };
+
+        //合并选项.
+        zoneOptions = $.extend(zoneOptions, options);
+        /*
+         只用自定义的初始化.
+         */
+        zoneOptions.init = function () {
+            var zone = this;
+            zone.on('success', function (event) {
+                var data = $.parseJSON(event.xhr.responseText);
+                fileArr.push(data.filePath);
+                fileMap[event.name] = data.filePath;
+                if (typeof options.finish == 'function') {
+                    options.finish.call(zone, fileArr, data, event);
+                }
+            }).on("removedfile", function (event) {
+                var data = $.parseJSON(event.xhr.responseText);
+                for (var i = 0; i < fileArr.length; i++) {
+                    if (fileArr[i] == fileMap[event.name]) {
+                        fileArr.splice(i, 1);
+                    }
+                }
+                if (typeof options.remove == 'function') {
+                    options.remove.call(zone, fileArr, data, event);
+                }
+            });
+
+            if (typeof options.exInit == 'function') {
+                options.exInit.call(zone);
+            }
+        };
+        return $(element).dropzone(zoneOptions);
+    };
+
+    /**
+     *
+     * @param id
+     * @param simple
+     */
+    exports.UEditor = function (id, simple) {
+        var toolbar;
+        //if(simple){
+        //    toolbar = [
+        //        'undo', 'redo', 'bold', 'italic', 'underline', 'insertorderedlist', 'insertunorderedlist', 'fontfamily', 'fontsize', '|',
+        //    ];
+        //}else{
+        toolbar = [
+            'undo', 'redo', '|',
+            'bold', 'italic', 'underline', 'insertorderedlist', 'insertunorderedlist',
+            'fontfamily', 'fontsize', '|',
+            'inserttable', 'deletetable', 'mergecells', 'splittocells', '|'
+        ];
+        //}
+
+
+        UEDITOR_CONFIG.serverUrl = '/page/ueditor/';
+        return UE.getEditor(id, {
+            elementPathEnabled: false,
+            toolbars: [toolbar]
+        });
+    }
+
+
+    /**
+     * 查询合同编号对应的签订公司
+     * @param contractNumber
+     * @param callback
+     * @returns {*}
+     */
+    exports.matchSignCompany = function (contractNumber, callback) {
+        if (!$.isFunction(callback)) {
+            callback = function () {
+            };
+        }
+
+        if (!contractNumber) {
+            return callback('');
+        }
+
+        $.post('/aj/contract/mach_sign_company', {contractNo: contractNumber}, function (resp) {
+            //if(resp.rcode != 200){
+            //    notify.error(resp.rmessage || '获取合同签订公司出错..');
+            //    return ;
+            //}
+            return callback(resp.codename || '');
+        }, 'json');
+    }
+});

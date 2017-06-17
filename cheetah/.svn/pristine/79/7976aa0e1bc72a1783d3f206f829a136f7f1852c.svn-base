@@ -1,0 +1,41 @@
+function home() {
+	return this;
+}
+var controlFns = {
+	'index' : function(){
+		this.home()
+	}
+	,'home' : function(){
+		// var a = this.readData('username',this.req._get,0);
+		var php = {
+			// 'users' : '/auth/login'
+			'users' : '/user/user_info_get?username=wulianglong',
+		}
+		// console.log('lironghaolironghao');
+		// console.log(a);
+        this.bindDefault(php);
+		this.bridgeMuch(php);
+		this.listenOver(function(data){
+			console.log(data)
+			data._CSSLinks = ['fontfamily','bootstrap','nifty.min','font-awesome.min','animate.min','morris.min','switchery.min','bootstrap-select.min','nifty-demo.min','pace.min'];
+			this.render('home.html' , data);
+		})
+	}
+	,'homeb' : function(){
+		// var a = this.readData('username',this.req._get,0);
+		var php = {
+			// 'users' : '/auth/login'
+			'users' : '/user/user_info_get?username=wulianglong',
+		}
+		// console.log('lironghaolironghao');
+		// console.log(a);
+        this.bindDefault(php);
+		this.bridgeMuch(php);
+		this.listenOver(function(data){
+			console.log(data)
+			data._CSSLinks = ['fontfamily','bootstrap','nifty.min','font-awesome.min','animate.min','morris.min','switchery.min','bootstrap-select.min','nifty-demo.min','pace.min'];
+			this.render('homeB.html' , data);
+		})
+	}
+};
+exports.__create = controller.__create(home, controlFns);

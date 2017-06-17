@@ -1,0 +1,69 @@
+<?php
+
+/**
+ * Created by PhpStorm.
+ * User: apple
+ * Date: 15-11-17
+ * Time: 上午11:57
+ */
+
+namespace Admin\Modules\Hr\Attendance;
+
+use Libs\Util\Format;
+use Admin\Modules\Common\BaseModule;
+use Admin\Package\Common\Response;
+use Admin\Package\Attendance\WorkingHours;
+use Admin\Package\Account\UserInfo;
+use Admin\Package\Log\Log;
+
+/**
+ * Created by guojiezhu@meilishuo.com
+ * User: MLS  
+ * Date: 15/11/13
+ * Time: 下午12:18
+ */
+class AjaxAttendanceUserDel extends BaseModule {
+
+    protected $errors = null;
+    private $params = null;
+    //protected $checkUserPermission = true;
+    public static $VIEW_SWITCH_JSON = TRUE;
+
+    public function run() {
+        $this->_init();
+        $update_params['status'] = 2;
+        $update_params['id'] = $this->params['id'];
+
+        $update_id = WorkingHours::getInstance()->updateStaffRelation($update_params);
+        if ($update_id > 0) {
+            //记录LOG
+            $log_info = array('user_id'=>$this->user['id'],
+                              'handle_id'=> $this->params['id'],
+                              'operation_type'=>  'delete',
+                              'after_data'=>  json_encode($update_params),
+                              'handle_type'=> 6);
+            Log::getInstance()->createLogs($log_info);
+
+            $return = Response::gen_success('操作成功');
+        } else {
+            $return = Response::gen_error(Response::DS_DATA_NO_DATA, '', '更新操作失败');
+        }
+      
+        return $this->app->response->setBody($return);
+    }
+
+    private function _init() {
+        $this->rules = array(
+            'id' => array(
+                'type' => 'string',
+                'required' => true,
+                'allowEmpty' => false,
+                'default' => 0
+            ),
+        );
+
+        $this->params = $this->POST()->safe();
+        $this->errors = $this->POST()->getErrors();
+    }
+
+}

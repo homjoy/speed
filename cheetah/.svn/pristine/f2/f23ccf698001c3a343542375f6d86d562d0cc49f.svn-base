@@ -1,0 +1,10 @@
+
+.left{float: left;}
+.panel{padding-top: 54px}
+.menu_left{width: 200px;padding-right: 46px;text-align: right;height: 100px}
+.menu_left img{border-radius: 50px}
+.infomation li{list-style: none;}
+.title{font-size: 18px;color: #7C7C7C;}
+// .right{float: right}
+.right{margin-left: 220px;padding: 0 0 0 27px;text-align: center;}
+.infor_head{height: 40px;background-color: #D2D2D2;color: #7D7D7D;font-size: 18px}

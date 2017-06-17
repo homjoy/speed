@@ -1,0 +1,74 @@
+<header id="navbar">
+    <div id="navbar-container" class="boxed">
+        <!--Brand logo & name-->
+        <div class="navbar-header-notrans">
+            <a href="/home" class="logo">
+                <div class="brand-title">
+                    <span class="brand-text">财务中心</span>
+                </div>
+            </a>
+        </div>
+        <!--Navbar Dropdown-->
+        <div class="navbar-content clearfix">
+            <!-- <ul class="nav navbar-top-links pull-left">
+                <li class="tgl-menu-btn">
+                    <a class="mainnav-toggle" href="#">
+                        <i class="fa fa-navicon fa-lg"></i>
+                    </a>
+                </li>
+            </ul> -->
+            <ul class="nav navbar-top-links pull-right">
+                <!--<li class="dropdown">-->
+                    <!--<a href="#" data-toggle="dropdown" class="dropdown-toggle" aria-expanded="false">-->
+                        <!--<i class="fa fa-bell fa-lg"></i>-->
+                        <!--<span class="badge badge-header badge-danger">1</span>-->
+                    <!--</a>-->
+                    <!--<div class="dropdown-menu dropdown-menu-xs dropdown-menu-right with-arrow">-->
+                        <!--<div class="pad-all bord-btm">-->
+                            <!--<p class="text-lg text-muted text-thin mar-no">其实这里还没有~~哈哈哈~~~</p>-->
+                        <!--</div>-->
+                    <!--</div>-->
+                <!--</li>-->
+                <!--User dropdown-->
+                <!--this.userInfo.data.avatar_origin||-->
+                <!--img/fms/avatar.png-->
+                <li id="dropdown-user" class="dropdown">
+                    <a href="#" data-toggle="dropdown" class="dropdown-toggle text-right">
+                        <% if(this.userInfo.rcode==200){%>
+                        <span class="pull-right">
+                            <img class="img-circle img-user media-object" src="<%= this.userInfo.data.avatar_small || (this.PICTURE_URL+'img/fms/avatar.png')%>" alt="头像">
+                        </span>
+                        <div class="username hidden-xs">
+                            <%= this.userInfo.data.nameCn%>
+                        </div>
+                        <%}else{%>
+                            <a href="/user/login/">登陆</a>
+                        <%}%>
+                    </a>
+                    <div class="dropdown-menu dropdown-menu-xs dropdown-menu-right with-arrow panel-default">
+                        <!-- User dropdown menu -->
+                        <ul class="head-list">
+                            <li>
+                                <a href="http://speed.meilishuo.com/user" target="speed">
+                                    <i class="fa fa-user fa-fw fa-lg"></i>个人资料
+                                </a>
+                            </li>
+                            <li>
+                                <a href="/user/login/">
+                                    <i class="fa fa-user fa-fw fa-lg"></i> 退出登录
+                                </a>
+                            </li>
+                        </ul>
+                        <!-- Dropdown footer -->
+                        <!--  <div class="pad-all text-right">
+                                    <a href="pages-login.html" class="btn btn-primary">
+                                        <i class="fa fa-sign-out fa-fw"></i> Logout
+                                    </a>
+                                </div> -->
+                    </div>
+                </li>
+                <!--End user dropdown-->
+            </ul>
+        </div>
+    </div>
+</header>

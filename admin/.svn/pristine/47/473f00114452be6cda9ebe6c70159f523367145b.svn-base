@@ -1,0 +1,67 @@
+<?php
+namespace Admin\Modules\Auth\Role;
+
+use Admin\Modules\Common\BaseModule;
+use Admin\Package\Common\Response;
+use Libs\Util\Format;
+
+class AjaxRoleAdd extends BaseModule {
+	
+	private $params = array();
+	private $errors = array();
+	public static $VIEW_SWITCH_JSON = TRUE;
+
+	public function run() {
+
+		$this->_init();
+
+		//参数校验
+		if ($this->post()->hasError()) {
+			$return = Response::gen_error(10001, '', $this->errors);
+        	return $this->app->response->setBody($return);
+		}
+
+		$result = self::getClient()->call('atom', 'treerole/role_add', $this->params);
+
+		$res = array();
+		if ($result['httpcode'] == 200 && $result['content']['error_code'] == 0) {
+			$res = array(
+				'code' => 200,
+				'url' => '/auth/role/role'
+			);
+		} else if ($result['httpcode'] == 200 && isset($result['content']['error_code'])) {
+			$res = array(
+				'code' => 400,
+				'error_msg' => $result['content']['error_msg']
+			);
+		} else {
+			$res = array(
+				'code' => 400,
+				'error_msg' => '操作失败'
+			);
+		}
+
+    	$this->app->response->setBody($res);
+	}
+	
+	protected function _init() {
+		
+		$this->rules = array(
+			'role_id'	=> array(
+                'required'	=> false,
+                'type'		=> 'integer',
+                'default'	=> 0,
+            ),
+            'role_name'	=> array(
+                'required'		=> true,
+                'type'			=> 'string',
+                'maxLength'		=> 30,
+				'allowEmpty'	=> false,
+            ),
+            
+        );
+		
+		$this->params = $this->post()->safe();
+		$this->errors = $this->post()->getErrors();
+	}
+}

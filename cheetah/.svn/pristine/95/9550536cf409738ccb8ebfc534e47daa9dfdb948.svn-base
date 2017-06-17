@@ -1,0 +1,26 @@
+<footer id="footer">
+    <div class="hide-fixed pull-right pad-rgt">v2.0</div>
+    <div class=" pull-right">
+        <ul class="footer-list list-inline">
+            <% /*
+            <!-- <li> -->
+            <!-- <p class="text-sm">SEO Proggres</p>
+            <div class="progress progress-sm progress-light-base">
+                <div style="width: 80%" class="progress-bar progress-bar-danger"></div>
+            </div> -->
+            <!-- <a class="fmenu_list fmenu_list_phone" href="http://speed.meilishuo.com/download/app" target="_blank"><span class="glyphicon glyphicon-phone"></span>手机客户端</a> -->
+            <!-- </li> -->
+            */%>
+            <li>
+                <% /* <p class="text-sm">Online Tutorial</p>
+                <div class="progress progress-sm progress-light-base">
+                    <div style="width: 80%" class="progress-bar progress-bar-primary"></div>
+                </div> */%>
+                <a class="fmenu_list fmenu_list_help" href="/home/window/?f=help&s=feed_back" title="">意见反馈</a>
+            </li>
+
+        </ul>
+    </div>
+
+    <p class="pad-lft"> © MEILISHUO 2013-2015</p>
+</footer>

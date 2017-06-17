@@ -1,0 +1,138 @@
+/*见http://redmine.meilishuo.com/projects/oa/wiki/7%E5%BC%B9%E6%A1%86*/
+
+@image-base: '../../../img';
+
+
+.modal-header {
+  height: 50px;
+  padding: 14px 30px;
+  border-bottom: 1px solid #f6f5f6;
+  .modal-title {
+    font-size: 16px;
+    color: #515151;
+  }
+  &:after {
+    content: none;
+  }
+}
+
+.modal-body {
+  padding: 25px 30px;
+}
+
+.modal-footer {
+  height: 50px;
+  //内部button 高度为34，所以padding-top/bottom为7.
+  padding: 8px 30px;
+  border-top: 1px solid #f6f5f6;
+  background-color: #f8f8f8;
+  border-bottom-left-radius: 5px;
+  border-bottom-right-radius: 5px;
+  .btn {
+    font-size: 16px;
+  }
+  .btn-default, .btn-default:hover {
+    border: 1px solid #cdd5e2;
+    padding: 5px 12px;
+  }
+}
+
+//审批意见弹框
+.approval-dialog {
+
+  .modal-dialog {
+    width: 623px;
+  }
+
+  .form-horizontal {
+    .remark {
+      width: 563px;
+      height: 87px;
+      -webkit-border-radius: 0;
+      -moz-border-radius: 0;
+      border-radius: 0;
+      color: #6A6A6A;
+
+      &:focus {
+        border-color: #7ecef4;
+        outline: 0;
+        box-shadow: none;
+      }
+    }
+  }
+}
+
+.notify-sm{
+  .modal-dialog {
+    width: 353px;
+  }
+
+  .modal-body {
+    padding: 16px 30px 38px;
+  }
+  .modal-footer{
+    text-align: center;
+
+    .btn+.btn{
+      margin-left: 18px;
+    }
+  }
+
+  .bootbox-body{
+    text-align: center;
+
+    p{
+      padding:25px 0 0 0;
+      margin:0;
+      font-size: 16px;
+    }
+  }
+
+  .icon-cancel,.icon-decline{
+    display: block;
+    margin:0 auto;
+    width:68px;
+    height:68px;
+  }
+  .icon-cancel{
+    background: transparent url("@{image-base}/queen/modal/quxiao.png") left no-repeat;
+  }
+  .icon-decline{
+    background: transparent url("@{image-base}/queen/modal/jujue.png") left no-repeat;
+  }
+}
+
+//统一的消息提示框.
+.queen-msg-container {
+  width: 100%;
+  height: 48px;
+  position: fixed;
+  top: 50px;
+  right: 0;
+  z-index: 3000;
+  display: none;
+  text-align: center;
+  .message {
+    margin: 0 auto;
+    width: 370px;
+    //max-width: 500px;
+    line-height: 48px;
+    height: 48px;
+    color: #fff;
+    font-size: 14px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    word-break: break-all;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.21);
+
+    &.success {
+      background-color: #A5CE78;
+    }
+    &.warning {
+      background-color: #f4bf4f;
+    }
+    &.error {
+      background-color: #F47B5B;
+    }
+  }
+}

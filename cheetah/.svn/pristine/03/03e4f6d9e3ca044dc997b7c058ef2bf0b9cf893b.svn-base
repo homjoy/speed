@@ -1,0 +1,250 @@
+@import "../../queen/mixins/preboot.less";
+.panel-form{
+  .panel-heading{
+    padding:46px 0 2px 0;
+    height:auto;
+    text-align: center;
+    &:after{
+      display: none;
+    }
+  }
+  .panel-title{
+    padding:0;
+    font-size:24px;
+    line-height: 1;
+  }
+  .panel-body{
+    padding:0 20px;
+  }
+
+
+  .panel-footer{
+    border-top:none;
+    background-color:#fff;
+    padding: 88px 15px 108px;
+
+    .btn-submit{
+      background-color: #fba416;
+    }
+    .btn-save-draft{
+      background-color: #90c320;
+    }
+  }
+}
+
+.form-apply{
+  fieldset{
+    margin: 24px+22px 0 0 0;
+    position: relative;
+  }
+  legend{
+    font-size:16px;
+    margin:0 0 24px 0;
+    padding:0 0 0 10px;
+    border-left:4px solid #eeaf3e;
+    border-bottom:0;
+
+    .addItemContent{
+      position: absolute;
+      left:130px;
+      width: 30px;
+      visibility: visible;
+      font-size: 15px;
+      text-align: center;
+      cursor: pointer;
+
+      >a{
+        display: inline-block;
+        width: 20px;
+        height: 22px;
+        padding: 2px;
+      }
+    }
+
+    span:nth-of-type(2){
+      position: absolute;
+      left:200px;
+      color: #e76789;
+      font-size:14px;
+    }
+
+  }
+  select.form-control{
+    height:34px;
+  }
+  &.form-horizontal{
+    .control-label.text-long{
+      padding-left: 0;
+      margin-left: -4px;
+      width: 102px;
+    }
+  }
+
+
+  //基本信息
+  .basic-info{
+    padding-right:75px;
+
+  }
+
+  //单据信息
+  .receipt-info{
+
+  }
+
+
+  //通用报销费用明细
+  .general-fee{
+    .column{
+      width:20%;
+    }
+
+    .column-remark{
+      width:36%;
+    }
+  }
+
+  //交通费用明细
+  .transport-fee{
+    .column{
+      width:15%;
+    }
+    .column-remark{
+      width:21%;
+    }
+  }
+
+  //餐费明细
+  .meals-fee{
+    .column{
+      width:25%;
+    }
+    .column-remark{
+      width:46%
+    }
+  }
+
+
+  //出差信息
+  .business-trip{
+    .col-xs-10{
+      padding-left:2px;
+    }
+
+    .moneyUnit{
+      line-height: 33px;
+      color: #a0a0a0;
+    }
+  }
+
+  //住宿费明细
+  .hotel-fee{
+    .column{
+      width:18%;
+    }
+    .column-remark{
+      width:24%;
+    }
+  }
+
+  //补助明细
+  .additional-fee{
+    .column{
+      width:20%;
+    }
+    .column-remark{
+      width:36%;
+    }
+  }
+
+  //业务招待
+  .business-fee{
+    .column{
+      width:25%;
+    }
+    .column-remark{
+      width:46%;
+    }
+  }
+
+  //业务招待
+  .other-fee{
+    .column{
+      width:20%;
+    }
+    .column-remark{
+      width:36%;
+    }
+  }
+
+
+  //借款 - 单据信息
+  .loan-receipt{
+
+    .row-full{
+      .col-xs-2{width:10.3%;}
+      .col-xs-10{width: 86.333333%;}
+    }
+  }
+}
+
+
+.inner-details{
+  .detail-row{
+    .clearfix();
+  }
+
+  .column{
+    float:left;
+    display: inline-block;
+    width:10%;
+    text-align: center;
+    padding:5px 8px;
+
+
+    &.column-audit{
+      display: none;
+    }
+    &.column-operate{
+      width:2%;
+      .btn{
+        margin-top:4px;
+      }
+    }
+  }
+
+
+
+  .detail-head,.detail-foot{
+    background: #eee;
+  }
+  .detail-foot .column{
+    width:100%;
+  }
+
+
+  .btn-group{
+    padding:16px 0 0 95px;
+  }
+  .btn-xs{
+    min-width:12px;
+    margin-right: 6px;
+  }
+}
+
+.has-error{
+  .control-label{
+    color:#f56245;
+  }
+  .token-input-list{
+    border:1px solid #f56245;
+  }
+}
+.has-success{
+  .control-label{
+    color:#8abe2e;
+  }
+  .token-input-list{
+    border:1px solid #8abe2e;
+  }
+}

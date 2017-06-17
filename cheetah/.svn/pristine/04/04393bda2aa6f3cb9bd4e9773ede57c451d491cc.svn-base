@@ -1,0 +1,87 @@
+<%#head.html%>
+<div id="container" class="effect mainnav-lg">
+    <%#navbar.html%>
+    <div class="boxed">
+        <div id="content-container">
+            <div id="page-content">
+                <div class="panel panel-nav">
+                    <div class="panel-heading">
+                        <ul class="nav nav-tabs slope" role="tablist">
+                            <li role="presentation"><a href="/my/approval/contract">合同</a></li>
+                            <li role="presentation" class="active"><a href="javascript:void(0);">付款</a></li>
+                            <li role="presentation"><a href="/my/approval/budget">预算</a></li>
+                            <li role="presentation"><a href="/my/approval/reimburse">报销</a></li>
+                            <li role="presentation"><a href="/my/approval/loan">借款</a></li>
+                        </ul>
+                    </div>
+                    <div class="panel-body">
+                        <div id="slope-home">
+                            <div class="row search-head"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <%#sidebar.html%>
+    </div>
+    <%#footer.html%>
+</div>
+
+
+<script type="text/html" id="left-table">
+    <table class="table">
+        <tr>
+            <th></th>
+            <th class="hidden-narrow"></th>
+            <th class="hidden-narrow">申请人</th>
+            <th class="hidden-narrow">单据编号</th>
+            <th>收款单位</th>
+            <th>金额</th>
+            <th class="hidden-narrow">日期</th>
+        </tr>
+        {{each data as info}}
+        <tr class="show-info tr-{{info.approveState}}" data-cpb-id="{{info.cabid}}" dbl-open="/pay/view/?cpbId={{info.cabid}}">
+            <td>
+                {{if info.approveState == 'wait'}}
+                <input type="checkbox" data-task_id="{{info.taskid}}" data-cpb-id="{{info.cabid}}" value="{{info.cabId}}"/>
+                {{else}}
+                <i class="icon icon-{{info.approveState}}"></i>
+                {{/if}}
+            </td>
+            <td class="hidden-narrow"><img class="avatar" src="{{info.applyuseravatar}}"/></td>
+            <td class="hidden-narrow">
+                <div>{{info.applyusername}}</div>
+                <div >{{info.applydeptname}}</div>
+            </td>
+            <td class="hidden-narrow">{{info.applyno}}</td>
+            <td>
+                <div class="name-limited">{{info.customerCompany}}</div>
+                <div class="hidden-fat bottom-word"><span>{{info.applydate}}</span><span class="bottom-word">{{info.applyusername}}</span></div>
+            </td>
+            <td>
+                <div>{{info.amount | currencyFormat}}</div>
+                <div class="hidden-fat bottom-word">{{info.applydeptname}}</div>
+            </td>
+            <td class="hidden-narrow bottom-word">{{info.applydate}}</td>
+        </tr>
+        {{/each}}
+    </table>
+</script>
+
+<%#my/apply/payDetail.tpl.html %>
+<script type="text/html" id="right-show">
+    <div class="panel-heading ">
+        <span>申请详情</span>
+        {{if canApproveFlag == 1 && contractPay.cpbApprovalState != 3}}
+        <a href="javascript:void(0);" data-cpb-id="{{contractPay.cpbId}}" data-task_id="{{taskid}}" class="btn btn-xs btn-danger single list-reject">驳回</a>
+        <a href="javascript:void(0);" data-cpb-id="{{contractPay.cpbId}}" data-task_id="{{taskid}}" data-formkey="{{formkey}}" class="btn btn-xs btn-success single list-agree">同意</a>
+        {{/if}}
+    </div>
+    {{ include 'payDetail'}}
+</script>
+
+
+<%! $_ENGINE_SELF.callFn( "useModule")( "<<<_use:
+        fml.use('fms/my/approval/pay');
+_use:", this._JSstack , this._JSmods); %>
+<%#foot.html%>

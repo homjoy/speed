@@ -1,0 +1,80 @@
+<?php
+
+/**
+ * 和Composer一样的机制自动加载第三方库
+ * Class VendorAutoloader
+ */
+
+class VendorAutoloader
+{
+    private static $loader;
+
+    public static function loadClassLoader($class)
+    {
+        if ('Vendor\ClassLoader' === $class) {
+            require __DIR__ . '/ClassLoader.php';
+        }
+    }
+
+    public static function getLoader()
+    {
+        if (null !== self::$loader) {
+            return self::$loader;
+        }
+
+        spl_autoload_register(array('VendorAutoloader', 'loadClassLoader'), true, true);
+        self::$loader = $loader = new \Vendor\ClassLoader();
+        spl_autoload_unregister(array('VendorAutoloader', 'loadClassLoader'));
+
+
+        //Vendor所在的目录即当前文件所在目录.
+        $vendorDir = dirname(__FILE__);
+
+        $map = array(
+            //注册Pixie的命名空间
+            'Pixie' => array($vendorDir . '/pixie/src'),
+            //日志
+            'Speed\\Logger' => array($vendorDir . '/logger'),
+            //天气
+            'Cmfcmf' => array($vendorDir . '/weather'),
+            //二维码
+            'PHPQRCode' => array($vendorDir . '/qrcode/lib'),
+            //临时注释 线上php还为升级
+           'Illuminate' => array($vendorDir . '/illuminate'),
+        );
+        foreach ($map as $namespace => $path) {
+            $loader->set($namespace, $path);
+        }
+
+        $map = array();
+        foreach ($map as $namespace => $path) {
+            $loader->setPsr4($namespace, $path);
+        }
+
+        $classMap = array();
+        if ($classMap) {
+            $loader->addClassMap($classMap);
+        }
+
+        $loader->register(true);
+        //blade 
+        //临时注释 线上php还为升级
+        //$includeFiles = array();
+        $includeFiles = array(
+            $vendorDir . '/illuminate/Illuminate/Support/helpers.php',
+            $vendorDir . '/danielstjules/stringy/src/Create.php',
+        );
+        foreach ($includeFiles as $file) {
+            composerRequire($file);
+        }
+
+        return $loader;
+    }
+}
+
+function composerRequire($file)
+{
+    require $file;
+}
+
+return VendorAutoloader::getLoader();

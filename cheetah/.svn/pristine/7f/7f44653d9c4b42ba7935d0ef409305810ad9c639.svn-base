@@ -1,0 +1,22 @@
+function ui_alerts_tooltips() {
+	return this;
+}
+var controlFns = {
+	'index' : function(){
+		this.ui_alerts_tooltips()
+	},
+	'ui_alerts_tooltips' : function(){
+		var php = {
+			
+		}
+        this.bindDefault(php);
+		this.bridgeMuch(php);
+		this.listenOver(function(data){
+			console.log(data)
+
+			data._CSSLinks = ['fontfamily','bootstrap','nifty.min','font-awesome.min','switchery.min','bootstrap-select.min','nifty-demo.min','pace.min'];
+			this.render('ui_alerts_tooltips.html' , data);
+		})
+	}
+};
+exports.__create = controller.__create(ui_alerts_tooltips, controlFns);

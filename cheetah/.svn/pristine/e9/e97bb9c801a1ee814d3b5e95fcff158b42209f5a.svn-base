@@ -1,0 +1,72 @@
+function doc() {
+    return this;
+}
+var controlFns = {
+    'pagination': function () {
+        var php = {};
+        this.bindDefault(php);
+        this.bridgeMuch(php);
+        this.listenOver(function (data) {
+            data._CSSLinks = ['fex/prism','fex/doc/base','queen/pagination'];
+            data._JSmods = ['fex/prism'];
+            this.render('doc/pagination.html', data);
+        });
+    },
+
+    'timeline': function () {
+        var php = {};
+        this.bindDefault(php);
+        this.bridgeMuch(php);
+        this.listenOver(function (data) {
+            data._CSSLinks = ['fex/prism','fex/doc/base','queen/king'];
+            data._JSmods = ['fex/prism'];
+            this.render('doc/timeline.html', data);
+        });
+    },
+
+    'navtabs': function () {
+        var php = {};
+        this.bindDefault(php);
+        this.bridgeMuch(php);
+        this.listenOver(function (data) {
+            data._CSSLinks = ['fex/prism','fex/doc/base','queen/king'];
+            data._JSmods = ['fex/prism'];
+            this.render('doc/navtabs.html', data);
+        });
+    },
+
+    'notify': function () {
+        var php = {};
+        this.bindDefault(php);
+        this.bridgeMuch(php);
+        this.listenOver(function (data) {
+            data._CSSLinks = ['fex/prism','fex/doc/base','queen/king'];
+            data._JSmods = ['fex/prism'];
+            this.render('doc/notify.html', data);
+        });
+    },
+
+    'upload': function () {
+        var php = {};
+        this.bindDefault(php);
+        this.bridgeMuch(php);
+        this.listenOver(function (data) {
+            data._CSSLinks = ['fex/prism','fex/doc/base','queen/upload'];
+            data._JSmods = ['fex/prism'];
+            this.render('doc/upload.html', data);
+        });
+    },
+
+
+    'trees': function () {
+        var php = {};
+        this.bindDefault(php);
+        this.bridgeMuch(php);
+        this.listenOver(function (data) {
+            data._CSSLinks = ['fex/prism','fex/doc/base','queen/trees'];
+            data._JSmods = ['fex/prism'];
+            this.render('doc/trees.html', data);
+        });
+    }
+};
+exports.__create = controller.__create(doc, controlFns);

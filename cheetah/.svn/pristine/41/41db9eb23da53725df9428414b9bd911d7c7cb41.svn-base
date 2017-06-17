@@ -1,0 +1,122 @@
+<%#head.html%>
+<div id="container" class="effect mainnav-lg">
+    <%#navbar.html%>
+        <div class="boxed">
+            <div id="content-container">
+                <div id="page-content">
+                    <div class="panel">
+                        <div class="panel-body">
+                            <ul class="nav nav-tabs">
+                                <li class="active"><a href="javascript:void(0);">合同</a></li>
+                                <li><a href="/myapproval/payApproval/">付款</a></li>
+                                <li><a href="/myapproval/budgetApproval/">预算</a></li>
+                            </ul>
+                            <ul id="myApplyTab" class="nav nav-tabs">
+                                <li class="active"><a href="#waiting" data-toggle="tab" aria-expanded="true">待审批</a></li>
+                                <li><a href="#over" data-toggle="tab" aria-expanded="false">已审批</a></li>
+                            </ul>
+                            <div id="myTabContent" class="tab-content">
+                                <div class="tab-pane fade active in" id="waiting">
+                                    <% if(this.tasklistJson.rcode==200){%>
+                                    <button class="btn btn-info btn-xs btn-all-pass">一键通过</button>
+                                    <button class="btn btn-warning btn-xs btn-all-reject">一键驳回</button>
+                                    <table id="tb-waitlist" class="table table-hover table-striped table-bordered vip">
+                                        <thead>
+                                            <tr>
+                                                <th><input type="checkbox" class="getall"></th>
+                                                <th>类型</th>
+                                                <th>单据编号</th>
+                                                <th>申请人</th>
+                                                <th>申请部门</th>
+                                                <th>申请时间</th>
+                                                <th>金额(￥)</th>
+                                                <th width="140">操作</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                                <% this.tasklistJson.data.forEach(function(tasklistJson, index){  %>
+                                                <tr data-id="<%= tasklistJson.cabid %>" data-type="<%= tasklistJson.btype %>" taskid="<%= tasklistJson.taskid %>" formkey="<%= tasklistJson.formkey%>">
+                                                    <td><input type="checkbox" value="<%= tasklistJson.taskid %>"></td>
+                                                    <td><%= tasklistJson.btypename %></td>
+                                                    <td><%= tasklistJson.applyno %></td>
+                                                    <td><%= tasklistJson.applyusername %></td>
+                                                    <td><%=tasklistJson.applydeptname %></td>
+                                                    <td><%= tasklistJson.applydate %></td>
+                                                    <td class="text-right"><%= tasklistJson.amount %></td>
+                                                    <td>
+                                                        <a href="javascript:;"class="btn btn-agree" >同意</a>
+                                                        <a href="javascript:;"class="btn btn-reject">驳回</a>
+                                                    </td>
+                                                </tr>
+                                                <% })  %>
+                                            <!-- <tr>
+                                                <td><input type="checkbox" value="1"></td>
+                                                <td>合同</td>
+                                                <td>HTSP2015060001</td>
+                                                <td>刘隽</td>
+                                                <td>技术部-用户研发</td>
+                                                <td>2015-06-26</td>
+                                                <td>200000元</td>
+                                                <td>
+                                                    <a href="javascript:;"class="btn btn-agree">同意</a>
+                                                    <a href="javascript:;"class="btn btn-reject">驳回</a>
+                                                </td>
+                                            </tr> -->
+                                        </tbody>
+                                    </table>
+                                    <%}else{%>
+                                        <div class="alert alert-danger fade in">
+                                            <button class="close" data-dismiss="alert"><span>×</span></button>
+                                            <%=this.tasklistJson.rmessage%>
+                                        </div>
+                                    <%}%>
+                                </div>
+                                <div class="tab-pane fade" id="over">
+                                    <%if(this.overlistJson.rcode==200){%>
+                                    <table id="tb-overlist" class="table tr-point-table table-hover table-striped table-bordered">
+                                        <thead>
+                                            <tr>
+                                                <th>类型</th>
+                                                <th>单据编号</th>
+                                                <th>申请人</th>
+                                                <th>申请部门</th>
+                                                <th>申请时间</th>
+                                                <th>金额(￥)</th>
+                                                <th>审批进度</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                                <% this.overlistJson.data.forEach(function(overlistJson,index){%>
+                                                <tr data-id="<%= overlistJson.cabid %>" data-type="<%= overlistJson.btype%>">
+                                                    <td><%= overlistJson.btypename %></td>
+                                                    <td><%= overlistJson.applyno %></td>
+                                                    <td><%= overlistJson.applyusername %></td>
+                                                    <td><%= overlistJson.applydeptname %></td>
+                                                    <td><%= overlistJson.applydate %></td>
+                                                    <td class="text-right"><%= overlistJson.amount %></td>
+                                                    <td><%= overlistJson.approveprogress %></td>
+                                                </tr>
+                                                <% })%>
+                                        </tbody>
+                                    </table>
+                                    <%}else{%>
+                                        <div class="alert alert-danger fade in">
+                                            <button class="close" data-dismiss="alert"><span>×</span></button>
+                                            <%=this.overlistJson.rmessage%>
+                                        </div>
+                                    <%}%>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        <%#sidebar.html%>
+    </div>
+<%#footer.html%>
+</div>
+    <%! $_ENGINE_SELF.callFn( "useModule")( "<<<_use:
+        fml.use('fms/myapproval/contractApproval');
+_use:", this._JSstack , this._JSmods); %>
+
+<%#foot.html%>

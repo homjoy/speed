@@ -1,0 +1,30 @@
+function home() {
+    return this;
+}
+var controlFns = {
+    'index': function () {
+        this.redirectTo('/page/download/');
+    },
+    'download': function () {
+        var php = {
+            'app': '/page/download_app'
+        };
+        this.bindDefault(php);
+        this.bridgeMuch(php);
+        this.listenOver(function (data) {
+            this.render('page/download.html', data);
+        });
+    },
+    'jd': function () {
+        var php = {};
+
+        this.bindDefault(php);
+        this.bridgeMuch(php);
+        this.listenOver(function (data) {
+            data._CSSLinks = [];
+            data._JSLinks = [];
+            this.render('page/jd.html', data);
+        });
+    }
+};
+exports.__create = controller.__create(home, controlFns);

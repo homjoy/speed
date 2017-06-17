@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>download</title>
+    <meta name="description" content="">
+    <meta name="keywords" content="">
+    <link href="" rel="stylesheet">
+    <style type="text/css" media="screen">
+        .header{
+            position: absolute;
+            top: 18.52%;
+            width: 100%;
+            text-align: center;
+            font-size: 3.5em;
+            color:#555;
+            font-family: 'Lucida Sans Unicode', 'Lucida Grande', sans-serif;
+        }
+        .picd{
+            background-image: url(http://d03.res.meilishuo.net/pic/_o/e0/dd/1bcd8ae20596f80550d16cb931da_304_282.cf.png);
+            width: 40%;
+            height: 30%;
+            position: absolute;
+            top: 28%;
+            left: 50%;
+            margin-left: -20%;
+            background-position: 50% 50%;
+            background-size: contain;
+            background-repeat: no-repeat;
+        }
+        .content{
+            position: absolute;
+            width: 100%;
+            text-align: center;
+            font-size: 2.5em;
+            top: 64%;
+            color:#777;
+            font-family: 'Lucida Sans Unicode', 'Lucida Grande', sans-serif;
+        }
+        .footer{
+            width: 100%;
+            position: absolute;
+            top: 73%;
+            text-align: center;
+            font-size: 2em;
+            color:#777;
+            font-family: 'Lucida Sans Unicode', 'Lucida Grande', sans-serif;
+        }
+        .date{
+            margin-left: 24%;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+<div class="header">感谢下载美丽speed客户端</div>
+<div class="picd"></div>
+<div class="content">我们致力于为您打造更加方便有趣的办公小秘书</div>
+<div class="footer">
+    <span class="version">当前版本<%=this.app.data.version%></span>
+    <span class="date">发布时间<%=this.app.data.pub_time || ''%></span>
+</div>
+<% if(this.app.data.url && this.app.data.url != '#'){ %>
+<script type='text/javascript'>window.location.href='<%= this.app.data.url %>'</script>
+<% } %>
+</body>
+</html>

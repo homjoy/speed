@@ -1,0 +1,29 @@
+<?php
+namespace Admin\Modules\Meeting;
+
+use Admin\Modules\Common\BaseModule;
+use Admin\Package\Common\Response;
+use Admin\Package\Meeting\Meeting;
+use Admin\Package\Company\Office;
+/**
+ * 会议室预定查询
+ * Class Home
+ *
+ * @package Admin\Modules\Meeting
+ */
+class MeetingBook extends BaseModule {
+
+    protected $errors = NULL;
+//    private   $params = NULL;
+//    private   $page_size = 20;
+    //public static $VIEW_SWITCH_JSON = TRUE;
+    protected $checkUserPermission = TRUE;
+    public function run() {
+
+
+    }
+
+
+
+
+}

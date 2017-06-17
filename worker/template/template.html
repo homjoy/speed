@@ -1,0 +1,303 @@
+<meta charset="UTF-8">
+<meta http-equiv="content-type" content="text/html; charset=utf-8">
+<meta name="viewport" content="width=device-width">
+<meta name="format-detection" content="address=no">
+<meta name="format-detection" content="telephone=no">
+<meta name="format-detection" content="email=no">
+<style type="text/css">
+
+    body {
+        -webkit-text-size-adjust: 100% !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        font-family: "Microsoft YaHei", "微软雅黑" !important;
+    }
+    ul{
+        list-style:none;
+        padding:0;
+        margin:0;
+    }
+    ul > li{
+        margin-bottom: 12px;
+    }
+
+    @media only screen and (max-device-width: 768px) {
+
+    }
+
+    .mail-wrapper,.logo {
+        width: 480px;
+        margin: 0 auto;
+    }
+    .mail-wrapper{
+        padding-bottom: 60px;
+    }
+    .logo {
+        text-align: center;
+        padding: 36px 0 33px 0;
+    }
+    .logo a{
+        display: block;
+        text-indent: -9999px;
+        width: 66px;
+        height: 76px;
+        margin: 0 auto;
+        background: url("http://static.newspeed.meilishuo.com/img/mail/newspeed_logo.png");
+    }
+
+    .title{
+        padding: 0 0 28px 0;
+    }
+    .title p,h3{
+        margin:0;
+        font-size: 20px;
+        font-weight: normal;
+    }
+    .title p{
+        color:#F991B4;
+        margin-bottom: 14px;
+    }
+    .title h3{
+        color:#707070;
+    }
+
+    .section{
+        padding:18px 0 10px 0;
+    }
+    .section.service{
+        padding-bottom: 0;
+        margin-bottom: -6px;
+    }
+    .section .place{
+        margin-bottom: 26px;
+    }
+    .section .place:last-child{
+        margin-bottom: 0;
+    }
+
+    span.tt{
+        color:#b2b2b2;
+        margin-right: 32px;
+        font-weight: 400;
+        vertical-align: top;
+    }
+    span.ct{
+        color:#666;
+        display: inline-block;
+        width:360px;
+    }
+    .line {
+        border-bottom: 1px solid #eee;
+    }
+
+    .btn-group{
+        text-align: center;
+        padding:50px 0;
+    }
+    .btn {
+        display: inline-block;
+        width: 88px;
+        height: 41px;
+        line-height: 41px;
+        text-align:center;
+        color:#707070;
+        text-decoration: none;
+        border: 1px solid #eee;
+        border-radius: 8px;
+        /*background: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFgAAAArCAMAAADL/b9pAAAABGdBTUEAALGPC/xhBQAAACBjSFJNAAB6JgAAgIQAAPoAAACA6AAAdTAAAOpgAAA6mAAAF3CculE8AAAAolBMVEUAAADd3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d0AAACMFYyTAAAANHRSTlMABlam3/nz11VR271mJFIDiUDBDg3AVNgP4js641u7XKtlrOAj+PLZKDkH1oqTlFMiBQv6dde50AAAAAFiS0dEAIgFHUgAAAAJcEhZcwAACxIAAAsSAdLdfvwAAADeSURBVEjH7dfJEoIwEATQjoAgi4ACLggKuKDizv9/m4C4lEdrUuUhfZnM5R1SOXSAOqwjyUpJkK4qaQyv9HTDtD7238Ms09D77WI7qkuBPuOqjt0cnMGQ0gU836lHMBrTusBYDapbmUypXSCcMUQxvQvEcywSHnCSIrN4wMsMK5L3+x2moOThomIFLGABC1jAAhbwv8Jrj4db9YpNzgOumhC37satbbJJSO9uZztA23No9Fo9Cp/4YXh+0Uz7QP1rOtrt8aTHyflCgV7zJNaD986iVL5R/Exvcho9mvwdXlsvsiFsTMUAAAAldEVYdGRhdGU6Y3JlYXRlADIwMTUtMDUtMjdUMTQ6NDc6MTMrMDg6MDAR+pzwAAAAJXRFWHRkYXRlOm1vZGlmeQAyMDE1LTA1LTI3VDE0OjQ3OjEzKzA4OjAwYKckTAAAAABJRU5ErkJggg==") no-repeat 0 0;*/
+    }
+    .btn-accept{
+        margin-right: 40px;
+    }
+
+    .icon{
+        margin:0 5px -4px 0;
+        display: inline-block;
+        width: 19px;
+        height: 19px;
+    }
+    .icon-accept {
+        background: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABMAAAATCAMAAABFjsb+AAAABGdBTUEAALGPC/xhBQAAACBjSFJNAAB6JgAAgIQAAPoAAACA6AAAdTAAAOpgAAA6mAAAF3CculE8AAAA2FBMVEUAAABUujBUujBUujBUujBUujBUujBUujBUujBUujBUujBUujBUujBUujBUujBUujBUujBUujBUujBUujBUujBUujBUujBUujBUujBUujBUujBUujBUujBUujBUujBYvDXQ7MbP7MVVuzLC5rX////h89u546rs9+hnwkfJ6b7B5rRWuzKn3JXx+e5yxlTR7cia1oX4/Pd5yV1bvTna8NKs3ZqM0XT9/v37/fqEzWpiwEHh89qe2IqAzGb+//6R03rq9+b4/Pac14hsxE3o9uPj9N2r3ZoAAABjML8mAAAAHnRSTlMAH3fB5fnCCY76jwoVzgbIBx77IICBxMbm7ZCReMOOJ53pAAAAAWJLR0QAiAUdSAAAAAlwSFlzAAALEgAACxIB0t1+/AAAAL9JREFUGNN1kOkWgUAUgK9kqRAllbi2kX3fsmX3/o+kmUIOvj/33G/m3A2AEuGifIyPcxF4kkgK6COIkq9SaXyTTlGVkTGMnPWciJ+IADkllFeqNVRUyIdUvUGaiBoUQs4mrTaiDgZip9tjqk8GQy+YEEMcEZuqMZlM2Rv9N5uTBeJy5ayZMlm9zZbs9o578KvqoNHQProncg46acF8l+vtHihvvq89in/2/XUXAMl67qxY0uuqaqlsCEa5pLLsAd0gJFIKl8VgAAAAJXRFWHRkYXRlOmNyZWF0ZQAyMDE1LTA1LTI3VDE0OjQ3OjEzKzA4OjAwEfqc8AAAACV0RVh0ZGF0ZTptb2RpZnkAMjAxNS0wNS0yN1QxNDo0NzoxMyswODowMGCnJEwAAAAASUVORK5CYII=") no-repeat 0 0;
+    }
+    .icon-decline {
+        background: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABMAAAATCAMAAABFjsb+AAAABGdBTUEAALGPC/xhBQAAACBjSFJNAAB6JgAAgIQAAPoAAACA6AAAdTAAAOpgAAA6mAAAF3CculE8AAAAtFBMVEUAAADrH0DrH0DrH0DrH0DrH0DrH0DrH0DrH0DrH0DrH0DrH0DrH0DrH0DrH0DrH0DrH0DrH0DrH0DrH0DrH0DrH0DrH0DrH0DrH0DrH0DrH0DrH0DrH0DrH0DrH0D4s7/709rsLEv96ez////6xc7rJETvT2n+9vjrI0P4r7vxYXj/+vv82uD//P3xZHryb4T//v7ycIXzdInwWXH+9Pb4tsH84+f3q7f70dj7z9b4sbwAAABzeUsNAAAAHnRSTlMAH3fB5fnCCY76jwoVzgbIBx77IICBxMbm7ZCReMOOJ53pAAAAAWJLR0QAiAUdSAAAAAlwSFlzAAALEgAACxIB0t1+/AAAALtJREFUGNN1UMcWgkAMDAgqTXQRAeksxS728v8f5hYEDjqH7GTeJpkEgEIQB5IsDUUBvhiNlYhDUTUu6UbUwdCpNDGjPswp0VRC4iQlMU1iElWAGSJvhvMiKnKcEY4smNOCssLxao2rkiY2LFiXzRbv8P7AuAMub32scX3i1AO5087N6ObfpVfr8X7lFd/aGQ7Y9Ln3vJC5zN/jyTy/3twf26OP5Z99f90FQPNRoyBfa69qBaGruGFgsewDl5Aje+Gp3AwAAAAldEVYdGRhdGU6Y3JlYXRlADIwMTUtMDUtMjdUMTQ6NDc6MTMrMDg6MDAR+pzwAAAAJXRFWHRkYXRlOm1vZGlmeQAyMDE1LTA1LTI3VDE0OjQ3OjEzKzA4OjAwYKckTAAAAABJRU5ErkJggg==") no-repeat 0 0;
+    }
+
+    .footer {
+        text-align: center;
+    }
+    .footer .tips{
+        color:#7c7c7c;
+    }
+    .footer .go-speed{
+        color:#a2a2a2;
+    }
+    .link-my-time {
+        color: #b3d463;
+        text-decoration: underline;
+    }
+
+    .important{
+        color:#eb1e3f !important;
+    }
+    .st{
+        color:#666;
+        display: inline-block;
+        width:360px;
+        line-height: 30px;
+        margin:0;
+        font-size: 14px;
+    }
+
+</style>
+<div class="logo">
+    <a href="http://speed.meilishuo.com" target="_blank">美丽说SPEED</a>
+</div>
+
+<!--<div class="mail-wrapper">-->
+    <!--<div class="title">-->
+        <!--<p>Hi! {{username}}：</p>-->
+        <!--<h3>{{invite_user}}因为{{reason}}拒绝了{{meeting_time}} {{meeting_week_day}}的“{{meeting_topic}}”邀请，别难过，下次再约吧！</h3>-->
+    <!--</div>-->
+<!--</div>-->
+
+<!--<div class="mail-wrapper">-->
+    <!--<div class="title">-->
+        <!--<p>Hi! {{username}}：</p>-->
+        <!--<h3>你刚刚取消了{{meeting_time}} {{meeting_week}}的“{{meeting_topic}}”，记得调整自己的时间安排哦！</h3>-->
+    <!--</div>-->
+    <!--<div class="footer">-->
+        <!--<p class="go-speed">去<a href="#" class="link-my-time">我的时间</a>看看</p>-->
+    <!--</div>-->
+<!--</div>-->
+
+<!--<div class="mail-wrapper">-->
+    <!--<div class="title">-->
+        <!--<p>Hi! {{username}}：</p>-->
+        <!--<h3>{{initiator}}刚刚取消了{{meeting_time}}的“{{meeting_topic}}”，记得调整自己的时间安排哦！</h3>-->
+    <!--</div>-->
+
+    <!--<div class="btn-group">-->
+        <!--<a href="http://newspeed.meilishuo.com/time" class="btn btn-accept"><i class="icon icon-accept"></i>查看</a>-->
+    <!--</div>-->
+    <!--&lt;!&ndash;<div class="footer">&ndash;&gt;-->
+        <!--&lt;!&ndash;<p class="go-speed">去<a href="http://speed.meilishuo.com/time" class="link-my-time">我的时间</a>看看</p>&ndash;&gt;-->
+    <!--&lt;!&ndash;</div>&ndash;&gt;-->
+<!--</div>-->
+
+<!--<div class="mail-wrapper">-->
+    <!--<div class="title">-->
+        <!--<p>Hi！亲：</p>-->
+        <!--<h3>会议提醒：“{{meeting_topic}}”马上开始啦，请提前准备，辛苦啦！</h3>-->
+    <!--</div>-->
+
+    <!--<div class="section service">-->
+        <!--<ul>-->
+            <!--<li>-->
+                <!--<span class="tt important">服务需求：</span>-->
+                <!--<span class="ct">{{meeting_service}}</span>-->
+            <!--</li>-->
+        <!--</ul>-->
+    <!--</div>-->
+
+    <!--<div class="section">-->
+        <!--<ul class="introduce">-->
+            <!--<li>-->
+                <!--<span class="tt">会议类型：</span>-->
+                <!--<span class="ct">{{meeting_type}}</span>-->
+            <!--</li>-->
+            <!--<li>-->
+                <!--<span class="tt">会议主题：</span>-->
+                <!--<span class="ct">{{meeting_topic}}</span>-->
+            <!--</li>-->
+            <!--<li>-->
+                <!--<span class="tt">会议时间：</span>-->
+                <!--<span class="ct">{{meeting_time}} {{meeting_week_day}}</span>-->
+            <!--</li>-->
+        <!--</ul>-->
+    <!--</div>-->
+    <!--<div class="line"></div>-->
+    <!--<div class="section">-->
+        <!--<ul class="place">-->
+            <!--<li>-->
+                <!--<span class="tt important">会议地点：</span>-->
+                <!--<span class="ct">{{place}}</span>-->
+            <!--</li>-->
+            <!--<li>-->
+                <!--<span class="tt">参会人员：</span>-->
+                <!--<span class="ct">{{invite_users}}</span>-->
+            <!--</li>-->
+        <!--</ul>-->
+
+        <!--<ul class="place">-->
+            <!--<li>-->
+                <!--<span class="tt important">会议地点：</span>-->
+                <!--<span class="ct">{{place}}</span>-->
+            <!--</li>-->
+            <!--<li>-->
+                <!--<span class="tt">参会人员：</span>-->
+                <!--<span class="ct">{{invite_users}}</span>-->
+            <!--</li>-->
+        <!--</ul>-->
+    <!--</div>-->
+
+    <!--<div class="btn-group">-->
+        <!--<a href="#" class="btn btn-accept"><i class="icon icon-accept"></i>接受</a>-->
+        <!--<a href="#" class="btn btn-decline"><i class="icon icon-decline"></i>拒绝</a>-->
+    <!--</div>-->
+
+    <!--&lt;!&ndash;<div class="footer">&ndash;&gt;-->
+        <!--&lt;!&ndash;<p class="tips">记得准时参加哦!</p>&ndash;&gt;-->
+        <!--&lt;!&ndash;<p class="go-speed">去<a href="#" class="link-my-time">我的时间</a>看看</p>&ndash;&gt;-->
+    <!--&lt;!&ndash;</div>&ndash;&gt;-->
+<!--</div>-->
+<style type="text/css">
+    .st{
+        color:#666;
+        display: inline-block;
+        width:410px;
+        line-height: 30px;
+        margin:0;
+        font-size: 14px;
+        text-indent: -11px;
+        margin-left: 11px;
+    }
+</style>
+<div class="mail-wrapper">
+    <div class="title">
+        <p>Hi! {{name}}:</p>
+        <h3>您的SPEED密码 <span style="color:#F991B4">{{message}}</span>，赶快登录修改密码吧！</h3>
+    </div>
+
+    <div class="btn-group">
+        <a href="http://speed.meilishuo.com/user/password/" class="btn btn-view" style="background-color: #ACD696;margin-left: -100px">登录</a>
+    </div>
+
+    <div>
+        <div class="section service">
+            <ul>
+                <li>
+                    <span style="color: #F991B4">请注意：</span>
+                </li>
+            </ul>
+        </div>
+
+        <div>
+            <div class="introduce">
+                <p class="st">
+                    1.密码<strong style="color: #F991B4">有效期为三个月</strong>，请定期修改密码；
+                </p>
+                <p class="st">
+                    2.密码<strong style="color:#F991B4">仅限员工本人使用</strong>，不得泄露给公司外部人员，也不得转借公司其他员工使用；
+                </p>
+                <p class="st">
+                    3.凡是以IT部门/管理员/老板/上级或其他任何名义向员工索要密码的行为都是骗子，请不要相信对方，也不要按对方要求进行操作；
+                </p>
+                <p class="st">
+                    4.如怀疑本人密码已被他人获取/窃取，应当第一时间登陆speed系统修改本人密码。
+                </p>
+            </div>
+        </div>
+    </div>
+
+</div></div>

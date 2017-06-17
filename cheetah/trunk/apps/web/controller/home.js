@@ -1,0 +1,63 @@
+function home() {
+    return this;
+}
+var controlFns = {
+    'index': function () {
+        var php = {
+            //右侧生日接口
+            'get_user_birthday':'/account/get_user_birthday',
+            //入职整年接口
+            'get_hire_anniversary': '/account/get_hire_anniversary',
+            'weather':'/weather/get',
+            //获取HOME图片
+            'home_newspics':'/sns/top_news',
+            'top_news': '/sns/bbs_article',
+            'user_share_list': '/routine/user_share_list?type=share_id',
+            'update_news': '/box/update_news?num=6',
+            'get_bus_info':'/executive_card/get_bus_info'
+        };
+
+        this.bindDefault(php);
+        this.bridgeMuch(php);
+        this.listenOver(function (data) {
+            var curdate = new Date();
+            data.curdate = (curdate.getMonth()+1) + "月" + curdate.getDate() + "日";
+            console.log("curdate$$$$$$$$$$$",data.curdate);
+            data._CSSLinks = ['plugin/bootstrap-datepicker','speed/home/index'];
+            this.render('home/index.html', data);
+        });
+    }
+    , 'window': function () {
+        var module = this.req.__get.f,
+            action = this.req.__get.s,
+            query = this.req.__get.q || '';
+        var url = this.siteInfo.OLD_SPEED_URL + module + "/" + action;
+        if(query){
+            url += "?"+decodeURIComponent(query);
+        }
+        if(module == 'api' && action == 'Ctrip_login'){
+            return this.redirectTo(url);
+        }
+        url = this.xssFilter.uriInDoubleQuotedAttr(url);
+        var php = {};
+        this.bindDefault(php);
+        this.bridgeMuch(php);
+        this.listenOver(function (data) {
+            data.f = module;
+            data.s = action;
+            data.query = query;
+            data.url = url;
+            this.render('home/window.html', data);
+        })
+    }, 'dayee': function () {
+        var php = {
+            'url':'/hr_recruit/recruit_sso'
+        };
+        this.bindDefault(php);
+        this.bridgeMuch(php);
+        this.listenOver(function (data) {
+            return this.redirectTo(data.url.data);
+        })
+    }
+};
+exports.__create = controller.__create(home, controlFns);

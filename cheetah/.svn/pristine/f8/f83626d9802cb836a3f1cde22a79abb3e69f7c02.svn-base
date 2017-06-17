@@ -1,0 +1,20 @@
+<%#head.html%>
+	<div id="container" class="cls-container">
+
+		<!-- CONTENT -->
+		<!--===================================================-->
+		<div class="cls-content">
+			<h1 class="error-code text-warning">404</h1>
+			<p class="h4 text-thin pad-btm mar-btm">
+				<i class="fa fa-exclamation-circle fa-fw"></i>
+				出错了，这个页面真没有！！！
+			</p>
+			<br>
+			<div class="pad-top"><a class="btn-link" href="/">返回首页</a></div>
+		</div>
+
+	</div>
+	<!--===================================================-->
+	<!-- END OF CONTAINER -->
+<%#footer.html%>
+

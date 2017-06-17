@@ -1,0 +1,5 @@
+@extends('layouts.master')
+
+@section('content')
+    管理后台总首页内容展示
+@endsection

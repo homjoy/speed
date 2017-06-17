@@ -1,0 +1,78 @@
+fml.define('speed/contacts/index', ['jquery'], function (require,exports) {
+    "use strict";
+
+    var $ = require('jquery');
+
+
+    function getUrlParam(name) {
+        var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)"); //构造一个含有目标参数的正则表达式对象
+        var r = window.location.search.substr(1).match(reg); //匹配目标参数
+
+        if (r != null) return decodeURI(r[2]);
+        return null; //返回参数值
+    }
+
+    //立即函数，加载后判断当前是查询结果页面／通常界面
+    (function(){
+        var $poneInfoDescribe = $('.phone-info-describe'),
+            href = window.location.href,
+            index = href.indexOf("/?q=");
+
+        var paramValue = getUrlParam('q');
+
+        if(paramValue){
+            $poneInfoDescribe.text('搜索结果');
+            $('.input_select').val(paramValue);
+
+            return false;
+        }
+
+        $poneInfoDescribe.text('我所在部门人员');
+
+    })();
+
+    /*$('.select_pic').on('click', function () {
+        var q = $('.input_select').val();
+        if (q) {
+            window.location.href = "/contacts/?q=" + q;
+        }
+    });*/
+
+
+    //头像
+    $('.contact_head').popover({
+        'placement': 'right',
+        'html': true,
+        'trigger': 'hover',
+        'delay': {show: 300, hide: 0},
+        'title': '照片',
+        'content': function () {
+            var t = $(this);
+            var data = t.data();
+            if (data.avatar_big != '') {
+                return '<img class="avatar" src="' + $(this).data().avatar + '">';
+            } else {
+                return '';
+            }
+        }
+    });
+
+    //电话号
+    $('.telephone').click(function () {
+        $('.show_tel').html($('.show_tel').attr('tel')).removeClass('show_tel');
+        var speed_im = $(this).attr('code');
+        var _this = $(this);
+        $(_this).addClass('show_tel');
+        $.getJSON('/aj/address/ajax_search_mobile', {code: speed_im}, function (ret) {
+            if (ret.code == 200) {
+                $(_this).html(ret.data);
+            }
+        });
+    });
+    $('.telephonehide').click(function(){
+        $('.telephoneencry').addClass('hide');
+        $('.telephonehide').show();
+        $(this).hide().next().removeClass('hide')
+    });
+
+});

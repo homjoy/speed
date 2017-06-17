@@ -1,0 +1,197 @@
+<?php 
+namespace WorkFlowApi\Modules\Task;
+
+/**
+ * 与我相关的任务列表
+ * @author jingjingzhang@meilishuo.com
+ * @since 2015-08-11
+ */
+
+use WorkFlowApi\Modules\Common\BaseModule;
+use WorkFlowApi\Package\Common\Response;
+use Libs\Util\ArrayUtilities;
+
+class MyRelatedTask extends BaseModule {
+
+	private $params;
+	private $errors;
+
+	public function run() {
+
+		$this->_init();
+
+		//参数校验
+		if($this->post()->hasError()){
+			$return = Response::gen_error(10001, '', $this->post()->getErrors());
+			return $this->app->response->setBody($return);
+		}
+
+		if (empty($this->params['user_id']) || empty($this->params['tasktype_id']) || empty($this->params['type'])) {
+			$return = Response::gen_error(10001);
+        	return $this->app->response->setBody($return);
+		}
+
+		$result = $reception_list = $approval_list = $finished_list = $my_role_list = $process_list = $progress_list = array();
+		$multiClientResult = self::getMultiClient();
+
+		if (in_array($this->params['type'], array(1, 3, 4))) {
+
+			$multiClient = self::getMultiClient();
+			if (in_array($this->params['type'], array(1, 4))) {		
+				
+				$multiClient->call('workflowatom', 'user/user_role_map_list', array( //获取当前用户具有的所有角色
+		        	'user_id' => $this->params['user_id'],
+		        ), 'my_role_list');
+		        
+				
+		        $multiClient->call('workflowatom', 'process/process_node_list', array( //获取当前任务类型的所有节点
+					'type_id' => $this->params['tasktype_id'],
+					'status'  => 1,
+				), 'process_list');
+
+			}
+
+			if (in_array($this->params['type'], array(3, 4))) {
+				$multiClient->call('workflowatom', 'process/progress_list', array( 
+					'current_user_id' => $this->params['user_id'], 
+					'action_type' => array(1, 2),
+				), 'progress_list');
+			}
+
+			$multiClient->callData();
+		}
+
+		// 待接收
+		if ($this->params['type'] == 1 || $this->params['type'] == 4) {
+      
+	        $my_role_list = $this->parseApiData($multiClient->my_role_list);
+	        $process_list = $this->parseApiData($multiClient->process_list);
+
+	        $roleIds = $processIds = array();
+	        if (!empty($my_role_list)) {
+	        	$roleIds = ArrayUtilities::my_array_column($my_role_list, 'role_id');
+	        }
+
+	        if (!empty($roleIds) && !empty($process_list)) {
+	        	foreach ($process_list as $k => $v) {
+	        		if (strstr($v['role_id'], 'wf_')) {
+	        			$role_id = str_replace('wf_', '', $v['role_id']);
+	        			if (in_array($role_id, $roleIds)) {
+	        				$processIds[] = $v['process_id'];
+	        			}
+	        		} 
+	        	}
+	        }
+
+			// 获取当前用户具有审批权限且并未被分配的任务
+			if (!empty($processIds)) {
+				$receptionParams['current_node_id'] = array_unique($processIds);
+				$receptionParams['current_user_id'] = 0;
+				$receptionParams['flag'] = 1;
+				$receptionParams['tasktype_id'] = $this->params['tasktype_id'];
+
+				$multiClientResult->call('workflowatom', 'process/task_list', $receptionParams, 'reception_list');
+			}
+		}
+
+		// 待处理
+		if ($this->params['type'] == 2 || $this->params['type'] == 4) {
+
+			$approvalParams['current_user_id'] = $this->params['user_id']; 
+			$approvalParams['tasktype_id'] = $this->params['tasktype_id'];
+
+			$multiClientResult->call('workflowatom', 'process/task_list', $approvalParams, 'approval_list');
+		}
+
+		// 已处理
+		$taskMap = array();
+		if ($this->params['type'] == 3 || $this->params['type'] == 4) {
+			
+			$progress_list = $this->parseApiData($multiClient->progress_list);
+
+			$taskIds = array();
+			if ($progress_list !== FALSE) {		
+				foreach ($progress_list as $k => $v) {
+					if ($v['process_id'] != 0) {
+						$taskIds[] = $v['task_id'];
+						$taskMap[$v['task_id']] = $v['action_type'];
+					}		
+				}
+			}
+
+			if (!empty($taskIds)) {
+				$taskIds = array_unique($taskIds);
+				$finishedParams['task_id'] = $taskIds;
+				$finishedParams['tasktype_id'] = $this->params['tasktype_id'];
+				$multiClientResult->call('workflowatom', 'process/task_list', $finishedParams, 'finished_list');
+			}
+		}
+
+		$multiClientResult->callData();
+
+		if ($multiClientResult->reception_list) {
+			$reception_list = $this->parseApiData($multiClientResult->reception_list);
+
+			if ($reception_list !== FALSE) {
+				foreach ($reception_list as $k => $v) {
+					$v['my_status'] = 1;
+					$reception_list[$k] = $v;
+				}
+			}
+		}
+		$result[1] = $reception_list;
+
+		if ($multiClientResult->approval_list) {
+			$approval_list = $this->parseApiData($multiClientResult->approval_list);
+
+			if ($approval_list !== FALSE) {
+
+				foreach ($approval_list as $k => $v) {
+					$v['my_status'] = 2;
+					$approval_list[$k] = $v;
+				}			
+			}
+		}
+		$result[2] = $approval_list;
+
+		if ($multiClientResult->finished_list) {
+			$finished_list = $this->parseApiData($multiClientResult->finished_list);
+
+			if ($finished_list !== FALSE) {
+
+				foreach ($finished_list as $k => $v) {
+					$v['my_status'] = 3;
+					$v['action_type'] = (isset($taskMap[$v['task_id']]) && $taskMap[$v['task_id']] == 1) ? 1 : 2;
+					
+					$finished_list[$k] = $v;
+				}	
+			}
+		}
+		$result[3] = $finished_list;
+
+		$this->app->response->setBody(Response::gen_success($result));
+	}
+
+	private function _init() {
+
+		$this->rules = array(
+			'user_id' => array(
+				'required'   => TRUE,
+				'type'       => 'integer',
+				'maxLength'  => 11,
+			),
+			'tasktype_id' => array(
+				'required'  => TRUE,
+				'type'      => 'integer',
+				'maxLength' => 5,
+			),
+			'type' => array( // 1、待接收 2、待处理 3、已处理 4、全部
+				'required' => TRUE,
+				'type'     => 'integer',
+			),
+		);
+
+		$this->params = $this->post()->safe();
+		$this->errors = $this->post()->getErrors();
+	}
+}

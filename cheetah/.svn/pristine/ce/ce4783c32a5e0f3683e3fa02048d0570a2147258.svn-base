@@ -1,0 +1,14 @@
+function agent() {
+	return this;
+}
+var controlFns = {
+	'index' : function(){
+		this.home()
+	}
+	,'home' : function(){
+
+		this.render('agent.html');
+
+	}
+};
+exports.__create = controller.__create(agent, controlFns);

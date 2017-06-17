@@ -1,0 +1,177 @@
+fml.define('fms/common/SearchTable', ['jquery', 'component/pagination', 'component/notify'], function (require, exports) {
+    var $ = require('jquery');
+    var notify = require('component/notify');
+
+
+    function SearchTable(options) {
+        this.options = $.extend(true, {}, SearchTable.DEFAULT, options);
+        if (!this.options.container) {
+            throw new Error('请指定container');
+        }
+
+
+        this.$container = $(this.options.container);
+        this.$searchForm = $(this.options.searchForm);
+        this.$table = $('<table class="table table-hover table-striped table-bordered"><thead></thead><tbody></tbody></table>');
+        this.$pageContainer = $('<ul class="pagination"></ul>');
+        this.$container.append(this.$table).after(this.$pageContainer);
+
+        this.init();
+    }
+
+    SearchTable.DEFAULT = {
+        container: null,
+        searchForm: null,
+        ajax: {
+            url: null,
+            type: 'post',
+            dataType: 'json'
+        },
+        headers: [],
+        headerFormatter: function (index, name) {
+            return name;
+        },
+        columns: [],
+        columnFormatter: function (index, value, row) {
+            return value;
+        },
+        data: null,
+        rowFormatter: function (columns, obj) {
+            return '<tr>' + columns + '</tr>';
+        }
+    };
+
+    SearchTable.prototype = {
+        init: function () {
+            //初始化的时候发起请求.
+            this._renderHeader();
+            this._renderTBody([]);
+
+            //事件处理.
+            this.bindEvent();
+
+            //然后发起请求.
+            this._request(1);
+        },
+        bindEvent: function () {
+            var that = this;
+            /**
+             * 表单搜索.
+             */
+            this.$searchForm.on('submit', function (e) {
+                //阻止表单提交.
+                e.preventDefault();
+
+                //搜索重建表格.
+                that.search();
+
+                return false;
+            });
+        },
+        _request: function (page, pageSize) {
+            page = page || 1;
+            pageSize = pageSize || 10;
+            var that = this;
+            var params = [{name: "page", value: page}, {name: "ps", value: pageSize}];
+            var url = that.options.ajax.url + (that.options.ajax.url.indexOf('?') >= 0 ? '&' : '?') + $.param(params);
+
+            /**
+             *
+             */
+            $.ajax({
+                url: url,
+                type: that.options.ajax.type,
+                data: that.$searchForm.serializeArray(),
+                dataType: that.options.ajax.dataType,
+                success: function (response) {
+                    //保存最后一次的请求.
+                    that.response = response;
+
+                    if (response.rcode != 200) {
+                        return notify.error(response.rmessage || '加载数据出错.');
+                    }
+
+                    //生成表格内容.
+                    that._renderTBody(response.data.data ? response.data.data : response.data );
+                    //生成分页
+                    that._renderPagination(response.data.page ? response.data.page : response.page);
+                },
+                error: function () {
+                    that._renderTBody([]);
+                }
+            });
+        },
+        _renderHeader: function () {
+            var that = this;
+            var th = ['<tr>'];
+            $.each(this.options.headers, function (index, head) {
+                th.push('<th>' + that.options.headerFormatter(index, head) + '</th>');
+            });
+            th.push('</tr>');
+            this.$table.find('thead').html(th.join(''));
+        },
+        _renderTBody: function (values) {
+            if(!values){
+                return ;
+            }
+            var that = this;
+            var trList = [];
+            $.each(values, function (i, rowValues) {
+                var columns = '';
+                $.each(that.options.columns, function (index, column) {
+                    var columnValue = rowValues[column] || '';
+                    columns += '<td>' + that.options.columnFormatter(index, columnValue, rowValues) + '</td>';
+                });
+
+                trList.push(that.options.rowFormatter(columns, rowValues));
+            });
+
+            this.$table.find('tbody').html(trList.join(''));
+        },
+        _renderPagination: function (pager) {
+            if(!pager){
+                return ;
+            }
+            var that = this;
+            var pageObj = this.$pageContainer.data('pagination');
+
+            //已经存在.
+            if (pageObj) {
+                return;
+            }
+            this.$pageContainer.pagination({
+                totalPage: parseInt(pager.maxPage) || 1,
+                currentPage: parseInt(pager.currentPage) || 1,
+                lastPagesCount: 1
+            }).on("switch", function (e, page) {
+                //翻页的时候发起请求.
+                that._request(page);
+            });
+        },
+
+        reload: function () {
+            var pageObj = this.$pageContainer.data('pagination');
+            if (pageObj) {
+                pageObj.destroy();
+            }
+        },
+
+
+        search: function () {
+            //销毁分页对象.
+            var pageObj = this.$pageContainer.data('pagination');
+            if (pageObj) {
+                pageObj.destroy();
+            }
+
+            this._request(1);
+        },
+        destroy: function () {
+            this.$container.html();
+            this.$pageContainer.remove();
+        }
+    };
+
+
+    return SearchTable;
+});

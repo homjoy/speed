@@ -1,0 +1,18 @@
+<header id="navbar" style="z-index:1;">
+    <div id="navbar-container">
+        <a href="/home">
+            <img class="navbar-logo" src="<%= this.PICTURE_URL  %>img/family/navbar/favicon.png"/>
+        </a>
+        <div class="navbar-function-content pull-right">
+            <div class="navbar-search">
+                <input class="search_input" placeholder="可按姓名、花名、拼音、手机号、邮箱前缀搜索"/>
+                <img class="search_pic" src="<%=this.PICTURE_URL %>img/family/navbar/icon_search.png"/>
+            </div>
+            <span>Hello !  <% if(this.userInfo.code==200){%><%= this.userInfo.data.user.name_cn%><%}%></span>
+            <input type="hidden" class="workcityfyc" value="<% if(this.userInfo.code==200){%><%= this.userInfo.data.user.city_id %><%}%>"/>
+            <a href="/user/logout/">
+                <img class="logoutimg" src="<%= this.PICTURE_URL %>img/family/navbar/icon_exit.png "/>
+            </a>
+        </div>
+    </div>
+</header>

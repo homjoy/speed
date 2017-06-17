@@ -1,0 +1,22 @@
+function pages_profile() {
+	return this;
+}
+var controlFns = {
+	'index' : function(){
+		this.pages_profile()
+	},
+	'pages_profile' : function(){
+		var php = {
+			
+		}
+        this.bindDefault(php);
+		this.bridgeMuch(php);
+		this.listenOver(function(data){
+			console.log(data)
+
+			data._CSSLinks = ['fontfamily','bootstrap','nifty.min','font-awesome.min','switchery.min','bootstrap-select.min','nifty-demo.min','pace.min'];
+			this.render('pages_profile.html' , data);
+		})
+	}
+};
+exports.__create = controller.__create(pages_profile, controlFns);

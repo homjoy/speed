@@ -1,0 +1,376 @@
+<?php
+namespace Admin\Modules\Common;
+
+use Admin\Package\Common\Response;
+use Libs\Util\ArrayUtilities;
+use Admin\Package\Helper\AuthCheckHelper;
+use Admin\Package\Helper\UrlCheckHelper;
+use Frame\Exception\AdminAuthException;
+use Frame\Exception\UrlCheckException;
+
+/**
+ *
+ * Class BaseModule
+ * @package Admin\Modules\Common
+ */
+abstract class BaseModule extends \Frame\Module {
+
+    /**
+     * 是否强制检测参数，强制模式下不符合规则会直接抛出异常并自动输出错误
+     * @var bool
+     */
+    protected $forceParamCheck = false;
+    protected $checkUserPermission = false;
+
+    /**
+     * 参数校验规则
+     * @var array
+     */
+    protected $rules = array();
+
+    protected $user = NULL;
+    protected $ip = NULL;
+    public static $VIEW_SWITCH_JSON;
+
+    public function __construct($app) {
+        $this->app = $app;
+        $this->checkSession();
+        $this->ip = $_SERVER['REMOTE_ADDR'];
+
+        $pathArgs = $this->app->request->path_args;
+        $url = '/' . implode('/', $pathArgs);
+        $action = $pathArgs[count($pathArgs)-1];
+        $urlList = UrlCheckHelper::getUrlList();
+
+
+        $myAuth = $this->getUserRole();
+
+        // 非超级管理员进行访问权限校验
+        if (!in_array('1', $myAuth)) {
+
+            if ($this->checkUserPermission) {
+                // 菜单权限校验
+                $this->checkTreePermission();
+            } else if (!in_array($url, array('/auth/oauthLogin', '/auth/logout'))) {
+                // 内部url权限检测
+                // $checkList = AuthCheckHelper::getCheckList();
+                // $checkList = self::getClient()->call('workflowatom', 'tree/tree_by_param', array('display_position' => 0));
+                $checkList = self::getClient()->call('workflowatom', 'tree/tree_by_param', array('display_position' => array(0,1)));
+                $checkList = $this->parseApiData($checkList);
+                $checkUrlList = array();
+
+                if (!empty($checkList)) {
+                    foreach ($checkList as $k => $v) {
+                        $checkUrlList[$k] = $v['tree_url'];
+                    }
+                }
+
+                if (in_array($url, $checkUrlList)) {
+                    // 标准url格式检验
+                    // $treeId = array_search($url, $checkUrlList);
+
+                    $treeId = array();
+                    foreach ($checkUrlList as $k => $v) {
+                        if ($url == $v) {
+                            $treeId[] = $k;
+                        }
+                    }
+
+                    $result = $this->checkUserRole($treeId, $myAuth);
+                    if ($result == FALSE) {
+                        if (isset($_SERVER["HTTP_X_REQUESTED_WITH"]) && strtolower($_SERVER["HTTP_X_REQUESTED_WITH"]) == "xmlhttprequest") { // ajax 请求的处理方式 
+                            $VIEW_SWITCH_JSON = TRUE;
+                            throw new AdminAuthException();
+                            return FALSE;
+                        } else { // 普通请求的处理方式
+                            header('Location: /bad/badrequest?error_code=90001');
+                            exit;
+                        };
+                    }
+                } else { 
+                    // 不标准url格式检验，如
+                    $url = strtolower(preg_replace('/((?<=[a-z])(?=[A-Z]))/', '_', $url));
+                    if (isset($checkList[$url])) {
+                        if (isset($_SERVER["HTTP_X_REQUESTED_WITH"]) && strtolower($_SERVER["HTTP_X_REQUESTED_WITH"]) == "xmlhttprequest") { // ajax 请求的处理方式 
+                            $VIEW_SWITCH_JSON = TRUE;
+                            throw new UrlCheckException();
+                            return FALSE;
+                        } else { // 普通请求的处理方式
+                            header('Location: /bad/badrequest?error_code=40001');
+                            exit;
+                        };
+                    } 
+                    // else {
+                    //     header('Location: /bad/badrequest?error_code=90001');
+                    //     exit;
+                    // }
+                }
+            }
+        }
+
+        //获取当前用户权限菜单
+        $this->getAuthTree(in_array('1', $myAuth), $url, $urlList, $action);
+    }
+    /*
+    *判断当前用户是否拥有菜单权限
+    */
+    protected function checkTreePermission() {
+        $pathArgs = $this->app->request->path_args;
+        $url = implode('/', $pathArgs);
+        if($url == 'bad/badrequest') {
+            return true;
+        }
+
+        $multiClient = self::getMultiClient();
+
+        $multiClient->call('workflowatom', 'tree/tree_by_param', array('tree_url' => '/' . $url), 'treeInfo');
+        $multiClient->call('workflowatom', 'treeuserrole/user_role_by_uid', array('user_id' => $this->user['id'], 'status' => 1), 'userRoleInfo');
+        $multiClient->callData();
+
+        $treeInfo = $multiClient->treeInfo;
+        $userRoleInfo = $multiClient->userRoleInfo;
+        //TODO 有BUG
+        if($treeInfo['httpcode'] == 200 && $treeInfo['content']['code'] ==200) {
+            $treeInfo = $treeInfo['content']['data'];
+        } else if ($treeInfo['content']['error_code'] == 30001) { // 错误菜单
+            header('Location: /bad/badrequest?error_code=40001');
+            exit;
+        }
+        if($userRoleInfo['httpcode'] == 200 && $userRoleInfo['content']['code'] ==200) {
+            $userRoleInfo = $userRoleInfo['content']['data'];
+        } else {
+            header('Location: /bad/badrequest?error_code=90001');
+            exit;
+        }
+
+        $treeId = ArrayUtilities::my_array_column($treeInfo, 'tree_id');
+        $roleId = ArrayUtilities::my_array_column($userRoleInfo, 'role_id');
+
+        $multiClient->call('workflowatom', 'tree/tree_permissions_by_param', array('tree_id' =>implode(',', $treeId), 'role_id' => implode(',', $roleId)), 'treePermissInfo');
+        $multiClient->callData();
+        $treePermissInfo = $multiClient->treePermissInfo;
+
+        //没有权限
+        if($treePermissInfo['httpcode'] == 200 && $treePermissInfo['content']['error_code'] ==30001) {
+            header('Location: /bad/badrequest?error_code=90001');
+            exit;
+        }
+    }
+
+    protected function getAuthTree($is_admin, $url, $urlList,$action) {
+
+        $treeInfo = $authTreeInfo = $allTreeInfo = array();
+
+        $multiClient = self::getMultiClient();
+        $multiClient->call('workflowatom', 'tree/tree', array('status' => 1), 'allTreeInfo');
+        $multiClient->callData();
+        $allTreeInfo = $multiClient->allTreeInfo;
+
+        if($allTreeInfo['httpcode'] == 200 && isset($allTreeInfo['content']['data']) && !empty($allTreeInfo['content']['data'])) {
+            $allTreeInfo = $allTreeInfo['content']['data'];
+        } else {
+            $this->app->response->setBody(array(
+                'treeInfo'  => $treeInfo,
+            ));
+            return false;
+        }
+
+        //var_dump($allTreeInfo);exit;
+
+        // 过滤无效数据
+        foreach ($allTreeInfo as $k => $v) {
+            if ($v['status'] == 0 || $v['display_position'] == 0) {
+                unset($allTreeInfo[$k]);
+            }
+        }
+        if(!empty($allTreeInfo)){
+            $treeParentInfo = \Admin\Modules\Common\BaseUtil::getParentUrlTree($allTreeInfo);
+
+        }else{
+            $treeParentInfo = array();
+        }
+        //var_dump($treeParentInfo);exit;
+        // 校验是否是超级管理员权限，如果是超级管理员，可以看到所有菜单；若不是，则查看有权限的菜单
+        if ($is_admin == TRUE) {
+            if (!empty($allTreeInfo)) {
+                $treeInfo = \Admin\Modules\Common\BaseUtil::getGenTree($allTreeInfo, 0);
+            }
+        } else {
+            $multiClient->call('workflowatom', 'tree/tree_by_uid', array('user_id' => $this->user['id'], 'status' => 1), 'authTreeInfo');
+            $multiClient->callData();
+
+            $authTreeInfo = $multiClient->authTreeInfo;
+
+            if($authTreeInfo['httpcode'] == 200 && isset($authTreeInfo['content']['data']) && !empty($authTreeInfo['content']['data'])) {
+                $authTreeInfo = $authTreeInfo['content']['data'];
+            } else {
+                $this->app->response->setBody(array(
+                    'treeInfo'  => $treeInfo
+                ));
+                return false;
+            }
+
+            if(!empty($authTreeInfo)) {
+
+                foreach ($authTreeInfo as $k => $v) {
+                    if ($v['display_position'] == 0) {
+                        unset($authTreeInfo[$k]);
+                    }
+                }
+
+                $authTreeInfo = \Admin\Modules\Common\BaseUtil::getParentTree($allTreeInfo, $authTreeInfo);
+                $treeInfo = \Admin\Modules\Common\BaseUtil::getGenTree($authTreeInfo, 0);
+            }
+        }
+
+        //解析当前链接的URL
+        $currentUrl = isset($urlList[$url]) ? $urlList[$url] : '';
+        $url = !empty($currentUrl) ?  $currentUrl : $url;
+        $breadCrumbs = \Admin\Modules\Common\BaseUtil::getBreadCrumbs($treeParentInfo,$url);
+
+
+        $this->app->response->setBody(array(
+            'treeInfo'  => $treeInfo,
+            'pathUrl'   => $url,
+            'urlList'   => $urlList,
+            '__action'  => $action,
+            'breadCrumbs' => $breadCrumbs,
+            'currentUrl' => $currentUrl,
+        ));
+    }
+
+    /**
+     * check seesion
+     */
+    protected function checkSession() {
+        $session = \Admin\Modules\Common\BaseSession::singleton()->load($_COOKIE, $_GET);
+
+        if($session->user) {
+            $this->user = $session->user;
+        }
+
+        if(empty($this->user['id'])) {
+
+            header('Location: ' . OPEN_API . 'oauth/authorize?client_id=' . OPEN_APPKEY . '&response_type=code&redirect_uri=http://' . SERVER_NAME . '/auth/oauthLogin');
+
+            exit;
+        }
+
+        $this->app->response->setBody(array(
+            'userInfo'  => $this->user
+        ));
+    }
+
+    /**
+     * @return \Frame\Speed\Http\ParameterFilter
+     */
+    protected function query() {
+        static $instance = null;
+        if (is_null($instance)) {
+            $instance = new \Frame\Speed\Http\ParameterFilter($this->request->GET,$this->rules,$this->forceParamCheck);
+        }
+        return $instance;
+    }
+
+    /**
+     * @return \Frame\Speed\Http\ParameterFilter
+     */
+    protected function post() {
+        static $instance = null;
+        if (is_null($instance)) {
+            $instance = new \Frame\Speed\Http\ParameterFilter($this->request->POST,$this->rules,$this->forceParamCheck);
+        }
+        return $instance;
+    }
+
+    /**
+     * @return \Frame\Speed\Http\ParameterFilter
+     */
+    protected function request() {
+        static $instance = null;
+        if (is_null($instance)) {
+            if ($this->request->method == 'post') {
+                $instance = $this->post();
+            } else if ($this->request->method == 'get') {
+                $instance = $this->query();
+            } else {
+                return false;
+            }
+        }
+        return $instance;
+    }
+
+    protected function getClient() {
+        static $client = null;
+        if (is_null($client)) {
+            $client = new \Libs\Serviceclient\Client;
+            \Libs\Serviceclient\RemoteHeaderCreator::setHeaders('Meilishuo', 'uid:' . $this->user['id'] . ';ip:'.$this->ip.';v:0;master:0');
+        }
+        return $client;
+
+    }
+
+    protected function getMultiClient() {
+        static $multiClient = null;
+        if (is_null($multiClient)) {
+            $multiClient = new \Libs\Serviceclient\MultiClient;
+            \Libs\Serviceclient\RemoteHeaderCreator::setHeaders('Meilishuo', 'uid:' . $this->user['id'] . ';ip:'.$this->ip.';v:0;master:0');
+        }
+
+        return $multiClient;
+    }
+
+    protected function getCurlObj() {
+        static $curl_obj = NULL;
+        if(is_null($curl_obj)) {
+            $curl_obj = new \Libs\Sphinx\curl;
+        }
+        return $curl_obj;
+    }
+
+    protected function parseApiData( $data ) {
+        $return = $data['content'];
+        if( (isset($return['error_code']) && !empty($return['error_code'])) || (isset($return['code']) && !empty($return['code']) && $return['code'] != 200)) {
+
+            $return = Response::gen_error($return['error_code'] ? $return['error_code'] : $return['code'], $return['error_msg']);
+            $this->app->response->setBody($return);
+            return FALSE;
+        } else if (empty($return)) {
+            $return = Response::gen_error(10000);
+            $this->app->response->setBody($return);
+            return FALSE;
+        }
+
+        return $return['data'];
+    }
+
+    protected function checkUserRole($treeId, $role) {
+
+        $treeRole = self::getClient()->call('workflowatom', 'tree/tree_permissions_by_param', array('tree_id' => implode(',', $treeId), 'status' => 1));
+        $treeRole = $this->parseApiData($treeRole);
+
+        $roleIds = array();
+        if (!empty($treeRole)) {
+            $roleIds = ArrayUtilities::my_array_column($treeRole, 'role_id');
+        }
+
+        $result = array_intersect($role, $roleIds);
+        if (empty($result)) {
+            return FALSE;
+        } else {
+            return TRUE;
+        }
+    }
+
+    protected function getUserRole() {
+        $roleList = self::getClient()->call('workflowatom', 'treeuserrole/user_role_by_uid', array('user_id' => $this->user['id'], 'status' => 1));
+        $roleList = self::parseApiData($roleList);
+
+        $roleIds = array();
+        if (!empty($roleList)) {
+            $roleIds = ArrayUtilities::my_array_column($roleList, 'role_id');
+        }
+
+        return $roleIds;
+    }
+}

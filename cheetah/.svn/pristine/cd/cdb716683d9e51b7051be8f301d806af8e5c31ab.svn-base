@@ -1,0 +1,66 @@
+fml.define('fms/home/index', ['jquery','plugin/bootbox','plugin/cookie','plugin/store','component/notify'], function (require, exports) {
+    var $ = require('jquery');
+    var bootbox = require('plugin/bootbox');
+    var notify = require('component/notify');
+    var Cookies = require('plugin/cookie');
+    var store = require('plugin/store');
+    /**
+     * 用户切换
+     */
+    $('.user-change').on('click', function () {
+        bootbox.dialog({
+            title: "用户切换",
+            message: '<form class="form-horizontal" method="post" id="switch-user-form"><div class="form-group"><label class="col-md-4 control-label" for="name">用户邮箱前缀</label><div class="col-md-4"><input id="usercode" name="usercode" type="text" class="form-control input-md usercode"></div></div></form>',
+            buttons: {
+                success: {
+                    label: "确定",
+                    className: "btn-success",
+                    callback: changeUser
+                },
+                cancel: {
+                    label: "取消",
+                    className: "btn-default"
+                }
+            }
+        });
+        return false;
+    });
+    $("body").on("submit",'#switch-user-form',function(e){
+        e.preventDefault();
+        changeUser();
+    });
+    function changeUser () {
+        var usercode = $('#usercode').val();
+        if(!usercode){
+            notify.error("要切换的用户名不能为空!");
+            return ;
+        }
+        $.post('/aj/user/switch', {'usercode': usercode}, function (data) {
+            if (data.rcode == 200) {
+                window.location.reload();
+            } else {
+                notify.error(data.rmessage)
+            }
+        }, 'json');
+        return false;
+    }
+
+    /*
+     遮罩层
+     */
+    var everWrap = Cookies.get('wrap') || store.get('pass-home-index-wizard');
+    if (!everWrap) {
+        $('.director-wrap').removeClass('wrap-hide');
+        var isThin = $('.effect').hasClass('mainnav-sm');
+        if (isThin) {
+            $('.effect').removeClass('mainnav-sm').addClass('mainnav-lg');
+        }
+        $('.guanbi').on('click', function () {
+            store.set('pass-home-index-wizard',true);
+            $('.director-wrap').remove();
+        });
+    }else{
+        Cookies.remove('wrap');
+        store.set('pass-home-index-wizard',true);
+    }
+});

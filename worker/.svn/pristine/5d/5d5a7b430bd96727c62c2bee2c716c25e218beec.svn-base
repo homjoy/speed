@@ -1,0 +1,1 @@
+Hi! {{receive_name}}：{{order_explains}}

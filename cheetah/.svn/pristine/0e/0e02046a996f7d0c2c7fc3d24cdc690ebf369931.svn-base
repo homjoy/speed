@@ -1,0 +1,155 @@
+fml.define('fms/query/pay', ['jquery', 'plugin/bootstrap/datepicker', 'plugin/bootstrap/dataTables', 'component/notify', 'fms/query/selectTree'], function (require, exports) {
+    var $ = require('jquery');
+    var notify = require('component/notify');
+    var treeSelect = require('fms/query/selectTree');
+
+
+    //查询路径
+    $.post('/aj/query/depart', function (data) {
+        treeSelect('input[name=departmentId]', data);
+    }, 'json');
+
+    $("#sTime,#eTime").datepicker({
+        'format': 'yyyy-mm-dd',
+        'autoclose': true,
+        'todayHighlight': true
+    });
+    /**
+     * 时间比较
+     * @returns {*|jQuery}
+     */
+    function timeCompare() {
+        var stime = $('#sTime').val(),
+            etime = $('#eTime').val(),
+            info = $('form').serialize();
+        return info;
+    }
+
+
+    $('.btn-export').on('click', function () {
+        var info = timeCompare();
+        if(!info){
+            return ;
+        }
+        $(this).attr('href', '/export/pay?' + info);
+    });
+
+    // 查询付款
+    $('.btn-query').on('click', function () {
+        var _this = this;
+        var info = timeCompare();
+        if(!info){
+            return ;
+        }
+        $(this).button('loading').delay('2000').queue(function () {
+            $(this).button('reset');
+        });
+        $.post('/aj/query/search_pay', info, function (data) {
+            $(_this).button('loading');
+            if (data.rcode == 200) {
+                renderResultTable(data.data || []);
+                $(_this).button('reset');
+            } else {
+                notify.error(data.rmessage || '查询出错.');
+            }
+        }, 'json');
+    });
+
+
+    /**
+     * 渲染查询结果.
+     * @param data
+     */
+
+    function renderResultTable(data) {
+        var options = {
+            "scrollX": true,
+            "data": data || [],
+            "columns": [{
+                data: 'cpbPayRequestCode'
+            },
+                {
+                    data: 'cpbContractCode'
+                },
+                {
+                    data: 'cpbContractName'
+                },
+                {
+                    data: 'cpbContractSignTime'
+                },
+                {
+                    data: 'cpbBugetItemId'
+                },
+                {
+                    data: 'cpbContractCompany'
+                },
+                {
+                    data: 'cpbCustomerCompany'
+                },
+                {
+                    data: 'cpbApplyTime'
+                },
+                {
+                    data: 'cpbPersonName'
+                },
+                {
+                    data: 'cpbDepartmentName'
+                },
+                {
+                    data: 'cpbMoney'
+                },
+                {
+                    data: 'cpbCollectType'
+                },
+                {
+                    data: 'cpbBank'
+                },
+                {
+                    data: 'cpbBranchBank'
+                },
+                {
+                    data: 'cpbAccountNumber'
+                },
+                {
+                    data:'cpbServerTerm'
+                },
+                {
+                    data:'cpbPayTime'
+                },
+                {
+                    data:'cpbGroupSimplename'
+                },
+                {
+                    data:'cpbApprovalState'
+                }],
+            "bDestroy": true,
+            "sDom": "<'row'<'col-md-6'l><'col-md-6'f>r>t<'row-fluid'<'col-md-6'i><'col-md-6'p>>", //定义DataTable布局的一个强大属性
+            "oLanguage": { //语言设置
+                "sLengthMenu": "每页显示  _MENU_ 条记录",
+                "sInfo": "从 _START_ 到 _END_ /共 _TOTAL_ 条数据",
+                "oPaginate": {
+                    "sFirst": "首页",
+                    "sPrevious": "前一页",
+                    "sNext": "后一页",
+                    "sLast": "尾页"
+                },
+                "sZeroRecords": "抱歉， 没有找到",
+                "sInfoEmpty": "没有数据",
+                "sInfoFiltered": "(从_MAX_条记录中搜索)"
+            },
+            "aaSorting": [
+                [2, 'desc']
+            ],
+            "bAutoWidth": false,
+            "bProcessing": true,
+            "paging": false,
+            "fnCreatedRow": function (nRow, aData, iDataIndex) {
+                var cpbId = aData.cpbId || 0;
+                $(nRow).data('cpbId', cpbId);
+                $(nRow).attr("dbl-open",'/pay/view/?cpbId=' + cpbId);
+            }
+        };
+
+        $('#table-pay-list').removeClass('hide').dataTable(options);
+    }
+});

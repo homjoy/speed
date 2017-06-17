@@ -1,0 +1,32 @@
+fml.define('fms/common/contract', ['jquery', 'fms/common/utils', 'fms/common/notify'], function (require, exports) {
+
+    var $ = require('jquery');
+    var utils = require('fms/common/utils');
+    var notify = require('fms/common/notify');
+
+
+    /**
+     * 完成任务
+     * @param taskId
+     * @param variables
+     * @param success
+     */
+    exports.taskComplete = function (taskId, variables, success) {
+        var params = utils.buildTaskParams(taskId, variables);
+        //批量还是单个.
+        var url = $.isArray(taskId) ? '/aj/myApproval/batch' : '/aj/myApproval/operate';
+        $.post(url, params, function (data) {
+            if (data.rcode != 200) {
+                return notify.error(data.rmessage);
+            }else{
+                notify.success(data.rmessage)
+                window.location.reload();
+            }
+            //if (success && typeof success === 'function') {
+            //    success(data);
+            //}
+        }, 'json');
+    };
+
+
+});

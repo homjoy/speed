@@ -1,0 +1,101 @@
+<?php
+namespace Admin\Modules\Prompt;
+
+use Admin\Modules\Common\BaseModule;
+use Admin\Package\Common\Response;
+use Admin\Package\Core\Prompt;
+/**
+ * Created by hongzhou@meilishuo.com
+ * User: MLS
+ * AjaxUpdateAdd
+ * Date: 18/01/25
+ * Time: 下午12:18
+ */
+class AjaxUpdateAdd extends BaseModule
+{
+    protected $errors = null;
+    private $params = null;
+    public static $VIEW_SWITCH_JSON = TRUE;
+    public function run()
+    {
+       $this->_init();
+       if($this->post()->hasError()){
+           return  $this->app->response->setBody(Response::gen_error(10001,'',$this->errors ));
+       }
+        //page  count  notify_type   data
+
+       $return = array();
+       if(empty($this->params['notice_id'])){//添加
+
+           $return =  Prompt::getInstance()->createNoticeInfo($this->params);
+       }else{
+
+           $return =  Prompt::getInstance()->updateNoticeInfo($this->params);
+       }
+       if($return===FALSE){
+            $return =  Response::gen_error(50003,'操作失败');
+       }else{
+            $return = Response::gen_success('操作成功');
+       }
+       $this->app->response->setBody($return);
+
+    }
+
+    private function _init()
+    {
+
+        $this->rules = array(
+            'notice_id'=>array(
+                'type'=>'integer',
+            ),
+            'type'=>array(
+                'required'=>true,
+                'type'=>'integer',
+                'default'=>0,
+            ),
+            'user_id'=>array(
+                'type'=>'integer',
+                'default'=>0,
+            ),
+            'style'=>array(
+                'type'=>'string',
+                'default'=>'',
+            ),
+            'title'=>array(
+                'required'=>true,
+                'type'=>'string',
+                'default'=>'',
+            ),
+            'content'=>array(
+                'required'=>true,
+                'type'=>'string',
+                'default'=>'',
+            ),
+            'link'=>array(
+                'type'=>'string',
+                'default'=>'',
+            ),
+            'is_always'=>array(
+                'type'=>'integer',
+                'default'=>0,
+            ),
+            'start_time'=>array(
+                'required'=>true,
+                'type'=>'string',
+                'default'=>0,
+            ),
+            'end_time'=>array(
+                'required'=>true,
+                'type'=>'string',
+                'default'=>0,
+            ),
+            'status'=>array(
+                'type'=>'integer',
+                'default'=>1,
+            ),
+        );
+        $this->params = $this->post()->safe();
+        $this->errors = $this->post()->getErrors();
+    }
+
+}

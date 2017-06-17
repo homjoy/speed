@@ -1,0 +1,152 @@
+<?php
+
+?><?php
+namespace Admin\Package\Workflow;
+
+/**
+ * 工作流节点
+ * @package Admin\Package\Workflow
+ * @author yixiangwang@meilishuo.com
+ * @since 2015-07-14
+ */
+
+use Admin\Package\Common\DbAdapter;
+
+class Process {
+
+    private static $instance = null;
+    private static $conn;
+
+    private static $tableName = 'workflow_process';
+    private static $col = array('process_id', 'tasktype_id', 'role_id', 'process_name', 'pre_process_ids', 'next_process_ids', 'status');
+    private static $pk = 'process_id';
+    private static $fields = array(
+		'process_id'		=> 0,
+		'tasktype_id'		=> 0,
+		'role_id'			=> 0,
+		'process_name'		=> '',
+		'pre_process_ids'	=> 0,
+		'next_process_ids'	=> 0,
+		'status'			=> 1,//状态:0无效1有效
+    );
+    private static $update_fields = array(
+		'tasktype_id'		=> 'int',
+		'role_id'			=> 'int',
+		'process_name'		=> 'string',
+		'pre_process_ids'	=> 'string',
+		'next_process_ids'	=> 'string',
+		'status'			=> 'int',//状态:0无效1有效
+    );
+
+    private function __construct() {}
+
+    public static function getInstance()
+    {
+        if(is_null(self::$instance)){
+            self::$instance = new self();
+            self::$conn =  new \Pixie\Connection(new DbAdapter('workflow'));
+        }
+        return self::$instance;
+    }
+
+    public static function getFields()
+    {
+        return self::$fields;
+    }
+
+    /**
+     * 获取单条信息
+     * @param $id
+     * @param array $fields
+     * @return array
+     */
+    public function getDataById($id, $fields = array())
+    {
+        if (empty($fields)) {
+            $fields = static::$col;
+        }
+
+        //查询
+        $qb = self::$conn->getQueryBuilder();
+        $ret = $qb->table(static::$tableName)
+            ->select(static::$col)
+            ->find($id, static::$pk);
+
+        return $ret;
+    }
+
+    /**
+     * 查询列表
+     */
+    public function getDataList(array $params = array())
+    {
+
+        //查询
+        $qb = self::$conn->getQueryBuilder();
+        $ret = $qb->table(static::$tableName)
+            ->select(static::$col);
+            //->offset(($page-1)*$pageSize)
+            //->limit($pageSize);
+
+        //查询条件
+        if (isset($params['tasktype_id'])) {
+            if (is_array($params['tasktype_id'])) {
+                $ret->whereIn('tasktype_id', $params['tasktype_id']);
+            }else{
+                $ret->where('tasktype_id', '=', $params['tasktype_id']);
+            }
+        }
+        if (isset($params['status'])) {
+            if (is_array($params['status'])) {
+                $ret->whereIn('status', $params['status']);
+            }else{
+                $ret->where('status', '=', $params['status']);
+            }
+        }
+        if (isset($params['process_name'])) {
+            $ret->where('process_name', 'LIKE', '%'.$params['process_name'].'%');
+        }
+
+        $ret->hash(self::$pk);
+		$ret->orderBy(self::$pk,'ASC');
+        return $ret->get();
+    }
+
+    /**
+     * 添加
+     */
+    public static function insert($params) {
+
+        if (!isset($params['process_name']) || !isset($params['tasktype_id'])){
+            return FALSE;
+        }
+
+        $params = array_intersect_key($params, self::$fields);
+        $params = array_merge(self::$fields, $params);
+        unset($params[self::$pk]);
+
+        $qb = self::$conn->getQueryBuilder();
+        $ret = $qb->table(static::$tableName);
+        return $ret->insert($params);
+    }
+
+    /**
+     * 更新
+     */
+    public static function update($params) {
+
+        if (!isset($params[self::$pk])){
+            return FALSE;
+        }
+
+        $params = array_intersect_key($params, self::$fields);
+        $pkid = $params[self::$pk];
+        unset($params[self::$pk]);
+
+        $qb = self::$conn->getQueryBuilder();
+        $ret = $qb->table(static::$tableName);
+        $ret = $ret->where(self::$pk, $pkid);
+        return $ret->update($params);
+    }
+
+} 

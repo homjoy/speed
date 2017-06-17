@@ -1,0 +1,15 @@
+<%#pay/detail.tpl.html %>
+<script type="text/html" id="payDetail">
+    <div class="panel-body">
+        <div class="info-head">
+            {{include 'pay-detail-tpl'}}
+        </div>
+        <div class="info-body">
+            <%#partial/approval_budget_analysis.html%>
+            <hr class="line-horizontal"/>
+            <a href="javascript:void(0);" class="approval-history history-icon active" data-cpb-id="{{listAppHis.cpbId}}" data-projectName="fms">审批记录</a>
+            {{include 'approval-history-timeline'}}
+        </div>
+    </div>
+</script>
+<%#partial/approval_history_timeline.html%>

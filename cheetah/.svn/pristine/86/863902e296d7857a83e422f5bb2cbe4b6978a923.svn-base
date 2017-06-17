@@ -1,0 +1,124 @@
+<%#head.html%>
+	
+	<div id='calendar'></div>
+	<input type="hidden" id="book_time" >
+
+<!-- Modal -->
+<div class="modal fade" id="bookModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+          <h4 class="modal-title"></h4>
+        </div>
+
+        <div class="alert" style="display:none;">
+          <h4>Notice!</h4>
+          <p></p>
+        </div>
+		<div class="modal-body">
+          <form id="myForm" class="form-horizontal" role="form" action="" method="post">
+
+            <div class="form-group">
+            <label for="meeting_topic" class="col-lg-2 control-label">会议主题</label>
+            <div class="col-lg-10">
+              <input type="text" class="form-control" id="meeting_topic" name="meeting_topic" placeholder="会议主题">
+            </div>
+            </div>
+
+            <div class="form-group">
+            <label for="inputDepartment" class="col-lg-2 control-label">参加人员</label>
+            <div class="col-lg-10" id="inputUserBox">
+              <!-- <input type="text" class="form-control" id="invite_users" name="invite_users" placeholder="参加人员"> -->
+            </div>
+            </div>
+
+            <div class="form-group">
+              <label for="inputStart" class="col-lg-2 control-label">开始时间</label>
+              <div class="col-lg-5">
+                <input type="text" class="form-control form_datetime" name="book_start" id="start">
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="inputEnd" class="col-lg-2 control-label">结束时间</label>
+              <div class="col-lg-5">
+                <input type="text" class="form-control form_datetime" name="book_end" id="end">
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="inputNotice" class="col-lg-2 control-label" id="inputNotice">开启设备</label>
+              <div class="col-lg-6" style="margin-top:5px">
+<% this.get_room_inform.data.forEach(function(bannar, index){  %>
+<span class="content_padding fontColor" id="notice_<%= bannar.service_id%>">
+  <input type="checkbox" datatype="array" name="service_id" value="<%= bannar.service_id%>" id="notice_input_<%= bannar.service_id%>"> 
+  <label for="tele_conferencin"><%= bannar.name%></label>
+</span>
+<% }); %>                  
+              </div>
+              <div class="col-lg-4">
+                <div class="fontC">*如需开启设备，请勾选</div>
+              </div>
+            </div>
+            
+			     <!-- 分会场地 -->
+           <div id="part_div" style="display: none;">
+            <div class="form-group">
+              <label for="input_part" class="col-lg-2 control-label" id="input_part">分会场</label>
+              <div class="col-lg-10" style="min-height:27px; line-height: 30px;">
+<% this.part_div.data.forEach(function(bannar, index){  %>   
+  <span class='content_padding'>
+    <input type='checkbox' class='<%= bannar.room_id%>' datatype="array" name='zones_room_id' value='<%= bannar.room_id%>' id='branch_<%= bannar.room_id%>'>
+    <label for='branch_<%= bannar.room_id%>'><%= bannar.room_name%></label>
+  </span>
+<% }); %>  
+               </div>
+             </div>
+           </div>        
+
+
+            <div class="form-group hide">
+              <label for="inputDepartment" class="col-lg-2 control-label">需求备注</label>
+              <div class="col-lg-10">
+                <input type="text" class="form-control" id="memo" name="memo" placeholder="备注">
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="repeat_type" class="col-lg-2 control-label">重复</label>
+              <div class="col-lg-5">
+                  <select class="form-control" id="repeat_type" name="repeat_type">
+                      <option value="0">永不</option>
+                      <option value="1">每天(周一~周五)</option>
+                      <option value="7">每周</option>
+                      <option value="30">每月</option>
+                  </select>
+              </div>
+            </div>
+
+            <input type="hidden" id="room_id" name="room_id" value="<%=this.room_id %>">
+            <input type="hidden" id="book_id" name="book_id" value="0">
+            <!-- <input type="hidden" id="submit_verify" name="submit_verify" value="0"> -->
+          </form>
+          <p class="modal-message"></p>
+        </div>
+        
+		<div class="modal-footer">
+          <button type="button" class="btn btn-danger pull-left Gate_book_delete"> 删除预定 </button>
+          <button type="button" class="btn btn-default" data-dismiss="modal"> 关 闭 </button>
+          <button type="button" class="btn btn-primary" id="btn_submit"> 提 交 </button> 
+        </div>
+      </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+  
+	<script src="<%= this.JCSTATIC_BASE  %>/script-ss/page/jquery-2.1.1.min.js?<%= this.SVERSION%>"></script>
+  
+	<script src="<%= this.JCSTATIC_BASE  %>/script-ss/meeting/jquery-ui.custom.min.js?<%= this.SVERSION%>"></script>
+  <script src="<%= this.JCSTATIC_BASE  %>/script-ss/page/bootstrap.min.js?<%= this.SVERSION%>"></script>
+  <script src="<%= this.JCSTATIC_BASE  %>/script-ss/page/tokeninput.js?<%= this.SVERSION%>"></script>
+  <script src="<%= this.JCSTATIC_BASE  %>/script-ss/meeting/fullcalendar.js?<%= this.SVERSION%>"></script>
+  <script src="<%= this.JCSTATIC_BASE  %>/script-ss/page/bootstrap-datetimepicker.min.js?<%= this.SVERSION%>"></script>
+  <script src="<%= this.JCSTATIC_BASE  %>/script-ss/meeting/meet_book_list.js?<%= this.SVERSION%>"></script>
+
+<%#foot.html%>

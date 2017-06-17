@@ -1,0 +1,106 @@
+@extends('layouts.master')
+
+@section('content')
+    <link type="text/css" rel="stylesheet" href="/static/css/pagination.css">
+    <script src="/static/js/pagination.js"></script>
+    <link rel="stylesheet" href="/static/css/tokeninput.css">
+    <script src="/static/js/tokeninputspeed.js"></script>
+    <div class="panel-heading" style="overflow: hidden; line-height: 32px">
+        <ol class="breadcrumb">
+            <li class="active">日志管理</li>
+        </ol>
+
+        <div class="container">
+            <div class="from-container">
+                <form id="searchForm" class="form-inline  form-horizontal" role="form" action="/log/log_home" method="get">
+                    <div class="row">
+                        <div class="col-lg-4 col-md-4 col-sm-4">
+                            <input type="text" class="form-control" placeholder="操作人" id="search" name="user_id" value=""/>
+                        </div>
+                        <div class="col-lg-4 col-md-6 col-sm-8">
+
+                            <div class="col-lg-3  col-md-3  col-sm-2">
+                                <input type="submit" class="btn btn-primary" id="retBtn" value="搜索"/>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <div class="table-container">
+            <table class="table table-striped table-hover"  style="font-size:14px;">
+                <thead>
+                <tr>
+                    <th class="col-xs-1">姓名</th>
+                    <th class="col-xs-1">操作ID</th>
+                    <th class="col-xs-2">操作类型</th>
+                    <th class="col-xs-4">操作后数据</th>
+                    <th class="col-xs-2">更新时间</th>
+                    <th class="col-xs-2">类型</th>
+                </tr>
+                </thead>
+                <tbody id="show">
+                @if (!empty($data))
+
+                    @foreach ($data as $t)
+                        <tr>
+                            <td class="col-xs-1">{{ $t['name'] }}</td>
+                            <td class="col-xs-1">{{ $t['handle_id'] }}</td>
+                            <td class="col-xs-3">{{ $t['operation_type'] }}</td>
+                            <td class="col-xs-3"><pre>{{ $t['after_data'] }}</pre></td>
+                            <td class="col-xs-2"> {{ $t['update_time'] }} </td>
+                            <td class="col-xs-2"> {{ $t['handle_type'] }} </td>
+                        </tr>
+                    @endforeach
+                @endif
+                </tbody>
+            </table>
+        </div>
+        <div class="pagination-left">
+        </div>
+        <!--</div>-->
+
+
+        <script type="text/javascript">
+            //分页
+            var count = '{!! json_encode($count) !!}';
+            try {
+                count = $.parseJSON(count);
+            } catch (e) {
+                count = [];
+            }
+            var page = '{!! json_encode($page) !!}';
+            try {
+                page = $.parseJSON(page);
+            } catch (e) {
+                page = [];
+            }
+            $(".pagination-left").pagination({
+                //总页数
+                totalPage: count,
+                //初始选中页
+                currentPage: page,
+                //最前面的展现页数
+                firstPagesCount: 0, //最前面的展现页数，默认值为2
+                preposePagesCount: 2,  //当前页的紧邻前置页数，默认值为2
+                postposePagesCount: 0, //当前页的紧邻后置页数，默认值为1
+                lastPagesCount: 2,//最后面的展现页数，默认值为0
+                href: false,    //不生成链接
+                first: '', //取消首页
+                prev: '<',
+                next: '>',
+                last: '', //取消尾页
+                go: false //取消页面跳转
+            }).on("switch", function (e, page) {
+                location.href = "/log/log_home?page=" + page + '&email=' + email;
+            });
+            //用户
+            $('#search').tokenInput("/structure/depart/ajax_search_name",{
+                queryParam:'search',tokenValue:'user_id',tokenLimit: 1,onAdd:function(ret) {
+                    $('#search').val(ret['user_id']);
+
+                }
+            });
+        </script>
+
+@endsection

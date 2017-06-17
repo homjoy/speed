@@ -1,0 +1,160 @@
+<?php
+namespace Admin\Modules\Mail;
+
+use Admin\Modules\Common\BaseModule;
+use Admin\Package\Common\Response;
+use Admin\Package\Mail\MailGroupUser;
+use Admin\Package\Mail\MailGroup;
+use Admin\Package\Account\UserInfo;
+use Admin\Package\Account\UserOutsourcingInfo;
+/**
+ * 邮件组添加
+ *
+ * @author guojiezhu@meilishuo.com
+ * @since  2015-11-04
+ */
+class AjaxMailGroupAdd extends BaseModule
+{
+
+    protected $errors = null;
+    private $params = null;
+    public static $VIEW_SWITCH_JSON = TRUE;
+    public function run()
+    {
+        $this->_init();
+        if(!empty($this->params['mail'])) {
+            $mail_list = explode(',', $this->params['mail']);
+            $mail_list = array_unique($mail_list);
+        }else{
+            $mail_list = array();
+        }
+        //获取组的 email，去掉后缀
+        $group_mail = explode('@',$this->params['group_name']);
+        $group_str = current($group_mail);
+        if(empty($group_str)){
+            $return = Response::gen_error(Response::DS_DATA_NO_DATA,'','请填写邮件列表');
+            return $this->app->response->setBody($return);
+        }
+        $mail_group_list = MailGroup::getInstance()->getMailGroupList(array('email'=>$group_str));
+        if(!empty($mail_group_list)){
+            $return = Response::gen_error(Response::DS_DATA_NO_DATA,'','数据已经存在');
+            return $this->app->response->setBody($return);
+        }
+        //对数据库中邮箱数据进行处理
+        $tmp_mail_list = $mail_list;
+        $tmp_mail_list = array_map(function($p){ return $p.'@meilishuo.com'; },$tmp_mail_list);
+        //调用第三方接口发送数据
+        $params = array(
+            'act' => 'createMlist',
+            'u' => $group_str.'@meilishuo.com'
+        );
+        //要同步的邮箱的列表
+        $data['forwardmaillist'] = implode(',',$tmp_mail_list);
+        $return = MailGroupUser::getInstance()->pushMailUserList($params,$data);
+        if(empty($return) ||  strtoupper($return['__STATUS__']) != 'OK'){
+            $return = Response::gen_error(Response::DS_DATA_NO_DATA,'',$return['__MSG__']);
+            return $this->app->response->setBody($return);
+        }
+        //创建组
+        $group_id = MailGroup::getInstance()->createMailGroup(array('group_name'=>$group_str));
+        if(!empty($group_id) && $group_id >0){
+            $return_info = $this->addNewMails($mail_list,$group_id);
+            if(empty($return_info) ){
+                $return = Response::gen_error(Response::DS_DATA_NO_DATA,'','创建成员失败');
+                return $this->app->response->setBody($return);
+            }else{
+                $return = Response::gen_success('创建成功');
+                return $this->app->response->setBody($return);
+            }
+
+        }else{
+            //失败，删除创建的邮箱组
+//            $params = array(
+//             'act' => 'deleteMlist',
+//             'u' => $group_str.'@meilishuo.com'
+//            );
+//            $return = MailGroupUser::getInstance()->pushMailUserList($params);
+            $return = Response::gen_error(Response::DS_DATA_NO_DATA,'','邮件组创建失败');
+            return $this->app->response->setBody($return);
+        }
+
+
+    }
+
+    /**
+     * 增加邮件组成员
+     * @param $newMails
+     * @param $group_id
+     *
+     * @return bool
+     */
+    public static function  addNewMails($new_mails,$group_id){
+        if (empty($new_mails) || empty($group_id)) {
+            return FALSE;
+        }
+        $serach_user_params = array('status' => array(1,2,3));
+        $add_return_array = array();
+        foreach ($new_mails as $key => $value) {
+            $mail_array = explode('@',$value);
+            $suffix = '';
+            $user_mail = '';
+            if(!empty($mail_array)){
+                $suffix = $mail_array[1];
+                $user_mail = $mail_array[0];
+            }
+            $mail_suffix_type =UserOutsourcingInfo::getInstance()->get_mail_suffix_type($suffix);
+
+            //查询用户信息
+            if($mail_suffix_type  ==1) {
+                $serach_user_params['mail'] = $user_mail;
+                $user = UserInfo::getInstance()->getUserInfo($serach_user_params);
+                if (empty($user)) {
+                    continue;
+                }
+                $user = current($user);
+                $new = array('user_mail' => $user['mail'],
+                             'user_id' => $user['user_id'],
+                             'group_id' => $group_id,
+                             'mail_suffix_type' => 1
+                );
+            }else if($mail_suffix_type ==2 ){
+                $serach_user_params['mail'] = $user_mail;
+                $user = UserOutsourcingInfo::getInstance()->searchUserOutsourcingInfo($serach_user_params);
+                if (empty($user)) {
+                    continue;
+                }
+                $user = current($user);
+                $new = array('user_mail' => $user['mail'],
+                             'user_id' => $user['out_user_id'],
+                             'group_id' => $group_id,
+                             'mail_suffix_type' => 2
+                );
+            }
+            $res = MailGroupUser::getInstance()->createMailGroupUser($new);
+            $add_return_array[$group_id][$user['mail']] =  $res;
+        }
+        return $add_return_array;
+    }
+
+
+    private function _init()
+    {
+
+        $this->rules = array(
+                'group_name' => array(
+                    'required' => TRUE,
+                    'allowEmpty' => FALSE,
+                    'type'=>'string',
+                ),
+                'mail' => array(
+                    'required' => TRUE,
+                    'allowEmpty' => FALSE,
+                    'type'=>'string'
+                )
+               
+        );
+        $this->params = $this->request()->safe();
+        $this->errors = $this->request()->getErrors();
+    }
+
+}

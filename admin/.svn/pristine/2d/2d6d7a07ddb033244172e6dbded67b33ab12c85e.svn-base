@@ -1,0 +1,44 @@
+<?php 
+namespace Admin\Modules\Workflow\Task;
+
+/**
+ * 任务管理
+ * @author jingjingzhang@meilishuo.com
+ * @since 2015-07-22
+ */
+use Admin\Modules\Common\BaseModule;
+use Admin\Package\Common\Response;
+
+class Manage extends BaseModule {
+
+	protected $checkUserPermission = TRUE;
+
+	public function run() {
+
+		$tasktypelist = self::getClient()->call('workflowatom', 'process/task_type_list', array());
+		$tasktypelist = $this->parseApiData($tasktypelist);
+
+		$parent_type = array();
+		foreach ($tasktypelist as $k => $v) {
+			if ($v['type_parent_id'] == 0) {
+				$parent_type[] = $v;
+			}
+		}
+
+		$sub_type = array();
+		if (!empty($parent_type)) {
+			foreach ($parent_type as $k_parent => $v_parent) {
+				foreach ($tasktypelist as $k_list => $v_list) {
+					if ($v_list['type_parent_id'] == $v_parent['type_id']) {
+						$sub_type[$v_parent['type_id']][] = $v_list;
+					}
+				}
+			}
+		}
+
+		$this->app->response->setBody(array(
+			'parentType' => $parent_type,
+			'subType'    => $sub_type,
+		));
+	}
+}

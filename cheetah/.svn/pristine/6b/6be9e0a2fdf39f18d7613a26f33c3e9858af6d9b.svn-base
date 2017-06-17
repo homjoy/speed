@@ -1,0 +1,39 @@
+function page() {
+    return this;
+}
+var controlFns = {
+    'index': function () {
+        this.redirectTo('/page/404/');
+    },
+    '404': function () {
+        var php = {};
+        this.bindDefault(php);
+        this.bridgeMuch(php);
+        this.listenOver(function (data) {
+            data._CSSLinks = [];
+            data._JSLinks = [];
+            this.render('page/404.html', data);
+        });
+    },
+    'icon': function () {
+        var php = {};
+        this.bindDefault(php);
+        this.bridgeMuch(php);
+        this.listenOver(function (data) {
+            this.render('page/icon.html', data);
+        });
+    }
+    ,'ueditor': function () {
+        var action = this.req.__get.action;
+        var php = {};
+        this.bindDefault(php);
+        this.bridgeMuch(php);
+        this.listenOver(function (data) {
+            if(action == 'config'){
+                this.render('page/ueditor.json', data);
+            }else{
+            }
+        });
+    }
+};
+exports.__create = controller.__create(page, controlFns);

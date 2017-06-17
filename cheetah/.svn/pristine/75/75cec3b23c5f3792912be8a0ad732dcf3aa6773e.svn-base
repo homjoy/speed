@@ -1,0 +1,521 @@
+fml.define("component/approval",['jquery','plugin/tokeninput','component/notify','plugin/moment','plugin/artTemplate','component/pagination','plugin/bootbox','plugin/bootstrap/daterangepicker',],function(require,exports){
+    var $ = require('jquery');
+    var notify = require('component/notify');
+    var moment = require('plugin/moment');
+    var Template = require('plugin/artTemplate');
+    var bootbox = require('plugin/bootbox');
+    //默认页，提交后刷新使用
+    var pageMemory = 1;
+    //分页是否已初始化
+    var paginationFlag = false;
+
+
+//head部分。搜索功能
+    var approval = function(option) {
+        var htmlheader = '<form class="search-component-form speedSearch-head form-inline" >' +
+            '<input type="checkbox" class="check-all"/>'+
+            '<div class="approval-btn-div">';
+        $.each(option.btns,function(k,v){
+            htmlheader += '<a href="javascript:void(0);" class="'+ v.class+'">'+v.title+'</a>';
+        });
+        htmlheader += '</div>';
+        if(!!option.approveStatusSearch){
+            var approveStatustitle="审批状态";
+            if(!!option.approveStatusTitle){
+                approveStatustitle =option.approveStatusTitle;
+            }
+            htmlheader += '<label>'+approveStatustitle+'</label>' +
+                '<select name="status" id="statusSearch">' +
+                '<option value="">请选择</option>';
+            if(!!option.statusOption){
+                $.each(option.statusOption,function(k,v){
+                    htmlheader += '<option value="'+ v.v+'">'+ v.title+'</option>';
+                });
+            }else{
+                htmlheader+= '<option value="3">审批中</option>' +
+                    '<option value="4">审批通过</option>' +
+                    '<option value="5">审批驳回</option>' +
+                    '<option value="6">已撤销</option>';
+            }
+            htmlheader +='</select>';
+        }
+        if (!!option.timeSearch) {
+            htmlheader += '<label>申请日期</label>' +
+                '<input type="hidden" class="search-start" name="start_date" />' +
+                '<input type="hidden" class="search-end " name="end_date" />';
+            htmlheader += '<input class="time-start-end form-control search-fyc">';
+        }
+        if (!!option.departSearch) {
+            htmlheader += '<label>申请部门</label>' +
+                '<select name="depart_id" id="">' +
+                '<option value="">请选择</option>' +
+                '<option value="">技术部-用户研发</option>' +
+                '</select>';
+        }
+        if(!!option.usernameSearch){
+            htmlheader +='<label>姓名</label>'+
+                '<div class="usernameSearch-div" style="">'+
+                '<input type="text" name="user_id" class="employees"/>'+
+                '</div>';
+        }
+        if(!!option.identifierSearch){
+            htmlheader +=
+                '<input type="text" name="identifier" placeholder="输入单据编号" class="identifier form-control"/>';
+        }
+        if(!!option.headercheckOthers){
+            htmlheader +=option.headercheckOthers;
+        }
+
+        htmlheader += '<a href="javascript:void(0);" class="btn btn-default btn-xs search-component">搜索</a>'+
+            '</form>';
+        var htmlbody =
+            '<div class="row">'+
+            '<div style="width:'+option.leftwidth+';" class="left-list">'+
+            '<div class="control-hide"></div>'+
+            '<div class="control-table hide-td-narrow">'+
+
+            '</div>'+
+            '<div class="pagination">'+
+
+            '</div>'+
+            '</div>'+
+            '<div style="margin-left: '+option.leftwidth+'" class="right-info panel panel-info">'+
+            '<div class="null-picture">' +
+            '<h4 class="null-picture">点击左侧栏，内容即现 </h4>'+
+            '</div>'+
+            '</div>'+
+            '</div>';
+        //dom结构框架
+        $('.search-head').html(htmlheader).after(htmlbody);
+
+        //名字
+        if(!!option.tokeninputurl) {
+            $('.employees').tokenInput(option.tokeninputurl, {
+                hintText: '请输入姓名...',
+                prePopulate: [],
+                tokenLimit: 1
+            });
+        }
+        //全选，反选功能
+        //选择器唯一性
+        $('.check-all').click(function(){
+            if($('.check-all').prop('checked')){
+                $('.left-list input[type="checkbox"]').prop('checked',true);
+            }else{
+                $('.left-list input[type="checkbox"]').prop('checked',false);
+            }
+        });
+
+        //搜索
+        var Form;
+        var FormLength;
+
+        $('.search-component').click(function(){
+            //左侧数据加载
+            loadleft();
+        });
+        //左侧数据加载方法
+        var loadleft = function(pageOn){
+            //console.log(Form);
+            var myForm;
+            if(!!pageOn){
+                if(Form.length>FormLength){
+                    Form.pop();
+                }
+                myForm = Form;
+                myForm.push({
+                    name:'page',
+                    value: pageOn
+                });
+
+            }else{
+                myForm = $('.search-component-form').serializeArray();
+                Form = myForm;
+                FormLength= Form.length;
+            }
+            //console.warn(Form);
+            $.getJSON(option.urlLeft, myForm, function (ret) {
+                //console.warn(ret);
+                if (ret.code == 200||ret.rcode == 200) {
+                    //封装好的加载数据方法
+                    $('.approval_num').find('span').html(ret.data.approval_num);
+                    $('.application_num').find('span').html(ret.data.application_num);
+                    var data = ret.data;
+
+                    var listTemplate = Template('left-table',data);
+                    //console.log(data);
+                    $('.control-table').html(listTemplate);
+                    console.log(!!option.autoload);
+                    if(!!option.autoload){
+                        $('.left-list').find('tr').eq(1).click();
+                    }
+                    if($.isFunction(option.onAfterLoadLeft)){
+                        option.onAfterLoadLeft()
+                    }
+                    //分页标签
+                    if(!paginationFlag&&data.page.maxPage>1){
+                        var maxPage = parseInt(data.page.maxPage),
+                            currentPage = parseInt(data.page.currentPage);
+                        $(".pagination").pagination({
+                            //总页数
+                            totalPage:maxPage,
+                            //初始选中页
+                            currentPage:currentPage,
+                            //最前面的展现页数
+                            firstPagesCount: 0, //最前面的展现页数，默认值为2
+                            preposePagesCount: 2,  //当前页的紧邻前置页数，默认值为2
+                            postposePagesCount: 0, //当前页的紧邻后置页数，默认值为1
+                            lastPagesCount: 2,//最后面的展现页数，默认值为0
+                            href: false,    //不生成链接
+                            first: '', //取消首页
+                            prev: '<',
+                            next: '>',
+                            last: '', //取消尾页
+                            go: '' //取消页面跳转
+                        }).on("switch",function(e,page){
+                            pageMemory=page;
+                            loadleft(page);
+                        });
+                        paginationFlag =true;
+                    }
+                } else {
+                    notify.error(ret.error_msg||ret.rmessage||'操作失败');
+                }
+            });
+        };
+        //初始化加载
+        loadleft();
+
+        //时间
+        $('.time-start-end').daterangepicker({
+            locale:{
+                format:'YYYY-MM-DD',
+                separator:'至',
+                applyLabel:'确定',
+                cancelLabel:'取消'
+            }
+
+        },function(start,end,label){
+            $('.search-start').val(start.format('YYYY-MM-DD'));
+            $('.search-end').val(end.format('YYYY-MM-DD'));
+        });
+        //右侧信息展示
+        $('.control-table').delegate('.show-info','click',function(){
+            $('.show-info').removeClass('flag');
+            var data= $(this).data();
+            $(this).addClass('flag');
+            $.getJSON(option.urlRight, data, function (ret) {
+                console.warn(ret);
+                if (ret.code == 200||ret.rcode == 200) {
+                    //封装好的加载数据方法
+                    var info = Template('right-show',ret);
+                    $('.right-info').html(info);
+                    $('.approval-history').click();
+                    //成功时候调用
+                    if($.isFunction(option.onAfterLoadRight)){
+                        option.onAfterLoadRight();
+                    }
+                } else {
+                    notify.error(ret.error_msg||ret.rmessage||'操作失败');
+                }
+            });
+
+        });
+
+        //左侧列表100%
+        $('.control-hide').click(function(){
+            if($(this).hasClass('fat')){
+                $('.right-info').show();
+                $('.left-list').css('width',option.leftwidth);
+                $(this).removeClass('fat').next().addClass('hide-td-narrow').removeClass('hide-td-fat');
+            }else{
+                $('.right-info').hide();
+                $('.left-list').css('width','100%');
+                $(this).addClass('fat').next().removeClass('hide-td-narrow').addClass('hide-td-fat');
+            }
+        });
+
+
+
+        //批量处理（同意/驳回，撤销/催审）
+        function getSelectedProcessData(alter,panduan,parameters) {
+            reason=$('.reason').val();
+            var foreachdata=function(dataList,index){
+                if(option.isStruss2){
+                    console.warn(dataList);
+                    $.each(dataList,function(name,value){
+                        if(parameters[name]){
+                            parameters[name].push(value);
+                        }else{
+                            parameters[name]=Array();
+                            parameters[name].push(value);
+                        }
+                    });
+                }else{
+                    console.log(parameters);
+                    $.each(dataList,function(name,value){
+                        parameters.push({
+                            name:'data['+index+']['+name+']',
+                            value: value
+                        });
+                    });
+                    if(alter=='agree'){
+                        parameters.push({
+                            name:'data['+index+'][reason]',
+                            value: reason
+                        });
+                        parameters.push({
+                            name:'data['+index+'][action_type]',
+                            value: 1
+                        });
+                    }else if(alter=='reject'){
+                        parameters.push({
+                            name:'data['+index+'][reason]',
+                            value: reason
+                        });
+                        parameters.push({
+                            name:'data['+index+'][action_type]',
+                            value: 2
+                        });
+                    }else if(alter=='undo'){
+                        parameters.push({
+                            name:'data['+index+'][reason]',
+                            value: reason
+                        });
+                    }
+                    console.warn(parameters);
+                }
+            }
+
+            //根据参数判断，遍历table，还是单条数据
+            var parameters;
+            if(panduan=='single'){
+                //单条数据
+                foreachdata(dataSingle,0);
+            }else{
+                //遍历table
+                //if($('.left-list input[type="checkbox"]:checked').length==0){
+                //    notify.error('没有选中任何选项哦');
+                //    return false;
+                //}
+
+                $('.left-list input[type="checkbox"]:checked').each(function(index){
+                    var dataList = $(this).data();
+                    foreachdata(dataList,index);
+                });
+            }
+            return parameters;
+            console.log(parameters);
+        }
+        //弹出框，同意时，有几率重写
+        function showModal(title,reason,success,dowhat,formKey) {
+            //判断是否为同意时弹窗特殊的数据
+            //var formKey;
+
+            //if(!!data[0]){
+            //    formKey =data[0].formKey;
+            var isSpecial =false;
+            if(!!formKey&&formKey!='/contract/dealTask/defaultapprove') {
+                var isSpecialArray = formKey.split('/');
+                isSpecial='';
+                $.each(isSpecialArray,function(k,v){
+                    isSpecial+=v;
+                });
+            }
+            //}
+            var message;
+            if(isSpecial&&dowhat=='agree'){
+                message = option[isSpecial];
+            }else{
+                message = '<form class="form-horizontal form-agree">' +
+                    '<textarea class="form-control reason" rows="3">'+reason+'</textarea>' +
+                    '</form>';
+            }
+            var options = {
+                className: "time-modal",
+                title: title,
+                message: message,
+                backdrop: true,
+                onEscape: function () {
+                    //关闭对话框.
+                    //this.modal('hide');
+                },
+                buttons: {
+                    cancel: {
+                        label: '取消',
+                        className: 'btn-default btn-cancel',
+                        callback: function () {
+                            //暂时不管.
+                        }
+                    },
+                    success: {
+                        label: '确定',
+                        className: 'btn-primary',
+                        callback: success
+                    }
+                }
+            };
+            bootbox.dialog(options);
+        }
+
+        //声明单条数据字段用来存储
+        var dataSingle;
+
+        //提交方法 参数（事件源，提交接口，同意驳回）
+        var submit =function(obje,url,dowhat){
+            //dowhat是表示同意，驳回，催审，撤销
+            var parameters;
+            if(option.isStruss2){
+                parameters ={};
+            }else{
+                parameters=[];
+            }
+            //判断触发源是否有single class，如果有择单条提交，如果没有批量提交
+            if($(obje).hasClass('single')){
+                dataSingle = $(obje).data();
+                console.warn(parameters);
+                parameters = getSelectedProcessData(dowhat,'single',parameters);
+            }else{//将checkbox或者按钮上的数据按照对应各式序列化
+                parameters = getSelectedProcessData(dowhat,'table',parameters);
+            }
+            if(option.isStruss2) {
+                //console.log(parameters);
+                reason = $('.reason').html();
+                if (dowhat == 'agree') {
+                    parameters.reason = reason;
+                    parameters.action_type = 1;
+                } else if (dowhat == 'reject') {
+                    parameters.reason = reason;
+                    parameters.action_type = 2;
+                } else if (dowhat == 'undo') {
+                    parameters.reason = reason;
+                }
+                var arr = $('.form-agree').serializeArray();
+                console.log(arr);
+                if(!!arr){
+                    $.each(arr,function(k,v){
+                        parameters[v.name] = v.value;
+                    });
+                }
+            }
+
+            //console.log($.param(parameters));
+            //if(!$.param(parameters)||parameters.length==0){
+            //    notify.error('没有选中任何选项哦');
+            //    return false;
+            //}
+            //用返回值提交
+            $.post(url, $.param(parameters), function (ret) {
+                //console.warn(ret);
+                if (ret.code == 200||ret.rcode == 200) {
+                    //审批
+                    notify.success('操作成功');
+                    if(dowhat!='pushon') {
+                        loadleft(pageMemory);
+                        $('.right-info').html('<div class="null-picture">' +
+                            '<h4 class="null-picture">点击左侧栏，内容即现 </h4>' +
+                            '</div>');
+                    }
+                } else {
+                    notify.error(ret.error_msg||ret.rmessage||'操作失败');
+                }
+            },'json');
+        }
+
+        var lengthcheck =function(obj){
+            console.log($(obj));
+            if(!$(obj).hasClass('single')){
+                console.log($(obj));
+                if($('.left-list input[type="checkbox"]:checked').length==0){
+                    notify.error('没有选中任何选项哦');
+                    return false;
+                }else{
+                    return true;
+                }
+            }else{
+                return true;
+            }
+        }
+
+        //同意
+        $('body').delegate('.list-agree','click',function () {
+            var _this = this;
+            if(!lengthcheck(_this)){
+                return false;
+            }
+            var formkey;
+            if($(_this).hasClass('single')){
+                formkey = $(_this).data().formkey;
+            }
+            showModal('审批意见','同意',function(){
+                submit(_this,option.url1,'agree');
+            },'agree',formkey);
+        });
+        //批量驳回
+        $('body').delegate('.list-reject','click',function () {
+            var _this = this;
+            if(!lengthcheck(_this)){
+                return false;
+            }
+            showModal('审批意见','驳回',function(){
+                submit(_this,option.url2,'reject');
+            },'reject');
+        });
+
+        //批量-催审
+        $('body').delegate('.list-pushon','click',function() {
+            var _this = this;
+            if(!lengthcheck(_this)){
+                return false;
+            }
+            submit(_this,option.url1,'pushon')
+        });
+        //批量撤销
+        $('body').delegate('.list-undo','click',function () {
+            var _this =this;
+            console.log(!lengthcheck(_this));
+            if(!lengthcheck(_this)){
+                return false;
+            }
+            showModal('撤销理由','取消申请',function(){
+                submit(_this,option.url2,'undo')
+            },'undo');
+        });
+        //审批记录，接口已通
+        $('.right-info').delegate('.approval-history','click',function(){
+            $('.history-icon').removeClass('active');
+            $(this).addClass('active');
+            var data= $(this).data();
+            $.getJSON(option.urlApproval, data, function (ret) {
+                console.warn(ret);
+                if (ret.code == 200||ret.rcode == 200) {
+                    //封装好的加载数据方法
+                    var info = Template('approve-history',ret);
+                    $('.timeline-wraper').html(info);
+                } else{
+                    notify.error(ret.error_msg||ret.rmessage||'操作失败');
+                }
+            });
+        });
+        //历史申请记录
+        $('.right-info').delegate('.application-history','click',function(){
+            $('.history-icon').removeClass('active');
+            $(this).addClass('active');
+            var data= $(this).data();
+            $.getJSON(option.urlApplicationHistory, data, function (ret) {
+                console.warn(ret);
+                if (ret.code == 200||ret.rcode == 200) {
+                    //封装好的加载数据方法
+                    var info = Template('aplication-history',ret);
+                    $('.timeline-wraper').html(info);
+                    $('.timeline-entry:first').addClass('active');
+                } else{
+                    notify.error(ret.error_msg||ret.rmessage||'操作失败');
+                }
+            });
+        });
+        return this;
+    }
+
+    exports.approval=approval;
+});

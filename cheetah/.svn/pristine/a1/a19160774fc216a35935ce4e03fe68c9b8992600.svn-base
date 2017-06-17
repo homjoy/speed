@@ -1,0 +1,25 @@
+/*--/Users/MLS/svn/finance/fms-1.2-bugfix/apps/fms/views/sidebar.html--*/ 
+     var est = require(config.path.lib + 'est/est.js'); 
+     var _extFn = require('/Users/MLS/svn/finance/fms-1.2-bugfix/nest/server/lib/est/extFn.js'); 
+     function requireFn(tpl) { return est.renderFile('/Users/MLS/svn/finance/fms-1.2-bugfix/apps/fms/views/' ,tpl , null , null ,'fms' ,true); } ; 
+     function __getHtml (_data) { 
+       function jsRender(tpl , id) { return est.jsRender(requireFn(tpl)(_data), id  ); } ; 
+       var __htm ='';
+__htm += '<nav id="mainnav-container">\n    <div id="mainnav">\n        <!-- 占位 不能删除 -->\n        <div id="mainnav-shortcut">\n            <ul class="nav navbar-top-links pull-left">\n                <li class="tgl-menu-btn">\n                    <a class="mainnav-toggle" href="#" >\n                         <!--<img src="';
+__htm += _data.PICTURE_URL ;
+__htm += 'img/fms/navicon/menu.png" width="20" height="20">-->\n                        <svg class="icon-sidebar icon-menu"><use xlink:href="/page/icon/#icon-menu"></use></svg>\n                   </a>\n                </li>\n            </ul> \n        </div>\n        <div id="mainnav-menu-wrap">\n            <div class="nano">\n                <div class="nano-content">\n                    <ul id="mainnav-menu" class="list-group">\n                        ';
+_data.permissionMenu.forEach(function(menu,index){;__htm += '\n                        <li data-id="';
+__htm +=menu.id || 0 ;
+__htm += '">\n                            <a href="';
+__htm +=menu.url || 'javascript:void(0);';
+__htm += '">\n                                <svg class="icon-sidebar ';
+__htm +=menu.icon;
+__htm += '"><use xlink:href="/page/icon/#';
+__htm +=menu.icon;
+__htm += '"></use></svg>\n                                <span class="menu-title">';
+__htm +=menu.name || '';
+__htm += '</span>\n                            </a>\n                        </li>\n                        ';
+});__htm += '\n                        ';
+__htm += '\n                    </ul>\n                </div>\n            </div>\n        </div>\n    </div>\n</nav>';
+return __htm;} 
+ exports.html = __getHtml; 

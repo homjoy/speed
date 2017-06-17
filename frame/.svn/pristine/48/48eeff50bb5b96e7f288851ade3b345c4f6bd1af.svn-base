@@ -1,0 +1,83 @@
+<?php
+
+namespace Frame\Speed\Middleware;
+
+use Frame\Speed\Exception\AuthException;
+use Libs\Http\Util;
+/**
+ * 认证检查
+ * Class AuthCheck
+ * @package Frame\Speed\Middleware
+ */
+class AuthHeaderCheck extends \Frame\Middleware
+{
+    /**
+     * @var array
+     */
+    protected $settings = array();
+
+    public function __construct($settings = array())
+    {
+        $this->settings['exclude'] = !isset($settings['exclude']) ? array()
+            : (is_array($settings['exclude']) ? $settings['exclude'] : array($settings['exclude']));
+    }
+
+    /**
+     * 认证检查
+     */
+    public function call()
+    {
+        try {
+            //请求的接口
+            $path = $this->app->request->path;
+            //如果不需要认证
+            if (in_array($path, $this->settings['exclude'])) {
+                $this->next->call();
+                return;
+            }
+
+            $this->analyzeHeaders();
+
+            //认证通过之后才能继续调用module 之类的代码
+            $this->next->call();
+        } catch (AuthException $e) {
+            $response = array();
+            //http code 401 表示未授权
+            $response['code'] = 401;
+            $response['error_code'] = $e->getCode();
+            $response['error_msg'] = $e->getMessage();
+
+            $this->app->response->setBody($response, true);
+        }
+    }
+
+
+    private function analyzeHeaders() {
+        $headers = Util::parseRequestHeaders();
+        if (!isset($headers['Meilishuo'])) {
+            throw new \Exception('empty meilishuo params in http header');
+        }
+
+        $meilishuo_data = explode(';', $headers['Meilishuo']);
+        foreach ($meilishuo_data as $data) {
+            $param = explode(':', $data);
+            if (!isset($this->app->request->$param[0]) && isset($param[1])) {
+                $this->app->request->$param[0] = $param[1];
+                continue;
+            }
+            throw new \Exception('wrong meilishuo params with ' . $data);
+        }
+
+        if (empty($this->app->request->ip))
+            throw new \Exception('wrong meilishuo params with ip');
+
+        $uid = (int) $this->app->request->uid;
+        if(empty($uid)){
+            throw new AuthException('user_id不正确.');
+        }
+
+        $user = array('id' => $uid, 'user_id' => $uid);
+        $this->app->request->user = (object) $user;
+    }
+
+}

@@ -1,0 +1,22 @@
+function ui_tabs_accordions() {
+	return this;
+}
+var controlFns = {
+	'index' : function(){
+		this.ui_tabs_accordions()
+	},
+	'ui_tabs_accordions' : function(){
+		var php = {
+			
+		}
+        this.bindDefault(php);
+		this.bridgeMuch(php);
+		this.listenOver(function(data){
+			console.log(data)
+
+			data._CSSLinks = ['fontfamily','bootstrap','nifty.min','font-awesome.min','switchery.min','bootstrap-select.min','nifty-demo.min','pace.min'];
+			this.render('ui_tabs_accordions.html' , data);
+		})
+	}
+};
+exports.__create = controller.__create(ui_tabs_accordions, controlFns);

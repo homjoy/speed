@@ -1,0 +1,209 @@
+<%#head.html %>
+<div id="container" class="effect mainnav-lg">
+    <%#navbar.html %>
+
+    <div class="boxed">
+        <!--CONTENT CONTAINER-->
+        <!--===================================================-->
+        <div id="content-container" >
+            <ol class="breadcrumb">
+                <li><a href="/home">主页</a></li>
+                <li><a href="/hr"> 人力资源</a></li>
+                <li class="active">请假</li>
+            </ol>
+            <div id="page-content" class="panel">
+                <ul class="nav nav-tabs slope col-lg-12 col-sm-12 col-xs-12" style="margin-bottom: 30px">
+                    <li role="presentation" ><a href="/hr/leave/apply">请假</a></li>
+                    <li  role="presentation" ><a href="/hr/leave/my" class="application_num">我的申请<span class="approval-badge"></span></a></li>
+                    <li class="active" role="presentation" ><a href="/hr/leave/approval" class="approval_num">我的审批<span class="approval-badge"></span></a></li>
+                    <li role="presentation" class=""><a href="/hr/leave/notice" >请假须知</a></li>
+                </ul>
+                <div class="panel-body" style="min-width:580px">
+                    <div class="tab-content">
+                        <div role="tabpanel" class="tab-pane row active">
+                            <div class="row">
+                                <!--<div class="btn-group">-->
+                                    <!--<a class="btn-left btn btn-xs btn-default application_num" href="/hr/leave/my">我的申请<span class="approval-badge"></span></a>-->
+                                    <!--<a class="btn-right btn btn-xs btn-default active approval_num" href="javascript:void(0);">我的审批<span class="approval-badge"></span></a>-->
+                                <!--</div>-->
+                                <!--<a href="/home/window/?f=document&s=absenceApprove" target="_blank" class="old-info">查看过往数据</a>-->
+                            </div>
+
+                            <div class="row search-head" style="text-align: center;">
+
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <%#footer.html%>
+        </div>
+        <%#mainnav.html%>
+    </div>
+</div>
+
+<script type="text/html" id="left-table">
+    <table class="table position-fix">
+        <thead>
+        <tr>
+            <th class="checkth"></th>
+            <th class="hidden-narrow avatarth"></th>
+            <th class="nameth">姓名</th>
+            <th class="typeth">类型</th>
+            <th class="hidden-narrow dateth">请假日期</th>
+            <th class="daysth">天数</th>
+            <th class="hidden-narrow memoth">原因</th>
+        </tr>
+        </thead>
+    </table>
+    <table class="table">
+        <thead>
+            <tr>
+                <th class="checkth"></th>
+                <th class="hidden-narrow avatarth"></th>
+                <th class="nameth">姓名</th>
+                <th class="typeth">类型</th>
+                <th class="hidden-narrow dateth">请假日期</th>
+                <th class="daysth">天数</th>
+                <th class="hidden-narrow memoth">原因</th>
+            </tr>
+        </thead>
+        {{each data as info}}
+        <tr class="show-info tr-{{info.status_eng}}" data-order_id="{{info.order_id}}">
+            <td>
+                {{if info.status_eng=='submit'||info.status_eng=='waiting'||info.status_eng=='approvaling'}}
+                <input type="checkbox" data-task_id="{{info.task_id}}" data-order_id="{{info.order_id}}" value="{{info.order_id}}"/>
+                {{else if !!info.my_status&&!info.status_eng}}
+                <i class="icon icon-{{info.my_status}}"></i>
+                {{else}}
+                <i class="icon icon-{{info.status_eng}}"></i>
+                {{/if}}
+            </td>
+            <td class="hidden-narrow avatarth"><img class="avatar" src="{{info.user_avatar}}"/></td>
+            <td>
+                <div>{{info.name_cn}}</div>
+                <div class="bottom-word">{{info.depart_name}}</div>
+            </td>
+            <td>
+                <div>{{info.absence_name}}</div>
+                <div class="hidden-fat bottom-word">{{info.create_time}}</div>
+            </td>
+            <td class="hidden-narrow">{{info.leave_date}}</td>
+            <td>{{info.length}}天</td>
+            <td class="hidden-narrow word-break createtimetd">{{info.memo}} <span class="createtime">{{info.create_time}}</span></td>
+        </tr>
+        {{/each}}
+    </table>
+</script>
+<script type="text/html" id="right-show">
+    <div class="panel-heading ">
+        <span>申请详情</span>
+        {{if data.status_eng=='submit'||data.status_eng=='waiting'||data.status_eng=='approvaling'}}
+        <a href="javascript:void(0);" data-order_id="{{data.order_id}}" data-task_id="{{data.task_id}}" class="btn btn-danger single list-reject btn-xs">驳回</a>
+        <a href="javascript:void(0);" data-order_id="{{data.order_id}}" data-task_id="{{data.task_id}}" class="btn btn-agree single list-agree btn-xs">同意</a>
+        {{/if}}
+    </div>
+    <div class="panel-body pad-lr70">
+        <div class="info-head">
+            <dl>
+                <dt class="left-dt left-pink">申请人</dt>
+                <dd>
+                    <div class="avatar-name">
+                        <img class="avatar" src="{{data.user_avatar}}" alt=""/>
+                        <span>{{data.name_cn}}</span>
+                    </div>
+                    <div class="depart-date">
+                        <dl>
+                            <dt>申请部门</dt><dd>{{data.depart_name}}</dd>
+                            <dt >申请日期</dt><dd>{{data.create_time}}</dd>
+                            <dt class="bottom">申请编号</dt><dd class="bottom">{{data.order_id}}</dd>
+                        </dl>
+                    </div>
+                </dd>
+                <dt class="left-dt left-pink">请假类型</dt>
+                <dd class="position-r">
+                    {{data.absence_name}}
+                    {{if data.status_eng=='submit'||data.status_eng=='waiting'||data.status_eng=='approvaling'}}
+
+                    <div class="leave">
+                        <ul>
+                            {{if !!data.usable||data.usable==0}}
+                            <li class="now">当前可用<span>{{data.usable}}</span>天</li>
+                            {{/if}}
+                        </ul>
+                    </div>
+                    {{/if}}
+                </dd>
+                <dt class="left-dt">起止日期</dt><dd>{{data.leave_date}}</dd>
+                <dt class="left-dt">请假天数</dt><dd>{{data.length}}</dd>
+                <dt class="left-dt">请假理由</dt><dd class="word-break">{{data.memo}}</dd>
+                {{if !!data.attachments}}
+                <dt class="left-dt">请假凭证</dt><dd>{{each data.attachments as files}} <p ><a class="downloadfile" href="{{files.link}}" target="_blank" download="{{files.filename}}"><i class="file-download"></i>{{files.filename}}</a></p> {{/each}}</dd>
+                {{/if}}
+            </dl>
+        </div>
+        <hr/>
+        <div class="info-body">
+            <a href="javascript:void(0);" class="approval-history history-icon" data-task_id="{{data.task_id}}">审批记录</a>
+            <a href="javascript:void(0);" class="application-history history-icon" data-user_id="{{data.user_id}}" data-date="{{data.create_time}}">一年内请假记录</a>
+            <div class="timeline-wraper" style="float:right;width: 100%">
+
+            </div>
+        </div>
+        <div class="info-foot">
+            <span>如对此审批流有疑问，请联系 <a href="/contacts/speedim/?u=MzUyMQ==" class="speedim" target="_blank"><span>孙艺鸣</span></a></span>
+        </div>
+    </div>
+
+</script>
+<script type="text/html" id="approve-history">
+    <div class="timeline timeline-mini approval-progress">
+        {{each data as info}}
+        <div class="timeline-entry">
+            <div class="timeline-stat">
+                <div class="timeline-icon"><i class="icon icon-{{info.timeline_status}}"></i></div>
+            </div>
+            <div class="timeline-label {{info.timeline_status}}">
+                <div class="timeline-left">
+                    <div class="uname">{{info.user_name}} <span class="font12">（{{info.name}}）</span></div>
+                    <div class="time">{{info.create_time}}</div>
+                </div>
+                <div class="remark timeline-right">{{info.progress_content}}</div>
+            </div>
+        </div>
+        {{/each}}
+    </div>
+</script>
+
+<script type="text/html" id="aplication-history">
+    <div class="timeline timeline-mini history timelinepl">
+        {{each data as info i}}
+        {{if i ==5}}
+        <a href="javascript:void(0)" class="more timeline-entry">查看更多</a>
+        {{/if}}
+        <div class="timeline-entry {{if i>=5}}hide{{/if}}">
+            <div class="timeline-stat">
+                <div class="timeline-icon"></div>
+            </div>
+            <div class="timeline-label">
+                <div class="time">
+                    <span>{{info.start_date}}至</span>
+                    <span>{{info.end_date}}</span>
+                </div>
+                <p>
+                    <span class="type">{{info.absence_name}}</span>
+                    <span class="day">{{info.length}}天</span>
+                    <span class="reason">{{info.memo}}</span>
+                </p>
+            </div>
+        </div>
+        {{/each}}
+    </div>
+</script>
+<%! $_ENGINE_SELF.callFn("useModule")("<<<_use:
+        fml.use('speed/common/base');
+        fml.use('speed/hr/leave/approval');
+_use:", this._JSstack , this._JSmods); %>
+
+<%#foot.html%>

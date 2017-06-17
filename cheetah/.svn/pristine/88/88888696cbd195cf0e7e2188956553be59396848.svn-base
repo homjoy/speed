@@ -1,0 +1,90 @@
+<%#pay/detail.tpl.html %>
+<script type="text/html" id="payDetail">
+    <div class="panel-body">
+        <div class="info-head">
+            {{include 'pay-detail-tpl'}}
+        </div>
+        <div class="info-body">
+            <%#partial/approval_budget_analysis.html%>
+            <hr class="line-horizontal"/>
+            <a href="javascript:void(0);" class="approval-history history-icon active" data-cpb-id="{{listAppHis.cpbId}}">审批记录</a>
+            {{include 'approval-history-timeline'}}
+        </div>
+    </div>
+</script>
+
+<script type="text/html" id="pay-detail-old">
+    <table class="table table-bordered">
+        <thead>
+        <tr>
+            <th rowspan="3">申请人</th>
+            <th rowspan="3">
+                <img class="avatar" src="{{contractPay.cpbPersonAvatar}}" alt=""/>
+                <p>{{contractPay.cpbPersonName}}</p>
+            </th>
+            <th class="tt">申请部门</th>
+            <th class="ct">{{contractPay.cpbDepartmentName}}</th>
+        </tr>
+        <tr>
+            <th class="tt">申请日期</th>
+            <th class="ct">{{contractPay.cpbApplyTimeStr}}</th>
+        </tr>
+        <tr>
+            <!--<td>{{contractPay.cpbPersonName}}</td>-->
+            <th class="tt">单据编号</th>
+            <th class="ct">{{contractPay.cpbPayRequestCode}}</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+            <th class="tt">业务线</th>
+            <td class="ct text-left" colspan="3">{{contractPay.businesslineName || '无'}}</td>
+        </tr>
+        {{if contractPay.cpbContractFlag == 'yes' }}
+        <tr>
+            <th class="tt">合同编号</th>
+            <td class="ct">{{contractPay.cpbContractCode}}</td>
+            <th class="tt">签订日期</th>
+            <td class="ct">{{contractPay.cpbContractSignTimeStr}}</td>
+        </tr>
+        <tr>
+            <th class="tt">合同名称</th>
+            <td class="ct text-left" colspan="3">{{contractPay.cpbContractName}}</td>
+        </tr>
+        <tr>
+            <th class="tt">付款条件</th>
+            <td class="ct text-left" colspan="3">{{#contractPay.cpbContractPayterm}}</td>
+        </tr>
+        {{/if}}
+        <tr>
+            <th class="tt">预算项目</th>
+            <td class="ct text-left" colspan="3">{{contractPay.cpbBugetitemId}}</td>
+        </tr>
+        <tr>
+            <th class="tt">付款单位</th>
+            <td class="ct text-left" colspan="3">{{contractPay.cpbContractCompany}}</td>
+        </tr>
+        <tr>
+            <th class="tt">付款金额</th>
+            <td class="ct text-left" colspan="3">{{contractPay.cpbMoney | currencyFormat}}</td>
+        </tr>
+        <tr>
+            <th class="tt">收款方式</th>
+            <td class="ct text-left" colspan="3">{{['电汇','支票','现金',][contractPay.cpbCollectType]}}</td>
+        </tr>
+        <tr>
+            <th class="tt">收款单位</th>
+            <td class="ct text-left" colspan="3">{{contractPay.cpbCustomerCompany}}</td>
+        </tr>
+        <tr>
+            <th class="tt">付款附件</th>
+            <td class="ct text-left" colspan="3">
+                {{each listAttach as info}}
+                <a href="/download/file/?cabid={{info.id}}" class="btn btn-defalut btn-download" target="_blank" download="{{info.fileName}}">{{info.fileName}}</a>
+                {{/each}}
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</script>
+<%#partial/approval_history_timeline.html%>

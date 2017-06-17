@@ -1,0 +1,173 @@
+<?php
+namespace WorkFlowAtom\Package\Tree;
+
+/**
+ * 工作流类型
+ * @package Admin\Package\Workflow
+ * @author yixiangwang@meilishuo.com
+ * @since 2015-07-10
+ */
+
+use WorkFlowAtom\Package\Common\DbAdapter;
+
+class Tree  {
+
+    private static $instance = null;
+    private static $conn;
+
+    private static $tableName = 'tree';
+    private static $col = array('tree_id', 'tree_name', 'tree_url', 'status', 'parent_id','display_position');
+    private static $pk = 'tree_id';
+    private static $fields = array(
+		'tree_id'			=> 0,
+		'tree_name'			=> '',
+		'tree_url'			=> '',
+		'status'			=> 0,//状态:0无效1有效
+		'parent_id'	=> 0,
+        'display_position' => 0,//不在首页显示
+    );
+    private static $update_fields = array(
+		'tree_name'			=> 'string',
+		'tree_url'			=> 'string',
+		'status'			=> 'int',
+		'parent_id'	=> 'int',
+        'display_position' => 'int'
+    );
+
+    private function __construct() {}
+
+    public static function getInstance()
+    {
+        if(is_null(self::$instance)){
+            self::$instance = new self();
+            self::$conn =  new \Pixie\Connection(new DbAdapter('workflow'));
+        }
+        return self::$instance;
+    }
+
+    public static function getFields()
+    {
+        return self::$fields;
+    }
+
+    /**
+     * 获取单条信息
+     * @param $id
+     * @param array $fields
+     * @return array
+     */
+    public function getDataById($id, $fields = array())
+    {
+        if (empty($fields)) {
+            $fields = static::$col;
+        }
+
+        //查询
+        $qb = self::$conn->getQueryBuilder();
+        $ret = $qb->table(static::$tableName)
+            ->select(static::$col)
+            ->find($id, static::$pk);
+
+        return $ret;
+    }
+
+    /**
+     * 查询列表
+     */
+    public function getDataList(array $params = array())
+    {
+
+        //查询
+        $qb = self::$conn->getQueryBuilder();
+        $ret = $qb->table(static::$tableName)
+            ->select(static::$col);
+            //->offset(($page-1)*$pageSize)
+            //->limit($pageSize);
+
+        //查询条件
+        if (isset($params['tree_id'])) {
+            if (is_array($params['tree_id'])) {
+                $ret->whereIn('tree_id', $params['tree_id']);
+            }else{
+                $ret->where('tree_id', '=', $params['tree_id']);
+            }
+        }
+        if (isset($params['status'])) {
+            if (is_array($params['status'])) {
+                $ret->whereIn('status', $params['status']);
+            }else{
+                $ret->where('status', '=', $params['status']);
+            }
+        }
+        if (isset($params['tree_name'])) {
+            if (is_array($params['tree_name'])) {
+                $ret->whereIn('tree_name', $params['tree_name']);
+            }else{
+                $ret->where('tree_name', '=', $params['tree_name']);
+            }
+        }
+        if (isset($params['tree_url'])) {
+            if (is_array($params['tree_url'])) {
+                $ret->whereIn('tree_url', $params['tree_url']);
+            }else{
+                $ret->where('tree_url', '=', $params['tree_url']);
+            }
+        }
+		if (isset($params['parent_id'])) {
+            if (is_array($params['parent_id'])) {
+                $ret->whereIn('parent_id', $params['parent_id']);
+            }else{
+                $ret->where('parent_id', '=', $params['parent_id']);
+            }
+        }
+        if (isset($params['display_position'])) {
+            if (is_array($params['display_position'])) {
+                $ret->whereIn('display_position', $params['display_position']);
+            }else{
+                $ret->where('display_position', '=', $params['display_position']);
+            }
+        }
+        $ret->orderBy('tree_id', 'asc');
+
+        $ret->hash(self::$pk);
+        return $ret->get();
+    }
+
+    /**
+     * 添加
+     */
+    public static function insert($params) {
+
+        if (!isset($params['tree_name'])){
+            return FALSE;
+        }
+
+        $params = array_intersect_key($params, self::$fields);
+        $params = array_merge(self::$fields, $params);
+        unset($params[self::$pk]);
+
+        $qb = self::$conn->getQueryBuilder();
+        $ret = $qb->table(static::$tableName);
+        return $ret->insert($params);
+    }
+
+    /**
+     * 更新
+     */
+    public static function update($params) {
+
+        if (!isset($params[self::$pk])){
+            return FALSE;
+        }
+
+        $params = array_intersect_key($params, self::$fields);
+        $pkid = $params[self::$pk];
+        unset($params[self::$pk]);
+
+        $qb = self::$conn->getQueryBuilder();
+        $ret = $qb->table(static::$tableName);
+        $ret = $ret->where(self::$pk, $pkid);
+        return $ret->update($params);
+    }
+
+} 

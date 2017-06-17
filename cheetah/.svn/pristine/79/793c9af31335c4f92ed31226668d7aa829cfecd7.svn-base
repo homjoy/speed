@@ -1,0 +1,167 @@
+<%#head.html %>
+<div id="container" class="effect mainnav-lg">
+    <%#navbar.html %>
+
+    <div class="boxed">
+        <!--CONTENT CONTAINER-->
+        <!--===================================================-->
+        <div id="content-container" >
+            <ol class="breadcrumb">
+                <li><a href="/home">主页</a></li>
+                <li><a href="/administration"> 行政中心</a></li>
+                <li class="active">名片</li>
+            </ol>
+            <div id="page-content" class="no-padding panel">
+                <ul class="nav nav-tabs slope col-lg-12 col-sm-12 col-xs-12" style="margin-bottom: 30px">
+                    <li class="active"  role="presentation" ><a href="/administration">名片申请</a></li>
+                    <li role="presentation" ><a href="/administration/businesscard/my" class="application_num">我的申请<span class="approval-badge"><%if(this.apply_card_get.code==200){%><%=this.apply_card_get.data.application_num%><%}%></span></a></li>
+                    <li role="presentation" ><a href="/administration/businesscard/approval" class="approval_num">我的审批<span class="approval-badge"><%if(this.apply_card_get.code==200){%><%=this.apply_card_get.data.approval_num%><%}%></span></a></li>
+                    <%if(this.permission_control.code==200){%>
+                    <%if(!!this.permission_control.data.manager){%>
+                    <li role="presentation" class=""><a href="/administration/businesscard/manage" >名片管理</a></li>
+                    <%}%>
+                    <%}%>
+                </ul>
+                <div class="panel-body" style="min-width:580px">
+
+                    <div class="tab-content">
+                        <!--<div role="tabpanel" class="tab-pane row active" id="wifi">-->
+                            <!--<div class="col-lg-12 col-sm-12 col-xs-12 user_right">-->
+                                <div class=" tap">
+                                    <form class="form-horizontal speed" id="form_leave" >
+                                        <div class="row">
+                                            <div class="form-group col-lg-6 col-sm-6 col-xs-6 ">
+                                                <label class="col-lg-4 col-sm-4 col-xs-4 control-label">姓名</label>
+                                                <div class="col-lg-8 col-sm-8 col-xs-8">
+                                                    <input type="text" class="form-control" name="name" value="<%if(this.card_request.code==200){%><%=this.card_request.data.name_cn%><%}%>" data-bv-notempty>
+                                                </div>
+                                            </div>
+
+                                            <div class="form-group col-lg-6 col-sm-6 col-xs-6">
+                                                <label class="col-lg-3 col-sm-3 col-xs-3 control-label"><span class="pink-word text-sub">*</span>职位</label>
+                                                <div class="col-lg-8 col-sm-8 col-xs-8">
+                                                    <input type="text" class="form-control job" name="job" data-bv-notempty value="<%if(this.card_request.code==200){%><%}%>">
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="row">
+                                            <div class="form-group col-lg-6 col-sm-6 col-xs-6 ">
+                                                <label class="col-lg-4 col-sm-4 col-xs-4 control-label">英文名</label>
+                                                <div class="col-lg-8 col-sm-8 col-xs-8">
+                                                    <input type="text" class="form-control"  name="english_name">
+                                                </div>
+                                            </div>
+
+                                            <div class="form-group col-lg-6 col-sm-6 col-xs-6">
+                                                <label class="col-lg-3 col-sm-3 col-xs-3 control-label">职位英文</label>
+                                                <div class="col-lg-8 col-sm-8 col-xs-8">
+                                                    <input type="text" class="form-control" name="english_job" value="">
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="row">
+                                            <div class="form-group col-lg-6 col-sm-6 col-xs-6 ">
+                                                <label class="col-lg-4 col-sm-4 col-xs-4 control-label"><span class="pink-word text-sub">*</span>联系电话</label>
+                                                <div class="col-lg-8 col-sm-8 col-xs-8">
+                                                    <input type="text" class="form-control" name="mobile" data-bv-notempty value="<%if(this.card_request.code==200){%><%=this.card_request.data.mobile%><%}%>">
+                                                </div>
+                                            </div>
+
+                                            <div class="form-group col-lg-6 col-sm-6 col-xs-6">
+                                                <label class="col-lg-3 col-sm-3 col-xs-3 control-label"><span class="pink-word text-sub">*</span>电子邮箱</label>
+                                                <div class="col-lg-8 col-sm-8 col-xs-8">
+                                                    <input type="text" class="form-control" name="mail" value="<%if(this.card_request.code==200){%><%=this.card_request.data.mail%><%}%>" data-bv-notempty>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="row">
+                                            <div class="form-group col-lg-6 col-sm-6 col-xs-6 ">
+                                                <label class="col-lg-4 col-sm-4 col-xs-4 control-label">QQ号</label>
+                                                <div class="col-lg-8 col-sm-8 col-xs-8">
+                                                    <input type="text" class="form-control" name="qq" value="<%if(this.card_request.code==200){%><%=this.card_request.data.qq%><%}%>">
+                                                </div>
+                                            </div>
+
+                                            <div class="form-group col-lg-6 col-sm-6 col-xs-6">
+                                                <label class="col-lg-3 col-sm-3 col-xs-3 control-label">微信号</label>
+                                                <div class="col-lg-8 col-sm-8 col-xs-8">
+                                                    <input type="text" class="form-control" name="we_chat">
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="row">
+                                            <div class="form-group col-lg-6 col-sm-6 col-xs-6 ">
+                                                <label class="col-lg-4 col-sm-4 col-xs-4 control-label"><span class="pink-word text-sub">*</span>工作地点</label>
+                                                <div class="col-lg-8 col-sm-8 col-xs-8">
+                                                    <select name="work_place" class="select">
+                                                        <%if(this.card_request.code==200){%>
+                                                            <option value="">请选择</option>
+                                                            <% this.card_request.data.city.forEach(function(v,index){ %>
+                                                            <option value="<%=v%>"><%=v%></option>
+                                                            <%})%>
+                                                        <%}%>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="row">
+                                                <label class="col-lg-2 col-sm-2 col-xs-2 control-label">其他说明</label>
+                                                <div class="col-lg-9 col-sm-9 col-xs-9" style="padding-left: 8px;">
+                                                    <textarea name="memo" id="" cols="30" rows="4" class="form-control"></textarea>
+                                                </div>
+                                        </div>
+
+                                        <div class="row">
+                                            <label class="col-lg-2 col-sm-2 col-xs-2"></label>
+                                            <label class="col-lg-10 col-sm-10 col-xs-10 example-word">
+                                                <span class="blue-word">名片示例？</span><span class="pink-word text-sub">*</span><span class="pink-word">为必填项  有对外业务接洽方可填申请，每次申请默认2盒，制作周期4天</span>
+                                            </label>
+                                        </div>
+                                        <div class="row">
+                                            <label class="col-lg-2 col-sm-2 col-xs-2"></label>
+                                            <div class="col-lg-5 col-sm-5 col-xs-5">
+                                                <button type="submit" class="btn btn-beauty save_password ">提交申请</button>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="col-lg-1 col-sm-1 col-xs-1"></label>
+                                            <div class="col-lg-10 col-sm-10 col-xs-10 pad-no">
+                                                <div class="approval-process">
+                                                    <p>预计审批流程为：</p>
+                                                    <p class="pink-word">
+                                                        <%if(this.card_request.code==200){%><%=this.card_request.data.process%><%}%>
+                                                    </p>
+                                                    <p>若有<span>流程问题</span>,请联系<a href="/contacts/speedim/?u=MzUyMQ==" class="speedim" target="_blank"><span>孙艺鸣</span></a></p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                            <!--</div>-->
+                        <!--</div>-->
+                    </div>
+
+                </div>
+
+            </div>
+            <%#footer.html%>
+        </div>
+        <%#mainnav.html%>
+    </div>
+</div>
+<div class="wizard-container hide">
+    <div class="wizard-card-example "></div>
+    <div class="wizard-guanbi"></div>
+</div>
+
+<%! $_ENGINE_SELF.callFn("useModule")("<<<_use:
+        fml.use('speed/common/base');
+fml.use('speed/administration/businesscard/apply');
+_use:", this._JSstack , this._JSmods); %>
+
+<%#foot.html%>

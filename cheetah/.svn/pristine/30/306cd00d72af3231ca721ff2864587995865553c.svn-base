@@ -1,0 +1,45 @@
+.share-users {
+  margin-bottom: 0;
+
+  // 头像
+
+  li {
+    display: inline-block;
+    list-style: none;
+    text-align: center;
+    margin-bottom: 0;
+    padding-top: 12px;
+    width: 100px;
+    height: 100px;
+    color: #6a6a6a;
+    font-size: 14px;
+    margin-left: 5px;
+    border-radius: 5px;
+    &:first-child{
+      margin-left:0;
+    }
+    img {
+      border: 1px solid #dddddd;
+      display: block;
+      border-radius: 30px;
+      margin: 1px auto;
+    }
+  }
+
+  // 高亮
+  li:hover,
+  .current {
+    span {
+      color: rgba(252, 140, 178, 1);
+    }
+    img {
+      border: 2px solid rgba(252, 140, 178, 0.5);
+      margin:0 auto;
+    }
+  }
+}
+
+.height() {
+  height: 88px;
+  margin-bottom: 0;
+}

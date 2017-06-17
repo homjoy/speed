@@ -1,0 +1,167 @@
+<script type="text/html" id="IDCinfo-table-tpl">
+    <table class="table table-bordered">
+        <thead>
+        <tr>
+            <th colspan="7">
+                <h3 class="text-center">IDC机房情况表</h3>
+            </th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+            <td>
+                <label>申请人</label>
+            </td>
+            <td colspan="2">{{data.handlePersonName || ''}}</td>
+            <td>
+                <label>申请部门</label>
+            </td>
+            <td colspan="2">{{data.handleDeptName || ''}}</td>
+        </tr>
+        <tr>
+            <td>
+                <label>单据类型</label>
+            </td>
+            <td colspan="2">{{data.roomTypeName}}</td>
+            <td>
+                <label>申请日期</label>
+            </td>
+            <td colspan="2">{{data.makeDateStr}}</td>
+        </tr>
+        {{if data.roomTypeName == '点对点'}}
+        <tr>
+            <td>点A</td>
+            <td colspan="2">{{data.pointA}}</td>
+            <td>点B</td>
+            <td colspan="2">{{data.pointB}}</td>
+        </tr>
+        {{/if}}
+        <tr>
+            <td>
+                <label>机房</label>
+            </td>
+            <td colspan="2">{{data.areaName}}-{{data.nameName}}</td>
+            {{if data.roomTypeName == '点对点'}}
+            <td></td>
+            <td colspan="2"></td>
+            {{else}}
+            <td>
+                <label>合同序号</label>
+            </td>
+            <td colspan="2">{{data.contractSeq}}</td>
+            {{/if}}
+        </tr>
+        <tr>
+            <td>
+                <label>合同编号</label>
+            </td>
+            <td colspan="2">{{data.contractNo}}</td>
+            <td>
+                <label>合同期限</label>
+            </td>
+            <td colspan="2">{{data.contractStartDateStr}} 至 {{data.contractEndDateStr}}</td>
+        </tr>
+        <tr>
+            <td>
+                <label>合同签订公司</label>
+            </td>
+            <td colspan="2">{{data.contractCompany}}</td>
+            <td>
+                <label>对方单位</label>
+            </td>
+            <td colspan="2">{{data.customerCompany}}</td>
+        </tr>
+        {{if data.roomTypeName == '非点对点'}}
+        <tr>
+            <td>
+                <label>合同金额</label>
+            </td>
+            <td>{{data.contractAmount | currencyFormat}}</td>
+            <td>
+                <label>月付金额</label>
+            </td>
+            <td>{{data.contractMonthAmount | currencyFormat}}</td>
+            <td>
+                <label>付款方式</label>
+            </td>
+            <td>{{data.payWayName}}</td>
+        </tr>
+        {{else}}
+        <tr>
+            <td>
+                <label>合同金额</label>
+            </td>
+            <td colspan="2">{{data.contractAmount | currencyFormat}}</td>
+            <td>
+                <label>付款方式</label>
+            </td>
+            <td colspan="2">{{data.payWayName}}</td>
+        </tr>
+        {{/if}}
+        {{if data.roomTypeName == '非点对点'}}
+        <tr>
+            <td>
+                <label>机柜数量</label>
+            </td>
+            <td>{{data.cabinetAmount}}</td>
+            <td>
+                <label>机柜单价</label>
+            </td>
+            <td>{{data.cabinetUnitPrice | currencyFormat}}</td>
+            <td>
+                <label>机柜总价</label>
+            </td>
+            <td>{{data.cabinetPrice | currencyFormat}}</td>
+        </tr>
+        <tr>
+            <td>
+                <label>带宽数量</label>
+            </td>
+            <td>{{data.bandWidth}}</td>
+            <td>
+                <label>宽带单价</label>
+            </td>
+            <td>{{data.bandUnitPrice | currencyFormat}}</td>
+            <td>
+                <label>宽带总价</label>
+            </td>
+            <td>{{data.bandPrice | currencyFormat}}</td>
+        </tr>
+        <tr>
+            <td>
+                <label>IP数量</label>
+            </td>
+            <td>{{data.ipAmount}}</td>
+            <td>
+                <label>机柜单元</label>
+            </td>
+            <td>{{data.cabinetUnit}}</td>
+            <td>
+                <label>电源类型</label>
+            </td>
+            <td>{{data.powerType}}</td>
+        </tr>
+        <tr>
+            <td>
+                <label>链路类型</label>
+            </td>
+            <td colspan="2">{{data.linkTypeName}}</td>
+            <td></td>
+            <td colspan="2"></td>
+        </tr>
+        {{/if}}
+        <tr>
+            <td>
+                <label>附加费用</label>
+            </td>
+            <td colspan="6">{{data.addExpense}}</td>
+        </tr>
+        <tr>
+            <td>
+                <label>备注</label>
+            </td>
+            <td colspan="6">{{data.remark}}</td>
+        </tr>
+        </tbody>
+    </table>
+</script>

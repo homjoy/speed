@@ -1,0 +1,227 @@
+@extends('layouts.master')
+@section('content')
+<link type="text/css" rel="stylesheet" href="/static/css/pagination.css">
+<script src="/static/js/pagination.js"></script>
+<style type="text/css">
+    .search_btn, .export_btn, .add_btn, .delete_btn, .edit_btn {
+        margin-left: 5px;
+        float: right;
+    }
+    .ul_input{
+        overflow: auto;
+        height: 200px;
+        border:1px solid #ddd;
+    }
+    .ul_input li{
+        padding: 3px 20px;
+    }
+</style>
+<div class="panel-heading" style="overflow: hidden; line-height: 32px">
+    <ol class="breadcrumb">
+        <li class="active">邮箱列表管理</li>
+    </ol>
+    <form id="searchForm" class="form-inline  form-horizontal" method="POST" role="form" action="/mail/mail_home">
+        <div class="row">
+            <div class="col-lg-4">
+                <input type="text" class="form-control" placeholder="按照邮箱进行搜索，可用邮箱前缀进行搜搜" value="@if(!empty($search_params['email'])){{$search_params['email']}} @endif" id="email" name="email"/>
+            </div>
+            <div class="col-lg-1">
+                <input type="submit" value="搜索" class="btn btn-default">
+            </div>
+            <div class="col-lg-1">
+                <button class="btn btn-primary add_new add_btn" type="button" id="mail_group_add">添加
+                </button>
+            </div>
+        </div>
+        <p></p>
+        <!-- Table -->
+        <div class="table-container">
+            <table class="table table-striped table-hover"  style="font-size:14px;">
+                <thead>
+                <tr>
+                    <th class="col-xs-1">ID</th>
+                    <th class="col-xs-3">邮箱</th>
+                    <th class="col-xs-3">邮箱组</th>
+                    <th class="col-xs-1">状态</th>
+                    <th class="col-xs-3">操作</th>
+                </tr>
+                </thead>
+                <tbody id="show">
+                @if (!empty($data))
+
+                @foreach ($data as $t)
+                <tr>
+                    <td >{{ $t['group_id'] }}</td>
+                    <td >{{ $t['show_name'] }}</td>
+                    <td >{{ $t['group_name'] }}@meilishuo.com</td>
+                    <td >{{ $t['status'] }}</td>
+                    <td >
+                        <a class="btn btn-warning  delete_btn" data-group-id="{{$t['group_id']}}"
+                           title="删除邮件组">删除
+                        </a>
+                        {{--<a href="/mail/mail_edit?group_id={{ $t['group_id'] }}" class="btn btn-primary add_new edit_btn" type="button">修改--}}
+                        {{--</a>--}}
+                        <a href="/mail/mail_user_list?group_id={{ $t['group_id'] }}" class="btn btn-primary add_new edit_btn" type="button">查看成员
+                        </a>
+
+                    </td>
+                </tr>
+                @endforeach
+                @endif
+                </tbody>
+            </table>
+        </div>
+         <div class="pagination-left">
+         </div>
+    </form>
+</div>
+<!-- 添加模版 -->
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="myModalLabel">邮件列表</h4>
+            </div>
+            <div class="modal-body">
+                <form  id="addForm" class="form-horizontal">
+                    <div class="form-group">
+                        <label for="depart_id" class="col-sm-2 control-label">邮件列表</label>
+                        <div class="col-sm-10">
+                            <input type="text"  class="form-control" name ='mail_group' id="mail_group" placeholder="邮件列表">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="depart_id" class="col-sm-2 control-label">成员</label>
+                        <div class="col-sm-10">
+                       
+                           <textarea name="mail" id="multiselect_to" cols="30" rows="20"  class="form-control" size="15">   </textarea>
+                        </div>
+                    </div>
+
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                <button type="button" class="btn btn-primary" id="add_btn">保存</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- 添加模版 -->
+<link rel="stylesheet" href="/static/css/tokeninput.css">
+<script src="/static/js/tokeninputspeed.js"></script>
+
+<script>
+    //分页
+    var count = '{!! json_encode($count) !!}';
+    try{
+        count = $.parseJSON(count);
+    }catch(e){
+        count = [];
+    }
+    var page = '{!! json_encode($page) !!}';
+    try{
+        page = $.parseJSON(page);
+    }catch(e){
+        page = [];
+    }
+    $(".pagination-left").pagination({
+        //总页数
+        totalPage:count,
+        //初始选中页
+        currentPage:page,
+        //最前面的展现页数
+        firstPagesCount: 0, //最前面的展现页数，默认值为2
+        preposePagesCount: 2,  //当前页的紧邻前置页数，默认值为2
+        postposePagesCount: 0, //当前页的紧邻后置页数，默认值为1
+        lastPagesCount: 2,//最后面的展现页数，默认值为0
+        href: false,    //不生成链接
+        first: '', //取消首页
+        prev: '<',
+        next: '>',
+        last: '', //取消尾页
+        go: false //取消页面跳转
+    }).on("switch",function(e,page){
+        var email = $('#email').val()
+        location.href="/mail/mail_home?page="+page+'&email='+email;
+
+    });
+
+    //添加邮件组操作
+    $('#mail_group_add').click(function(e) {
+        e.stopPropagation();
+        $('#myModalLabel').html('邮件列表');
+        $('#myModal').modal('show');
+    });
+   
+    //保存数据
+     //保存数据
+    $("#add_btn").click(function(){
+        var mail_group = $("#mail_group").val();
+
+        if(!mail_group){
+            var ret = [];
+            ret['error_msg'] = '邮件列表不能为空';
+            show_message(0,ret)
+            return;
+        }
+
+        var arr_string = $("#multiselect_to").val();
+        $('#add_btn').attr('disabled',true);
+        $.ajax({
+            url: "/mail/ajax_mail_group_add",
+            method: "POST",
+            data: { group_name : mail_group, mail:arr_string},
+            dataType: "json",
+            success:function(msg){
+                $('#add_btn').removeAttr('disabled');
+                if(msg.code==200){
+                    show_message(msg.code,msg);
+                    $('#mail_group').val('');
+                    $('#multiselect').text('');
+                    setTimeout("location.reload()",1500);
+                }else{
+                    var ret =[];
+                    ret['error_msg'] = msg['error_detail'];
+                    show_message(msg.code,ret);
+                }
+            }
+        });
+
+    })
+
+
+    //删除邮件组
+    $('.delete_btn').click(function(){
+        if(!confirm('确认删除？')){
+            return false;
+        }
+        var mail_group_id = $(this).attr('data-group-id');
+        if(!mail_group_id){
+            show_message(0,'邮件列表不能为空')
+            return;
+        }
+        var _this = $(this)
+        $(this).attr('disabled',true);
+        $.ajax({
+            url: "/mail/ajax_mail_group_del",
+            method: "POST",
+            data: {  group_id:mail_group_id},
+            dataType: "json",
+            success:function(data){
+                _this.removeAttr('disabled');
+                if(data.code==200){
+                    show_message(data.code,data);
+                    setTimeout("location.reload()",1500);
+                }else{
+                    var ret =[];
+                    ret['error_msg'] = data['error_detail'];
+                    show_message(data.code,ret);
+                }
+            }
+        });
+
+    })
+</script>
+@endsection

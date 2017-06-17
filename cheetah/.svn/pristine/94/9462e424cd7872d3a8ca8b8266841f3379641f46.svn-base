@@ -1,0 +1,145 @@
+<%#contract/detail.tpl.html %>
+<script type="text/html" id="contractDetail">
+    <div class="panel-body">
+        <div class="info-head">
+            {{include 'contract-detail-tpl'}}
+        </div>
+        <div class="info-body">
+            <%#partial/approval_budget_analysis.html%>
+            <hr class="line-horizontal"/>
+            <a href="javascript:void(0);" class="approval-history history-icon active" data-cpb-id="{{listAppHis.cpbId}}">审批记录</a>
+            {{include 'approval-history-timeline'}}
+        </div>
+    </div>
+</script>
+<script type="text/html" id="contract-table-old">
+    <table class="table table-bordered">
+        <tbody>
+        <tr>
+            <th class="tt">经办人</th>
+            <td class="ct">{{contractApplication.userName}}</td>
+
+            <th class="tt">申请部门</th>
+            <td class="ct">{{contractApplication.departmentName}}</td>
+        </tr>
+        <tr>
+            <th class="tt">单据编号</th>
+            <td class="ct">{{contractApplication.cabCode}}</td>
+            <th class="tt">申请日期</th>
+            <td class="ct">{{contractApplication.cabCurrentDate}}</td>
+        </tr>
+        <tr>
+            <th class="tt">合同编号</th>
+            <td class="ct">{{contractApplication.contratno}}</td>
+            <th class="tt">合同签订日期</th>
+            <td class="ct">{{contractApplication.cabSignDate}}</td>
+        </tr>
+        <tr>
+            <th class="tt">收支类型</th>
+            <td class="ct" colspan="3">{{contractApplication.cabTypeName}}</td>
+        </tr>
+        <tr>
+            <th class="tt">合同类型</th>
+            <td class="ct" colspan="3">{{contractApplication.cabAmountTypeName}}</td>
+        </tr>
+        <tr>
+            <td class="tt">协议类型</td>
+            <td class="ct" colspan="3">{{contractApplication.cabAddAgreementName}}</td>
+        </tr>
+        {{ if contractApplication.cabAddAgreement == 'Y' }}
+        <tr>
+            <th class="tt">主合同编号</th>
+            <td class="ct">{{contractApplication.cabMasterContractNumber}}</td>
+            <th class="tt">主合同名称</th>
+            <td class="ct">{{contractApplication.cabMasterContractName}}</td>
+        </tr>
+        <tr>
+            <th colspan="4">
+                <a href="/contract/view/?id={{contractApplication.cabId}}&type=CA"
+                   class="btn btn-default">查看主合同</a>
+            </th>
+        </tr>
+        {{/if}}
+        <tr>
+            <th class="tt">业务线</th>
+            <td class="ct">{{contractApplication.businesslineCodeName}}</td>
+            <th class="tt">合同份数</th>
+            <td class="ct">{{contractApplication.contractnum}}</td>
+        </tr>
+        <tr>
+            <th class="tt">合同名称</th>
+            <td class="ct" colspan="3">{{contractApplication.cabNameCn}}</td>
+        </tr>
+        <tr>
+            <th class="tt">预算项目</th>
+            <td class="ct">{{contractApplication.cabBudgetItemId}}</td>
+            <th class="tt">合同签订公司</th>
+            <td class="ct">{{contractApplication.cabContractCompany}}</td>
+        </tr>
+        <tr>
+            <th class="tt">合同金额</th>
+            <td class="ct">{{contractApplication.cabAmount | currencyFormat }}</td>
+            <th class="tt">合同期限</th>
+            <td class="ct">{{contractApplication.cabContractBegin}}/{{contractApplication.cabContractEnd}}</td>
+        </tr>
+        <tr>
+            <th class="tt">合同主要内容</th>
+            <td class="ct" colspan="3"><div class="ueditor-content">{{#contractApplication.cabContractDetail}}</div></td>
+        </tr>
+        <tr>
+            <th class="tt">收/付款条件</th>
+            <td class="ct" colspan="3"><div class="ueditor-content">{{#contractApplication.cabPaymentTerms}}</div></td>
+        </tr>
+        <tr>
+            <th class="tt">对方单位</th>
+            <td class="ct" colspan="3">{{contractApplication.cabCustomerCompany}}</td>
+        </tr>
+        <tr>
+            <th class="tt">对方联系人</th>
+            <td class="ct">{{contractApplication.cabContractPerson }}</td>
+            <th class="tt">联系电话</th>
+            <td class="ct">{{contractApplication.cabTelephone}}</td>
+        </tr>
+        <tr>
+            <td>
+                <label>合同附件</label>
+            </td>
+            <td colspan="3" class="text-left">
+                {{each attach as item }}
+                <a href="/download/file/?cabid={{item.id}}" class="btn btn-defalut btn-download"
+                   target="_blank" download="{{item.fileName}}">{{item.fileName}}</a>
+                {{/each}}
+            </td>
+        </tr>
+        {{if contractApplication.cabApprovalState == '5' }}
+        <tr>
+            <th class="tt">归档编号</th>
+            <td class="ct">{{contractApplication.archiveno }}</td>
+            <th class="tt">归档日期</th>
+            <td class="ct">{{contractApplication.signDate}}</td>
+        </tr>
+        <tr>
+            <td>
+                <label>归档附件</label>
+            </td>
+            <td colspan="3" class="text-left">
+                {{if archiveAttach && archiveAttach.length }}
+                {{each archiveAttach as item }}
+                <a href="/download/file/?cabid={{item.id}}" class="btn btn-defalut btn-download"
+                   target="_blank" download="{{item.fileName}}">{{item.fileName}}</a>
+                {{/each}}
+                {{/if}}
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <label>归档备注</label>
+            </td>
+            <td colspan="3">{{remark}}</td>
+        </tr>
+        {{/if}}
+        </tbody>
+    </table>
+</script>
+
+<%#partial/approval_history_timeline.html %>

@@ -1,0 +1,32 @@
+/*--/Users/MLS/speed/cheetah/trunk/apps/web/views/user/secretkey.html--*/ 
+     var est = require(config.path.lib + 'est/est.js'); 
+     var _extFn = require('/Users/MLS/speed/cheetah/trunk/nest/server/lib/est/extFn.js'); 
+     function requireFn(tpl) { return est.renderFile('/Users/MLS/speed/cheetah/trunk/apps/web/views/' ,tpl , null , null ,'web' ,true); } ; 
+     function __getHtml (_data) { 
+       function jsRender(tpl , id) { return est.jsRender(requireFn(tpl)(_data), id  ); } ; 
+       var __htm ='';
+__htm += '';
+__htm += est.renderFile("/Users/MLS/speed/cheetah/trunk/apps/web/views/" ,"head.html",_data,null,"web" )||"";
+__htm += '\n<div id="container" class="effect mainnav-lg">\n	';
+__htm += est.renderFile("/Users/MLS/speed/cheetah/trunk/apps/web/views/" ,"navbar.html",_data,null,"web" )||"";
+__htm += '\n	<div class="boxed">\n		<!--CONTENT CONTAINER-->\n		<!--===================================================-->\n		<div id="content-container" >\n			<ol class="breadcrumb">\n	          <li><a href="/home">主页</a></li>\n	          <li class="active">个人中心</li>\n	        </ol>\n			<div id="page-content">\n				<div class="panel row" style="min-width:580px">\n					\n					<div class="col-lg-2 col-sm-2 col-xs-2 user_left">\n						<img class="head_img" src="';
+if(_data.userInfo.code==200){;__htm += '';
+__htm += _data.userInfo.data.user.avatar.avatar_middle ;
+__htm += '';
+};__htm += '">\n						<span class="first-title">个人中心</span>\n						<ul>\n							<li ><a class="second-title" href="/user">基本信息</a></li>\n							<li ><a class="second-title" href="/user/avatar/">修改头像</a></li>\n							<li >\n								<a class="second-title" href="javascript:void(0);">安全中心</a>\n								<ul class="second-ul">\n									<li><a class="thrid-title" href="/user/safe/password">修改密码</a></li>\n									<li><a class="thrid-title" href="/user/safe/verification">手机验证</a></li>\n									<li class="active"><a class="thrid-title" href="/user/safe/secretkey">动态密钥</a></li>\n								</ul>\n							</li>\n						</ul>\n					</div>\n					<div class="col-lg-10 col-sm-10 col-xs-10 user_right">\n						\n						<div class="panel_pink">设置动态密钥</div>\n						<form class="form-horizontal" id="form" >\n							<div class="password_fix tap row">\n								<div class="col-lg-8 col-sm-8 col-xs-8">\n									<div class="form-group oldmobile">\n										<label  class="col-lg-4 col-sm-4 col-xs-4 control-label">手机号</label>\n										<label class="col-lg-5 col-sm-5 col-xs-5 control-label oldtel-secret">\n											';
+if(_data.userInfoGet.code==200){;__htm += '';
+__htm += _data.userInfoGet.data.mobile_hidden;
+__htm += '';
+};__htm += '\n										</label>\n										<div class="col-lg-3 col-sm-3 col-xs-3">\n											<button type="button" class="send_message btn-beauty btn btn-small">发送验证码</button>\n										</div>\n									</div>\n									<div class="form-group">\n										<label class="col-lg-4 col-sm-4 col-xs-4 control-label ">输入验证码</label>\n										<div class="col-lg-5 col-sm-5 col-xs-5">\n											<input type="text" name="captcha" data-bv-notempty class="form-control verificationcode" value="">\n										</div>\n									</div>\n									<div class="form-group btn_line">\n										<label  class="col-lg-4 col-sm-4 col-xs-4 control-label"></label>\n										<div class="col-lg-8 col-sm-8 col-xs-8">\n											<button type="button" class="btn btn-beauty new_step">下一步</button>\n										</div>\n									</div>\n								</div>\n							</div>\n							<div class="row second-row hide">\n								<div class="col-lg-12 col-sm-12 col-xs-12">\n									<div class="codesubdiv" style="text-align: center">\n										<h4>手机打开美丽Speed,进入“更多”获取动态码</h4>\n										<h6 class="text-unimportant">扫描下面的二维码</h6>\n										<h6 class="text-unimportant">嘘！这是你的二维码，别让别人看去了哦~</h6>\n										<img class="dynamicqrcodeimg" src=""\n											 width="200" height="200"/>\n										<h4>输入扫码获取的动态码</h4>\n										<div style="width:200px;display: block;margin: 0 auto;">\n											<input type="text" class="form-control code" value="">\n										</div>\n										<button type="button" class="btn btn-beauty submitcode">启动</button>\n									</div>\n									<div class="successdiv hide" style="text-align: center">\n										<img src="';
+__htm += _data.PICTURE_URL  ;
+__htm += 'img/speed/user/center_finish.png" width="100" height="100"/>\n										<h4 class="green-word">你的动态码已配置成功</h4>\n										<h4>以后没有你手机上的动态码，谁也别想冒用你的账号啦！</h4>\n										<h6>动态码有效期为 <span class="pink-word">一个月</span>，过期后需要再次输入</h6>\n									</div>\n								</div>\n							</div>\n						</form>\n					</div>\n				</div>\n			</div>\n			';
+__htm += est.renderFile("/Users/MLS/speed/cheetah/trunk/apps/web/views/" ,"footer.html",_data,null,"web" )||"";
+__htm += '\n		</div>\n		';
+__htm += est.renderFile("/Users/MLS/speed/cheetah/trunk/apps/web/views/" ,"mainnav.html",_data,null,"web" )||"";
+__htm += '\n	</div>\n</div>\n  \n';
+__htm += est.callFn("useModule")("fml.use('speed/common/base');\n		fml.use('speed/user/secretkey');", _data._JSstack , _data._JSmods) || '';
+ ;__htm += '\n';
+__htm += est.renderFile("/Users/MLS/speed/cheetah/trunk/apps/web/views/" ,"foot.html",_data,null,"web" )||"";
+__htm += '';
+return __htm;} 
+ exports.html = __getHtml; 

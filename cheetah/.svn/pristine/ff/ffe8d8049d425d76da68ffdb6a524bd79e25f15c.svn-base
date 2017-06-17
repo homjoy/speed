@@ -1,0 +1,8 @@
+<%#head.html%>
+<%! $_ENGINE_SELF.callFn("useModule")("<<<_use:
+	fml.use('plugin/store',function (store) {
+		store.set('login_count_down_time',0);
+		window.location.href = '/user/login/';
+	});
+_use:", this._JSstack , this._JSmods); %>
+<%#foot.html%>

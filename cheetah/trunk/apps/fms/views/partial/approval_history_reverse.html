@@ -1,0 +1,36 @@
+<%if(this.detail.offsetlist.length>0){%>
+<table class="table record-print approval-history">
+    <thead>
+    <tr>
+        <th colspan="10" class="text-left">冲帐记录</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr>
+        <th>操作事件</th>
+        <th>还款方式</th>
+        <th>还款金额</th>
+        <th>欠款金额</th>
+        <th>报销单据编号</th>
+    </tr>
+    <!-- 如果全部通过   pay-over显示 -->
+    <% this.detail.offsetlist.forEach(function(info,index){
+        var url = "";
+        var urlMap = {
+            'EA' : '/reimburse/general/view?id=',
+            'ET' : '/reimburse/traffic/view?id=',
+            'EC' : '/reimburse/travel/view?id='
+        };
+       url = urlMap[''+info.reverseBilltype]+ info.reverseBillid;
+    %>
+    <tr>
+        <td><%=info.offsetDate||''%></td>
+        <td><%=info.offsetWayName||''%></td>
+        <td><%=info.offsetMoney||''%></td>
+        <td><%=info.currBalance%></td>
+        <td><a target="_blank" href="<%=url%>" class="aLink"><%=info.reverseBillno%></a></td>
+    </tr>
+    <%})%>
+    </tbody>
+</table>
+<%}%>

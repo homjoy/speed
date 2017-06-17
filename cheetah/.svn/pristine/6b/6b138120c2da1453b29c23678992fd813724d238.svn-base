@@ -1,0 +1,100 @@
+//#page-content{
+//  background: #fff;
+//  margin: 20px 25px 0;
+//  padding: 20px 30px;
+//
+//}
+body {
+  //font-family: '微软雅黑', 'Microsoft YaHei' !important;
+}
+body,a,b,caption,dd,dl,div,em,form,i,label,ol,select,strong,h1,h2,h3,h4,h5,h6,table,thead,tbody,th,td,
+option,button, input, optgroup, select, textarea{
+  letter-spacing: 1px;//字体间距.
+  font-family: "Helvetica Neue", Helvetica, 'Heiti SC',Microsoft Yahei, sans-serif;
+}
+
+@media (min-width:0px){
+  #content-container{
+    z-index: 0;
+  }
+}
+
+input:focus{
+  border:1px solid #fff;
+}
+@pageMainColor : #FC6E47;
+@image-base: '../../../img/family';
+
+
+//头部样式
+
+#navbar{
+  position: fixed;
+  top: 0;
+}
+#navbar-container{
+  height:50px;
+  background-color: @pageMainColor;
+  min-width:1000px;
+}
+.navbar-logo {
+  margin: 6px 0 15px 30px;
+}
+.navbar-function-content{
+  line-height: 50px;
+  margin-right: 30px;
+
+  .navbar-search{
+    position: relative;
+    display: inline-block;
+
+    img{
+      position: absolute;
+      top:17px;
+      right:10px;
+      cursor: pointer;
+    }
+  }
+
+  input{
+    line-height: 20px;
+    min-width: 350px;
+    padding: 5px 10px;
+    border: none;
+    border-radius: 5px;
+    outline: 0;
+
+    &:focus{
+      box-shadow: 0 0 0 1px #eee;
+    }
+  }
+
+  > span{
+    display: inline-block;
+    line-height: 20px;
+    min-width: 100px;
+    padding-left: 20px;
+    padding-right: 20px;
+    margin-right: 20px;
+    border-right: 1px solid #fff;
+    font-size: 13px;
+    color: #fff;
+  }
+}
+
+//内容部分公共样式
+#page-content{
+  padding: 20px 50px 20px 50px;
+}
+
+.panel{
+  border-radius: 5px;
+  background-color: #fff;
+}
+.logoutimg{
+  position: relative;
+  top: -3px;
+}
+#content-container {
+  background-color: #f4f4f4;
+}

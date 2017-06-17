@@ -1,0 +1,154 @@
+<?php 
+namespace Admin\Modules\Workflow\Task;
+
+/**
+ * 搜索任务
+ * @author jingjingzhang@meilishuo.com
+ * @since 2015-07-22
+ */
+use Admin\Modules\Common\BaseModule;
+use Admin\Package\Common\Response;
+
+class AjaxGetTaskList extends BaseModule {
+
+	private $task = NULL;
+	protected $errors = NULL;
+	public static $VIEW_SWITCH_JSON = TRUE;
+
+	public function run() {
+
+		$this->_init();
+
+		//参数校验
+		if ($this->post()->hasError()) {
+			$return = Response::gen_error(10001, '', $this->errors);
+        	return $this->app->response->setBody($return);
+		}
+
+		$queryParams = array();
+		//如果设置任务小类，则查找小类别下所有任务
+		if ($this->task['sub_task_type'] != 0) {
+			$queryParams['tasktype_id'] = $this->task['sub_task_type'];
+		}
+		//如果设置了大类别，没有设置小类别，则查找大类别（包括大类别下的所有小类别）下所有任务
+		if ($this->task['sub_task_type'] == 0 && $this->task['parent_task_type'] != 0) {
+			
+			$tasktypelist = $this->getTaskTypeList();
+			$typeIds = array();
+			$typeIds[] = $this->task['parent_task_type'];
+			if ($tasktypelist != FALSE) {
+				foreach ($tasktypelist as $k => $v) {
+					if ($v['type_parent_id'] == $this->task['parent_task_type']) {
+						$typeIds[] = $v['type_id'];
+					}
+				}
+			}	
+			$queryParams['tasktype_id'] = $typeIds;
+		}
+		if ($this->task['user_id'] != 0) {
+			$queryParams['user_id'] = $this->task['user_id'];
+		}
+		if ($this->task['current_user_id'] != 0) {
+			$queryParams['current_user_id'] = $this->task['current_user_id'];
+		}
+
+		if (empty($queryParams)) {
+			return $this->app->response->setBody(Response::gen_error(400, '请选择搜索条件！'));
+		}
+	
+		$result = self::getClient()->call('workflowatom', 'process/task_list', $queryParams);
+
+		$taskTypeList = $this->getTaskTypeList();
+		$task_type = array();
+		if (!empty($taskTypeList)) {
+			foreach ($taskTypeList as $k => $v) {
+				$task_type[$v['type_id']] = $v['type_name'];
+			}
+		}
+
+		if ($result['httpcode'] == 200 && isset($result['content']) && !empty($result['content'])) {
+			$return = $result['content'];
+			if ($return['code'] == 200) {
+				$return = $return['data'];
+				$userIds = array();
+				foreach ($return as $k => $v) {
+					$userIds[] = $v['user_id'];
+					if ($v['current_user_id'] != 0) {
+						$userIds[] = $v['current_user_id'];
+					}
+				}
+
+				$user = array();
+				if (!empty($userIds)) {
+					$user = $this->getUserInfo(array('user_id' => implode(',', $userIds), 'status' => array(1, 2, 3), 'all' => 1));
+				}
+
+				$user_map = array();
+				if (!empty($user)) {
+					foreach ($user as $k) {
+						$user_map[$k['user_id']] = $k['name_cn'];
+					}
+				}
+
+				foreach ($return as $k => $v) {
+
+					$v['user_name'] = isset($user_map[$v['user_id']]) ? $user_map[$v['user_id']] : '';
+					
+					if ($v['current_user_id'] != 0) {
+						$v['current_user_name'] = isset($user_map[$v['current_user_id']]) ? $user_map[$v['current_user_id']] : '';
+					} else if ($v['current_user_id'] == 0) {
+						$v['current_user_name'] = '未开始审核';
+					}
+
+					$v['tasktype_name'] = isset($task_type[$v['tasktype_id']]) ? $task_type[$v['tasktype_id']] : '';
+
+					unset($return[$k]); 
+					$return[$k] = $v;
+				}
+
+				$return = Response::gen_success($return);
+			} 
+		} else if ($result === 0) {
+			$return = Response::gen_error(10000);
+		}
+
+		$this->app->response->setBody($return);
+	}
+
+	private function getUserInfo($param) {
+
+		$ret = self::getClient()->call('atom', 'account/get_user_info', $param);
+		$ret = $this->parseApiData($ret);
+
+		return $ret;
+	}
+
+	private function getTaskTypeList() {
+		
+		$ret = self::getClient()->call('workflowatom', 'process/task_type_list', array());
+		$ret = $this->parseApiData($ret);
+
+		return $ret;
+	}
+
+	private function _init() {
+
+		$this->rules = array(
+			'parent_task_type' => array(
+                'type'		=> 'integer',
+			),
+			'sub_task_type'    => array(
+                'type'		=> 'integer',
+			),
+			'user_id'          => array(
+				'type'       => 'integer',
+			),
+			'current_user_id'  => array(
+				'type'       => 'integer',
+			),
+		);
+
+		$this->task = $this->post()->safe();
+		$this->errors = $this->post()->getErrors();
+	}
+}

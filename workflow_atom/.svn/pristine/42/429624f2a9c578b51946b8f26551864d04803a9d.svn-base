@@ -1,0 +1,44 @@
+<?php 
+namespace WorkFlowAtom\Modules\User;
+
+use WorkFlowAtom\Modules\Common\BaseModule;
+use WorkFlowAtom\Package\Common\Response;
+use WorkFlowAtom\Package\User\UserRoleMap;
+use Libs\Util\Format;
+
+/**
+ * 逻辑删除用户角色映射
+ * @author jingjingzhang@meilishuo.com
+ * @date 2015-7-16 
+ */
+
+class UserRoleMapDelete extends BaseModule {
+
+    protected $mapIds = array();
+	
+    public function run() {
+
+	$this->_init();
+
+	if($this->post()->hasError()){
+            $return = Response::gen_error(10001, '', $this->post()->getErrors());
+            return $this->app->response->setBody($return);
+        }
+
+        $result = UserRoleMap::getInstance()->logicDelete($this->mapIds);
+
+        if ($result === FALSE) {
+            $return = Response::gen_error(50001);
+        }elseif (empty($result)) {
+            $return = Response::gen_error(30001);
+        }else{
+   	    $return = Response::gen_success(array('msg' => '修改成功'));
+        }
+
+        $this->app->response->setBody($return);
+    }
+
+    private function _init() {
+	   $this->mapIds = $this->request->POST;
+    }
+}

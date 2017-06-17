@@ -1,0 +1,314 @@
+@extends('layouts.master')
+
+@section('content')
+<link rel="stylesheet" href="/static/css/tokeninput.css">
+<script src="/static/js/tokeninputspeed.js"></script>
+<link rel="stylesheet" href="/static/css/bootstrap-select.css">
+<script src="/static/js/bootstrap-select.js"></script>
+<style type="text/css">
+    .submit_btn{
+        margin-left: 5px;
+        float: right;
+    }
+    .selectpicker{
+        display: none;
+    }
+    .password_notice{
+        margin:0 auto;text-align: center ;
+    }
+    .token-input-token,.token-input-input-token{line-height: 23px !important;}
+    .bootstrap-select ul{max-height: 270px !important;}
+
+</style>
+<div class="panel">
+<div class="panel-body" >
+    <p></p>
+    <ul id="myTab" class="nav nav-tabs">
+        <li class="active"><a href="#pwdEdit" data-toggle="tab">Mail密码修改</a></li>
+        <li><a href="#allAuth" data-toggle="tab">一键注销账号</a></li>
+        <li><a href="#allMutAuth" data-toggle="tab">批量注销账号</a></li>
+    </ul>
+    <div id="myTabContent" class="tab-content">
+
+        <div class="tab-pane fade in active" id="pwdEdit">
+            <p></p>
+            <form  id="pwdForm" class="form-inline  form-horizontal" role="form" >
+                <p></p>
+                <div class="row">
+                    <label class="control-label col-lg-3 col-md-3 col-sm-3" for="">用户名:</label>
+                    <div class="col-lg-6 col-md-6 col-sm-6">
+                        <input   id="mail_name" type="text" class="form-control " placeholder="邮箱前缀" name="mail_name"  >
+                    </div>
+                </div>
+                <div style="display: none;" class="row">
+                    <label class="control-label col-lg-3 col-md-3 col-sm-3" for="">mail密码:</label>
+                    <div class="col-lg-6 col-md-6 col-sm-6">
+                        <input    type="text" class="form-control " placeholder="修改的密码" name="mail_pwd"  >
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-10">
+                        <button  formId="pwdForm" class="btn btn-primary add_new submit_btn " id="pwdSubmit" type="submit" data-toggle="modal" data-target="#cateModal">保存</button>
+                    </div>
+                </div>
+            </form>
+            <div class="password_notice" style="color: #d16b8e">
+                <p><span>亲，密码由speed系统自动生成，并以短信形式下发到用户手机</span><p>
+            </div>
+        </div>
+
+        <div class="tab-pane fade" id="allAuth">
+            <p></p>
+            <form  id="allAuthForm" class="form-inline  form-horizontal" role="form" >
+                <p></p>
+                <div class="row">
+
+                    <label class="control-label col-lg-3 col-md-3 col-sm-3" for="">用户名</label>
+                    <div class="col-lg-6 col-md-6 col-sm-6">
+                        <input   id="user_id" type="text" class="form-control " placeholder="用户id" name="user_id"  >
+                    </div>
+                </div>
+
+                <div class="row">
+                    <label class="control-label col-lg-3 col-md-3 col-sm-3" for="">VPN</label>
+                    <div class="col-lg-6 col-md-6 col-sm-6">
+                        <select class="form-control" name="vpn_status" id="vpn_status">
+                            <option value=0 >不申请</option>
+                            <option value=1 selected>申请</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="row">
+                    <label class="control-label col-lg-3 col-md-3 col-sm-3" for="">Mail</label>
+                    <div class="col-lg-6 col-md-6 col-sm-6">
+
+                        <select class="form-control" name="mail_status" id="mail_status">
+                            <option value=0 >不申请</option>
+                            <option value=1 selected>申请</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="row">
+
+                    <label class="control-label col-lg-3 col-md-3 col-sm-3" for="">线上登录权限</label>
+                    <div class="col-lg-6 col-md-6 col-sm-6">
+                        <select class="form-control" name="online_status" id="online_status">
+                            <option value=0>不申请</option>
+                            <option value=1 selected>申请</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="row">
+
+                    <label class="control-label col-lg-3 col-md-3 col-sm-3" for="">WIFI</label>
+                    <div class="col-lg-6 col-md-6 col-sm-6">
+                        <select class="form-control" name="wifi_status" id="wifi_status">
+                            <option value=0>不申请</option>
+                            <option value=1 selected>申请</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="row">
+                    <label class="control-label col-lg-3 col-md-3 col-sm-3" for="">Redmine&Svn</label>
+                    <div class="col-lg-6 col-md-6 col-sm-6">
+                        <select class="form-control" name="redmine_status" id="redmine_status">
+                            <option value=0>不申请</option>
+                            <option value=1 selected>申请</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-10">
+                        <button  formId="authAllForm" class="btn btn-primary add_new submit_btn" id="authAllSubmit" type="submit" data-toggle="modal" data-target="#cateModal">保存</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <div class="tab-pane fade" id="allMutAuth">
+                <p></p>
+                <form  id="allMutAuthForm" class="form-inline  form-horizontal" role="form" >
+                    <p></p>
+                    <div class="row">
+
+                        <label class="control-label col-lg-3 col-md-3 col-sm-3" for="">用户名</label>
+                        <div class="col-lg-6 col-md-6 col-sm-6">
+                            <textarea name="mail" placeholder="提示：邮箱前缀" cols="30" rows="10"  class="form-control" size="15"></textarea>
+                            <!--                        <input   id="user_id" type="text" class="form-control " placeholder="用户id" name="user_id"  >-->
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <label class="control-label col-lg-3 col-md-3 col-sm-3" for="">VPN</label>
+                        <div class="col-lg-6 col-md-6 col-sm-6">
+                            <select class="form-control" name="vpn_status" >
+                                <option value=0 >不申请</option>
+                                <option value=1 selected>申请</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <label class="control-label col-lg-3 col-md-3 col-sm-3" for="">Mail</label>
+                        <div class="col-lg-6 col-md-6 col-sm-6">
+
+                            <select class="form-control" name="mail_status">
+                                <option value=0 >不申请</option>
+                                <option value=1 selected>申请</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row">
+
+                        <label class="control-label col-lg-3 col-md-3 col-sm-3" for="">线上登录权限</label>
+                        <div class="col-lg-6 col-md-6 col-sm-6">
+                            <select class="form-control" name="online_status" >
+                                <option value=0>不申请</option>
+                                <option value=1 selected>申请</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row">
+
+                        <label class="control-label col-lg-3 col-md-3 col-sm-3" for="">WIFI</label>
+                        <div class="col-lg-6 col-md-6 col-sm-6">
+                            <select class="form-control" name="wifi_status" >
+                                <option value=0>不申请</option>
+                                <option value=1 selected>申请</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <label class="control-label col-lg-3 col-md-3 col-sm-3" for="">Redmine&Svn</label>
+                        <div class="col-lg-6 col-md-6 col-sm-6">
+                            <select class="form-control" name="redmine_status" >
+                                <option value=0>不申请</option>
+                                <option value=1 selected>申请</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-lg-10">
+                            <button  formId="allMutAuthForm" class="btn btn-primary add_new submit_btn" id="allMutAuthSubmit" type="submit" data-toggle="modal" data-target="#cateModal">保存</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+    </div>
+</div>
+</div>
+<script src="/static/js/bootbox.min.js"></script>
+<script>
+
+    $('#pwdSubmit').click(function(){
+        var myForm = $('#pwdForm').serializeArray();
+        $.ajax({
+            url: "/structure/user/ajax_update_mail_pwd",
+            method: "POST",
+            data: myForm,
+            dataType: "json",
+            success: function (msg) {
+                if (msg.code == 200) {
+                    show_message(msg.code, msg);
+                    $('#pwdSubmit').attr({'disabled':'disabled'});
+                    setTimeout("$('#pwdSubmit').removeAttr('disabled')",3000);
+
+                } else {
+                    show_message(msg.code, msg);
+
+                }
+
+            }
+        });
+
+
+    });
+    $('#mail_name').tokenInput("/structure/depart/ajax_search_name",{
+        queryParam:'search' ,tokenLimit: 1,onAdd:function(ret) {
+            var mail_name = [ret];
+            $.each(mail_name,function(index,u){
+                $('#mail_name').val(u['mail']);
+
+            });
+
+        }
+    });
+    var  U = [];
+    $('#user_id').tokenInput("/structure/depart/ajax_search_name",{
+        queryParam:'search' ,tokenLimit: 1,onAdd:function(ret) {
+            var userId = [ret]
+            $.each(userId,function(index,u){
+                U.push(u['user_id']);
+            });
+            $('#user_id').val(U);
+
+        }
+    });
+    $('#authAllSubmit').click(function(){
+        var myForm = $('#allAuthForm').serializeArray();
+
+            var _this = $(this)
+            bootbox.confirm('确认删除用户吗？', function (result) {
+                if (result) {
+                    _this.attr({'disabled':'disabled'});
+                    $.ajax({
+                        url: "/structure/user/ajax_recover_all_auth",
+                        method: "POST",
+                        data: myForm,
+                        dataType: "json",
+                        success: function (msg) {
+                            if (msg.code == 200) {
+                                show_message(msg.code, msg);
+                                _this.removeAttr('disabled');
+                            } else {
+                                show_message(msg.code, msg);
+                            }
+                        }
+                    });
+                } else {
+
+                }
+            });
+
+    });
+    $('#allMutAuthSubmit').click(function(){
+        var myForm = $('#allMutAuthForm').serializeArray();
+
+        var _this = $(this)
+        bootbox.confirm('确认删除用户吗？', function (result) {
+            if (result) {
+                _this.attr('disabled',true);
+                $.ajax({
+                    url: "/itserver/ajax_recover_all_auth_by_mail",
+                    method: "POST",
+                    data: myForm,
+                    dataType: "json",
+                    success: function (msg) {
+
+                        if (msg.code == 200) {
+                            show_message(msg.code, msg);
+                            _this.removeAttr('disabled');
+                        } else {
+                            show_message(msg.code, msg);
+                        }
+                    }
+                });
+            } else {
+
+            }
+        });
+
+
+    });
+    $(function(){
+        $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
+            // 获取已激活的标签页的名称
+            var activeTab = $(e.target).text();
+            // 获取前一个激活的标签页的名称
+            var previousTab = $(e.relatedTarget).text();
+            $(".active-tab span").html(activeTab);
+            $(".previous-tab span").html(previousTab);
+        });
+    });
+
+
+</script>
+@endsection

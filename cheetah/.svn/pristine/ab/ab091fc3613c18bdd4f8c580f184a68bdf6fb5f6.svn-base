@@ -1,0 +1,47 @@
+<%#head.html%>
+		<div id="how-to-get-tips" class="animated fadeIn"></div>
+		<div class="page-hd">
+			<span><img src="<%= this.PICTURE_URL  %>img/speed/bg-img/icon.png" ></span>
+			<span><img src="<%= this.PICTURE_URL  %>img/speed/bg-img/speed.png" ></span>
+		</div>
+		<div class="card-container expire">
+			<a class="card-corner" data-switch="card-download"></a>
+			<div class="container-bd">
+				<div class="card card-expire animated flipInX active">
+					<form class="form-horizontal" method="post">
+
+						<p id="nickname"><%= (this.userInfo && this.userInfo.data && this.userInfo.data.user ) ? this.userInfo.data.user.name_cn : '花小美' %></p>
+
+						<p id="expire-tips">您的动态密钥已过期，请重输：</p>
+						<input type="text" name="verifyCode" class="form-control" maxlength="6"/>
+						<div class="help-links">
+							<a id="how-to-get" href="javascript:void(0);">如何获取?</a>
+							<a class="pull-right" href="/user/login/">没有密钥?</a>
+						</div>
+						<div class="text-center">
+							<button type="submit" class="btn btn-sign-in">登录</button>
+						</div>
+					</form>
+				</div>
+				<div class="card card-download animated bounceIn">
+					<h3 class="download-title">下载APP</h3>
+					<div class="row">
+						<div class="col-xs-5">
+							<span class="download-tips">请扫描右侧<br>客户端二维码</span>
+						</div>
+						<div class="col-xs-6">
+							<img src="<%= this.PICTURE_URL  %>img/speed/bg-img/ma.png" width="140" height="140">
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="container-bottom">
+				<div class="triangle"></div>
+				<div class="shadow-border left"></div>
+				<div class="shadow-border right"></div>
+			</div>
+		</div>
+<%! $_ENGINE_SELF.callFn("useModule")("<<<_use:
+		fml.use('speed/user/expire');
+_use:", this._JSstack , this._JSmods); %>
+<%#foot.html%>

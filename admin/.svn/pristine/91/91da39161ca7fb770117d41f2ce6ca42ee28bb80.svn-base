@@ -1,0 +1,86 @@
+<?php
+
+namespace Admin\Package\Attendance;
+
+use Admin\Modules\Common\BaseModule;
+use Admin\Package\Common\Response;
+/**
+ * 考勤时间 package
+ * @package Admin\Package\LeaveList
+ * @author guojiezhu@meilishuo.com
+ * @since 2015-11-13
+ */
+
+class WorkingHours extends \Admin\Package\Common\BasePackage {
+    //mail的发送地址
+    private static $instance = null;
+    private function __construct() {}
+
+    public static function getInstance()
+    {
+        if(is_null(self::$instance)){
+            self::$instance = new self();
+        }
+        return self::$instance;
+    }
+
+    
+    /**
+     * 获取考勤规则
+     */
+    public function getWorkingHours( $params = array() ){
+        $ret = self::getClient()->call('atom', '/punch/get_working_hours', $params);
+        $ret = self::parseRemoteData($ret);
+        return $ret;
+    }
+    
+    /**
+     * 获取所有的考勤人员表
+     */
+    public function getStaffWorkingHours( $params = array()){
+        $ret = self::getClient()->call('atom', '/punch/get_staff_working_hours', $params);
+        $ret = self::parseRemoteData($ret);
+        return $ret;
+    } 
+
+    
+      /**
+     * 创建考勤组
+     */
+    public function createWorkingHours( $params = array()){
+        $ret = self::getClient()->call('atom', '/punch/create_working_hours', $params);
+        $ret = self::parseRemoteData($ret);
+        return $ret;
+    } 
+    
+    /**
+     * 更新考勤组
+     */
+    public function updateWorkingHours( $params = array()){
+        $ret = self::getClient()->call('atom', '/punch/update_working_hours', $params);
+        $ret = self::parseRemoteData($ret);
+        return $ret;
+    } 
+    
+    /**
+     * 创建考勤人员和考勤组关系
+     */
+    public function createStaffRelation( $params = array()){
+        $ret = self::getClient()->call('atom', '/punch/create_working_staff_hours', $params);
+        $ret = self::parseRemoteData($ret);
+        return $ret;
+    } 
+    
+    /**
+     * 更新考勤人员和考勤组关系
+     */
+    public function updateStaffRelation( $params = array()){
+
+        $ret = self::getClient()->call('atom', '/punch/update_working_staff_hours', $params);
+
+        $ret = self::parseRemoteData($ret);
+        return $ret;
+    }
+    
+    
+}

@@ -1,0 +1,328 @@
+<?php
+namespace Admin\Modules\Structure\Depart;
+use Libs\Util\Format;
+use Admin\Modules\Common\BaseModule;
+use Admin\Package\Common\Response;
+use Admin\Package\Department\Department;
+use Admin\Package\Department\DepartRelation;
+use Admin\Package\Department\DepartSub;
+use Admin\Package\Account\UserInfo;
+use Admin\Package\Log\Log;
+/**
+ * Created by hongzhou@meilishuo.com
+ * User: MLS
+ * Date: 15/9/25
+ * Time: 下午9:52
+ */
+
+class AjaxUpdateDepart extends BaseModule {
+
+    protected $errors = NULL;
+    private $params = NULL;
+    private static $DEPART_TYPE = 5;
+    public static $VIEW_SWITCH_JSON = TRUE;
+
+    public function run() {
+
+       $this->_init();
+       if($this->post()->hasError()){
+           $return = Response::gen_error(10001, '', $this->post()->getErrors());
+           return $this->app->response->setBody($return);
+       }
+        if(isset($this->params['depart_name'])){
+            $this->params['depart_name'] =htmlspecialchars_decode(  $this->params['depart_name']);
+        }
+        if(isset($this->params['depart_info'])){
+            $this->params['depart_info'] =htmlspecialchars_decode(  $this->params['depart_info']);
+        }
+       $depart_info= $relation_info= $sub_info = array();
+       if(empty($this->params['leader_id'])&& empty($this->params['sub_leader_id'])){
+           return $this->app->response->setBody(Response::gen_error(10001,'领导必须要有'));
+       }
+       //部门人员变动
+       if(is_array($this->params['user_id'])&& isset($this->params['depart_id'])){
+
+           $this->params['user_id']= array_unique($this->params['user_id']);
+           foreach($this->params['user_id'] as $key => $value){
+               $add_user = UserInfo::getInstance()->updateUserInfo(array('user_id'=>$value
+               ,'depart_id'=> $this->params['depart_id']));
+               if($add_user === FALSE){
+                   $this->doLog($this->params,__LINE__.'添加部门人员失败');
+                   return $this->app->response->setBody(Response::gen_error(50001,'添加部门人员失败'));
+               }
+           }
+       }
+
+
+        $ret  =array();
+        $ret   =   DepartRelation::getInstance()->getRelationTempInfo(array('depart_id'=>$this->params['depart_id'],'is_virtual'=>0));
+        $ret=   is_array($ret)?array_pop($ret):'';
+        //是否具有关系
+        if($ret){
+            //部门信息更新
+            $result = array();
+            $result   = Department::getInstance()->getDepartTemp(array('depart_id'=>$this->params['depart_id']));
+            $result=   is_array($result)?array_pop($result):'';
+
+            $up_d  = Department::getInstance()->updateDepartTemp($this->params);
+            if($up_d === FALSE){
+                $this->doLog($this->params,__LINE__.'修改部门信息失败');
+                return $this->app->response->setBody(Response::gen_error(50001,'修改部门信息失败'));
+            }
+            $up_p_r = array();
+
+            if(isset($result['parent_id']) &&(($result['parent_id']!=$this->params['parent_id']))){//父亲id不相等时才改变
+                //level
+                $parent_info = $update_depart = $son =array();
+                $parent_info = Department::getInstance()->getDepartTemp(array('depart_id'=>$this->params['parent_id']));
+                $parent_info=   is_array($parent_info)?array_pop($parent_info):'';
+                if(isset($parent_info['depart_level'])){
+                    $update_depart  =  Department::getInstance()->updateDepartTemp(array('depart_id'=>$this->params['depart_id']
+                    ,'depart_level'=>$parent_info['depart_level']+1,'parent_id'=>$this->params['parent_id']));
+
+                    if($update_depart===FALSE){
+                        $this->doLog($this->params,__LINE__.'部门level修改失败');
+                        return $this->app->response->setBody(Response::gen_error(50001,'部门level修改失败'));
+                    }elseif($update_depart){
+                        //level的递归改变
+                        $son = $this->updateLevel(array('depart_id'=>$this->params['depart_id']
+                        ,'depart_level'=>$parent_info['depart_level']+1));
+                        if($son===FALSE){
+                            $this->doLog($this->params,__LINE__.'子部门level修改失败');
+                            return $this->app->response->setBody(Response::gen_error(50001,'子部门level修改失败'));
+                        }
+                    }
+                }
+
+                //修改parent_relation_id
+                $get=DepartRelation::getInstance()->getRelationTempInfo(array('depart_id'=>$this->params['parent_id'],
+                    'is_virtual'=>0));
+
+                $get=   is_array($get)?array_pop($get):'';
+
+                $get=   isset($get['relation_id'])?$get['relation_id']:'';
+                $dR = DepartRelation::getInstance()->updateRelationTempInfo(array('depart_id'=>$this->params['depart_id'],
+                    'is_virtual'=>0,'parent_relation_id'=>$get));
+
+            }
+
+            //leader
+            if($this->params['leader_id']==''){
+                $relation_info['user_id']=0;
+            }else{
+                $relation_info['user_id'] =  $this->params['leader_id'];
+
+            }
+            $relation_info['role_id'] =  $this->params['role_id'];
+            $relation_info['relation_id'] = isset($ret['relation_id'])?$ret['relation_id']:'';
+            $relation_info = DepartRelation::getInstance()->updateRelationTempInfo($relation_info);
+            if($relation_info===FALSE){
+                return $this->app->response->setBody(Response::gen_error(50001,'修改直属领导失败'));
+            }
+            //sub
+            $sub_info['relation_id'] =  isset($ret['relation_id'])?$ret['relation_id']:'';
+            $sub_temp =   DepartSub::getInstance()->getSubTempInfo(array('relation_id'=> $sub_info['relation_id']));
+            if(!empty($this->params['sub_leader_id'])){
+                $sub_info['user_id'] =  $this->params['sub_leader_id'];
+                if(empty($sub_temp)){
+                    $sub_info['status'] =1;
+                    $sub_temp  = DepartSub::getInstance()->createSubTempInfo($sub_info);
+                    if(empty($sub_temp)){
+                        $this->doLog($this->params,__LINE__.'创建代理失败');
+                        return $this->app->response->setBody(Response::gen_error(50001,'创建代理失败'));
+                    }
+                }else{
+                    $sub_temp =DepartSub::getInstance()->updateSubTempInfo($sub_info);
+                    if($sub_temp===FALSE){
+                        $this->doLog($this->params,__LINE__.'更新代理失败');
+                        return $this->app->response->setBody(Response::gen_error(50001,'更新代理失败'));
+                    }
+                }
+
+            }else{
+                if($sub_temp){
+                    $sub_temp  =  DepartSub::getInstance()->updateSubTempInfo(array('relation_id'=> $sub_info['relation_id'],'status'=>0));
+                    if($sub_temp===FALSE){
+                        $this->doLog($this->params,__LINE__.'删除代理失败');
+                        return $this->app->response->setBody(Response::gen_error(50001,'删除代理失败'));
+                    }
+                }
+            }
+
+           //虚拟关系
+           if(!empty($this->params['virtual_leader_id'])&&isset($ret['parent_relation_id'])){
+                //关系是否改变
+                 $r_p = DepartRelation::getInstance()->getRelationTempInfo(array('relation_id'=> $ret['parent_relation_id'],'is_virtual'=>1));
+                 $r_p=   is_array($r_p)?array_pop($r_p):'';
+                 if(empty($r_p)||(isset($r_p['user_id'])&& ($r_p['user_id']!=$this->params['virtual_leader_id']))){
+
+                   //有虚拟关系 删除原虚拟关系
+                   if(isset($r_p['relation_id'])){
+                       $delete =  DepartRelation::getInstance()->updateRelationTempInfo(array('relation_id'=>$r_p['relation_id'],'status'=>0));
+                       if($delete===FALSE){
+                           $this->doLog($this->params,__LINE__.'删除原关系失败');
+                           return $this->app->response->setBody(Response::gen_error(50001,'删除原关系失败'));
+                       }
+                   }
+
+                   // 添加新关系 更新关系
+                   $leader_depart = $leader_temp =  $vir = array();
+                   $leader_depart = UserInfo::getInstance()->getUserInfo(array('user_id'=>$this->params['virtual_leader_id']));
+                   $leader_depart=   is_array($leader_depart)?array_pop($leader_depart):'';
+
+                   $leader_temp = isset($leader_depart['depart_id'])?$leader_depart['depart_id']:'';
+                   $leader_temp = DepartRelation::getInstance()->getRelationTempInfo(array('depart_id'=>$leader_temp,'is_virtual'=>0));
+                   $leader_temp=   is_array($leader_temp)?array_pop($leader_temp):'';
+                   $vir['depart_id'] = isset($leader_depart['depart_id'])?$leader_depart['depart_id']:'';
+                   $vir['parent_relation_id'] = isset($leader_temp['relation_id'])?$leader_temp['relation_id']:'';
+                   $vir['is_virtual'] =1;
+                   $vir['role_id'] = isset($leader_temp['role_id'])?$leader_temp['role_id']:'';
+                   $vir['user_id'] = $this->params['virtual_leader_id'];
+
+                   $create =  DepartRelation::getInstance()->createRelationTempInfo($vir);
+                    if(empty($create)){
+                        $this->doLog($this->params,__LINE__.'创建新虚拟关系失败');
+                        return $this->app->response->setBody(Response::gen_error(50001,'创建新虚拟关系失败'));
+                    }
+                   //更新关系
+                   $up_r = isset($ret['relation_id'])?$ret['relation_id']:'';
+                   $up   = DepartRelation::getInstance()->updateRelationTempInfo(array('relation_id'=>$up_r,'parent_relation_id'=>$create));
+                     if(empty($up)){
+                         $this->doLog($this->params,__LINE__.'更新关系失败');
+                         return $this->app->response->setBody(Response::gen_error(50001,'更新关系失败'));
+                     }
+                 }
+            }else{
+               //删除原有虚拟关系
+
+               $r_v_d  =array();
+               if(empty($this->params['virtual_leader_id'])){
+                   $r_v_d = isset($ret['parent_relation_id'])?$ret['parent_relation_id']:'';
+                   $r_v_d = DepartRelation::getInstance()->getRelationTempInfo(array('relation_id'=> $r_v_d,'is_virtual'=>1));
+                   $r_v_d=   is_array($r_v_d)?array_pop($r_v_d):'';
+                   if(isset($r_v_d['relation_id'])&& isset($ret['relation_id'])){
+                       $r_v_d =DepartRelation::getInstance()->updateRelationTempInfo(array('relation_id'=> $r_v_d['relation_id'],'status'=>0));
+                       if($r_v_d===FALSE){
+                           $this->doLog($this->params,__LINE__.'删除原有虚拟关系失败');
+                           return $this->app->response->setBody(Response::gen_error(50001,'删除原有虚拟关系失败'));
+                       }
+                       //在这要找到当前部门的parent_id 所对应的relation_id
+                       $r_v_d = DepartRelation::getInstance()->getRelationTempInfo(array('depart_id'=> $this->params['parent_id'],'is_virtual'=>0));
+                       $r_v_d=   is_array($r_v_d)?array_pop($r_v_d):'';
+                       $r_v_d = isset($r_v_d['relation_id'])?$r_v_d['relation_id']:'';
+                       $r_v_d = DepartRelation::getInstance()->updateRelationTempInfo(array('relation_id'=>$ret['relation_id'],'parent_relation_id'=> $r_v_d));
+                       if($r_v_d===FALSE){
+                           $this->doLog($this->params,__LINE__.'更新父亲真实关系失败');
+                           return $this->app->response->setBody(Response::gen_error(50001,'更新父亲真实关系失败'));
+                       }
+                   }
+               }
+           }
+          $this->doLog($this->params,__LINE__.'修改成功');
+          return   $this->app->response->setBody(Response::gen_success('修改成功'));
+       }
+        $this->doLog($this->params,__LINE__.'请通知管理员核对数据关系');
+        $this->app->response->setBody(Response::gen_error(50001,'请通知管理员核对数据关系'));
+    }
+
+   private function updateLevel($parent){//level  depart_id
+       $parent_temp =$parent;
+       if(isset($parent_temp['depart_id'])&&$parent_temp['depart_level']===''){
+           return FALSE;
+       }
+       $child = Department::getInstance()->getDepartTemp(array('parent_id'=>$parent_temp['depart_id']));
+
+       if(empty($child)|| !is_array($child)){
+           return TRUE;
+       }elseif(is_array($child)){
+           foreach($child as $k =>$v){
+               $ret  =  Department::getInstance()->updateDepartTemp(array('depart_id'=>$v['depart_id']
+               ,'depart_level'=>$parent_temp['depart_level']+1));
+               if(!empty($ret)){//这里判断子level
+                    $this->updateLevel(array('depart_id'=>$v['depart_id'],'depart_level'=>$parent_temp['depart_level']+1));
+               }
+           }
+       }
+
+   }
+
+
+    protected function doLog($new_param=array(),$old_param=array()){
+        if(empty($old_param)){
+            $old =array('修改数据');
+        }else{
+            $old =$old_param;
+        }
+        $new =$new_param;
+        $depart =isset($new['depart_id'])?$new['depart_id']:'';
+        $new = json_encode($new);
+        $ret = Log::getInstance()->createLogs(array('user_id'=>$this->user['id'],'handle_id'=>$depart,
+            'before_data'=>$old,'after_data'=>$new,'handle_type'=>self::$DEPART_TYPE));
+        return $ret;
+    }
+
+   private function _init() {
+
+       $this->rules  = array(
+           'depart_id' => array(
+               'required' => TRUE,
+               'allowEmpty' => FALSE,
+               'type'=>'string',
+               'maxLength'=> 30,
+           ),
+           'depart_name' => array(
+               'type'=>'string',
+               'maxLength'=> 30,
+           ),
+           'leader_id' => array(//leader_id
+               'type'=>'integer',
+           ),
+           'sub_leader_id' => array(//代理leader_id
+               'type'=>'integer',
+               'maxLength'=> 30,
+           ),
+           'virtual_leader_id' => array(//虚拟部门leader_id
+               'type'=>'integer',
+               'maxLength'=> 30,
+           ),
+           'user_id' => array(//部门成员
+               'type'=>'multiID',
+               'default'=>array(),
+           ),
+           'depart_info' => array(
+               'type'=>'string',
+               'maxLength'=> 300,
+           ),
+            'role_id' => array(
+                'type'=>'integer',
+                'required' => TRUE,
+                'allowEmpty' => FALSE,
+            ),
+           'parent_id' => array(
+               'required' => TRUE,
+               'allowEmpty' => FALSE,
+               'type'=>'integer',
+           ),
+           'memo' => array(
+               'type'=>'string',
+               'maxLength'=> 300,
+           ),
+           'is_official' => array(
+               'type'=>'integer',
+               'enum'=> array(0,1),
+               'default' => 1,
+           ),
+           'status' => array(
+               'type'=>'integer',
+               'enum'=> array(0,1),
+               'default' => 1,
+           ),
+
+       );
+
+       $this->params   = $this->post()->safe();
+       $this->errors   = $this->post()->getErrors();
+
+
+   }
+}

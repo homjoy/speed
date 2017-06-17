@@ -1,0 +1,464 @@
+<script type="text/html" id="basic-info-tpl">
+    <fieldset class="basic-info">
+        <legend>基本信息</legend>
+        <div class="row">
+            <div class="form-group col-xs-6">
+                <label class="col-xs-4 control-label">申请人</label>
+
+                <div class="col-xs-8">
+                    <input type="text" class="form-control">
+                </div>
+            </div>
+            <div class="form-group col-xs-6">
+                <label class="col-xs-4 control-label">申请部门</label>
+
+                <div class="col-xs-8">
+                    <input type="text" name="departmentId" value="{{departmentId}}" class="form-control" disabled>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="form-group col-xs-6">
+                <label class="col-xs-4 control-label">银行账号</label>
+
+                <div class="col-xs-8">
+                    <input type="text" class="form-control" disabled>
+                </div>
+            </div>
+            <div class="form-group col-xs-6">
+                <label class="col-xs-4 control-label">联系电话</label>
+
+                <div class="col-xs-8">
+                    <input type="text" class="form-control" disabled>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="form-group col-xs-6">
+                <label class="col-xs-4 control-label">单据编号</label>
+
+                <div class="col-xs-8">
+                    <input type="text" class="form-control" disabled>
+                </div>
+            </div>
+            <div class="form-group col-xs-6">
+                <label class="col-xs-4 control-label">申请日期</label>
+
+                <div class="col-xs-8">
+                    <input type="text" class="form-control" disabled>
+                </div>
+            </div>
+        </div>
+    </fieldset>
+</script>
+
+
+<script type="text/html" id="receipt-info-tpl">
+    <fieldset class="receipt-info">
+        <legend>单据信息</legend>
+        <div class="row">
+            <div class="form-group col-xs-4">
+                <label class="col-xs-4 control-label">是否冲借款</label>
+
+                <div class="col-xs-8">
+                    <div class="checkbox">
+                        <label><input type="checkbox">是</label>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group col-xs-4">
+                <label class="col-xs-4 control-label">财务应付</label>
+
+                <div class="col-xs-8">
+                    <input type="text" class="form-control">
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="form-group col-xs-4">
+                <label class="col-xs-4 control-label">预算项目</label>
+
+                <div class="col-xs-8">
+                    <select class="form-control">
+                        <option>请选择</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-group col-xs-4">
+                <label class="col-xs-4 control-label">所属项目</label>
+
+                <div class="col-xs-8">
+                    <select class="form-control">
+                        <option>请选择</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-group col-xs-4">
+                <label class="col-xs-4 control-label">归属地</label>
+
+                <div class="col-xs-8">
+                    <select class="form-control">
+                        <option>请选择</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="form-group col-xs-4">
+                <label class="col-xs-4 control-label">报销金额</label>
+
+                <div class="col-xs-8">
+                    <input type="text" class="form-control" disabled/>
+                </div>
+            </div>
+
+            <div class="form-group col-xs-4">
+                <label class="col-xs-4 control-label">附件张数</label>
+
+                <div class="col-xs-8">
+                    <input type="text" class="form-control"/>
+                </div>
+            </div>
+
+            <div class="form-group col-xs-4">
+                <label class="col-xs-4 control-label">经办人</label>
+
+                <div class="col-xs-8">
+                    <input type="text" class="form-control" disabled/>
+                </div>
+            </div>
+        </div>
+    </fieldset>
+</script>
+<script type="text/html" id="general-fee-tpl">
+    <fieldset class="general-fee">
+        <legend>费用明细</legend>
+        <div class="row">
+            <div class="form-group col-xs-12">
+                <div class="inner-details">
+                    <div class="detail-row detail-head">
+                        <div class="column column-date">日期</div>
+                        <div class="column column-project">报销项目</div>
+                        <div class="column column-want">报销金额</div>
+                        <div class="column column-audit">核定金额</div>
+                        <div class="column column-remark">备注</div>
+                        <div class="column column-operate"></div>
+                    </div>
+                    {{include 'general-fee-row'}}
+                    <div class="detail-row detail-foot">
+                        <div class="column">
+                            合计<span class="detail-summary"></span>
+                        </div>
+                    </div>
+
+                    <div class="btn-group">
+                        <span><a href="javascript:void(0);" class="btn btn-xs btn-success"><i
+                                class="fa fa-plus"></i></a>添加</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </fieldset>
+</script>
+<script type="text/html" id="general-fee-row">
+    <div class="detail-row detail-control">
+        <div class="column column-date">
+            <input type="text" class="form-control"/>
+        </div>
+        <div class="column column-project">
+            <input type="text" class="form-control"/>
+        </div>
+        <div class="column column-want">
+            <input type="text" class="form-control"/>
+        </div>
+        <div class="column column-audit">
+            <input type="text" class="form-control"/>
+        </div>
+        <div class="column column-remark">
+            <input type="text" class="form-control"/>
+        </div>
+        <div class="column column-operate"><a href="javascript:void(0);"
+                                              class="btn btn-xs btn-danger btn-remove"><i
+                class="fa fa-minus"></i></a></div>
+    </div>
+</script>
+<script type="text/html" id="transport-fee-tpl">
+    <fieldset class="transport-fee">
+        <legend>交通费用明细</legend>
+        <div class="row">
+            <div class="form-group col-xs-12">
+                <div class="inner-details">
+                    <div class="detail-row detail-head">
+                        <div class="column column-date">日期</div>
+                        <div class="column column-start">起始地点</div>
+                        <div class="column column-end">到达地点</div>
+                        <div class="column column-vehicle">交通工具</div>
+                        <div class="column column-want">报销金额</div>
+                        <div class="column column-audit">核定金额</div>
+                        <div class="column column-remark">备注</div>
+                        <div class="column column-operate"></div>
+                    </div>
+                    {{include 'tranport-fee-row'}}
+                    <div class="detail-row detail-foot">
+                        <div class="column">
+                            合计<span class="detail-summary"></span>
+                        </div>
+                    </div>
+                    <div class="btn-group">
+                        <span><a href="javascript:void(0);" class="btn btn-xs btn-success"><i
+                                class="fa fa-plus"></i></a>添加</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </fieldset>
+</script>
+<script type="text/html" id="tranport-fee-row">
+    <div class="detail-row detail-control">
+        <div class="column column-date"><input type="text" class="form-control"/></div>
+        <div class="column column-start"><input type="text" class="form-control"/></div>
+        <div class="column column-end"><input type="text" class="form-control"/></div>
+        <div class="column column-vehicle"><input type="text" class="form-control"/></div>
+        <div class="column column-want"><input type="text" class="form-control"/></div>
+        <div class="column column-audit"><input type="text" class="form-control"/></div>
+        <div class="column column-remark"><input type="text" class="form-control"/></div>
+        <div class="column column-operate">
+            <a href="javascript:void(0);" class="btn btn-xs btn-danger btn-remove">
+                <i class="fa fa-minus"></i></a></div>
+    </div>
+</script>
+
+<script type="text/html" id="meals-fee-tpl">
+    <fieldset class="meals-fee">
+        <legend>餐费明细</legend>
+        <div class="row">
+            <div class="form-group col-xs-12">
+                <div class="inner-details">
+                    <div class="detail-row detail-head">
+                        <div class="column column-date">日期</div>
+                        <div class="column column-consume">消费金额</div>
+                        <div class="column column-remark">备注</div>
+                        <div class="column column-operate"></div>
+                    </div>
+                    {{include 'meals-fee-row'}}
+                    <div class="detail-row detail-foot">
+                        <div class="column">
+                            合计<span class="detail-summary"></span>
+                        </div>
+                    </div>
+                    <div class="btn-group">
+                        <span><a href="javascript:void(0);" class="btn btn-xs btn-success"><i
+                                class="fa fa-plus"></i></a>添加</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </fieldset>
+</script>
+<script type="text/html" id="meals-fee-row">
+    <div class="detail-row detail-control">
+        <div class="column column-date"><input type="text" class="form-control"/></div>
+        <div class="column column-consume"><input type="text" class="form-control"/></div>
+        <div class="column column-remark"><input type="text" class="form-control"/></div>
+        <div class="column column-operate"><a href="javascript:void(0);"
+                                              class="btn btn-xs btn-danger btn-remove"><i
+                class="fa fa-minus"></i></a></div>
+    </div>
+</script>
+
+<script type="text/html" id="business-trip-tpl">
+    <fieldset class="business-trip-detail">
+        <legend>出差信息</legend>
+        <div class="row">
+            <div class="form-group col-xs-4">
+                <label class="col-xs-6 control-label">出差申请编号</label>
+
+                <div class="col-xs-6">
+                    <select class="form-control">
+                        <option>请选择</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-group col-xs-4">
+                <label class="col-xs-4 control-label">出差天数</label>
+
+                <div class="col-xs-6">
+                    <input type="text" class="form-control"/>
+                </div>
+                <div class="col-xs-2">天</div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="form-group col-xs-12">
+                <label class="col-xs-2 control-label">出差事由</label>
+
+                <div class="col-xs-10">
+                    <textarea class="form-control"></textarea>
+                </div>
+            </div>
+        </div>
+    </fieldset>
+</script>
+<script type="text/html" id="hotel-fee-tpl">
+    <fieldset class="hotel-fee">
+        <legend>住宿费明细</legend>
+        <div class="row">
+            <div class="form-group col-xs-12">
+                <div class="inner-details">
+                    <div class="detail-row detail-head">
+                        <div class="column column-start">入住日期</div>
+                        <div class="column column-end">离店日期</div>
+                        <div class="column column-days">住宿天数</div>
+                        <div class="column column-want">报销金额</div>
+                        <div class="column column-audit">核定金额</div>
+                        <div class="column column-remark">备注</div>
+                        <div class="column column-operate"></div>
+                    </div>
+                    {{include 'hotel-fee-row'}}
+                    <div class="detail-row detail-foot">
+                        <div class="column">
+                            合计<span class="detail-summary"></span>
+                        </div>
+                    </div>
+                    <div class="btn-group">
+                        <span><a href="javascript:void(0);" class="btn btn-xs btn-success"><i
+                                class="fa fa-plus"></i></a>添加</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </fieldset>
+</script>
+<script type="text/html" id="hotel-fee-row">
+    <div class="detail-row detail-control">
+        <div class="column column-start"><input type="text" class="form-control"/></div>
+        <div class="column column-end"><input type="text" class="form-control"/></div>
+        <div class="column column-days"><input type="text" class="form-control"/></div>
+        <div class="column column-want"><input type="text" class="form-control"/></div>
+        <div class="column column-audit"><input type="text" class="form-control"/></div>
+        <div class="column column-remark"><input type="text" class="form-control"/></div>
+        <div class="column column-operate"><a href="javascript:void(0);"
+                                              class="btn btn-xs btn-danger btn-remove"><i
+                class="fa fa-minus"></i></a></div>
+    </div>
+</script>
+
+
+<script type="text/html" id="additional-fee-row">
+    <div class="detail-row detail-control">
+        <div class="column column-date"><input type="text" class="form-control"/></div>
+        <div class="column column-project"><input type="text" class="form-control"/></div>
+        <div class="column column-want"><input type="text" class="form-control"/></div>
+        <div class="column column-audit"><input type="text" class="form-control"/></div>
+        <div class="column column-remark"><input type="text" class="form-control"/></div>
+        <div class="column column-operate"><a href="javascript:void(0);"
+                                              class="btn btn-xs btn-danger btn-remove"><i
+                class="fa fa-minus"></i></a></div>
+    </div>
+</script>
+<script type="text/html" id="additional-fee-tpl">
+    <fieldset class="additional-fee">
+        <legend>补助明细</legend>
+        <div class="row">
+            <div class="form-group col-xs-12">
+                <div class="inner-details">
+                    <div class="detail-row detail-head">
+                        <div class="column column-date">日期</div>
+                        <div class="column column-project">报销项目</div>
+                        <div class="column column-want">报销金额</div>
+                        <div class="column column-audit">核定金额</div>
+                        <div class="column column-remark">备注</div>
+                        <div class="column column-operate"></div>
+                    </div>
+
+                    <div class="detail-row detail-foot">
+                        <div class="column">
+                            合计<span class="detail-summary"></span>
+                        </div>
+                    </div>
+                    <div class="btn-group">
+                        <span><a href="javascript:void(0);" class="btn btn-xs btn-success"><i
+                                class="fa fa-plus"></i></a>添加</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </fieldset>
+</script>
+<script type="text/html" id="loan-receipt-tpl">
+    <fieldset class="loan-receipt">
+        <legend>单据信息</legend>
+        <div class="row">
+            <div class="form-group col-xs-4">
+                <label class="col-xs-4 control-label">预算项目</label>
+
+                <div class="col-xs-8">
+                    <select class="form-control">
+                        <option>请选择</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-group col-xs-4">
+                <label class="col-xs-4 control-label">所属项目</label>
+
+                <div class="col-xs-8">
+                    <select class="form-control">
+                        <option>请选择</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="form-group col-xs-4">
+                <label class="col-xs-4 control-label">借款金额</label>
+
+                <div class="col-xs-8">
+                    <input type="text" class="form-control" disabled/>
+                </div>
+            </div>
+
+            <div class="form-group col-xs-4">
+                <label class="col-xs-4 control-label text-long">预计还款日期</label>
+
+                <div class="col-xs-8">
+                    <input type="text" class="form-control"/>
+                </div>
+            </div>
+
+            <div class="form-group col-xs-4">
+                <label class="col-xs-4 control-label">欠款金额</label>
+
+                <div class="col-xs-8">
+                    <input type="text" class="form-control"/>
+                </div>
+            </div>
+        </div>
+        <div class="row row-full">
+            <div class="form-group col-xs-12">
+                <label class="col-xs-2 control-label">借款理由</label>
+
+                <div class="col-xs-10">
+                    <textarea class="form-control"></textarea>
+                </div>
+            </div>
+        </div>
+        <div class="row row-full">
+            <div class="form-group col-xs-12">
+                <label class="col-xs-2 control-label">借款附件</label>
+
+                <div class="col-xs-10">
+                    <a href="javascript:void(0);" class="upload-btn" data-exists="[]">上传附件</a>
+                </div>
+            </div>
+        </div>
+    </fieldset>
+</script>

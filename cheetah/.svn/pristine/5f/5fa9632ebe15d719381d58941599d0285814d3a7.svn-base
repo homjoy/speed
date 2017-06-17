@@ -1,0 +1,353 @@
+<%#head2.html%>
+		<div class="boxed">
+			<!--CONTENT CONTAINER-->
+			<!--===================================================-->
+			<div id="content-container">
+				
+				<div id="page-content">
+					<div class="row">
+						<div class="col-lg-8" style="padding-left:20px;padding-right:30px">
+							<!-- <div id="demo-panel-network" class="panel">
+								<div id="morris-chart-network" class="morris-full-content"></div>
+							</div> -->
+							<!-- 通讯录 -->
+							<div class="row">
+								<div  class="panel" style="height:120px;min-width:560px">
+									<img src="<%= this.userInfo.data.user.avatar.avatar_middle%>" class="head_pic left">
+									<div class="head_word left">
+										<span class="up hidden-xs">hello <%= this.userInfo.data.user.name_cn%></span>
+										<span class="down  hidden-xs">活动一下？</span>
+									</div>
+									
+									<div class="left select_div">
+										<span class="button_select left"><span class="button_select_word" name="name">通讯录</span>
+											<!-- <ul class="choose_select hide">
+												<li name="qq">QQ</li>
+												<li name="qq">部门</li>
+												<li name="name">姓名</li>
+												<li name="mail">邮箱</li>
+												<li name="mobile">手机</li>
+											</ul> -->
+										</span>
+										<input type="text" class="input_select left" placeholder="姓名/拼音/邮箱/手机号/QQ号" autofocus="autofocus"/>
+										<a href="#" class="select_pic">
+											<img src="<%= this.PICTURE_URL  %>img/home/search icon.png">
+										</a>
+									</div>
+								</div>
+							</div>
+							<!-- 常用功能 -->
+							<div class="row">
+								<div class="panel antenna" style="min-width:560px">
+									<div class="panel_head">
+										<img src="<%= this.PICTURE_URL  %>img/home/shezhi.png">常用功能
+									</div>
+									<div class="panel_body ">
+										<ul>
+											<li><a href="/meeting"><img src="<%= this.PICTURE_URL  %>img/home/u_huiyi.png"><span>预定会议室</span></a></li>
+											<li><a href="/home/window/?f=document&s=requestAbsence"><img src="<%= this.PICTURE_URL  %>img/home/u_qingjia.png"><span>请假申请</span></a></li>
+											<li><a href="/home/window/?f=executive&s=requestStationery"><img src="<%= this.PICTURE_URL  %>img/home/u_bangong.png"><span>办公用品申请</span></a></li>
+											<li><a href="/home/window/?f=executive&s=requestTravel"><img src="<%= this.PICTURE_URL  %>img/home/u_chuchai.png"><span>出差申请</span></a></li>
+											<li><a href="/home/window/?f=executive&s=assets_request"><img src="<%= this.PICTURE_URL  %>img/home/u_guding.png"><span>固定资产申请</span></a></li>
+											<li><a href="/home/window/?f=executive&s=requestCard"><img src="<%= this.PICTURE_URL  %>img/home/u_mingpian.png"><span>名片申请</span></a></li>
+										</ul>
+									</div>
+								</div>
+							</div>
+				
+							<div class="row">
+								<div class="panel panel_time" >
+									<div class="panel-top"></div>
+									<div id="demo-dp-range">
+									</div>
+									<div class="todo_today panel_right">
+										<div class="panel_head">当日待办事项</div>
+										<div class="panel_body">
+											<div></div>
+										</div>
+										<div class="img_div hide" >
+											<img src="<%= this.PICTURE_URL  %>img/home/wuneirong.png" >
+											<span class="img_word" >合理安排</br>才是硬道理</span>
+										</div>
+										<a class="mytime_rili" href="/time/">我的时间</a>
+									</div>
+								</div>
+							</div>
+				<% if(this.user_share_list.code==200){ %>
+							<div class="row">
+								<div class="panel share_time_div" >
+									
+										<div class="panel_body" style="">
+											<span class="">查看共享人</br>的时间</span>
+										</div>
+										<div style="float:left;height:100%;">
+											<ul>
+												<% this.user_share_list.data.forEach(function(bannar, index){  %>
+												<li>
+													<a href="/time/?user_id=<%= bannar.user_id%>&iw=<%= bannar.is_write%>">
+														<img src="<%= bannar.avatar%>">
+														<span style=""><%= bannar.name_cn %></span>
+													</a>
+												</li>
+												<% }); %>
+											</ul>
+										</div>
+								</div>
+							</div>
+				<% } %>
+							<div class="row friendly-link">
+								<div class="panel antenna" style="min-width:560px">
+									<div class="panel_head">
+										<img src="<%= this.PICTURE_URL  %>img/home/lianjie.png">友情链接
+									</div>
+									<div class="panel_body ">
+										<ul>
+											<li><a href="http://redmine.meilishuo.com/welcome" target="_blank"><img src="<%= this.PICTURE_URL  %>img/home/wikiicon.png"><span>wiki</span></a></li>
+											<li><a href="http://home.meilishuo.com/index.php?app=homeapi&mod=AutoLogin" target="_blank"><img src="<%= this.PICTURE_URL  %>img/home/homeicon.png"><span>home</span></a></li>
+											<li><a href="http://developer.meiliworks.com" target="_blank"><img src="<%= this.PICTURE_URL  %>img/home/kaifangfuwu.png" ><span>开放服务平台</span></a></li>
+										</ul>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="col-lg-4" style="padding:0px">
+
+							<!--Extra Small Weather Widget-->
+							 <!--<div class="panel middle">-->
+								<!--<div class="media-left pad-all">-->
+									<!--<canvas id="demo-weather-xs-icon" width="48" height="48"></canvas>-->
+								<!--</div>-->
+								<!--<div class="media-body">-->
+									<!--<p class="text-2x mar-no text-thin text-mint">25&#176;</p>-->
+									<!--<p class="text-muted mar-no">Partly Cloudy Day</p>-->
+								<!--</div>-->
+							<!--</div>-->
+							<!--End Extra Small Weather Widget-->
+							<% if(this.weather.code == 200){%>
+							<div class="panel panel_right">
+								<div id="demo-weather-widget" class="panel panel-mint text-center">
+									<div class="panel-body" >
+
+										<!--Weather widget body-->
+										<div class="row pad-top">
+
+											<div class="col-xs-7">
+												<h1 ><%= this.weather.data.today.main.temp %> ℃</h1>
+												<h4 class="text-semibold"><%= this.weather.data.city.city_name %></h4>
+											</div>
+											<div class="col-xs-3">
+												<input type="hidden" id="demo-weather-skycon-today" value="<%= this.weather.data.today.weather.skycon %>"/>
+												<canvas id="demo-weather-icon-today" width="64" height="64" ></canvas>
+											</div>
+										</div>
+										<hr>
+
+										<!--Weather widget footer-->
+										<ul class="list-unstyled text-center clearfix">
+
+											<% this.weather.data.forecast.forEach(function(weather, index){  %>
+											<li class="col-xs-4">
+												<input type="hidden" id="demo-weather-skycon-<%= index%>" value="<%= weather.weather.skycon %>"/>
+												<canvas id="demo-weather-icon-<%= index%>" width="32" height="32"></canvas>
+												<p class="text-sm mar-no"><%= weather.date_cn %></p>
+												<p><%= weather.temp.min%>-<%= weather.temp.max%> ℃</p>
+											</li>
+											<% })  %>
+
+										</ul>
+									</div>
+								</div>
+							</div>
+							<%}%>
+							<div class="panel panel_right">
+								<div class="panel_head">
+									美丽说新闻
+								</div>
+								<div class="panel_body">
+									<ul>
+<% if(this.top_news.code == 200){%>
+										<% this.top_news.data.forEach(function(bannar, index){ %>
+                          	<li >
+                          		
+                          		<a href="<%=bannar.url%>" class="news_home" target="<%= index %>"
+                          		<% if(index==0){ %>
+                          		style="color:green;max-width: 86%;"
+                          		<% } %>
+                          		><%=bannar.title %></a>
+                          		<% if(index==0){ %>
+                          		<img src="<%= this.PICTURE_URL  %>img/home/newicon.png" class="new">
+                          		<% } %>
+                          	</li>
+										<% }); %>
+<%}%>
+									</ul>
+									<a class="more" href="http://home.meilishuo.com/news?t=3" target="_Blank1">查看更多</a>
+								</div>
+							</div>
+
+							<div class="panel panel_right">
+								<div class="panel_head">
+									最近更新
+								</div>
+								<div class="panel_body">
+									<ul>
+<% if(this.update_news.code == 200){%>
+										<% this.update_news.data.forEach(function(bannar, index){ %>
+                          	<li><%=bannar.friendly %><%=bannar.subject %></li>
+										<% }); %>
+<%}%>										
+									</ul>
+									
+								</div>
+							</div>
+						</div>
+					</div>
+					
+<!-- List Todo -->
+				<!--<div class="row">
+						<div class="col-lg-7">
+							<div class="row">
+								<div class="col-lg-6">
+									
+									<div class="panel panel-dark panel-colorful">
+										<div class="panel-heading">
+											<div class="panel-control">
+												<button class="btn btn-default"><i class="fa fa-gear"></i></button>
+											</div>
+											<h3 class="panel-title">To do list</h3>
+										</div>
+										<div class="pad-ver">
+											<ul class="list-group bg-trans list-todo mar-no">
+												
+												<li class="list-group-item">
+													<label class="form-checkbox form-icon active">
+														<input type="checkbox" checked>
+														<span>Redesign my logo</span>
+													</label>
+												</li>
+												<li class="list-group-item">
+													<label class="form-checkbox form-icon">
+														<input type="checkbox">
+														<span>Read the book</span>
+													</label>
+												</li>
+											</ul>
+										</div>
+										<div class="input-group pad-all">
+											<input type="text" class="form-control" placeholder="New task" autocomplete="off">
+											<span class="input-group-btn">
+												<button type="button" class="btn btn-success"><i class="fa fa-plus"></i></button>
+											</span>
+										</div>
+									</div>
+									
+								</div>
+							</div>
+						</div>-->
+<!-- End todo list -->
+						
+							<!--Morris donut chart-->
+							<!--
+							<div class="panel">
+								<div id="demo-morris-donut" class="morris-donut"></div>
+							</div>
+							-->
+							<!--End Morris donut chart-->
+					
+<!--Weather Widget-->
+					<!--	<div id="demo-weather-widget" class="panel panel-mint panel-colorful text-center">
+								<div class="panel-body">
+									<div class="row pad-top">
+										<div class="col-xs-6">
+											<canvas id="demo-weather-icon-1" width="98" height="98"></canvas>
+										</div>
+										<div class="col-xs-6">
+											<p class="text-4x">27&#176;</p>
+											<p class="text-semibold">Partly Cloudy Day</p>
+										</div>
+									</div>
+					
+									<h4 class="mar-no pad-top">San Jose, CA</h4>
+									<p>Today</p>
+									<hr>
+									<ul class="list-unstyled text-center clearfix">
+										<li class="col-xs-3">
+											<canvas id="demo-weather-icon-2" width="32" height="32"></canvas>
+											<p class="text-sm mar-no">Saturday</p>
+											<p>25 &#176;C</p>
+										</li>
+										<li class="col-xs-3">
+											<canvas id="demo-weather-icon-3" width="32" height="32"></canvas>
+											<p class="text-sm mar-no">Sunday</p>
+											<p>22 &#176;C</p>
+										</li>
+										<li class="col-xs-3">
+											<canvas id="demo-weather-icon-4" width="32" height="32"></canvas>
+											<p class="text-sm mar-no">Monday</p>
+											<p>20 &#176;C</p>
+										</li>
+										<li class="col-xs-3">
+											<canvas id="demo-weather-icon-5" width="32" height="32"></canvas>
+											<p class="text-sm mar-no">Monday</p>
+											<p>28 &#176;C</p>
+										</li>
+									</ul>
+								</div>
+							</div>-->
+<!--End Weather Widget-->
+					
+				</div>
+				<!--===================================================-->
+				<!--End page content-->
+
+				<div class="foot_panel" style="">
+					<div class="panel_head">
+						联系方式
+					</div>
+					<div class="panel_body">
+						<ul>
+							<li>
+								<span >北京</span>
+								<p>总部：北京市海淀区中关村大街19号新中关大厦A座6、7、9、10、11层</p>
+								<p> 总机：010-82486129   &nbsp;&nbsp;传真：010-60190662(7层)</p>
+								<p>客服：北京市海淀区海淀中街15号远中悦莱大厦B区3层305C</p>
+							</li>
+
+							<li>
+								<span >广州</span>
+								<p> 广州市天河区冼村路11号保利威座北塔32层全层（珠江新城W酒店对面）</p>
+								<p>仓库：广州市黄埔区护林路1199号 C库</p>
+							</li>
+
+							<li>
+								<span >杭州</span>
+								<p>杭州市西湖区古墩路83号浙商财富中心4号楼406室</p>
+							</li>
+
+							<li><span >上海</span>
+								<p>上海市长宁区娄山关路523号金虹桥国际中心I座706室</p></li>
+
+
+						</ul>
+					</div>
+				</div>
+			</div>
+			<!--===================================================-->
+			<!--END CONTENT CONTAINER-->
+			<%#mainnav_container_left.html%>
+
+			<%#footer.html%>
+			<!--<%#aside.html%>-->
+		</div>
+
+<button id="scroll-top" class="btn"><i class="fa fa-chevron-up"></i></button>		<!--===================================================-->
+	</div>
+	<!--===================================================-->
+	<!-- END OF CONTAINER -->
+<%! $_ENGINE_SELF.callFn("useModule")("<<<_use:
+		fml.use('speed/common/base');
+		fml.use('nifty/skycons.min');
+		fml.use('speed/home/wizard');
+		fml.use('speed/home/index');
+_use:", this._JSstack , this._JSmods); %>
+<%#foot.html%>

@@ -1,0 +1,92 @@
+<%#head.html%>
+<div id="container" class="effect mainnav-lg">
+    <%#navbar.html%>
+    <div class="boxed">
+        <div id="content-container">
+            <div id="page-content">
+                <div class="panel panel-nav">
+                    <div class="panel-heading">
+                        <ul class="nav nav-tabs slope" role="tablist">
+                            <li role="presentation" ><a href="/my/apply/reimburse">报销</a></li>
+                            <li role="presentation"><a href="/my/apply/loan">借款</a></li>
+                            <li role="presentation"><a href="/my/apply/pay">付款</a></li>
+                            <li role="presentation"><a href="/my/apply/contract">合同</a></li>
+                            <li role="presentation"><a href="/my/apply/budget">预算</a></li>
+                            <li role="presentation" class="active"><a href="javascript:void(0);">IDC机房</a></li>
+                        </ul>
+                    </div>
+                    <div class="panel-body">
+                        <div id="slope-home">
+                            <div class="row search-head"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <%#sidebar.html%>
+    </div>
+    <%#footer.html%>
+</div>
+
+
+
+<script type="text/html" id="left-table">
+    <table class="table">
+        <tr>
+            <th></th>
+            <th>机房</th>
+            <th>合同金额(￥)</th>
+            <th class="hidden-narrow">审批状态</th>
+            <th class="hidden-narrow">申请日期</th>
+        </tr>
+        {{each data as info}}
+        <tr class="show-info tr-{{info.approveState}}" data-id="{{info.id}}" dbl-open="/IDCinfo/view/?id={{info.id}}">
+            <td>
+                <i class="icon icon-{{info.approve_flag}}"></i>
+            </td>
+            <td>
+                <div class="name-limited">{{info.server_room_area_name}}-{{info.server_room_name_name}}</div>
+                <div class="hidden-fat bottom-word"><span>{{info.make_date}}{{info.handle_personname || ''}}</span></div>
+            </td>
+            <td>
+                <div>{{info.contract_amount | currencyFormat}}</div>
+                <div class="hidden-fat bottom-word approvalState"><span>{{info.handle_deptname}}</span></div>
+            </td>
+            <td class="hidden-narrow">{{info.approve_state_name}}</td>
+            <td class="hidden-narrow">{{info.make_date}}</td>
+        </tr>
+        {{/each}}
+    </table>
+</script>
+
+<%#IDCinfo/detail.tpl.html %>
+<%#partial/approval_history_timeline.html %>
+<script type="text/html" id="right-show">
+    <div class="panel-heading ">
+        <span>申请详情</span>
+        <a href="/IDCinfo/print/?id={{data.id}}" target="_blank" class="btn btn-xs btn-default single">打印</a>
+        {{if canRevokeFlag == "1"}}
+        <a href="javascript:void(0);" data-id="{{data.id}}" class="btn btn-xs btn-danger single list-undo">撤销</a>
+        {{else if canModifyFlag == "1"}}
+        <a href="/IDCinfo/edit/?id={{data.id}}" target="_blank" class="btn btn-xs btn-success single">修改</a>
+        {{/if}}
+    </div>
+    <div class="panel-body">
+        <div class="info-head">
+            {{ include 'IDCinfo-table-tpl'}}
+        </div>
+        <div class="info-body">
+            <hr class="line-horizontal"/>
+            <a href="javascript:void(0);" class="approval-history history-icon" data-task_id="fms">审批记录</a>
+            {{include 'approval-history-timeline'}}
+        </div>
+    </div>
+</script>
+
+
+
+
+<%! $_ENGINE_SELF.callFn( "useModule")( "<<<_use:
+        fml.use('fms/my/apply/IDCinfo');
+_use:", this._JSstack , this._JSmods); %>
+<%#foot.html%>

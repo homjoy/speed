@@ -1,0 +1,14 @@
+{
+    "name": "speed/worker",
+    "description": "SPEED 异步任务",
+    "authors": [
+        {
+            "name": "Feng Pan",
+            "email": "fengpan@meilishuo.com"
+        }
+    ],
+    "require": {
+        "fabpot/goutte": "~2.0",
+        "php-imap/php-imap": "dev-master"
+    }
+}

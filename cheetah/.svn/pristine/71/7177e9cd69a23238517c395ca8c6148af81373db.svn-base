@@ -1,0 +1,18 @@
+@import "../variables";
+
+
+.text-very-important(){
+  color:@text-very-important;
+}
+
+.text-important(){
+  color:@text-important;
+}
+
+.text-normal(){
+  color:@text-normal;
+}
+
+.text-unimportant(){
+  color:@text-unimportant;
+}

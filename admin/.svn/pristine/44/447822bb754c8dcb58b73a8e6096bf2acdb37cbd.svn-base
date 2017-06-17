@@ -1,0 +1,120 @@
+@extends('layouts.master')
+@section('content')
+<link type="text/css" rel="stylesheet" href="/static/css/pagination.css">
+<script src="/static/js/pagination.js"></script>
+<link rel="stylesheet" href="/static/css/tokeninput.css">
+<script src="/static/js/tokeninputspeed.js"></script>
+<style type="text/css">
+    .search_btn, .export_btn, .add_btn, .delete_btn, .edit_btn {
+        margin-left: 5px;
+        float: right;
+    }
+</style>
+<div class="panel-heading" style="overflow: hidden; line-height: 32px">
+    <ol class="breadcrumb">
+        <li class="active">邮箱组成员列表</li>
+    </ol>
+
+
+    <p></p>
+    <!-- Table -->
+    <div class="row">
+        <form action="" method="POST"/>    
+	<div class="col-xs-5">
+        <input type="text" name ='sub_leader_id'  id="sub_leader_id" class="form-control" placeholder="Search..." />
+		<select name="from" id="multiselect" class="form-control" size="15" multiple="multiple">
+		</select>
+	</div>
+	
+	<div class="col-xs-2">
+		<button type="button" id="multiselect_rightAll" class="btn btn-default btn-block"><i class="glyphicon glyphicon-forward"></i>全部增加</button>
+		<button type="button" id="multiselect_rightSelected" class="btn btn-default btn-block"><i class="glyphicon glyphicon-chevron-right"></i>增加</button>
+		<button type="button" id="multiselect_leftSelected" class="btn btn-warning btn-block"><i class="glyphicon glyphicon-chevron-left"></i>删除</button>
+		<button type="button" id="multiselect_leftAll" class="btn  btn-danger btn-block"><i class="glyphicon glyphicon-backward"></i>全部删除</button>
+      
+	</div>
+	
+	<div class="col-xs-5">
+        <select name="to" id="multiselect_to" class="form-control" size="15" multiple="multiple">@foreach ($data as $t) <option value="{{ $t['user_mail'] }}">{{ $t['user_mail'] }}@meilishuo.com</option> @endforeach</a></select>
+	</div>
+    </div>
+    <div class="row"><div class="col-xs-12 text-center"><input type="hidden" value="{{ $search_params['group_id'] }}" id="group_id" name="group_id"/><input type="button" value="提交" class="btn btn-success submit_email_group"/></div></div>
+        
+
+
+</div>
+<!-- 模态框（Modal） -->
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog"
+     aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close"
+                        data-dismiss="modal" aria-hidden="true">
+                    &times;
+                </button>
+                <h4 class="modal-title" id="myModalLabel">
+                    删除用户
+                </h4>
+            </div>
+            <div class="modal-body">
+                亲,确定删除用户信息?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" id="uid"
+                        data-dismiss="modal">关闭
+                </button>
+                <button type="button" class="btn btn-primary d_btn">
+                    提交更改
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+<!--</div>-->
+<script type="text/javascript" src="/static/js/multiselect.js"></script>    
+<script>
+    $(function(){
+        $('.submit_email_group').click(function(){
+            var group_id = "{{ $search_params['group_id'] }}";
+            var arr = [];
+             $("#multiselect_to option").each(function () {
+                var val = $(this).val(); //获取单个value
+                arr.push(val);
+            });
+
+            var arr_string = arr.toString();
+             $('.submit_email_group').attr('disabled',true);
+             $.ajax({
+                url: "/mail/ajax_mail_user_edit",
+                method: "POST",
+                data: { group_id : group_id, mail:arr_string},
+                dataType: "json",
+                success:function(msg){
+                    $('.submit_email_group').removeAttr('disabled');
+                    if(msg.code==200){
+                        show_message(msg.code,msg);
+                        setTimeout("location.reload()",1500);
+                    }else{
+                        var ret =[];
+                        ret['error_msg'] = msg['error_detail'];
+                        show_message(msg.code,ret);
+                    }
+                }
+              });
+        })
+        
+        $('#multiselect').multiselect({
+            search: {
+                right: '<input type="text" name="q" class="form-control" placeholder="Search..." />',
+            }
+        });
+        $('#sub_leader_id').tokenInput("/structure/depart/ajax_search_name",{
+            queryParam:'search' ,tokenLimit: 1,onAdd:function(ret) {
+                var html ="<option  value='"+ret.mail+"'>"+ret.mail+"@meilishuo.com</option>"
+                $('#multiselect').append(html);
+            }
+        });
+    })
+</script>
+@endsection

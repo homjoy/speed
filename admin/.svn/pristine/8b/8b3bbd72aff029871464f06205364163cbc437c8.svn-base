@@ -1,0 +1,99 @@
+<?php
+namespace Admin\Modules\Itserver;
+
+use Libs\Util\Format;
+use Admin\Modules\Common\BaseModule;
+use Admin\Package\Common\Response;
+use Admin\Package\Itserver\Itserver;
+use Libs\Util\ArrayUtilities;
+/**
+ * Created by hongzhou@meilishuo.com
+ * User: MLS  AccountExpireHome
+ * Date: 06/01/25
+ * Time: 下午12:18
+ */
+class AccountExpireHome extends BaseModule
+{
+    protected $errors = null;
+    private $params = null;
+    private $page_size = 20;
+    protected $expire_type = array(
+        1 => 'vpn',
+        2 => 'redmine',
+        3 => 'svn',
+        4 => 'osys',
+        5 => 'mail',
+    );
+    protected $status_type = array(
+        0 => '无效',
+        1 => '有效',
+
+    );
+    protected $checkUserPermisssion = TRUE;
+    public function run()
+    {
+
+        $this->_init();
+        //page  count  notify_type   data search_params
+        if(empty($this->params['user_id'])){
+            unset($this->params['user_id']);
+        }
+        $this->params['offset']  = intval($this->params['page']-1)* $this->page_size;
+        $this->params['limit']  =  $this->page_size;
+        $data =  Itserver::getInstance()->getUserAccount($this->params);
+        //只给前端输出想要的字段
+        $end_data= $temp =array();
+        if(!empty($data)&&is_array($data)){
+            foreach($data as $key=>$value){
+                $temp['id'] = isset($value['id'])?$value['id']:'';
+                $temp['user_id'] = isset($value['user_id'])?$value['user_id']:'';
+                $temp['login_name'] = isset($value['login_name'])?$value['login_name']:'';
+                $temp['update_time'] = isset($value['update_time'])?$value['update_time']:'';
+                if(isset($value['status'])){
+                    $temp['status'] =  isset($this->status_type[$value['status']])?$this->status_type[$value['status']]:'';
+                }
+                if(isset($value['account_type'])){
+                    $temp['account_type'] =  isset($this->expire_type[$value['account_type']])?$this->expire_type[$value['account_type']]:'';
+                }
+                $end_data[] =   $temp;
+            }
+        }
+        $return =  Response::gen_success($end_data);
+        $this->params['count'] =1;
+
+        $count = Itserver::getInstance()->getUserAccount($this->params);
+
+        if($count){
+            $return['count'] = ceil($count/$this->page_size);
+        }else{
+            $return['count']='';
+        }
+        $return['page'] = $this->params['page'];
+
+        $return['search_params'] = $this->params;
+        $return['expire_type'] =$this->expire_type;
+        $this->app->response->setBody($return);
+
+    }
+
+    private function _init()
+    {
+        $this->rules = array(
+            'page' => array(
+                'type'    => 'integer',
+                'default' => 1
+            ),
+            'user_id' => array(
+                'type'    => 'integer',
+            ),
+            'account_type'=> array(
+                'type'=>'multiId',
+                'default'=>array_keys($this->expire_type),
+            ),
+
+        );
+        $this->params = $this->query()->safe();
+        $this->errors = $this->query()->getErrors();
+    }
+
+}

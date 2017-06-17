@@ -1,0 +1,22 @@
+function login() {
+	return this;
+}
+var controlFns = {
+	'index' : function(){
+		this.login()
+	}
+	,'login' : function(){
+		var php = {
+			
+		}
+        this.bindDefault(php);
+		this.bridgeMuch(php);
+		this.listenOver(function(data){
+			console.log(this.req.headers.cookie);
+
+			data._CSSLinks = ['nifty/bootstrap','login'];
+			this.render('login.html' , data);
+		})
+	}
+};
+exports.__create = controller.__create(login, controlFns);

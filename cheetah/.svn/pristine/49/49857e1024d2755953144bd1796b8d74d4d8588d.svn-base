@@ -1,0 +1,111 @@
+<%#head.html%>
+<%#header.html%>
+<div class="boxed">
+    <div id="content-container">
+        <div id="page-content">
+            <div class="col-lg-12">
+                <div class="panel">
+                    <div class="panel-body">
+                        <ul id="myApplyTab" class="nav nav-tabs">
+                            <li class="active"><a href="#contract" data-toggle="tab" aria-expanded="true">合同</a></li>
+                        </ul>
+                        <div id="myTabContent" class="tab-content">
+                            <div class="tab-pane fade active in" id="contract">
+                                <form class="form-horizontal query-form">
+                                    <table class="table owntable">
+                                        <tbody>
+                                        <tr>
+                                            <td class="text-right">部门</td>
+                                            <td id="department" class="text-left">
+                                                <input type="text" name="departmentId" class="form-control"/>
+                                                <!--<select name="departmentId" id="department" class="form-control ow4">-->
+
+                                                <!--&lt;!&ndash;<option value="1">w</option>&ndash;&gt;-->
+                                                <!--</select>-->
+                                            </td>
+                                            <td class="text-right">合同编号</td>
+                                            <td class="text-left">
+                                                <div class="form-inline">
+                                                    <input type="text" class="form-control ow4" name="conId">
+                                                </div>
+                                            </td>
+                                            <td class="text-right">合同签订日期</td>
+                                            <td class="text-left">
+                                                <div class="form-inline">
+                                                    <input type="text" class="form-control" id="sTime" name="sTime">
+                                                    &nbsp;&nbsp;至&nbsp;&nbsp;
+                                                    <input type="text" id="eTime" class="form-control" name="eTime">
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td class="text-right">单据编号</td>
+                                            <td class="text-left">
+                                                <input type="text" class="form-control" name="approId">
+                                            </td>
+                                            <td  class="text-right">合同名称</td>
+                                            <td class="text-left">
+                                                <div class="form-inline">
+                                                    <input type="text" class="form-control ow4" name="cabNameCn">
+                                                </div>
+                                            </td>
+                                            <td class="text-right">单据状态</td>
+                                            <td class="text-left">
+                                                <select name="state" id="" class="form-control">
+                                                    <option value="">查询全部</option>
+                                                    <option value="0">草稿</option>
+                                                    <option value="2">审批中</option>
+                                                    <option value="3">审批通过</option>
+                                                    <option value="4">驳回</option>
+                                                    <option value="5">已归档</option>
+                                                </select>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td colspan="6">
+                                                <a href="javascript:;" class="btn btn-success ow2 btn-query"
+                                                   data-loading-text="查询中">查询</a>
+                                                <a href="javascript:;" class="btn btn-default ow2 btn-export">导出</a>
+                                            </td>
+                                        </tr>
+                                        </tbody>
+                                    </table>
+                                </form>
+                                <table id="tb-filing-query"
+                                       class="table table-hover table-striped table-bordered tb-width hide">
+                                    <thead>
+                                    <tr>
+                                        <th>单据编号</th>
+                                        <th>合同编号</th>
+                                        <th>合同类型</th>
+                                        <th>合同名称</th>
+                                        <th>签订日期</th>
+                                        <th>合同金额(￥)</th>
+                                        <th>合同期限</th>
+                                        <th>签订合同公司</th>
+                                        <th>对方名称</th>
+                                        <th>对方联系人</th>
+                                        <th>联系电话</th>
+                                        <th>经办部门</th>
+                                        <th>经办人</th>
+                                        <th>单据状态</th>
+                                        <th>文件状态</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <%#sidebar.html%>
+</div>
+<%#footer.html%>
+<%! $_ENGINE_SELF.callFn( "useModule")( "<<<_use:
+        fml.use('fms/query/query');
+_use:", this._JSstack , this._JSmods); %>
+<%#foot.html%>

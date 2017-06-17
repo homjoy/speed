@@ -1,0 +1,261 @@
+<%#head.html%>
+<script type="text/javascript">
+    var IDCinfoDetail = <%= JSON.stringify(this.detail)%> || {};
+    console.log(IDCinfoDetail);
+</script>
+<div id="container" class="effect mainnav-lg">
+    <%#navbar.html%>
+    <div id="boxed">
+        <div id="content-container">
+            <div id = "page-content">
+                <div class="panel panel-form">
+                    <div class="panel-heading">
+                        <p class="panel-title">IDC机房情况表</p>
+                    </div>
+                    <div class="panel-body">
+                        <form class="form-horizontal form-apply">
+                            <fieldset class="basic-info" data-editable="false">
+                                <legend>基本信息</legend>
+                                <div class="row">
+                                    <input type="hidden" name="id" value="<%=this.detail.data.id%>"/>
+                                    <div class="form-group col-xs-6">
+                                        <label class="col-xs-4 control-label">申请人</label>
+
+                                        <div class="col-xs-8">
+                                            <input type="text" name="applyPersonName" class="form-control" value="<%=this.userInfo.data.nameCn%>" disabled>
+                                        </div>
+                                    </div>
+                                    <div class="form-group col-xs-6">
+                                        <label class="col-xs-4 control-label">申请部门</label>
+
+                                        <div class="col-xs-8">
+                                            <input type="text" name="departmentName" class="form-control" value="<%=this.userInfo.data.department.departName%>" disabled>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="form-group col-xs-6">
+                                        <label class="col-xs-4 control-label">单据编号</label>
+
+                                        <div class="col-xs-8">
+                                            <input name="billNo" type="text" class="form-control" readonly>
+                                        </div>
+                                    </div>
+                                    <div class="form-group col-xs-6">
+                                        <label class="col-xs-4 control-label">申请日期</label>
+
+                                        <div class="col-xs-8">
+                                            <input type="text" name="applyDateStr" class="form-control" disabled>
+                                        </div>
+                                    </div>
+                                </div>
+                            </fieldset>
+                            <fieldset class="machineBill-info">
+                                <legend>单据内容</legend>
+                                <div class="row">
+                                    <div class="form-group col-xs-6">
+                                        <label class="col-xs-4 control-label">机房</label>
+                                        <div class="col-xs-3 no-padding-right">
+                                            <select name="serverRoomArea" class="form-control selectpicker">
+                                                <option value="">请选择</option>
+                                                <% if(this.areaEngineRooms && this.areaEngineRooms.rcode == 200) { %>
+                                                <% this.areaEngineRooms.data.forEach(function(engineRoom,index){%>
+                                                <option value="<%=engineRoom.itemValue %>"><%=engineRoom.itemName %></option>
+                                                <% }); %>
+                                                <% } %>
+                                            </select>
+                                        </div>
+                                        <div class="col-xs-1 symbolSpan">——</div>
+                                        <div class="col-xs-3 no-padding-left">
+                                            <select name="serverRoomName" class="form-control selectpicker">
+                                                <option value="">请选择（关联机房）</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="form-group col-xs-6">
+                                        <label class="col-xs-4 control-label">合同序号</label>
+                                        <div class="col-xs-8">
+                                            <input name="" type="text" value="<%=this.detail.data.contractSeq%>" class="form-control" disabled>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="form-group col-xs-6">
+                                        <label class="control-label col-xs-4">合同编号</label>
+                                        <div class="col-xs-8">
+                                            <input type="text" name="contractNo" class="form-control">
+                                        </div>
+                                    </div>
+                                    <div class="form-group col-xs-6">
+                                        <label class="col-xs-4 control-label">合同期限</label>
+                                        <div class="col-xs-3 no-padding-right">
+                                            <input name="contractStartDate" type="text" value="<%=this.detail.data.contractStartDateStr%>" class="form-control" readonly>
+                                        </div>
+                                        <div class="col-xs-1 symbolSpan">至</div>
+                                        <div class="col-xs-3 no-padding-left">
+                                            <input name="contractEndDate" type="text" value="<%=this.detail.data.contractEndDateStr%>" class="form-control" readonly>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="form-group col-xs-6">
+                                        <label class="control-label col-xs-4">合同签订公司</label>
+                                        <div class="col-xs-8">
+                                            <input name="contractCompany" type="text" value="<%=this.detail.data.contractCompany%>" class="form-control" readonly>
+                                        </div>
+                                    </div>
+                                    <div class="form-group col-xs-6">
+                                        <label class="control-label col-xs-4">对方单位</label>
+                                        <div class="col-xs-8">
+                                            <input name="customerCompany" type="text" value="<%=this.detail.data.customerCompany%>" class="form-control" readonly>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="form-group col-xs-4">
+                                        <label class="control-label col-xs-4">合同金额</label>
+                                        <div class="col-xs-8">
+                                            <input name="contractAmount" type="text" value="<%=this.detail.data.contractAmount%>" class="form-control" readonly>
+                                        </div>
+                                    </div>
+                                    <div class="form-group col-xs-4">
+                                        <label class="control-label col-xs-4">月付金额</label>
+                                        <div class="col-xs-8">
+                                            <input name="contractMonthAmount" type="text" value="<%=this.detail.data.contractMonthAmount%>" class="form-control">
+                                        </div>
+                                    </div>
+                                    <div class="form-group col-xs-4">
+                                        <label class="control-label col-xs-4">付款方式</label>
+                                        <div class="col-xs-8">
+                                            <select name="payWay" class="form-control selectpicker">
+                                                <option value="">请选择</option>
+                                                <% if(this.payTypes && this.payTypes.rcode == 200){%>
+                                                <% this.payTypes.data.forEach(function(pay,index) {%>
+                                                <option value="<%=pay.itemValue%>"><%=pay.itemName%></option>
+                                                <%});%>
+                                                <%}%>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="form-group col-xs-4">
+                                        <label class="control-label col-xs-4">机柜数量</label>
+                                        <div class="col-xs-8">
+                                            <input name="cabinetAmount" type="text" value="<%=this.detail.data.cabinetAmount%>" class="form-control">
+                                        </div>
+                                    </div>
+                                    <div class="form-group col-xs-4">
+                                        <label class="control-label col-xs-4">机柜单价</label>
+                                        <div class="col-xs-8">
+                                            <input name="cabinetUnitPrice" type="text" value="<%=this.detail.data.cabinetUnitPrice%>" class="form-control">
+                                        </div>
+                                    </div>
+                                    <div class="form-group col-xs-4">
+                                        <label class="control-label col-xs-4">机柜总价</label>
+                                        <div class="col-xs-8">
+                                            <input name="cabinetPrice" type="text" value="<%=this.detail.data.cabinetPrice%>" class="form-control">
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="form-group col-xs-4">
+                                        <label class="control-label col-xs-4">宽带数量</label>
+                                        <div class="col-xs-8">
+                                            <input name="bandWidth" type="text" value="<%=this.detail.data.bandWidth%>" class="form-control">
+                                        </div>
+                                    </div>
+                                    <div class="form-group col-xs-4">
+                                        <label class="control-label col-xs-4">宽带单价</label>
+                                        <div class="col-xs-8">
+                                            <input name="bandUnitPrice" type="text" value="<%=this.detail.data.bandUnitPrice%>" class="form-control">
+                                        </div>
+                                    </div>
+                                    <div class="form-group col-xs-4">
+                                        <label class="control-label col-xs-4">宽带总价</label>
+                                        <div class="col-xs-8">
+                                            <input name="bandPrice" type="text" value="<%=this.detail.data.bandPrice%>" class="form-control">
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="form-group col-xs-4">
+                                        <label class="control-label col-xs-4">IP数量</label>
+                                        <div class="col-xs-8">
+                                            <input name="ipAmount" type="text" value="<%=this.detail.data.ipAmount%>" class="form-control">
+                                        </div>
+                                    </div>
+                                    <div class="form-group col-xs-4">
+                                        <label class="control-label col-xs-4">机柜单元</label>
+                                        <div class="col-xs-8">
+                                            <input name="cabinetUnit" type="text" value="<%=this.detail.data.cabinetUnit%>" class="form-control">
+                                        </div>
+                                    </div>
+                                    <div class="form-group col-xs-4">
+                                        <label class="control-label col-xs-4">电源类型</label>
+                                        <div class="col-xs-8">
+                                            <input name="powerType" type="text" value="<%=this.detail.data.powerType%>" class="form-control">
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="form-group col-xs-4">
+                                        <label class="control-label col-xs-4">链路类型</label>
+                                        <div class="col-xs-8">
+                                            <select name="linkType" class="form-control selectpicker">
+                                                <option value="">请选择</option>
+                                                <% if(this.linkTypes && this.linkTypes.rcode == 200){%>
+                                                <% this.linkTypes.data.forEach(function(link,index) {%>
+                                                <option value="<%=link.itemValue%>"><%=link.itemName%></option>
+                                                <%});%>
+                                                <%}%>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="form-group col-xs-4">
+                                        <label class="control-label col-xs-4">附加费用</label>
+                                        <div class="col-xs-8">
+                                            <input name="addExpense" type="text" value="<%=this.detail.data.addExpense%>" class="form-control">
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="form-group col-xs-12">
+                                        <label class="col-xs-1 control-label">备注</label>
+
+                                        <div class="col-xs-11">
+                                        <textarea name="remark"  class="form-control" rows="5">
+                                            <%=this.detail.data.remark%>
+                                        </textarea>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </fieldset>
+                        </form>
+                    </div>
+                    <div class="panel-footer  text-center">
+                        <a class="btn btn-warning btn-submit" href="javascript:void(0);" data-url="/aj/IDCinfo/submit" data-redirect="/my/apply/IDCinfo/">提交</a>
+                        <a class="btn btn-success btn-save-draft" href="javascript:void(0);" data-url="/aj/IDCinfo/save_draft" data-redirect="/my/apply/IDCinfo/">保存草稿</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <%#sidebar.html%>
+    </div>
+    <%#footer.html%>
+</div>
+<%! $_ENGINE_SELF.callFn( "useModule")( "<<<_use:
+        fml.use('fms/IDCinfo/apply');
+_use:", this._JSstack , this._JSmods); %>
+<%#foot.html%>
+

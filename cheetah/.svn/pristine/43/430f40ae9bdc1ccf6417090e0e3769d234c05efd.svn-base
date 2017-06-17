@@ -1,0 +1,224 @@
+fml.define('fms/pay/payApplycation', ['jquery','plugin/tokeninput','plugin/bootstrap/datepicker','plugin/dropzone','plugin/bootstrap/validator'], function (require, exports) {
+	var $ = require('jquery');
+	// var Dropzone = require('plugin/dropzone');
+
+	var payUrl = {
+		conQuery: 'aaa', //查询合同编号
+		submit: 'ddd', //提交
+		drafs: '',    //保存草稿
+		fileup:'a',   //文件上传
+		conOther:'sss',//合同相关信息查询
+		applyList:'myApply.html' //保存成功后，跳到的列表
+	}
+	var selector = {
+		form1: $('#formPay')
+	}
+	// 合同相关信息
+	var conInfo = {
+		name_content: $('#nameContent'),  //合同名字、内容
+		pay_tips: $('#payTips'),  //付款条款
+		pay_company: $('#payCompany'), //付款公司
+		take_company: $('#takeCompany'), //收款公司
+	    sign_date: $('#signDate') //签署日期
+	}
+	// 初始化datepicker
+	$('#payDay').datepicker({
+		'format': 'yyyy-mm-dd',
+	    'autoclose': true,
+	    'todayHighlight': true
+	})
+	//初始化合同编号搜索
+	$('#conId').tokenInput(payUrl.conQuery,{
+	    noResultsText: '没有结果',
+	    searchingText: '搜索中',
+	    queryParam: 'cContractCode',
+	    onResult: function(data) {
+	    	console.log(data);
+	    }
+	});
+	// $('.token-input-list').on('click',function(){
+	// 	$('.view-con').show();
+
+	// })
+		        
+	// 通过合同编号 查询相关信息
+	$('#conId').on('change', function() {
+	    var conId = $(this).val();
+	    $.post(payUrl.conOther,{'conId':conId}, function(data) {
+	    	if(data.code==0){
+	    		for (key in conInfo) {
+		            // 要求key的值与data中key值相同
+		            $(conInfo[key]).val(data[key]);
+		        }
+		        $('.view-con').show();
+	    	}
+	        
+	    });
+	});
+
+	zoneOptions = {
+		url:payUrl.fileup,
+		autoDiscover :false,
+		addRemoveLinks: true,
+	    dictRemoveLinks: 'x',
+	    dictCancelUpload: 'x',
+	    dictDefaultMessage:'文件拖到或点击此处实现上传，支持pdf/doc/docx/xlsx/xls/ppt/pptx/rar/zip格式',
+	    addRemoveLinks: true,
+	    dictRemoveFile:'删除文件',
+	    maxFiles:2,
+	    dictMaxFilesExceeded:'不能超过2个',
+	    //关闭自动上传功能，默认会true会自动上传
+	    //也就是添加一张图片向服务器发送一次请求
+	    autoProcessQueue: false,
+	    acceptedFiles: 'application/pdf,.doc,.docx,.xlsx,.xls,.ppt,.pptx,.zip,.rar',
+	    init: function() {
+	    	var zone = this;
+	    	var submitButton = document.querySelector('#submit-all');
+	            this.on('success', function(file) {
+	                console.log('File ' + file.name + "uploaded");
+	            });
+	            this.on("removedfile", function(file) {
+	                console.log('File ' + file.name + "removed");
+	            });
+	            submitButton.addEventListener("click",function(){
+		          //手动上传所有图片
+		          zone.processQueue();
+		        });
+		        this.on('complete',function(file,data){
+		        	console.log(file,file.type,file.name,file.size,file.xhr.responseText);
+		        	$('fileName').val(file.name);
+		        	$('fileSize').val(file.size);
+		        	$('fileType').val(file.type);
+		        })
+	        }
+	}
+	// new Dropzone('#fileZone',zoneOptions)
+	// Dropzone.autoDiscover = false;
+	$('#fileZone').dropzone(zoneOptions)
+
+	$('#payMoney').on('blur',function(){
+		var money = $(this).val();
+		if(money){
+			$(this).val(changeMoney(money));
+		}
+	})
+
+	//设置本地日期
+	function setLoaclDate(sel) {
+	    var curDate = (new Date()).Format("yyyy-MM-dd");
+	    sel.val(curDate);
+	}
+	var isVal = $('.writeDay').val();
+	if(!isVal){
+	    setLoaclDate($('.writeDay'));
+	}
+
+	// 保存
+	selector.form1.bootstrapValidator({
+		container: '#cc',
+		fields: {
+			payMoney: {
+				container: 'tooltip',
+				validators: {
+					notEmpty: {
+						message: '不能为空'
+					},
+					regexp: {
+						regexp: /^\d+(\.\d{2}){0,1}$/,
+						message: '格式不对'
+					}
+				}
+			}
+		}
+	}).on('success.form.bv',function(e){
+		e.preventDefault();
+		var conId = $.trim($('#conId').val());
+		var fileName = $('fileName').val();
+		if(conId == ""){
+			$.niftyNoty({
+				type: 'warning',
+				container: 'floating',
+				message: '合同编号不能为空',
+				timer: 2000
+			});
+			return;
+		}
+		if(fileName.length == 0){
+			$.niftyNoty({
+				type: 'warning',
+				container: 'floating',
+				message: '请上传文件',
+				timer: 2000
+			});
+			return;
+		}
+
+		// 防止二次点击
+		$('.btn-submit').button('loading').delay(100).queue(function(){
+			var info= selector.form1.serialize();
+			console.log(info,'表单值已经发送');
+			$.post(payUrl.submit,{'data':info},function(data){
+				if(data.code==0){
+					$.niftyNoty({
+			            type: 'info',
+			            container: 'panel',
+			            message : '归档成功',
+			            timer : 2000
+			        });
+			        console.log("保存成功",data);
+					$(_this).button('reset');
+					window.location.href = payUrl.applyList;
+				}
+			},'json')
+		});
+	});
+
+	//  var myDropzoneOptions = {
+	//                 url : '/accounts/Ajax_uploadFile',
+	//                 maxFilesize:10,
+	//                 maxFiles : 20,
+	//                 dictMaxFilesExceeded: '最大只能上传20个', //超过最大文件数量的提示文本
+	//                 paramName : 'attach',
+	//                 dictDefaultMessage: '将文件拖拽至此区域进行上传（或点击此区域）,最大只能上传1个,文件大小要小于10M',
+	//                 dictInvalidFileType: "不允许的文件上传类型.",
+	//                 addRemoveLinks: true,
+	//                 dictRemoveLinks: "x",
+	//                 dictCancelUpload : '取消上传',
+	//                 dictRemoveFile : '取消上传',
+	//                 clickable: fileZone,
+	//                 acceptedFiles : "application/pdf,.doc,.docx,.xlsx,.xls,.ppt,.pptx,.zip,.rar",
+	//                 autoDiscover :false,
+	//                 init:function(){
+	//                     this.on('success',function(file,Data){
+	//                         var result = JSON.parse(Data);
+	//                         if(result.ret!=0){
+	//                             show_message(400,'上传失败');return;
+	//                         }
+	//                         var file_index =result.data.file_id;
+	//                         var item_upload_url={url:file_index,filename:file.name};
+	//                         save_upload_info.push(item_upload_url);
+	//                         //序列化为json字符串
+	//                         var json_encode_string=JSON.stringify(save_upload_info);
+	//                         $('#file_index').val(json_encode_string);
+	//                     });
+	//                     this.on('addedfile',function(file){
+	//                         //
+	//                     });
+	//                     this.on('removedfile',function(file){
+	//                         var this_file_name  = file.name;
+	//                         for(var j in save_upload_info){
+	//                             if(save_upload_info[j].filename==this_file_name){
+	//                                 save_upload_info.splice(j,1);
+	//                                 this_file_name='';
+	//                             }
+	//                         }
+	//                         var json_encode_string=JSON.stringify(save_upload_info);
+	//                         $('#file_index').val(json_encode_string);
+
+	//                     });
+	//                 }
+	//             };
+	//             Dropzone.autoDiscover = false;
+	//             new Dropzone("#fileZone", myDropzoneOptions);
+
+});

@@ -1,0 +1,137 @@
+@extends('layouts.master')
+@section('content')
+    <link rel="stylesheet" href="/static/bootstrap/css/bootstrap-datetimepicker.min.css">
+    <script src="/static/bootstrap/js/bootstrap-datetimepicker.min.js"></script>
+    <div class="panel-heading" style="overflow: hidden; line-height: 32px">
+        <ol class="breadcrumb">
+            <li class="active">SPEED后台管理/信息管理/信息推送</li>
+        </ol>
+        <div id="page-content" class="panel">
+        </div>
+        <div class="table-container">
+            <form name="send_msg" id="send_msg">
+                <table class="table " style="font-size:14px;">
+                    <tbody>
+                    <tr>
+                        <td class="col-xs-2">发送对象:</td>
+                        <td>
+                            {{--<input type="radio" name="send_object" class="send-obj" value="1"/> 按部门--}}
+                            <input type="radio" name="send_object" class="send-obj" value="2"/> 在职员工
+                            <input type="radio" name="send_object" class="send-obj" value="3"/> 离职员工
+                            <input type="radio" name="send_object" class="send-obj" value="4"/> 手机号(仅支持发送短信)
+                            <input type="radio" name="send_object" class="send-obj" value="5"/> 邮箱(支持发送邮件和短信)
+                            {{--<input type="radio" name="send_object" class="send-obj" value="6"/> 输入员工号(A140002)--}}
+                        </td>
+                    </tr>
+                    <tr class="send-info" style="display: none">
+                        <td class="col-xs-2"></td>
+                        <td><textarea name="send_user" cols="50" rows="5" class="form-control" placeholder="输入信息"></textarea></td>
+                    </tr>
+                    <tr class="send-depart-info" style="display: none">
+                        <td class="col-xs-2"></td>
+                        <td class="depart-info"></td>
+                    </tr>
+                    <tr>
+                        <td>类型:</td>
+                        <td><input type="radio" name="channel" class="channel" value="1"> 邮件
+                            <input type="radio" name="channel" class="phone_channel" value="2"> 短信
+                            {{--<input type="radio" name="channel" value="3"> IM--}}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>模板:</td>
+                        <td><input type="text" class=" form-control" value="" name="template_id"/></td>
+                    </tr>
+                    <tr>
+                        <td>权重:</td>
+                        <td><input type="radio" value="10" name="weights"/>非常紧急<input type="radio" checked value="30" name="weights"/>紧急<input type="radio" value="50" name="weights"/>不紧急</td>
+                    </tr>
+                    <tr>
+                        <td>标题:</td>
+                        <td><input type="text" class=" form-control" value="" name="title"/></td>
+                    </tr>
+                    <tr>
+                        <td>发送内容:</td>
+                        <td><textarea cols="50" rows="5" class=" form-control" name="content"></textarea>
+                            {{--<input type="button" class="btn btn-info" value="#name#员工姓名">--}}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>发送时间:</td>
+                        <td><input type="text" value="" class="form-control form_datetime" name="send_at"/></td>
+                    </tr>
+                    <tr>
+                        <td></td>
+                        <td><input type="button" id="submit" name="button" class="btn btn-info" value="提交"/></td>
+                    </tr>
+                    </tbody>
+                </table>
+            </form>
+            <div class="pagination-left panel-body">
+            </div>
+        </div>
+
+    </div>
+    <link rel="stylesheet" href="/static/css/validator.css">
+    <script type="text/javascript" src="/static/js/Validform_v5.3.2_min.js"></script>
+    <script type="text/javascript">
+        $(function () {
+            $('.send-obj').click(function () {
+                var check_value = $(this).val();
+                if (check_value == 2 || check_value == 3) {
+                    $('.send-depart-info').hide();
+                    $('.send-info').hide();
+                }
+                if (check_value == 1) {
+
+                    $('.send-depart-info').show();
+                    $('.send-info').hide();
+                }
+                if (check_value == 4 || check_value == 5 || check_value == 6) {
+                    $('.send-info').show();
+                    $('.send-depart-info').hide();
+                }
+                if(check_value ==4 ){
+                    $('.channel').attr('disabled',true);
+                    $('.phone_channel').attr('checked',true);
+                }else{
+                    $('.channel').removeAttr('disabled');
+
+                }
+
+            })
+            $(".form_datetime").datetimepicker({format: 'yyyy-mm-dd hh:ii:ss', autoclose: true});
+            var validform_obj =  $("#send_msg").Validform({
+                tiptype:3,
+                postonce:true,
+                showAllError:true,
+                ajaxPost:true
+            });
+            $('#submit').click(function () {
+                var form_data = $('#send_msg').serialize();
+                var _this = $(this);
+                _this.attr('disabled', true);
+                $.ajax({
+                    method: "POST",
+                    url: "/message_send/ajax_message_send",
+                    async: true,
+                    data: form_data,
+                    success: function (msg) {
+                        _this.removeAttr('disabled');
+                        msg = $.parseJSON(msg);
+                        if (msg.code == 200) {
+                            show_message(msg.code, msg);
+                            //window.location.reload();
+                        } else {
+                            var ret = [];
+                            ret['error_msg'] = msg['error_msg'];
+                            show_message(msg.code, ret);
+                        }
+                    }
+                })
+            })
+
+        })
+    </script>
+
+@endsection

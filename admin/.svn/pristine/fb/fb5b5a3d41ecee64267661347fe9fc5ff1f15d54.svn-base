@@ -1,0 +1,135 @@
+<?php
+namespace Admin\Modules\Structure\Outer;
+
+use Admin\Modules\Common\BaseModule;
+use Admin\Package\Common\Response;
+use Admin\Package\Account\UserOutsourcingInfo;
+
+use Admin\Package\Log\Log;
+/**
+ * 添加用户信息
+ * @author hongzhou@meilishuo.com
+ * @since 2015-9-14 下午12:53:13
+ */
+class AjaxAddUser extends BaseModule {
+
+    protected $errors = NULL;
+    private   $params = NULL;
+    public static $VIEW_SWITCH_JSON = TRUE;
+    const USER_TYPE = 4;
+    
+    public function run() {
+        $this->_init();
+        if($this->post()->hasError()){
+            $return = Response::gen_error(10001, '', $this->post()->getErrors());
+            return $this->app->response->setBody($return);
+        }
+        if(ord($this->params['name_cn']) <= 122){
+            return $this->app->response->setBody(Response::gen_error(30001,'请核对中文名字,必须使用中文'));
+        }
+        if(isset($this->params['mail'])&&( ord($this->params['mail']) <= 57 ||ord($this->params['mail']) > 122) ){
+            return $this->app->response->setBody(Response::gen_error(30001,'请核对邮箱,必须使用拼音'));
+        }
+        $return_data = UserOutsourcingInfo::getInstance()->createUserOutsourcingInfo($this->params);
+        if(empty($return_data)){//返回user_id
+            return $this->app->response->setBody(Response::gen_error(50001,'添加失败'));
+        }
+        $this->params['out_user_id'] = isset($return_data['out_user_id'])?$return_data['out_user_id']:'';
+        $this->doLog($this->params);
+        $this->app->response->setBody(Response::gen_success('添加成功'));
+
+    }
+
+
+    protected function doLog($new_param=array(),$old_param='add'){
+
+        $new_param = json_encode($new_param);
+        $ret = Log::getInstance()->createLogs(array(
+                'user_id'=>$this->user['id'],
+                'handle_id'=>isset($new_param['out_user_id'])?$new_param['out_user_id']:'',
+                'operation_type'=>$old_param,
+                'after_data'=> $new_param,
+                'handle_type'=>self::USER_TYPE
+            )
+        );
+        return $ret;
+    }
+
+
+    private function _init() {
+
+        $this->rules  = array(
+//user_info
+           'depart_id' => array(
+//                  'required' => TRUE,
+//                'allowEmpty' => FALSE,
+                'type'=>'integer',
+                'default'=>0
+            ),
+//            'job_role_id' => array(
+//                'type'=>'integer',
+//                'default'=>0
+//
+//            ),
+            'name_cn' => array(
+                'type'=>'string',
+                'required' => TRUE,
+                'allowEmpty' => FALSE,
+                'maxLength'=> 30,
+            ),
+            'name_en' => array( //可不填
+                'type'=>'string',
+                'maxLength'=> 30,
+            ),
+            'mail' => array(
+                'required' => TRUE,
+                'allowEmpty' => FALSE,
+                'type'=>'string',
+                'maxLength'=> 30,
+            ),
+            'hire_time' => array(
+                'type'=>'datetime',
+            ),
+            'positive_time' => array(
+                'type'=>'datetime',
+            ),
+            'staff_id' => array(
+                'type'=>'string',
+                'required' => TRUE,
+                'allowEmpty' => FALSE,
+                'maxLength'=> 10,
+            ),
+            'gender' => array(
+                'type'=>'integer',
+                'enum'=> array(0,1)//性别0女1男
+            ),
+            'flag' => array(
+                'required' => TRUE,
+                'allowEmpty' => FALSE,
+                'type'=>'integer',
+                'enum'=> array(1,2,3,4)//标记:1实习2试用3正式4申请离职
+            ),
+            'status' => array(
+                'type'=>'integer',
+                 'required' => TRUE,
+                'allowEmpty' => FALSE,
+                'enum'=> array(1,2,3)
+            ),
+            'graduation_time' => array(
+                'type'=>'datetime',
+//                'required' => TRUE,
+//                'allowEmpty' => FALSE,
+            ),
+            'mail_suffix' => array(
+               'type'=>'string',
+                'required' => TRUE,
+                'allowEmpty' => FALSE,
+           )
+        );
+
+        $this->params   = $this->post()->safe();
+        $this->errors   = $this->post()->getErrors();
+
+    }
+    
+}

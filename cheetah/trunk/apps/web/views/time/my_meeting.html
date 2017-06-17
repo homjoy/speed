@@ -1,0 +1,128 @@
+<div class="event-list my-meeting">
+    <dl class="event-header">
+        <dt>
+            <span class="column date">日期</span>
+            <span class="column time">会议时间</span>
+            <span class="column creator">预订人</span>
+            <span class="column room">会议室名称</span>
+            <span class="column services">服务支持</span>
+            <span class="column status">当前状态</span>
+            <span class="column repeat">是否重复</span>
+            <span class="column manage">操作</span>
+        </dt>
+    </dl>
+
+    <% if(this.meetings.code == 200) { %>
+    <% this.meetings.data.forEach(function(meeting,index){ %>
+    <dl class="event <%=meeting.status%>">
+        <dt>
+            <span class="column date"><%= meeting.date%></span>
+            <span class="column time"><%= meeting.time%></span>
+            <span class="column creator"><%= meeting.creator%></span>
+                                <span class="column room">
+                                    <% if(meeting.place.length == 1) {%>
+                                        <%=meeting.place[0].room || '' %><em>(<%=meeting.place[0].position || ''%>)</em>
+                                    <% } else { meeting.place.forEach(function(p,index){ %>
+                                        <strong><%=p.room || ''%><em>(<%=p.position || ''%>)</em></strong>
+                                    <% });%>
+                                    <% } %>
+                                </span>
+                                <span class="column services">
+                                    <% meeting.services.forEach(function(service,index){ %>
+                                        <i class="service_<%=service.id || 0%>"></i>
+                                    <% })%>
+                                </span>
+            <span class="column status"><%= meeting.statusText %></span>
+            <span class="column repeat"><%= meeting.repeat %></span>
+                                <span class="column manage">
+                                    <% var clsMap = {checkin:'签到',edit:'修改',cancel:'取消',decline:'拒绝'}; %>
+                                    <% meeting.handle.forEach(function(cls,index){ if(cls =='edit'){ return ;} %>
+                                        <a href="javascript:void(0);" class="btn-<%=cls%>" data-id="<%=meeting.id || 0%>" data-toggle="tooltip" data-placement="top" title="<%=clsMap[cls] %>"></a>
+                                    <% })%>
+                                </span>
+        </dt>
+        <%if(!meeting.servicer) {%>
+        <dd>
+            <div class="column one">
+                <div class="row">
+                    <div class="tt">会议主题</div>
+                    <div class="ct"><%=meeting.title%></div>
+                </div>
+            </div>
+            <div class="column two">
+                <div class="row invite-users">
+                    <div class="tt">参会人员</div>
+                    <div class="ct room-users">
+                        <% if(meeting.invite_user.length ==1 ) { %>
+                        <%meeting.invite_user[0].user.forEach(function(user){%>
+                        <% if(user.reject) {%>
+                        <strong class="decline"><%=user.username %>（拒绝）</strong>
+                        <% } else {%>
+                        <strong><%=user.username %></strong>
+                        <% } %>
+                        <% })%>
+                        <% } else { meeting.invite_user.forEach(function(zone){ %>
+                        <div class="row">
+                            <div class="tt"><%=zone.room || '' %><em>(<%=zone.position || ''%>)</em></div>
+                            <div class="ct">
+                                <%zone.user.forEach(function(user){%>
+                                <% if(user.reject) {%>
+                                <strong class="decline"><%=user.username %>（拒绝）</strong>
+                                <% } else {%>
+                                <strong><%=user.username %></strong>
+                                <% } %>
+                                <% })%>
+                            </div>
+                        </div>
+                        <% }); }%>
+                    </div>
+                </div>
+                <% if(meeting.remark) {%>
+                <div class="row remark">
+                    <div class="tt">备注</div>
+                    <div class="ct"><%=meeting.remark || '' %></div>
+                </div>
+                <% } %>
+            </div>
+        </dd>
+        <% } %>
+    </dl>
+    <% }); %>
+    <% } %>
+</div>
+
+
+<% if(this.meetings.code == 200 ) { %>
+<div class="text-center">
+    <% if(this.meetings.page.maxPage > 1) { %>
+    <ul class="pagination">
+        <% if(this.meetings.page.currentPage > 1) { %>
+        <li class="prev">
+            <a href="javascript:void(0);" aria-label="上一页" data-page="<%=(this.meetings.page.currentPage-1) %>"><</a>
+        </li>
+        <% } %>
+
+        <% for(var i = 1,max = this.meetings.page.maxPage; i <= max; i++) { %>
+        <% if(i == this.meetings.page.currentPage ) {%>
+        <li class="active">
+            <a href="javascript:void(0);" data-page="<%=i %>"><%=i %></a>
+        </li>
+        <% } else { %>
+        <li><a href="javascript:void(0);" data-page="<%=i %>"><%=i %></a></li>
+        <% } %>
+        <% } %>
+        <% if(this.meetings.page.currentPage < this.meetings.page.maxPage) {%>
+        <li class="next">
+            <a href="javascript:void(0);" aria-label="下一页" data-page="<%=(this.meetings.page.currentPage+1) %>">></a>
+        </li>
+        <% } %>
+        <li class="go-page">
+            <div class="form-inline" method="get">
+                <input type="text" class="form-control" name="page"/>
+                <a href="javascript:void(0);" class="btn" data-max="<%=this.meetings.page.maxPage || 1%>">Go</a>
+            </div>
+        </li>
+    </ul>
+    <% } %>
+</div>
+<% } %>

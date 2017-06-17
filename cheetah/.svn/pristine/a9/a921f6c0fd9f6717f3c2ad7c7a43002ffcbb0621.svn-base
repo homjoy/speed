@@ -1,0 +1,147 @@
+<%#head.html%>
+	<div id="container" class="cls-container">
+		
+		<!-- BACKGROUND IMAGE -->
+		<!--===================================================-->
+		<!-- <div id="bg-overlay" class="bg-img img-balloon"></div> -->
+		
+		
+		<!-- HEADER -->
+		<!--===================================================-->
+		<!-- <div class="cls-header cls-header-lg">
+			<div class="cls-brand">
+				<a class="box-inline" href="index.html">
+					<span class="brand-title">Speed <span class="text-thin">Admin</span></span>
+				</a>
+			</div>
+		</div> -->
+		<div class="speed_logo">
+			<div class="cls-brand">
+				<!-- <a class="box-inline" href="index.html"> -->
+					<span class="brand-title-flower" ><img class="" src="<%= this.PICTURE_URL  %>img/bg-img/icon.png" ></span>
+					<span class="brand-title-word"><img class="" src="<%= this.PICTURE_URL  %>img/bg-img/speed.png" ></span>
+				<!-- </a> -->
+			</div>
+		</div>
+		<!--===================================================-->
+		
+		
+		<!-- LOGIN FORM -->
+		<!--===================================================-->
+		<div class="cls-content" id="login-form">
+			<div class="cls-content-sm center_part panel">
+				<div class="panel-wrapper">
+				<div class="panel-body">
+						<div style="text-aline:center">
+							<label class="notice">
+								 	
+							</label>
+						</div>
+						
+						<div class="form-group">
+							<div class="input-group">
+								<div class="input-group-addon">
+									<img src="<%= this.PICTURE_URL  %>img/bg-img/adimin.png">
+								</div>
+								<input type="text" name="username" class="form-control userName" id="userName" placeholder="公司邮箱前缀" autofocus="autofocus">
+								<input type="hidden" value="true" name="resubmit "/>
+							</div>
+						</div>
+						<div class="form-group">
+							<div class="input-group">
+								<div class="input-group-addon">
+									<img src="<%= this.PICTURE_URL  %>img/bg-img/key.png">
+								</div>
+								<input type="password" name="password" id="passWord" class="form-control passWord" placeholder="邮箱密码">
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-xs-4 ">
+								<!-- <label style="float:left">
+								<input type="checkbox"> 记住密码
+								</label> -->
+							</div>
+							<div class="col-xs-4 " style="">
+								
+							</div>
+							<div class="col-xs-4 ">
+								<a id="forget_password" style="" href="mailto:chengchengyang@meilishuo.com?subject=忘记密码">
+								忘记密码
+								</a>
+							</div>
+							
+						</div>
+						<div class="row" style="margin-bottom:40px;">
+							<div class="col-xs-12 login_button">
+								<div class="form-group ">
+								<button class="btn signIn">登录</button>
+								</div>
+							</div>
+						</div>
+
+
+
+
+						<div class="form-group">
+							<span class="download_title">下载APP</span>
+
+						</div>
+						
+						<div class="row" style="margin-top:80px">
+							<div class="col-xs-5 ">
+								<span class="download_notice" style="">
+								  请扫描右侧<br>客户端二维码
+								</span>
+							</div>
+							<div class="col-xs-6 " style="width:140px;height:140px">
+								<img src="<%= this.PICTURE_URL  %>img/bg-img/ma.png">
+							</div>
+						</div>
+						
+				</div>
+				</div>
+				<div class="change top" style="">
+					<img src="<%= this.PICTURE_URL  %>img/bg-img/qiehuan1.png" class="up ">
+					<img src="<%= this.PICTURE_URL  %>img/bg-img/qiege.png" class="down hide">
+				</div>
+
+				<div class="triangle"></div>
+			</div>
+			<div class="shadow_left">
+				<img src="<%= this.PICTURE_URL  %>img/bg-img/qiegetiao.png" style="">
+			</div>
+			<div class="shadow_right">
+				<img src="<%= this.PICTURE_URL  %>img/bg-img/qiegetiao.png" style="">
+			</div>
+		</div>
+		<!--===================================================-->
+		
+		
+		<!-- DEMO PURPOSE ONLY -->
+		<!--===================================================-->
+		<!-- <div class="demo-bg">
+		登陆北京切换功能
+			<div id="demo-bg-list">
+				<div class="demo-loading"><i class="fa fa-refresh"></i></div>
+				<img class="demo-chg-bg bg-trans" src="<%= this.PICTURE_URL  %>img/bg-trns.jpg" alt="Background Image">
+				<img class="demo-chg-bg" src="<%= this.PICTURE_URL  %>img/bg-img-1.jpg" alt="Background Image">
+				<img class="demo-chg-bg active" src="<%= this.PICTURE_URL  %>img/bg-img-2.jpg" alt="Background Image">
+				<img class="demo-chg-bg" src="<%= this.PICTURE_URL  %>img/bg-img-3.jpg" alt="Background Image">
+				<img class="demo-chg-bg" src="<%= this.PICTURE_URL  %>img/bg-img-4.jpg" alt="Background Image">
+				<img class="demo-chg-bg" src="<%= this.PICTURE_URL  %>img/bg-img-5.jpg" alt="Background Image">
+				<img class="demo-chg-bg" src="<%= this.PICTURE_URL  %>img/bg-img-6.jpg" alt="Background Image">
+				<img class="demo-chg-bg" src="<%= this.PICTURE_URL  %>img/bg-img-7.jpg" alt="Background Image">
+			</div>
+		</div> -->
+		<!--===================================================-->
+		
+		
+		
+	</div>
+	<!--===================================================-->
+	<!-- END OF CONTAINER -->
+	<script src="<%= this.JCSTATIC_BASE  %>/script-ss/page/jquery-2.1.1.min.js?<%= this.SVERSION%>"></script>
+	<script src="<%= this.JCSTATIC_BASE  %>/script-ss/page/bootstrap.min.js?<%= this.SVERSION%>"></script>
+	<script src="<%= this.JCSTATIC_BASE  %>/script-ss/page/nifty.min.js?<%= this.SVERSION%>"></script>
+	<script src="<%= this.JCSTATIC_BASE  %>/script-ss/page/login.js?<%= this.SVERSION%>"></script>
+<%#foot.html%>

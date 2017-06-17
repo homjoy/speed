@@ -1,0 +1,148 @@
+@import "base";
+
+.password_fix {
+  margin-top: 35px;
+  position: relative;
+  left: 100px;
+}
+
+.more {
+  position: relative;
+  left: 20px;
+}
+
+.save_basic_info, .save_password {
+
+  font-size: 16px;
+  width: 75px;
+  height: 33px;
+  display: block;
+  text-align: center;
+  line-height: 20px !important;
+  margin: 0 auto;
+
+  border-radius: 5px;
+
+  &:focus {
+    color: white;
+  }
+}
+
+//下面提示
+.safe-notice{
+
+  margin: 0 auto;
+  width: 600px;
+  p{
+    margin-bottom: 0;
+  }
+  span{
+    color: #5b9be0;
+    margin-left: 10px;
+  }
+  .notice{
+    padding:1px 10px 10px 90px;
+    margin-bottom: 80px;
+    background-color: #f6f8fa;
+    color:#6a6a6a;
+    p{ //公用部分，待提取
+      font-size: 12px !important;
+    }
+  }
+  .indent {
+    display: block;
+    margin-top:10px;
+    color:#f39700;
+
+    .btn-danger{
+      background-color: #98c664;
+      border-color:  #98c664;
+      color:#fff;
+      margin-left:5px;
+    }
+  }
+}
+//侧面提示
+.password_notice {
+  color: #6a6a6a;
+  span {
+    font-size: 12px !important;
+    color: #ff80a9
+  }
+  h4{
+    font-size:14px;
+  }
+  p {
+    font-size: 12px;
+  }
+  .indent {
+    display: block;
+    margin-top:10px;
+    color:#f39700;
+
+    .btn-danger{
+      background-color: #98c664;
+      border-color:  #98c664;
+      color:#fff;
+      margin-left:5px;
+    }
+  }
+}
+
+.btn-xs {
+  text-align: center;
+}
+
+.send_message {
+  margin: 0 auto;
+  text-align: center;
+  line-height: 18px;
+  margin-top: 6px;
+}
+
+.btn_line {
+  text-align: center;
+  margin-top: 40px;
+  position: relative;
+  left: -100px;
+}
+#forget_password{
+  margin-top: 10px;
+  margin-bottom: 30px;
+  //display: block;
+  .speedim{
+     background: url("../../../img/speed/paopao.png") 0px no-repeat !important;
+     display: inline-block;
+    margin-left: 5px;
+     text-indent: 25px;
+   }
+  &:hover{
+    .speedim{
+      background: url("../../../img/speed/paopaohover.png") 0px no-repeat !important;
+    }
+  }
+}
+dl{
+  width: 300px;
+  font-size: 14px;
+  dt{
+    width: 30%;
+    float: left;
+    color: #eb447a;
+  }
+  dd{
+    span{
+      display: inline-block;
+      width: 65px;
+      text-align: left;
+      color: #515151;
+    }
+    div:first-child{
+      margin-bottom: 8px;
+    }
+    padding-bottom: 19px;
+    color: #a0a0a0;
+    width: 70%;
+    float:left;
+  }
+}

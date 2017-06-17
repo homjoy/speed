@@ -1,0 +1,418 @@
+body {
+  font: 12px/1.125;
+  letter-spacing: 1px;
+  font-family: "Helvetica Neue", Helvetica, Microsoft Yahei, Heiti, "黑体", Hiragino Sans GB, WenQuanYi Micro Hei, sans-serif;
+}
+
+ul {
+  list-style: none;
+  padding: 0;
+}
+
+.brand-text {
+  min-width: 112px
+}
+
+.table > tbody > tr > td,
+.table > tbody > tr > th,
+.table > tfoot > tr > td,
+.table > tfoot > tr > th,
+.table > thead > tr > td,
+.table > thead > tr > th {
+  font-size: 14px;
+  vertical-align: middle !important;
+}
+
+.table > tbody > tr > td input {
+  font-size: 14px !important;
+}
+
+//navheader的宽度
+#navbar-container, .navbar-header-notrans, .navbar-content, .brand-title {
+  height: 50px;
+}
+
+//导航条
+#container.mainnav-in .brand-title,
+#container.mainnav-sm .brand-title,
+#container.mainnav-lg .brand-title {
+  color: #f6ad3e
+}
+
+#container.mainnav-in .navbar-brand,
+#container.mainnav-sm .navbar-brand,
+#container.mainnav-lg .navbar-brand {
+  background-color: #fff;
+}
+
+.navbar-header-notrans {
+  float: left;
+  padding-left: 55px;
+}
+
+/*sidebar的宽度 180px*/
+.mainnav-container
+.mainnav-lg .navbar-header, .mainnav-lg #mainnav {
+  width: 180px
+}
+
+#container.mainnav-lg #mainnav-container {
+  width: 180px !important;
+}
+
+#container.mainnav-lg #footer,
+#container.mainnav-lg #content-container {
+  padding-left: 180px !important;
+}
+
+.navbar-content {
+  margin-left: 180px !important;
+}
+
+/*sidebar*/
+#container.mainnav-lg .icon-sidebar {
+  display: inline-block;
+  width: 22px;
+  height: 20px;
+  margin-left: -8px;
+  fill: #fff;
+}
+
+#container.mainnav-sm .icon-sidebar {
+  display: inline-block;
+  width: 22px;
+  height: 20px;
+  margin-left: -7px;
+  fill: #fff;
+}
+
+#container.mainnav-lg .icon-menu,
+#container.mainnav-sm .icon-menu {
+  margin-left: -2px;
+}
+
+.nav-tabs a {
+  font-size: 16px;
+}
+
+.nav-tabs > li.active > a {
+  border-top: 2px solid #f39800;
+}
+
+.nav-tabs > li.active > a:focus, .nav-tabs > li.active > a:hover {
+  border-top: 2px solid #f39800;
+}
+
+.nav-tabs:not(.slope) > li{
+  margin-bottom: -2px !important;
+}
+
+#page-content {
+  font-size: 14px;
+}
+
+#startTime, #endTime, #sTime, #eTime {
+  background-color: #fff;
+  cursor: default;
+}
+
+//公共样式————————按钮
+.btn {
+  -webkit-border-radius: 5px;
+  -moz-border-radius: 5px;
+  border-radius: 5px;
+
+  &:not(.btn-default,.btn-download):focus{
+    color:#fff;
+  }
+}
+
+.btn-agree {
+  background-color: #68c664;
+  color:#fff;
+  &:hover,&:active ,&:focus {
+    background-color: #7eb242;
+    color:#fff;
+  }
+}
+
+.btn-reject, .btn-del {
+  background-color: #f2663e;
+  color:#fff;
+  &:hover,&:active,&:focus {
+    background-color: #e14e2b;
+    color:#fff;
+  }
+}
+
+/*=====================sidebar样式*/
+.list-group svg {
+  position: absolute;
+}
+
+.list-group .menu-title {
+  margin-left: 30px;
+  line-height: 20px;
+  font-size: 12px;
+}
+
+#container #mainnav-shortcut > ul > li a {
+  display: block;
+  padding: 20px 12px 0 14px;
+  height: 50px;
+  //line-height: 50px;
+}
+
+#container.mainnav-sm #mainnav-shortcut > ul > li a {
+  display: block;
+  //padding: 12px 19px;
+  padding: 20px 12px 0 14px;
+  height: 50px;
+}
+
+/*/*=====================sidebar样式结束*/
+
+#footer {
+  padding-top: 32px;
+}
+
+#container .table th {
+  font-size: 1.05em;
+  border-bottom: none;
+}
+
+.modal-dialog {
+  z-index: 3000;
+}
+
+table th,
+table td {
+  text-align: center;
+}
+
+table th {
+  padding-left: 30px;
+}
+
+table td a {
+  padding-right: 5px;
+}
+
+.notify-box > .modal-dialog,
+.smModal > .modal-dialog {
+  width: 400px;
+
+}
+
+.passModal > .modal-dialog .modal-body {
+  padding: 20px
+}
+
+// 标签页内边距 20px
+.tab-content {
+  padding-top: 20px;
+}
+
+#container.mainnav-in .navbar-brand,
+#container.mainnav-lg .navbar-brand,
+#container.mainnav-in .brand-title,
+#container.mainnav-lg .brand-title {
+  width: 180px !important;
+}
+
+/*=====================打印样式*/
+@media all {
+  //.table-printed td > label{
+  .table-printed td{
+    min-width: 120px;
+  }
+  .table-printed{
+    >tbody>tr>td{
+      text-align: left;
+      label{
+        padding-left:6px;
+      }
+    }
+  }
+}
+@media print {
+  .record-print,.table-printed{
+    >tbody>tr>td{
+      padding:4px 0 4px 12px;
+      font-size:12px;
+      > label{
+        margin-bottom: 0;
+      }
+    }
+  }
+  .table-printed {
+    border: none !important;
+    margin-top: -10px !important;
+  }
+
+  .finance > tbody > tr > th {
+    border: none !important;
+  }
+
+  .finance, .record-print {
+    margin-bottom: 0 !important;
+  }
+
+  .record-print > tbody > tr > td:nth-child(1) {
+    width: 80px !important;
+  }
+
+  .record-print > tbody > tr > td:nth-child(2) {
+    width: 60px !important;
+  }
+
+  .record-print > tbody > tr > td:nth-child(3) {
+    width: 50px !important;
+  }
+
+  .record-print > tbody > tr > td:nth-child(4) {
+    width: 100px !important;
+  }
+
+  .record-print > tbody > tr > td:nth-child(5) {
+    width: 50px !important;
+  }
+
+  .record-print > tbody > tr > td:nth-child(6) {
+    width: 100px !important;
+  }
+
+  .record-print > tbody > tr > td:nth-child(7) {
+    width: 60px !important;
+  }
+
+  .record-print > tbody > tr > td:nth-child(8) {
+    width: 60px !important;
+  }
+
+  .record-print > tbody > tr > td:nth-child(9) {
+    width: 60px !important;
+  }
+
+  .record-print > tbody > tr > td:nth-child(10) {
+    width: 60px !important;
+  }
+
+  @page {
+    margin: 2cm;
+    /*margin-top: 1cm;*/
+  }
+}
+
+//修改 datatable默认样式
+table.dataTable tbody th, table.dataTable tbody td {
+  padding: 8px 5px !important;
+}
+
+table.dataTable thead > tr > th {
+  padding: 10px 18px 10px 0px !important;
+}
+
+//使table中button按钮  靠左排列
+
+#message-container {
+  width: 100%;
+  top: 50px;
+  right: 0; //TODO 为什么此布局需要设置这玩意。。
+  z-index: 100;
+  position: fixed;
+  display: none;
+  .container {
+    width: 400px;
+  }
+}
+
+.brand-title {
+  background: transparent url(../../../img/fms/navicon/logo.png) 0 0 no-repeat;
+  display: inline-block;
+  .brand-text {
+    //padding-left:60px;
+    display: inline-block;
+    margin-left: 8px;
+  }
+}
+
+#dropdown-user {
+  margin-right: 108px;
+}
+
+//dropzone
+.dropzone {
+  padding: 0 !important;
+  border: 1px solid #eee !important;
+}
+
+.dropzone .dz-preview .dz-details {
+  position: static !important;
+}
+
+//datapicker
+.datepicker {
+  z-index: 1000 !important;
+}
+
+.edui-default .edui-editor {
+  z-index: 9 !important;
+  width: 100% !important;
+}
+
+.btn-download {
+  background-color: #eee;
+  color: #000;
+  &:focus{
+    color: #000;
+  }
+}
+
+//统一的消息提示框.
+.queen-msg-container {
+  width: 100%;
+  height: 48px;
+  position: fixed;
+  top: 50px;
+  right: 0;
+  z-index: 3000;
+  display: none;
+  text-align: center;
+  .message {
+    margin: 0 auto;
+    width: 370px;
+    //max-width: 500px;
+    line-height: 48px;
+    height: 48px;
+    color: #fff;
+    font-size: 14px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    word-break: break-all;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.21);
+
+    &.success {
+      background-color: #A5CE78;
+    }
+    &.info {
+      background-color: #A5CE78;
+    }
+    &.warning {
+      background-color: #f4bf4f;
+    }
+    &.error {
+      background-color: #F47B5B;
+    }
+  }
+}
+
+/**
+覆盖审批页的样式.
+*/
+.left-list .control-hide{
+  background: url("../../../img/queen/approval/caiwu_push_right.png") no-repeat !important;
+}
+.control-hide.fat{
+  background: url("../../../img/queen/approval/caiwu_push_left.png") no-repeat !important;
+}

@@ -1,0 +1,10 @@
+{
+	"hosts": {
+		"web": "apicloud.newspeed.meilishuo.com",
+		"fms": "fmsapi.meiliworks.com"
+	},
+	"spamhost": false,
+	"timeout": 15000,
+	"port":80,
+	"debug": true
+}

@@ -1,0 +1,59 @@
+function setcookie(name,value){  
+	var Days = 7;  
+	var exp  = new Date();  
+	exp.setTime(exp.getTime() + Days*24*60*60*1000);  
+	// domain=meilishuo.com;
+	document.cookie = name + "="+ escape (value) + ";domain=meilishuo.com;expires=" + exp.toGMTString();
+}
+$('.signIn').on('click',function(){
+	if($('.userName').val().replace(/(^\s*)|(\s*$)/g, "")!="" && $('.passWord').val().replace(/(^\s*)|(\s*$)/g, "")!=""){
+		$.post('/aj/login/users', {
+	 		"username" : $('.userName').val(),
+	 		"password" : $('.passWord').val()
+	 	}, function(res){
+	 		console.log(res);
+			if(res.code !=200){
+				// alert(res.msg);
+				$('.notice').html(res.error_msg);
+			}else{
+				// alert(res.data.speed_token);
+			    setcookie("speed_token", res.data.speed_token);  
+				self.location = '/home';
+			}
+		}, 'json');
+	}else{
+		$('.notice').html('用户名和密码不能为空');
+
+	}
+});
+$('.change').click(function(){
+	if($(this).hasClass('top')){
+		$('.panel-body').animate({top:'-255px'},'fast');
+		$(this).removeClass('top');
+		$('.up').addClass('hide');
+		$('.down').removeClass('hide');
+	}else{
+		$('.panel-body').animate({top:'0'},'fast');
+		$(this).addClass('top');
+		$('.up').removeClass('hide');
+		$('.down').addClass('hide');
+	}
+});
+// 	if ($(this).val().replace(/(^\s*)|(\s*$)/g, "")=="")
+// 		alert("username is blank");
+// });
+// $('.passWord').on('blur',function(){
+// 	if ($(this).val().replace(/(^\s*)|(\s*$)/g, "")=="")
+// 		alert("password is blank");
+// });
+
+
+//响应回车
+$(document).on('keydown', function(e) {
+	var e = e || event;
+	var currKey = e.keyCode || e.which || e.charCode;
+	if (currKey == 13) {
+		$('.signIn').click();
+	}
+});
+

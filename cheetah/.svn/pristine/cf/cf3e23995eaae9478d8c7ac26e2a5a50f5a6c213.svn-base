@@ -1,0 +1,22 @@
+function misc_calendar() {
+	return this;
+}
+var controlFns = {
+	'index' : function(){
+		this.misc_calendar()
+	},
+	'misc_calendar' : function(){
+		var php = {
+			
+		}
+        this.bindDefault(php);
+		this.bridgeMuch(php);
+		this.listenOver(function(data){
+			console.log(data)
+
+			data._CSSLinks = ['fontfamily','bootstrap','nifty.min','font-awesome.min','switchery.min','bootstrap-select.min','fullcalendar','nifty-demo.min','pace.min'];
+			this.render('misc_calendar.html' , data);
+		})
+	}
+};
+exports.__create = controller.__create(misc_calendar, controlFns);

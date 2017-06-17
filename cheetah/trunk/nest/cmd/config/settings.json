@@ -1,0 +1,5 @@
+{"uglify":"../node_modules/uglify-js/uglify-js.js",
+"less":"../node_modules/less",
+"nodepencies":["app/meilishuo",
+"fml"],
+"pubVerson":8}

@@ -1,0 +1,85 @@
+fml.define('fms/report/budget/base', ['jquery','component/trees','component/notify', 'component/TreeSelect'], function (require, exports) {
+    var $ = require('jquery');
+    var notify = require('component/notify');
+
+    var select = $("#quarter-select");
+    if(select.length){
+        select.selectpicker({noneSelectedText:'请选择'}).on("change",function(){
+            var values = $(this).val();
+            $("input[type=hidden][name=draftTerm]").val(values.join(','));
+        });
+    }
+
+
+    //加载预算项目.
+    if($("input[name=budgetItem]:not(#report-project)").length){
+        $.post('/aj/budget/projects', function (response) {
+            if(response.rcode != 200){
+                return notify.error(response.rmessage);
+            }
+
+            $("input[name=budgetItem]").TreeSelect({
+                multiple: true,
+                cascading:true,
+                data: response.budgetItemTree
+            });
+        }, 'json');
+    }
+
+    if($("input[name=deptId]").length){
+        /**
+         * 加载部门树.
+         */
+        $.post('/aj/query/depart', function (data) {
+            $("input[name=deptId]").TreeSelect({
+                multiple: true,
+                cascading: true,
+                data: data
+            });
+            //$("input[name=deptId]").QueenTrees({
+            //    multiple:true,
+            //    placeholder:'申请部门',
+            //    data:data
+            //    //allowSearch:false,
+            //}).on("change",function(event,nodes){
+            //    console.log($(this).val(),nodes);
+            //});
+        }, 'json');
+    }
+
+
+    if($("#report-project").length){
+        $.post('/aj/budget/report_projects', function (response) {
+            if(response.rcode != 200){
+                return notify.error(response.rmessage);
+            }
+
+            $("#report-project").TreeSelect({
+                multiple: true,
+                data: response.budgetItemTree
+            });
+        }, 'json');
+    }
+
+
+    $(".search-form").on('submit',function(e){
+        e.preventDefault();
+        var $form = $(this);
+
+        var url = $form.attr("action");
+
+        $.ajax(url,{
+            type:'post',
+            data:$form.serialize(),
+            dataType:'json',
+            success:function(response){
+                if(response.rcode != 200){
+                    return notify.error(response.rmessage);
+                }
+                $(".report-content").html(response.data);
+            }
+        });
+
+        return false;
+    });
+});

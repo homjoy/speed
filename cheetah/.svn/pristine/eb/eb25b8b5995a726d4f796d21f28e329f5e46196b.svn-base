@@ -1,0 +1,152 @@
+<%#head.html%>
+<div id="container" class="effect mainnav-lg">
+    <%#navbar.html%>
+    <div class="boxed">
+        <div id="content-container">
+            <div id="page-content">
+                <div class="panel">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">预算申请单</h3>
+                    </div>
+                    <div class="panel-body">
+                        <form class="form-horizontal" method="POST">
+                            <fieldset>
+                                <legend>基本信息</legend>
+                                <div class="row">
+                                    <div class="form-group col-xs-6">
+                                        <label class="control-label col-xs-4">申请人</label>
+                                        <div class="col-xs-8">
+                                            <input type="text" class="form-control" name="nameCn" value="<%=this.userInfo.data.nameCn%>" readonly>
+                                        </div>
+                                    </div>
+                                    <div class="form-group col-xs-6">
+                                        <label class="control-label col-xs-4">申请部门</label>
+                                        <div class="col-xs-8">
+                                            <input type="text" class="form-control" name="applyDeptid" value="<%=this.userInfo.data.department.departId%>" readonly>
+                                        </div>
+                                    </div>
+                                </div>
+
+
+                                <div class="row">
+                                    <div class="form-group col-xs-6">
+                                        <label class="control-label col-xs-4">单据编号</label>
+                                        <div class="col-xs-8">
+                                            <input type="text" class="form-control" readonly>
+                                        </div>
+                                    </div>
+                                    <div class="form-group col-xs-6">
+                                        <label class="control-label col-xs-4">申请日期</label>
+                                        <div class="col-xs-8">
+                                            <input type="text" class="form-control current-date" readonly>
+                                        </div>
+                                    </div>
+                                </div>
+                            </fieldset>
+                            <fieldset>
+                                <legend>单据内容</legend>
+                                <div class="row">
+                                    <div class="form-group col-xs-8">
+                                        <label class="control-label col-xs-2">编制期间</label>
+                                        <div class="col-xs-3">
+                                            <select name="budgetYear" class="form-control selectpicker" data-required>
+                                                <% this.budgetYears.forEach(function(year,index){ %>
+                                                <option value="<%=year %>" <%= this.currentYear == year ? 'selected' : '';%>><%== year%></option>
+                                                <% }); %>
+                                            </select>
+                                        </div>
+                                        <div class="col-xs-1"><span class="line"></span></div>
+                                        <div class="col-xs-3">
+                                            <select name="draftTerm" class="form-control selectpicker" data-required>
+                                                <option value="">请选择</option>
+                                                <% this.quarters.forEach(function(quarter,index){ %>
+                                                <option value="<%=quarter %>"><%== quarter%></option>
+                                                <% }); %>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!--预算项目-->
+                                <div class="row">
+                                    <div class="form-group col-xs-12">
+                                        <div class="budget-detail">
+                                            <div class="detail-head">
+                                                <div class="row-columns row-title">
+                                                    <div class="row-columns-inner">
+                                                    <div class="column column-project" data-projects="<%== (this.projects && this.projects.rcode == '200') ? JSON.stringify(this.projects.budgetItemTree) : '[]' %>">预算项目</div>
+                                                    <div class="column column-q1">Q1</div>
+                                                    <div class="column column-q2">Q2</div>
+                                                    <div class="column column-q3">Q3</div>
+                                                    <div class="column column-q4">Q4</div>
+                                                    <div class="column column-total">合计</div>
+                                                    <div class="column column-remark">备注</div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="detail-body">
+                                                <div class="empty-column">请选择编制期间.</div>
+                                            </div>
+                                            <div class="detail-footer hide">
+                                                <div class="row-columns">
+                                                    <div class="row-columns-inner">
+                                                        <div class="column column-project"><span class="project-name">总计</span></div>
+                                                        <div class="column column-q1"><span class="money">0</span></div>
+                                                        <div class="column column-q2"><span class="money">0</span></div>
+                                                        <div class="column column-q3"><span class="money">0</span></div>
+                                                        <div class="column column-q4"><span class="money">0</span></div>
+                                                        <div class="column column-total"><span class="total">0</span></div>
+                                                        <div class="column column-remark"></div>
+                                                    </div>
+                                                </div>
+                                                <div class="detail-btn-group">
+                                                    <a href="javascript:void(0)" class="project-add"><i class="fa fa-plus"></i>增加项目</a>
+                                                    <!--<a href="javascript:void(0)" class="project-remove"><i class="fa fa-minus"></i>删除项目</a>-->
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+
+                                <div class="row">
+                                    <div class="form-group col-xs-12">
+                                        <label class="control-label col-xs-2">说明</label>
+                                        <div class="col-xs-10">
+                                            <textarea name="remark" id="remark"></textarea>
+                                        </div>
+                                    </div>
+                                </div>
+                                <input type="hidden" name="budgetFilePath" value="" data-required/>
+                                <input type="hidden" name="delAttachId" value=""/>
+                                <input type="hidden" name="delBudgetItem" value=""/>
+                            </fieldset>
+                        </form>
+
+                        <div class="row">
+                            <div class="form-group">
+                                <label class="col-xs-2 control-label text-right">上传附件</label>
+                                <div class="col-xs-7">
+                                    <a href="javascript:void(0);" class="upload-btn" data-exists="[]">上传附件</a>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="panel-footer text-right">
+                            <a class="btn btn-info btn-submit" href="javascript:void(0);">提交</a>
+                            <a class="btn btn-info btn-save-drafts" href="javascript:void(0);">保存草稿</a>
+                        </div>
+                </div>
+            </div>
+        </div>
+        <%#sidebar.html%>
+    </div>
+    <%#footer.html%>
+</div>
+
+<%#budget/tpl.html %>
+
+<%! $_ENGINE_SELF.callFn( "useModule")( "<<<_use:
+    fml.use('fms/budget/apply');
+_use:", this._JSstack , this._JSmods); %>
+<%#foot.html%>

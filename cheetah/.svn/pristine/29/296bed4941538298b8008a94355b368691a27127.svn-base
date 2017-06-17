@@ -1,0 +1,50 @@
+/*--/Users/MLS/svn/finance/fms-1.2-bugfix/apps/fms/views/foot.html--*/ 
+     var est = require(config.path.lib + 'est/est.js'); 
+     var _extFn = require('/Users/MLS/svn/finance/fms-1.2-bugfix/nest/server/lib/est/extFn.js'); 
+     function requireFn(tpl) { return est.renderFile('/Users/MLS/svn/finance/fms-1.2-bugfix/apps/fms/views/' ,tpl , null , null ,'fms' ,true); } ; 
+     function __getHtml (_data) { 
+       function jsRender(tpl , id) { return est.jsRender(requireFn(tpl)(_data), id  ); } ; 
+       var __htm ='';
+__htm += '<script src="';
+__htm += _data.JCSTATIC_BASE + _data.SCRIPT_BASE ;
+__htm += 'jquery.js?';
+__htm += _data.SVERSION;
+__htm += '"></script>\n<script src="';
+__htm += _data.JCSTATIC_BASE + _data.SCRIPT_BASE ;
+__htm += 'nifty/bootstrap.js?';
+__htm += _data.SVERSION;
+__htm += '"></script>\n<script src="';
+__htm += _data.JCSTATIC_BASE + _data.SCRIPT_BASE ;
+__htm += 'nifty/nifty.min.js?';
+__htm += _data.SVERSION;
+__htm += '?';
+__htm += _data.SVERSION;
+__htm += '"></script>\n';
+__htm += (function(link , jsmods){
+var str = '';
+var SVERSION = _data.SVERSION;
+var base = _data.JCSTATIC_BASE;
+var scriptBase = _data.SCRIPT_BASE;
+link && link.map(function(src){
+    if(/^s\//.test(src)){
+    str += '<script src="'+ base + src + '.js?'+SVERSION+'"></script>';
+    }else{
+    str += '<script src="'+ base + scriptBase + src + '.js?'+SVERSION+'"></script>';
+    }
+});
+if (jsmods.length) {
+jsmods = '~'  +  jsmods.join('+');
+str += '<script  src="' + base + jsmods + '?'+SVERSION+'"></script>';
+}
+return str;
+})(_data._JSLinks ,_data._JSmods) ;
+__htm += '\n<script>\n    ';
+ if (_data._JSstack && _data._JSstack.length) { ;__htm += '\n    ';
+__htm += _data._JSstack.join(";\n"); ;
+__htm += '\n    ';
+ }
+    if (_data.JS_Defer) {
+    ;__htm += '\n        ;fml.iLoad();\n    ';
+};__htm += '\n</script>\n</body>\n</html>\n';
+return __htm;} 
+ exports.html = __getHtml; 

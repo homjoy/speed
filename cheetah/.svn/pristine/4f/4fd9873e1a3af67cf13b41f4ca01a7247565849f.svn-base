@@ -1,0 +1,107 @@
+<%#head.html%>
+	<div id="container" class="cls-container">
+		
+		<!-- BACKGROUND IMAGE -->
+		<!--===================================================-->
+		<!-- <div id="bg-overlay" class="bg-img img-balloon"></div> -->
+		
+		
+		<!-- HEADER -->
+		<!--===================================================-->
+		<!-- <div class="cls-header cls-header-lg">
+			<div class="cls-brand">
+				<a class="box-inline" href="index.html">
+					<span class="brand-title">Speed <span class="text-thin">Admin</span></span>
+				</a>
+			</div>
+		</div> -->
+		<div class="cls-header cls-header-lg">
+			<div class="cls-brand">
+				<!-- <a class="box-inline" href="index.html"> -->
+					<span class="brand-title-flower" ><img class="" src="<%= this.PICTURE_URL  %>img/bg-img/icon.png" alt=""></span>
+					<span class="brand-title-word"><img class="" src="<%= this.PICTURE_URL  %>img/bg-img/speed.png" alt=""></span>
+				<!-- </a> -->
+			</div>
+		</div>
+		<!--===================================================-->
+		
+		
+		<!-- LOGIN FORM -->
+		<!--===================================================-->
+		<div class="cls-content">
+			<div class="cls-content-sm panel">
+				<div class="panel-body">
+					<!-- <p class="pad-btm">Sign In to your account</p> -->
+					<!-- <form id='login_form' method="post"> -->
+						<div class="form-group">
+							<div class="input-group">
+								<div class="input-group-addon"><i class="fa fa-user"></i></div>
+								<input type="text" name="username" class="form-control userName" placeholder="Username">
+								<input type="hidden" value="true" name="resubmit "/>
+							</div>
+						</div>
+						<div class="form-group">
+							<div class="input-group">
+								<div class="input-group-addon"><i class="fa fa-asterisk"></i></div>
+								<input type="password" name="password" class="form-control passWord" placeholder="Password">
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-xs-8 text-left checkbox">
+								<label class="form-checkbox form-icon">
+								<input type="checkbox"> Remember me
+								</label>
+							</div>
+							<div class="col-xs-4">
+								<div class="form-group text-right">
+								<button class="btn btn-success text-uppercase signIn">Sign In</button>
+								</div>
+							</div>
+						</div>
+						<div class="mar-btm"><em>- or -</em></div>
+						<button class="btn btn-primary btn-lg btn-block" type="button">
+							<i class="fa fa-facebook fa-fw"></i> Login with Facebook
+						</button>
+					<!-- </form> -->
+				</div>
+			</div>
+			<!-- <div class="pad-ver">
+				<a href="pages-password-reminder.html" class="btn-link mar-rgt">Forgot password ?</a>
+				<a href="pages-register.html" class="btn-link mar-lft">Create a new account</a>
+			</div> -->
+		</div>
+		<!--===================================================-->
+		
+		
+		<!-- DEMO PURPOSE ONLY -->
+		<!--===================================================-->
+		<!-- <div class="demo-bg">
+		登陆北京切换功能
+			<div id="demo-bg-list">
+				<div class="demo-loading"><i class="fa fa-refresh"></i></div>
+				<img class="demo-chg-bg bg-trans" src="<%= this.PICTURE_URL  %>img/bg-trns.jpg" alt="Background Image">
+				<img class="demo-chg-bg" src="<%= this.PICTURE_URL  %>img/bg-img-1.jpg" alt="Background Image">
+				<img class="demo-chg-bg active" src="<%= this.PICTURE_URL  %>img/bg-img-2.jpg" alt="Background Image">
+				<img class="demo-chg-bg" src="<%= this.PICTURE_URL  %>img/bg-img-3.jpg" alt="Background Image">
+				<img class="demo-chg-bg" src="<%= this.PICTURE_URL  %>img/bg-img-4.jpg" alt="Background Image">
+				<img class="demo-chg-bg" src="<%= this.PICTURE_URL  %>img/bg-img-5.jpg" alt="Background Image">
+				<img class="demo-chg-bg" src="<%= this.PICTURE_URL  %>img/bg-img-6.jpg" alt="Background Image">
+				<img class="demo-chg-bg" src="<%= this.PICTURE_URL  %>img/bg-img-7.jpg" alt="Background Image">
+			</div>
+		</div> -->
+		<!--===================================================-->
+		
+		
+		
+	</div>
+	<!--===================================================-->
+	<!-- END OF CONTAINER -->
+	
+	<script src="<%= this.JCSTATIC_BASE  %>/script-ss/page/pace.min.js?<%= this.SVERSION%>"></script>
+	<script src="<%= this.JCSTATIC_BASE  %>/script-ss/page/jquery-2.1.1.min.js?<%= this.SVERSION%>"></script>
+	<script src="<%= this.JCSTATIC_BASE  %>/script-ss/page/bootstrap.min.js?<%= this.SVERSION%>"></script>
+	<script src="<%= this.JCSTATIC_BASE  %>/script-ss/page/fastclick.min.js?<%= this.SVERSION%>"></script>
+	<script src="<%= this.JCSTATIC_BASE  %>/script-ss/page/nifty.min.js?<%= this.SVERSION%>"></script>
+	<script src="<%= this.JCSTATIC_BASE  %>/script-ss/page/bg-images.js?<%= this.SVERSION%>"></script>
+	<script src="<%= this.JCSTATIC_BASE  %>/script-ss/page/login.js?<%= this.SVERSION%>"></script>
+<%#foot.html%>

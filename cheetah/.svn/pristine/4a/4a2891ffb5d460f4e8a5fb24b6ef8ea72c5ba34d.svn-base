@@ -1,0 +1,7 @@
+.toolbar {
+  .left,
+  .right {
+    display: inline-block;
+    width: 28%;
+  }
+}

@@ -1,0 +1,52 @@
+/*--/Users/MLS/speed/cheetah/trunk/apps/web/views/meeting/index.html--*/ 
+     var est = require(config.path.lib + 'est/est.js'); 
+     var _extFn = require('/Users/MLS/speed/cheetah/trunk/nest/server/lib/est/extFn.js'); 
+     function requireFn(tpl) { return est.renderFile('/Users/MLS/speed/cheetah/trunk/apps/web/views/' ,tpl , null , null ,'web' ,true); } ; 
+     function __getHtml (_data) { 
+       function jsRender(tpl , id) { return est.jsRender(requireFn(tpl)(_data), id  ); } ; 
+       var __htm ='';
+__htm += '';
+__htm += est.renderFile("/Users/MLS/speed/cheetah/trunk/apps/web/views/" ,"head.html",_data,null,"web" )||"";
+__htm += '\n<div id="container" class="effect mainnav-lg">\n    ';
+__htm += est.renderFile("/Users/MLS/speed/cheetah/trunk/apps/web/views/" ,"navbar.html",_data,null,"web" )||"";
+__htm += '\n    <div class="boxed">\n        <div id="content-container">\n            <ol class="breadcrumb">\n                <li><a href="/home">首页</a></li>\n                <li class="active">会议室预定</li>\n            </ol>\n            <div id="page-content">\n                <div class="switch-view">\n                    ';
+ if(_data.manager.data == 1){;__htm += '\n                    <a href="javascript:void(0);" class="only-service" data-value="service"><i class="eye"></i>只看我服务的会议</a>\n                    ';
+ } ;__htm += '\n                    <a href="javascript:void(0);" class="only-self" data-value="self"><i class="eye"></i>只看我的会议</a>\n                </div>\n                <div class="row" style="padding-top:10px;">\n                    <div class="col-lg-9 col-md-8 col-sm-8 col-xs-9">\n                        <ul class="day-choose">\n                            <li>\n                                <a class="jumpday to-prev-day">< 上一天</a>\n                            </li>\n                            <li>\n                                <a type="button" class="jumpday today current">今天</a>\n                            </li>\n                            <li>\n                                <a type="button" class="jumpday to-next-day">下一天 ></a>\n                            </li>\n                            <li>\n                                <input type="text" placeholder="开始时间" id="to-some-day" value="';
+__htm += _data.today ;
+__htm += '">\n                            </li>\n                        </ul>\n                    </div>\n                    <div class="col-lg-3 col-md-4 col-sm-4 col-xs-3" style="text-align: right;">\n                        <!--<a href="/address/map" class="meeting_position" target=\'_blank\' data-toggle="tooltip"-->\n                        <!--data-placement="bottom" title=\'会议室分布图\'>会议室分布图</a>-->\n                        <div class="choose-city">\n                            <span>当前地区：</span>\n                            <div class="dropdown">\n                                <div class="btn btn-default dropdown-toggle current-city-name" data-toggle="dropdown">\n                                    <span class="caret"></span>\n                                </div>\n                                <ul class="dropdown-menu dropdown-menu-md dropdown-menu-right with-arrow panel-default head-list d_menu"\n                                    role="menu" aria-labelledby="dropdownMenu1">\n                                    ';
+ _data.city.data.forEach(function(city, index){ ;__htm += '\n                                    <li><a class="city" data-cityId="';
+__htm += city.office_id ;
+__htm += '">';
+__htm += city.city_name ;
+__htm += ' - ';
+__htm +=
+                                        city.office_position ;
+__htm += '</a></li>\n                                    ';
+ }); ;__htm += '\n                                </ul>\n                            </div>\n                        </div>\n                    </div>\n                </div>\n                <div class="row">\n                    <div class="col-lg-8 col-md-8 col-sm-8 col-xs-8">\n                        <div class="service-list">\n                            ';
+ var serviceIcon = ['m-icon-projector','m-icon-video','m-icon-phone']; ;__htm += '\n                            ';
+ _data.services.data.forEach(function(service, index){ ;__htm += '\n                            <a href="javascript:void(0);" class="btn service-btn"\n                               data-serviceId="';
+__htm += service.service_id ;
+__htm += '">\n                                <span class="filter ';
+__htm += serviceIcon[service.service_id%3] ;
+__htm += '"></span>\n                                ';
+__htm += service.name ;
+__htm += '\n                            </a>\n                            ';
+ }); ;__htm += '\n                        </div>\n                    </div>\n                    <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4">\n                        <div class="meeting-room-map">\n                            <a href="/time/my/?t=meeting" class="btn my-meeing-list"><span></span>我的会议列表</a>\n                            <a href="/meeting/map/" target="_blank" class="btn dist"><span></span>会议室分布图</a>\n                        </div>\n                    </div>\n                </div>\n                <div class="row">\n                    <div class="col-lg-12 col-md-12">\n                        <table class="table" id="table_head">\n                            <thead>\n                            <tr>\n                                <th width="50">楼层</th>\n                                <th width="110">会议室名称</th>\n                                <th width="110">设备</th>\n                                <th width="60" class="hidden-md hidden-sm hidden-xs">人数</th>\n                                <th width="64%" class="overview">\n                                    <table width="100%">\n                                        <thead id="time_list">\n                                        <tr>\n                                            ';
+ for(var i = 8;i <= 21; i++){ ;__htm += '\n                                            ';
+ if(i % 2 == 0) { ;__htm += '\n                                            <th class="hidden-sm hidden-xs">';
+__htm += i ;
+__htm += ':00</th>\n                                            ';
+ }else{ ;__htm += '\n                                            <th>';
+__htm += i ;
+__htm += ':00</th>\n                                            ';
+ }} ;__htm += '\n                                        </tr>\n                                        </thead>\n                                    </table>\n                                </th>\n                            </tr>\n                            </thead>\n                            <!-- <tbody></tbody> -->\n                        </table>\n                        <table class="table">\n                            <tbody id="meeting-list"></tbody>\n                        </table>\n                    </div>\n                </div>\n            </div>\n            ';
+__htm += est.renderFile("/Users/MLS/speed/cheetah/trunk/apps/web/views/" ,"footer.html",_data,null,"web" )||"";
+__htm += '\n        </div>\n        ';
+__htm += est.renderFile("/Users/MLS/speed/cheetah/trunk/apps/web/views/" ,"mainnav.html",_data,null,"web" )||"";
+__htm += '\n    </div>\n</div>\n<!--===================================================-->\n<!-- END OF CONTAINER -->\n';
+__htm += est.callFn("useModule")("fml.use('speed/common/base');\n        fml.use('speed/meeting/index');", _data._JSstack , _data._JSmods) || '';
+ ;__htm += '\n';
+__htm += est.renderFile("/Users/MLS/speed/cheetah/trunk/apps/web/views/" ,"foot.html",_data,null,"web" )||"";
+__htm += '';
+return __htm;} 
+ exports.html = __getHtml; 

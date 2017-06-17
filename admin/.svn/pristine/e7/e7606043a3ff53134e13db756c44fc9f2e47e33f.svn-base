@@ -1,0 +1,127 @@
+<?php
+namespace Admin\Modules\Structure\User;
+use Libs\Util\Format;
+use Admin\Modules\Common\BaseModule;
+use Admin\Package\Common\Response;
+use Admin\Package\Log\Log;
+/**
+ * 修改邮箱密码
+ * @author hongzhou@meilishuo.com
+ * @since 2015-11-14 下午12:53:13
+ */
+class AjaxUpdateMailPwd extends BaseModule {
+
+    protected $errors = NULL;
+    private   $params = NULL;
+    public static $VIEW_SWITCH_JSON = TRUE;
+    const mail_string = '@meilishuo.com';
+    const IT =8;
+
+    public function run() {
+        $this->_init();
+        if($this->post()->hasError()){
+            $return = Response::gen_error(10001, '', $this->post()->getErrors());
+            return $this->app->response->setBody($return);
+        }
+        $is_mail = preg_match('/@/', $this->params['mail_name']);
+        if (!$is_mail) { // 邮箱
+            $this->params['mail_name'] .=self::mail_string;
+        }
+        $check =  $this->complexMatch(    $this->params['mail_pwd'] );
+        if(isset($check['code'])&&$check['code']!=200){
+            return $this->app->response->setBody($check);
+        }
+
+        $ret = $this->updateMailPwd($this->params);
+        if(!$ret){
+           return $this->app->response->setBody(Response::gen_error(50001,'修改失败'));
+        }
+        $this->doLog($this->params);
+        $this->app->response->setBody(Response::gen_success('修改成功'));
+    }
+
+    public  function  complexMatch( $newPassword = '') {
+        if(empty($newPassword)) {
+            return array('code'=>400,'error_msg'=>'没有密码');
+        }
+
+        //检测新密码合法
+        if(trim($newPassword) !== $newPassword) {
+
+            return  array('code'=>400,'error_msg'=>'密码格式不对');
+        }
+
+        if(strlen($newPassword) < 6) {
+            return array('code'=>400,'error_msg'=>'密码少于六位');
+        }
+
+        if(!preg_match('/[0-9]/', $newPassword)) {
+            return array('code'=>400,'error_msg'=>'没有数字');
+        }
+
+        if(!preg_match('/[a-z]/', $newPassword) && !preg_match('/[A-Z]/', $newPassword)) {
+            return array('code'=>400,'error_msg'=>'没有字母');
+        }
+        //不兼容加号和空格
+//        if(!preg_match('/[\[\]\(\)\~\!\@\#\$\%\^\*\+\=\,\.\_\-]/', $newPassword)) {
+//            return array('code'=>400,'error_msg'=>'没有特殊字符，不允许这样的啦');
+//        }
+        if(preg_match('/[^0-9a-zA-Z\[\]\(\)\~\!\@\#\$\%\^\*\+\=\,\.\_\-]/', $newPassword, $match)) {
+            $match = array_pop($match);
+            if(trim($match) !== $match) {
+                return array('code'=>400,'error_msg'=>'是不是密码总有空格和加号啊！这个不行的');
+            }
+
+        }
+        //检测密码邮箱关联性
+        $lowerMail = strtolower($this->app->currentUser['mail']);
+        if(strcasecmp($lowerMail, $newPassword) === 0) {
+            return array('code'=>400,'error_msg'=>'不能与用户名相同(不区分大小写)');
+        }
+
+        if(preg_match('/(' . preg_quote(strtolower($newPassword)) . ')+/', $lowerMail) || preg_match('/(' . preg_quote($lowerMail) . ')+/', strtolower($newPassword))) {
+            return array('code'=>400,'error_msg'=>'不能是用户名的子集、用户名也不能是密码的子集(不区分大小写)');
+        }
+
+        return array('code'=>200);
+    }
+
+    protected function updateMailPwd($mail){
+        $return_data=NULL;
+        $return_data = $this->getClient()->call('joint', 'itserver/email_update', $mail);
+        $return_data = $this->parseApiData($return_data);
+        return $return_data;
+
+    }
+    protected function doLog($new_param=array(),$old_param='update'){
+        $ret = Log::getInstance()->createLogs(array(
+                'user_id'=>$this->user['id'],
+                'handle_id'=>100000,
+                'operation_type'=>$old_param,
+                'after_data'=>json_encode($new_param),
+                'handle_type'=>self::IT
+            )
+        );
+        return $ret;
+    }
+    private function _init() {
+
+        $this->rules  = array(
+            'mail_pwd' => array(
+                'type'=>'string',
+                'required' => TRUE,
+                'allowEmpty' => FALSE,
+            ),
+            'mail_name' => array(
+               'type'=>'string',
+                'required' => TRUE,
+                'allowEmpty' => FALSE,
+           )
+        );
+
+        $this->params   = $this->post()->safe();
+        $this->errors   = $this->post()->getErrors();
+
+    }
+    
+}

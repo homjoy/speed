@@ -1,0 +1,96 @@
+<div class="event-list my-event">
+    <dl class="event-header">
+        <dt>
+            <span class="column date">日期</span>
+            <span class="column time">时间</span>
+            <span class="column creator">添加人</span>
+            <span class="column title">事件名称</span>
+            <span class="column status">当前状态</span>
+            <span class="column manage">操作</span>
+        </dt>
+    </dl>
+
+    <% if(this.events.code == 200) { %>
+    <% this.events.data.forEach(function(event,index){ %>
+    <dl class="event">
+        <dt>
+            <span class="column date"><%=event.date %></span>
+            <span class="column time"><%=event.time %></span>
+            <span class="column creator"><%=event.creator %></span>
+            <span class="column title"><%=event.title %></span>
+            <span class="column status"><%=event.statusText %></span>
+                            <span class="column manage">
+                                <% var clsMap = {checkin:'签到',edit:'修改',cancel:'取消',decline:'拒绝'}; %>
+                                <% event.handle.forEach(function(cls,index){ if(cls =='edit'){ return ;}%>
+                                    <a href="javascript:void(0);" class="btn-<%=cls%>" data-id="<%=event.id || 0%>" data-toggle="tooltip" data-placement="top" title="<%=clsMap[cls] %>"></a>
+                                <% })%>
+                            </span>
+        </dt>
+        <dd>
+            <div class="column one">
+                <div class="row">
+                    <div class="tt">地点</div>
+                    <div class="ct"><%=event.place%></div>
+                </div>
+            </div>
+            <div class="column two">
+                <div class="row invite-users">
+                    <span class="tt">参加人</span>
+                                    <span class="ct">
+                                        <% event.invite_user.forEach(function(user){%>
+                                            <% if(user.reject) {%>
+                                                <strong class="decline"><%=user.username %>（拒绝）</strong>
+                                            <% } else {%>
+                                                <strong><%=user.username %></strong>
+                                            <% } %>
+                                        <% })%>
+                                    </span>
+                </div>
+
+                <% if(event.remark) {%>
+                <div class="row remark">
+                    <span class="tt">备注</span>
+                    <span class="ct"><%=event.remark || '' %></span>
+                </div>
+                <% } %>
+            </div>
+        </dd>
+    </dl>
+    <% }); %>
+    <% } %>
+</div>
+
+<% if(this.events.code == 200 ) { %>
+<div class="text-center">
+    <% if(this.events.page.maxPage > 1) { %>
+    <ul class="pagination">
+        <% if(this.events.page.currentPage > 1) { %>
+        <li class="prev">
+            <a href="javascript:void(0);" aria-label="上一页" data-page="<%=(this.events.page.currentPage-1) %>"><</a>
+        </li>
+        <% } %>
+
+        <% for(var i = 1,max = this.events.page.maxPage; i <= max; i++) { %>
+        <% if(i == this.events.page.currentPage ) {%>
+        <li class="active">
+            <a href="javascript:void(0);" data-page="<%=i %>"><%=i %></a>
+        </li>
+        <% } else { %>
+        <li><a href="javascript:void(0);" data-page="<%=i %>"><%=i %></a></li>
+        <% } %>
+        <% } %>
+        <% if(this.events.page.currentPage < this.events.page.maxPage) {%>
+        <li class="next">
+            <a href="javascript:void(0);" aria-label="下一页" data-page="<%=(this.events.page.currentPage+1) %>">></a>
+        </li>
+        <% } %>
+        <li class="go-page">
+            <div class="form-inline" method="get">
+                <input type="text" class="form-control" name="page"/>
+                <a href="javascript:void(0);" class="btn" data-max="<%=this.events.page.maxPage || 1%>">Go</a>
+            </div>
+        </li>
+    </ul>
+    <% } %>
+</div>
+<% } %>

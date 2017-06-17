@@ -1,0 +1,39 @@
+/*--/Users/MLS/speed/cheetah/trunk/apps/web/views/time/shares.html--*/ 
+     var est = require(config.path.lib + 'est/est.js'); 
+     var _extFn = require('/Users/MLS/speed/cheetah/trunk/nest/server/lib/est/extFn.js'); 
+     function requireFn(tpl) { return est.renderFile('/Users/MLS/speed/cheetah/trunk/apps/web/views/' ,tpl , null , null ,'web' ,true); } ; 
+     function __getHtml (_data) { 
+       function jsRender(tpl , id) { return est.jsRender(requireFn(tpl)(_data), id  ); } ; 
+       var __htm ='';
+__htm += '';
+ if (_data.user_share_list){;__htm += '\n';
+ if(_data.user_share_list.code==200){ ;__htm += '\n<div class="row">\n    <ul class="share-users">\n        ';
+ var link = _data.shareLink.slice(-1) == '/' ? _data.shareLink + '?' : _data.shareLink + '&' ;;__htm += '\n        ';
+ if(_data.userInfo.code==200){ ;__htm += '\n        <li ';
+ if(!_data.params.userId || _data.params.userId == _data.userInfo.data.user.user_id ) {;__htm += 'class="current"';
+ } ;__htm += '>\n        <a href="';
+__htm +=link;
+__htm += '"><img src="';
+__htm += _data.userInfo.data.user.avatar.avatar_small ;
+__htm += '"></a><span>我的时间</span></li>\n        ';
+ } ;__htm += '\n        ';
+ _data.user_share_list.data.forEach(function(bannar, index){ ;__htm += '\n        <li\n        ';
+ if(_data.params.userId == bannar.user_id ) {;__htm += 'class="current"';
+ } ;__htm += '>\n        <a user-id="';
+__htm += bannar.user_id;
+__htm += '"\n           href="';
+__htm +=link ;
+__htm += 'user_id=';
+__htm += bannar.user_id;
+__htm += '&iw=';
+__htm += bannar.is_write;
+__htm += '"><img\n                src="';
+__htm += bannar.avatar;
+__htm += '"></a>\n        <span>';
+__htm += bannar.name_cn ;
+__htm += '</span>\n        </li>\n        ';
+ }); ;__htm += '\n    </ul>\n</div>\n';
+ } ;__htm += '\n';
+ } ;__htm += '';
+return __htm;} 
+ exports.html = __getHtml; 

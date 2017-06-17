@@ -1,0 +1,29 @@
+function mymanage() {
+    return this;
+}
+var controlFns = {
+    'index':function(){
+        var php = {
+            //'filing':'/contractapplication/showSuccAndFileContractJson',
+            //'waitList':'/contractapplication/queryAllSuccApprovContractAppJson',
+            //'overList':'/contractapplication/showAreadyFileContractJson'
+        };
+        this.bindDefault(php);
+        this.bridgeMuch(php);
+        this.listenOver(function (data) {
+            data._CSSLinks = ['plugin/dropzone','plugin/bootstrapValidator.min','plugin/jquery.dataTables','plugin/dataTables.bootstrap','fms/contract/contract','fms/mymanage/filing',];
+            this.render('mymanage/contract-filing.html', data);
+        });
+        //return this.redirectTo('/mymanage/pay/');
+    }
+    ,'pay':function(){
+        var php = {};
+        this.bindDefault(php);
+        this.bridgeMuch(php);
+        this.listenOver(function (data) {
+            data._CSSLinks = ['fms/contract/contract','plugin/dropzone'];
+            this.render('contract/payApplycation.html', data);
+        });
+    }
+};
+exports.__create = controller.__create(mymanage, controlFns);

@@ -1,0 +1,28 @@
+<script type="text/html" id="reversehistory">
+    <style>
+        .mr5{margin-right: 5px;float: left}
+        .offsetMoney{width: 60px;text-align: center}
+        .remark{width:50%;}
+        .currBalance{float: right;}
+    </style>
+    <div class="timeline-wraper timeline-wraper-reverse hide">
+        <div class="timeline timeline-mini history-fms timelinepl" style="float: right;width: 100%">
+            {{each offsetlist as info}}
+            <div class="timeline-entry">
+                <div class="timeline-stat">
+                    <div class="timeline-icon"></div>
+                </div>
+                <div class="timeline-label">
+                    <div class="">
+                        <span class="offsetDate mr5">{{info.offsetDate}}</span>
+                        <span class="offsetMoney mr5">{{info.offsetMoney}}</span>
+                        <span class="remark mr5">{{info.remark}}</span>
+                        <span class="currBalance mr5">剩余欠款{{info.currBalance}}</span>
+                    </div>
+
+                </div>
+            </div>
+            {{/each}}
+        </div>
+    </div>
+</script>

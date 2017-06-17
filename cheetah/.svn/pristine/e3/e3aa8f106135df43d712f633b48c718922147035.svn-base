@@ -1,0 +1,83 @@
+var arr_fyc = new Array();
+var anyTime="2015-5-8";
+for(var i=8;i<=21;i++){
+  if(i<10){
+    for(var j=0;j<4;j++){
+      if(j==1 || j==2){
+
+      }else{
+        arr_fyc.push('0'+i+':'+j+'0');
+      }
+    }
+  }else{
+    for(var j=0;j<4;j++){
+      if(j==1 || j==2){
+
+      }else{
+        arr_fyc.push(''+i+':'+j+'0');
+      }
+    }
+  }
+}
+arr_fyc.pop();
+
+var arr = arr_fyc;
+for(var i=0;i<arr.length;i++){
+  var tStr = anyTime +' '+ arr[i];
+  var sTime = (new Date(tStr)).getTime();
+  for(var j=0; j<$('.list').length; j++){
+    $($($('.list')[j]).find('li')[i]).attr('data_time',sTime);
+  }
+}
+
+var url = '/aj/meeting/ajax_book_all';
+var queryData = {
+  // 'start':$('#start').val()+' 08:00:00',
+  // 'end':$('#start').val()+' 21:00:00',
+  'book_start':'2015-5-1',
+  'book_end':'2015-5-1',
+  // 'room_area': meeting_china
+};
+$.get(url,{book_start:'2015-5-8', book_end:'2015-5-9'},function(ret){
+  ret = JSON.parse(ret);
+  console.warn(queryData);
+  console.log(ret);
+  if(ret){
+    $.each(ret.data,function(j,item){
+      for(var i=0;i<item.length;i++){
+        var startTime = item[i].start.replace(/-/g,'/');
+        var endTime = item[i].end.replace(/-/g,'/');
+        startTime = (new Date(startTime)).getTime();
+        endTime = (new Date(endTime)).getTime();
+        for(var p=0; p<14; p++){
+          var domLi = $('.'+j+' .time_'+p+'').children();
+          // console.warn(p);
+          // var domLi = $('.1101'+' .time_'+p+'').children();
+          for(var k=0;k<arr_fyc.length;k++){
+            if($(domLi[k]).attr('data_time')> startTime && $(domLi[k]).attr('data_time')<=endTime){
+              $(domLi[k]).addClass('bg');
+            }
+          }
+        }
+      }
+    });
+  }
+});
+$(".form_datetime").hover(
+  function(){
+    var _start = $(this).val();
+    if (_start == "") {
+      _startView = 2;
+    }else{
+      _startView = 1;
+    }
+    $(this).datetimepicker({
+      format: 'yyyy-mm-dd', 
+      minView: 'month',
+      autoclose:true
+    });
+  },
+  function(){
+    $(this).unbind("Datetimepicker");
+  }
+);

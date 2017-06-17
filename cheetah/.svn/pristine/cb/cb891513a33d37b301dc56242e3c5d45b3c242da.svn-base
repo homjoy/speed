@@ -1,0 +1,92 @@
+@import "variables";
+
+.pagination {
+
+  > li > a,
+  > li > span {
+    font-size: 14px;
+    padding: 8px 12px;
+
+    &:hover,
+    &:focus {
+      z-index: 3;
+      color: @btn-hover-color;
+      background-color: @btn-hover-bg;
+      border-color: transparent;
+      box-shadow: none;
+    }
+  }
+
+  .prev {
+    > a {
+      margin-right: 6px;
+      border-top-left-radius: 5px !important;
+      border-bottom-left-radius: 5px !important;
+    }
+  }
+
+  .next {
+    > a {
+      margin-left: 6px;
+      border-top-right-radius: 5px;
+      border-bottom-right-radius: 5px;
+    }
+  }
+
+  > .active > a,
+  > .active > span {
+    &,
+    &:hover,
+    &:focus {
+      z-index: 2;
+      color: #fff;
+      background-color: @queen-primary-dark;
+      border-color: transparent;
+      cursor: default;
+      box-shadow: none;
+    }
+  }
+
+  .go-page {
+    position: relative;
+    float: left;
+    padding: 0;
+    margin-left: 25px;
+    line-height: 1.42857143;
+    color: #337ab7;
+    text-decoration: none;
+    background-color: #fff;
+    border: none;
+
+    .form-inline {
+      input {
+        width: 53px;
+        height: 38px;
+        font-size:14px;
+        text-align: center;
+        &:focus{
+          border-color: @queen-primary;
+          box-shadow: none;
+          transition-duration: 0.5s;
+        }
+      }
+      .btn{
+        position: relative;
+        float: right;
+        font-size: 14px;
+        padding: 8px 12px;
+        -webkit-border-radius: @border-radius;
+        -moz-border-radius: @border-radius;
+        border-radius: @border-radius;
+        margin-left: 8px;
+        line-height: 1.42857143;
+        color: @queen-primary-dark;
+        text-decoration: none;
+        background-color: #fff;
+        border: 1px solid #dddddd;
+        box-shadow: none;
+      }
+    }
+  }
+
+}

@@ -1,0 +1,333 @@
+<div id="container" class="effect mainnav-lg">
+    <header id="navbar">
+        <div id="navbar-container" class="boxed">
+            <!--Brand logo & name-->
+            <div class="navbar-header">
+                <a href="index.html" class="navbar-brand">
+                    <!-- <img src="img/logo.png" alt="Nifty Logo" class="brand-icon"> -->
+                    <div class="brand-title">
+                        <span class="brand-text">财务预算</span>
+                    </div>
+                </a>
+            </div>
+            <!--Navbar Dropdown-->
+            <div class="navbar-content clearfix">
+                <!--  <ul class="nav navbar-top-links pull-left">
+                        <li class="tgl-menu-btn">
+                            <a class="mainnav-toggle" href="#">
+                                <i class="fa fa-navicon fa-lg"></i>
+                            </a>
+                        </li>
+                    </ul> -->
+                <ul class="nav navbar-top-links pull-right">
+                    <!--User dropdown-->
+                    <li id="dropdown-user" class="dropdown">
+                        <a href="#" data-toggle="dropdown" class="dropdown-toggle text-right">
+                            <span class="pull-right">
+                                    <img class="img-circle img-user media-object" src="img/av1.png" alt="Profile Picture">
+                                </span>
+                            <div class="username hidden-xs">admin</div>
+                        </a>
+                        <div class="dropdown-menu dropdown-menu-md dropdown-menu-right with-arrow panel-default">
+                            <!-- User dropdown menu -->
+                            <ul class="head-list">
+                                <li>
+                                    <a href="#">
+                                        <i class="fa fa-user fa-fw fa-lg"></i>个人资料
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="#">
+                                        <i class="fa fa-user fa-fw fa-lg"></i> 退出登录
+                                    </a>
+                                </li>
+                            </ul>
+                            <!-- Dropdown footer -->
+                            <!--  <div class="pad-all text-right">
+                                    <a href="pages-login.html" class="btn btn-primary">
+                                        <i class="fa fa-sign-out fa-fw"></i> Logout
+                                    </a>
+                                </div> -->
+                        </div>
+                    </li>
+                    <!--End user dropdown-->
+                </ul>
+            </div>
+        </div>
+    </header>
+    <div class="boxed">
+        <div id="content-container">
+            <div id="page-content">
+                <div class="row">
+                    <div class="col-lg-9">
+                        <div class="panel">
+                            <div class="panel-heading myhead">
+                                <h4 class="panel-title">申请</h4>
+                            </div>
+                            <div class="panel-body panel-layout">
+                                <div class="apply-layout">
+                                    <svg class="icon icon-hetong">
+                                        <use xlink:href="../image/apply/svgdefs.svg#icon-hetong"></use>
+                                    </svg>
+                                    <a href="#" class="icon-btn btn-hetong">合同</a>
+                                </div>
+                                <div class="apply-layout">
+                                    <svg class="icon icon-fukuan">
+                                        <use xlink:href="../image/apply/svgdefs.svg#icon-fukuan"></use>
+                                    </svg>
+                                    <a href="#" class="icon-btn btn-fukuan">付款</a>
+                                </div>
+                                <div class="apply-layout">
+                                    <svg class="icon icon-yusuan">
+                                        <use xlink:href="../image/apply/svgdefs.svg#icon-yusuan"></use>
+                                    </svg>
+                                    <div class="hover-menu">
+                                        <a href="#" class="icon-btn btn-yusuan">预算</a>
+                                        <ul class="item-list item-list-yusuan">
+                                            <li><a href="#">预算申请</a></li>
+                                            <li><a href="#">预算调整</a></li>
+                                        </ul>
+                                    </div>
+                                </div>
+                                <div class="apply-layout">
+                                    <svg class="icon icon-baoxiao">
+                                        <use xlink:href="../image/apply/svgdefs.svg#icon-baoxiao"></use>
+                                    </svg>
+                                    <div class="hover-menu">
+                                        <a href="#" class="icon-btn btn-baoxiao">报销</a>
+                                        <ul class="item-list item-list-baoxiao">
+                                            <li><a href="">交通费及餐费</a></li>
+                                            <li><a href="">差旅费</a></li>
+                                            <li><a href="">通用费用</a></li>
+                                        </ul>
+                                    </div>
+                                </div>
+                                <div class="apply-layout">
+                                    <svg class="icon icon-jiekuan">
+                                        <use xlink:href="../image/apply/svgdefs.svg#icon-jiekuan"></use>
+                                    </svg>
+                                    <a href="#" class="icon-btn btn-jiekuan">借款</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-3" min-width="250">
+                        <div class="panel friend-link">
+                            <div class="panel-heading myhead">
+                                <h4 class="panel-title">友情链接</h4>
+                            </div>
+                            <div class="panel-body">
+                                <a href="#" class="text-link">SPEED</a>
+                                <a href="#" class="text-link">ROI</a>
+                                <a href="#" class="text-link">优惠劵</a>
+                                <a href="#" class="text-link">品牌</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="panel wait-item">
+                            <div class="panel-heading myhead">
+                                <h4 class="panel-title">待办事项</h4>
+                            </div>
+                            <div class="panel-body">
+                                <ul id="myApplyTab" class="nav nav-tabs">
+                                    <li class="active"><a href="#myApply" data-toggle="tab" aria-expanded="true">我的申请</a></li>
+                                    <li><a href="#myApproval" data-toggle="tab" aria-expanded="false">我的审批</a></li>
+                                </ul>
+                                <div id="myTabContent" class="tab-content">
+                                    <div class="tab-pane fade active in" id="myApply">
+                                        <table id="tb-index-apply" class="table table-striped owntable">
+                                            <thead>
+                                                <tr>
+                                                    <th width="100">类型</th>
+                                                    <th>申请编号</th>
+                                                    <th>申请时间</th>
+                                                    <th>金额(￥)</th>
+                                                    <th>审批进度</th>
+                                                    <th width="160">操作</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr>
+                                                    <td>
+                                                        <span class="re-type type-hetong">合同</span>
+                                                    </td>
+                                                    <td>HTSP2015060001</td>
+                                                    <td>2015-06-26</td>
+                                                    <td>200,000.00</td>
+                                                    <td>审批中-王曦</td>
+                                                    <td>
+                                                        <a href="javascript:;" class="btn btn-edit">修改</a>
+                                                        <a href="javascript:;" class="btn btn-del">删除</a>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>
+                                                        <span class="re-type type-yusuan">预算申请</span>
+                                                    </td>
+                                                    <td>HTSP2015060001</td>
+                                                    <td>2015-06-26</td>
+                                                    <td>200,000.00</td>
+                                                    <td>审批中-王曦</td>
+                                                    <td>
+                                                        <a href="javascript:;" class="btn btn-hurry">催审</a>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>
+                                                        <span class="re-type type-baoxiao">报销</span>
+                                                    </td>
+                                                    <td>HTSP2015060001</td>
+                                                    <td>2015-06-26</td>
+                                                    <td>200,000.00</td>
+                                                    <td>审批中-王曦</td>
+                                                    <td>
+                                                        <a href="javascript:;" class="btn btn-hurry">催审</a>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>
+                                                        <span class="re-type type-fukuan">付款</span>
+                                                    </td>
+                                                    <td>HTSP2015060001</td>
+                                                    <td>2015-06-26</td>
+                                                    <td>200,000.00</td>
+                                                    <td>审批中-王曦</td>
+                                                    <td>
+                                                        <a href="javascript:;" class="btn btn-hurry">催审</a>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>
+                                                        <span class="re-type type-jiekuan">借款</span>
+                                                    </td>
+                                                    <td>HTSP2015060001</td>
+                                                    <td>2015-06-26</td>
+                                                    <td>200,000.00</td>
+                                                    <td>审批中-王曦</td>
+                                                    <td>
+                                                        <a href="javascript:;" class="btn btn-hurry">催审</a>
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                        <div class="text-right">
+                                            <a href="" class="btn btn-default btn-more-apply">更多</a>
+                                        </div>
+                                    </div>
+                                    <div class="tab-pane fade" id="myApproval">
+                                        <table id="tb-index-approval" class="table table-striped owntable">
+                                            <thead>
+                                                <tr>
+                                                    <th width="100">类型</th>
+                                                    <th>申请编号</th>
+                                                    <th>申请人</th>
+                                                    <th>申请部门</th>
+                                                    <th>金额(￥)</th>
+                                                    <th width="160">操作</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr data-id="2" data-type="0">
+                                                    <td>
+                                                        <span class="re-type type-hetong">合同</span>
+                                                    </td>
+                                                    <td>HTSP2015060001</td>
+                                                    <td>刘隽</td>
+                                                    <td>技术部-用户研发</td>
+                                                    <td>200,000.00</td>
+                                                    <td>
+                                                        <a href="javascript:;" class="btn btn-agree">同意</a>
+                                                        <a href="javascript:;" class="btn btn-reject">驳回</a>
+                                                    </td>
+                                                </tr>
+                                                <tr data-id="2" data-type="0">
+                                                    <td>
+                                                        <span class="re-type type-yusuan">预算申请</span>
+                                                    </td>
+                                                    <td>HTSP2015060001</td>
+                                                    <td>李燕杰</td>
+                                                    <td>技术部-用户研发</td>
+                                                    <td>15,000,000.00</td>
+                                                    <td>
+                                                        <a href="javascript:;" class="btn btn-agree">同意</a>
+                                                        <a href="javascript:;" class="btn btn-reject">驳回</a>
+                                                    </td>
+                                                </tr>
+                                                <tr data-id="2" data-type="0">
+                                                    <td>
+                                                        <span class="re-type type-baoxiao">报销</span>
+                                                    </td>
+                                                    <td>HTSP2015060001</td>
+                                                    <td>周滨</td>
+                                                    <td>技术部-用户研发</td>
+                                                    <td>900.00</td>
+                                                    <td>
+                                                        <a href="javascript:;" class="btn btn-agree">同意</a>
+                                                        <a href="javascript:;" class="btn btn-reject">驳回</a>
+                                                    </td>
+                                                </tr>
+                                                <tr data-id="2" data-type="0">
+                                                    <td>
+                                                        <span class="re-type type-jiekuan">借款</span>
+                                                    </td>
+                                                    <td>HTSP2015060001</td>
+                                                    <td>王馨</td>
+                                                    <td>技术部-用户研发</td>
+                                                    <td>900.00</td>
+                                                    <td>
+                                                        <a href="javascript:;" class="btn btn-agree">同意</a>
+                                                        <a href="javascript:;" class="btn btn-reject">驳回</a>
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                        <div class="text-right">
+                                            <a href="" class="btn btn-default btn-more-approval">更多</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="problem">
+                    <div class="problem-left">如遇问题请联系</div>
+                    <div class="problem-right">
+                        <div class="pr-item" href="#">
+                            <span class="text-warning">预算问题</span>&nbsp;&nbsp;
+                            <a href=""><img src="../image/navicon/im.png" alt="im" width="20" height="20"></a>
+                            <span>欧阳锋&nbsp;&nbsp;18977722222 </span>
+                        </div>
+                        <div class="pr-item" href="#">
+                            <span class="text-warning">法务问题</span>&nbsp;&nbsp;
+                            <a href=""><img src="../image/navicon/im.png" alt="im" width="20" height="20"></a>
+                            <span>欧阳锋&nbsp;&nbsp;18977722222</span>
+                        </div>
+                        <div class="pr-item" href="#">
+                            <span class="text-warning">报销问题</span>&nbsp;&nbsp;
+                            <a href=""><img src="../image/navicon/im.png" alt="im" width="20" height="20"></a>
+                            <span>欧阳锋&nbsp;&nbsp;18977722222</span>
+                        </div>
+                        <div class="pr-item" href="#">
+                            <span class="text-warning">借款问题</span>&nbsp;&nbsp;
+                            <a href=""><img src="../image/navicon/im.png" alt="im" width="20" height="20"></a>
+                            <span>欧阳锋&nbsp;&nbsp;18977722222</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!--#include file="sidebar.html"-->
+    </div>
+    <!--#include file="footer.html"-->
+</div>
+<%#foot.html%>
+<%! $_ENGINE_SELF.callFn("useModule")("<<<_use:
+        fml.use('fms/user/login');
+_use:", this._JSstack , this._JSmods); %>
+<script src="../plugins/datatables/jquery.dataTables.js"></script>
+<script src="../plugins/datatables/dataTables.bootstrap.js"></script>
+<script src="../js/index.js"></script>

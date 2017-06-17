@@ -1,0 +1,44 @@
+fml.define('fms/report/reimburse/base', ['jquery','plugin/bootstrap/datepicker','component/trees','component/notify', 'component/TreeSelect'], function (require, exports) {
+    var $ = require('jquery');
+    var notify = require('component/notify');
+
+    if($("input[name=departId]").length){
+        /**
+         * 加载部门树.
+         */
+        $.post('/aj/query/depart', function (data) {
+            $("input[name=departId]").TreeSelect({
+                multiple: true,
+                cascading: true,
+                data: data
+            });
+        }, 'json');
+    }
+
+    $('.input-daterange').datepicker({
+        format: "yyyy-mm-dd",
+        language: "zh-CN",
+        autoclose: true
+    });
+
+    $(".search-form").on('submit',function(e){
+        e.preventDefault();
+        var $form = $(this);
+
+        var url = $form.attr("action");
+
+        $.ajax(url,{
+            type:'post',
+            data:$form.serialize(),
+            dataType:'json',
+            success:function(response){
+                if(response.rcode != 200){
+                    return notify.error(response.rmessage);
+                }
+                $(".report-content").html(response.data);
+            }
+        });
+
+        return false;
+    });
+});

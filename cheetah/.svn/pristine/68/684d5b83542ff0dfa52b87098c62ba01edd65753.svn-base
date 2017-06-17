@@ -1,0 +1,111 @@
+fml.define('speed/user/login', ['jquery','plugin/cookie'], function (require, exports) {
+    //"use strict";
+    var $ =require('jquery');
+// 在前面显示的元素，隐藏在后面的元素
+    var eleBack = null, eleFront = null,
+    //元素们
+        eleList = $(".flip");
+
+    // 确定前面与后面元素
+    var funBackOrFront = function() {
+        eleList.each(function() {
+            if ($(this).hasClass("out")) {
+                eleBack = $(this);
+            } else {
+                eleFront = $(this);
+            }
+        });
+    };
+    funBackOrFront();
+
+
+    $('.forget_password').bind("click", function() {
+        // 切换的顺序如下
+        // 1. 当前在前显示的元素翻转90度隐藏, 动画时间225毫秒
+        // 2. 结束后，之前显示在后面的元素逆向90度翻转显示在前
+        // 3. 完成翻面效果
+        eleFront.addClass("out").removeClass("in");
+        console.log(eleFront);
+        setTimeout(function() {
+            eleBack.addClass("in").removeClass("out");
+            console.log(eleBack);
+            // 重新确定正反元素
+            funBackOrFront();
+        }, 225);
+        $('.up').addClass('hide').next().removeClass('hide');
+
+        return false;
+    });
+
+    var Cookies = require('plugin/cookie');
+    $('.signIn').on('click', function () {
+        if ($('.userName').val().replace(/(^\s*)|(\s*$)/g, "") != "" && $('.passWord').val().replace(/(^\s*)|(\s*$)/g, "") != "") {
+            $.post('/aj/user/login', {
+                "username": $('.userName').val(),
+                "password": $('.passWord').val()
+            }, function (res) {
+                if (res.code != 200) {
+                    // alert(res.msg);
+                    $('.notice').html(res.error_msg);
+                } else {
+                    // alert(res.data.speed_token);
+                    Cookies.remove('speed_token',{domain:'meilishuo.com'});
+                    Cookies.remove('speed_token');
+                    Cookies.set('speed_token',res.data.speed_token,{expires:7,domain:window.location.hostname});
+                    //setcookie("speed_token", res.data.speed_token);
+                    window.location.href = '/home';
+                }
+            }, 'json');
+        } else {
+            $('.notice').html('用户名和密码不能为空');
+
+        }
+    });
+    $('.change').click(function () {
+        if ($(this).hasClass('top')) {
+            if($('.up').hasClass('hide')){
+                eleFront.addClass("out").removeClass("in");
+                setTimeout(function() {
+                    eleBack.addClass("in").removeClass("out");
+                    funBackOrFront();
+                }, 225);
+                $('.down').addClass('hide').prev().removeClass('hide');
+                return false;
+            }else{
+                $('.panel-body').animate({top: '-255px'}, 'fast');
+                $(this).removeClass('top');
+                $('.up').addClass('hide');
+                $('.down').removeClass('hide');
+            }
+
+        } else {
+            $('.panel-body').animate({top: '0'}, 'fast');
+            $(this).addClass('top');
+            $('.up').removeClass('hide');
+            $('.down').addClass('hide');
+        }
+    });
+// 	if ($(this).val().replace(/(^\s*)|(\s*$)/g, "")=="")
+// 		alert("username is blank");
+// });
+// $('.passWord').on('blur',function(){
+// 	if ($(this).val().replace(/(^\s*)|(\s*$)/g, "")=="")
+// 		alert("password is blank");
+// });
+
+
+//响应回车
+    $(document).on('keydown', function (e) {
+        var e = e || event;
+        var currKey = e.keyCode || e.which || e.charCode;
+        if (currKey == 13) {
+            $('.signIn').click();
+        }
+    });
+
+
+
+
+
+
+});

@@ -1,0 +1,83 @@
+@prefix: tree-select;
+
+.@{prefix}-container {
+  position: relative;
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 30px;
+  border-radius: 5px;
+  border: 1px solid #e1e5ea;
+
+  &.active {
+    -webkit-border-radius: 5px 5px 0 0;
+    -moz-border-radius: 5px 5px 0 0;
+    border-radius: 5px 5px 0 0;
+    .@{prefix}-label {
+      background-position: 96% 11px;
+    }
+  }
+
+  .@{prefix}-label {
+    display: block;
+    height: 100%;
+    padding: 6px 22px 6px 12px;
+    background: transparent url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAsAAAA+CAMAAADKxREKAAAABGdBTUEAALGPC/xhBQAAACBjSFJNAAB6JgAAgIQAAPoAAACA6AAAdTAAAOpgAAA6mAAAF3CculE8AAAAulBMVEUAAAB9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX0AAADEtsc6AAAAPHRSTlMAEsXCDxTPyxEW0uXpzRMY1uMmKecV0+EiJ8qqICXcnxAIG+7RcP6C5NUXdXEj1xl5fCHf63gf3XQcv2p+TjajAAAAAWJLR0QAiAUdSAAAAAlwSFlzAAALEgAACxIB0t1+/AAAAH1JREFUKM/tjEcSglAUBMeEIioYEHPOOce+/7nkS3kDl/Rmuuq9GSkkkUylFZGxIJv7qp3HKVAshep6lCvVGpYv1QkaUtOhJbW9jvns9vqKifkbg2GUrjQaT3yj09lc9oLlSlrDRtoG7PYHOJrr6cwFrlHrdofHb+r5epv4AAQDC8SBUV7zAAAAJXRFWHRkYXRlOmNyZWF0ZQAyMDE1LTA4LTExVDEyOjQyOjIyKzA4OjAwSO4mYQAAACV0RVh0ZGF0ZTptb2RpZnkAMjAxNS0wOC0xMVQxMjo0MjoyMiswODowMDmznt0AAAAASUVORK5CYII=) no-repeat 100% 50%;
+    background-position: 96% -44px;
+
+    .label-inner {
+      display: block;
+      width: 100%;
+      //line-height: 1; //文本垂直居中.
+      max-width: 135px;
+      overflow: hidden;
+      word-wrap: break-word;
+      word-break: break-all;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+    }
+  }
+
+  .@{prefix}-dropdown {
+    position: absolute;
+    top: 28px;
+    left: 0;
+    width: 101%;
+    margin-left: -1px;
+    z-index: 101;
+    background-color: #FFF;
+    border: 1px solid #e2e2e2;
+    display: none;
+
+    .@{prefix}-dropdown-wrap {
+      overflow-y: scroll;
+      min-height: 180px;
+      max-height: 280px;
+    }
+  }
+
+  .tree-search-box {
+    width: 100%;
+    display: block;
+    border: 1px solid #e1e5ea;
+    border-left: 0;
+    border-right: 0;
+
+    .@{prefix}-input {
+      width: 100%;
+      outline: none;
+      padding: 6px 22px 6px 12px;
+      border: none;
+      font-size: 12px;
+      text-align: left;
+    }
+  }
+
+  .@{prefix}-ztree {
+    /* ztree 的样式.*/
+  }
+}
+
+select {
+  height: 34px !important;
+}

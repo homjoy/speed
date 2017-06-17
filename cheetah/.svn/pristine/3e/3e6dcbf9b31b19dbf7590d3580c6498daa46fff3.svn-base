@@ -1,0 +1,65 @@
+function user() {
+	return this;
+}
+var controlFns = {
+	'index' : function(){
+		var php = {
+			'userInfoGet':'/user/userInfoGet'
+		};
+		this.bindDefault(php);
+		this.bridgeMuch(php);
+		this.listenOver(function(data){
+			data._CSSLinks = ['plugin/bootstrapValidator','speed/user/index'];
+			this.render('user/index.html' , data);
+		});
+	}
+	, 'login': function () {
+		var php = {};
+		this.bindDefault(php);
+		this.bridgeMuch(php);
+		this.listenOver(function (data) {
+			if(data.userInfo && data.userInfo.code == 200){
+				return this.redirectTo('/');
+			}
+			data._CSSLinks = ['speed/user/login'];
+			this.render('user/login.html', data);
+		})
+	},
+	'logout': function () {
+		var self = this;
+		var appMod = require(config.path.appPath + 'web/model/application.js');
+		var speedToken = appMod.getCookie(self.req, self.res) || '';
+		var php = {
+			'logout':'/auth/logout?speed_token='+speedToken.trim()
+		};
+		this.bindDefault(php);
+		this.bridgeMuch(php);
+		this.listenOver(function (data) {
+			//删除SPEED TOKEN.
+			appMod.removeCookie(self.req, self.res,'speed_token');
+			return this.redirectTo('/user/login/');
+		})
+	}
+	,'avatar' : function(){
+		var php = {
+		};
+        this.bindDefault(php);
+		this.bridgeMuch(php);
+		this.listenOver(function(data){
+			data._CSSLinks = ['speed/user/avatar'];
+			this.render('user/avatar.html' , data);
+		})
+	}
+	,'password' : function(){
+		var php = {
+			'userInfoGet':'/user/userInfoGet'
+		};
+        this.bindDefault(php);
+		this.bridgeMuch(php);
+		this.listenOver(function(data){
+			data._CSSLinks = ['plugin/bootstrapValidator','speed/user/password'];
+			this.render('user/password.html' , data);
+		})
+	}
+};
+exports.__create = controller.__create(user, controlFns);

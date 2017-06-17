@@ -1,0 +1,14 @@
+<div class="search-info-guide">
+    <div class="for-pages">
+        第 <span class="cur-page">1</span>/<span class="all-page">4</span>页 
+        <a href="#" class="go-first" data-page="1">首页</a> | 
+        <a href="#" class="go-prev" data-page="0">上页</a> | 
+        <a href="#" class="go-next" data-page="2">下页</a> | 
+        <a href="#" class="go-last" data-page="4">尾页</a>
+        转到第<input type="text" class="sm-ow3 go-some-page-num" name="pagenum" maxlength="2">页
+        <button type="button" class="btn btn-xs btn-success go-some">GO</button>
+    </div>
+    <div class="info">
+        总共 <span class="info-num">20</span> 条记录
+    </div>
+</div>

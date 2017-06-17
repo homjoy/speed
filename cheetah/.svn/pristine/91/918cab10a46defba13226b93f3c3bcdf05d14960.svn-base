@@ -1,0 +1,44 @@
+#mainnav-menu li a {
+  position: relative;
+}
+
+.left_img {
+  height: 16px;
+  width: 20px;
+  position: absolute;
+  left: 14px
+}
+
+#mainnav-menu .menu-title {
+  margin-left: 28px
+}
+
+.brand-icon-fyc {
+  margin-left: 70px;
+  float: left;
+  margin-top: 3px
+}
+
+// .head-list-user li{text-align: center;}
+.head-list-user li img {
+  margin-left: 20px;
+  margin-right: 10px
+}
+
+.breadcrumb {
+  margin-top: 15px;
+  font-size: 14px
+}
+
+.share_high_light {
+  background: #F98FB3;
+  border-radius: 5px
+}
+
+#mainnav-container {
+  position: fixed !important;
+}
+
+header {
+  position: fixed !important;
+}

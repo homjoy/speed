@@ -1,0 +1,119 @@
+fml.define('fms/home/index', ['jquery', 'fms/common/common', 'plugin/cookie', 'fms/common/notify', 'fms/common/contract'], function (require, exports) {
+    var $ = require('jquery');
+    var notify = require('fms/common/notify');
+    var common = require('fms/common/common');
+    var contract = require('fms/common/contract');
+    var Cookies = require('plugin/cookie');
+    common.panelClick('index_panel_type', 'a[href="#myApproval', 'a[href="#myApply"]');
+
+
+    // 删除
+    $('body').on('click', '.btn-del', function (e) {
+        e.stopPropagation();
+        // params.did = $(this).attr('data-id');
+        var did = $(this).getId(),
+            dtype = $(this).getType();
+
+        notify.formDialog("确认框", "您确定要删除这条记录吗？", function () {
+            $.post('/aj/myapply/del', {'billId': did, 'billType': dtype}, function (data) {
+                if (data.rcode != 200) {
+                    return notify.error(data.rmessage);
+                }
+                notify.success(data.rmessage);
+                window.location.reload();
+            }, 'json');
+        });
+    });
+
+
+    // 催审
+    $('.btn-hurry').on('click', function () {
+        var aid = $(this).getId();
+        $.post('/aj/myapply/hurry', {'cabid': aid}, function (data) {
+            if (data.rcode != 200) {
+                return notify.warning(data.rmessage);
+            }
+
+            notify.success('催审邮件已发出');
+        }, 'json');
+    });
+
+
+    var tmpl = {
+        '/contract/dealTask/defaultapprove': '<form><textarea placeholder="不超过200字" class="form-control approval-info" style="min-height:80px"></textarea>' + '</form>',
+        '/contract/dealTask/needapprove': '<form><textarea placeholder="不超过200字" class="form-control approval-info" style="min-height:80px"></textarea>' + '<div class="checkbox"><label><input type="checkbox" id="isChecked" name="" value="1"/>是否需要进一步审批</label></form>'
+    };
+    // 同意
+    //
+    $('#myTabContent').on('click', '.btn-agree', function (e) {
+        e.stopPropagation();
+        var id = $(this).getId();
+        var taskid = $(this).parents('tr').attr('taskid');
+        var formkey = $(this).parents('tr').attr('formkey');
+
+        var index = 1;
+        // $.post('/aj/myapproval/getTmpl',{},function(data){
+        var content = tmpl[formkey || '/contract/dealTask/defaultapprove'];
+        //var content = data.fm;
+        notify.formDialog('审批意见', content, function () {
+            var info = $('.approval-info').val(),
+                cbox = $('#isChecked');
+            var param = [{
+                key: 'approvedState',
+                value: true,
+                type: 'B'
+            }, {
+                key: 'approveMessage',
+                value: info,
+                type: 'S'
+            }];
+            if (cbox.length > 0) {
+                var isChecked = cbox.prop('checked');
+                param.push({
+                    key: 'isChecked',
+                    value: isChecked,
+                    type: 'B'
+                });
+            }
+            contract.taskComplete(taskid, param);
+        });
+
+        $('.approval-info').val('同意');
+    }).on('click', '.btn-reject', function (e) {
+        e.stopPropagation();
+        var id = $(this).getId();
+        var taskid = $(this).parents('tr').attr('taskid');
+
+        notify.formDialog('审批意见',
+            '<textarea placeholder="不超过200字" class="form-control approval-info" style="min-height:80px"></textarea>',
+            function () {
+                var info = $('.approval-info').val();
+                var param = [{
+                    key: 'approvedState',
+                    value: false,
+                    type: 'B'
+                }, {
+                    key: 'approveMessage',
+                    value: info,
+                    type: 'S'
+                }];
+                contract.taskComplete(taskid, param);
+            });
+        $('.approval-info').val('驳回');
+    });
+    /*
+     遮罩层
+      */
+    var everWrap = Cookies.get('wrap');
+    if(!everWrap){
+        $('.director-wrap').removeClass('wrap-hide');
+        var isThin = $('.effect').hasClass('mainnav-sm');
+        if(isThin){
+            $('.effect').removeClass('mainnav-sm').addClass('mainnav-lg');
+        }
+        $('.guanbi').on('click',function(){
+            Cookies.set('wrap','1',{expires:30});
+            $('.director-wrap').remove();
+        });
+    }
+});

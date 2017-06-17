@@ -1,0 +1,63 @@
+fml.define('fms/contract/approvalView', ['jquery', 'plugin/bootbox', 'fms/common/common', 'fms/common/contract', 'component/notify'], function (require, exports) {
+    var $ = require('jquery');
+    var common = require('fms/common/common');
+    var bootbox = require('plugin/bootbox');
+    var contract = require('fms/common/contract');
+    var notify = require('component/notify');
+
+    // 当前id值 编辑
+    var curId = $('#conId').val();
+    $.fn.getBillId = function () {
+        var id = $(this).data('id');
+        return id;
+    };
+
+    // 同意
+    $('body').on('click', '.btn-agree', function (e) {
+        e.stopPropagation();
+        var id = $(this).getId();
+        var taskid = Cookies.get('taskid');
+        var formkey = Cookies.get('formkey');
+        var index = 1;
+        contract.approval(taskid, formkey);
+    }).on('click', '.btn-reject', function (e) {
+        //驳回
+        e.stopPropagation();
+        var taskid = Cookies.get('taskid');
+        contract.reject(taskid);
+    });
+
+
+    // 设置打印范围
+    function preview() {
+        var bdhtml = window.document.body.innerHTML;
+        var sprnstr = "";
+        var eprnstr = "";
+        var prnhtml = bdhtml.substr(bdhtml.indexOf('<!--startprint-->') + 17);
+        prnhtml = prnhtml.substring(0, prnhtml.indexOf('<!--endprint-->'));
+        window.document.body.innerHTML = prnhtml;
+        window.print();
+        //回到正常页面.
+        window.history.go(0);
+    }
+
+    $('.con-export').on('click', function (e) {
+        e.preventDefault();
+        //阻止链接，防止打开空页面.
+        preview();
+        return false;
+    });
+    // 下载附件
+    $('.download').on('click', function () {
+        // window.open('')
+    });
+
+
+    //@see http://fex-team.github.io/ueditor/#start-uparse
+    //处理页面没有边框的BUG，
+    //http://redmine.meilishuo.com/issues/40583
+    var basePath = fml.getOption('modulebase');
+    uParse('.ueditor-content', {
+        rootPath: basePath + '/s/ueditor/'
+    });
+});

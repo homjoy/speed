@@ -1,0 +1,116 @@
+/*
+	ajax请求转发
+*/
+function aj(){
+	return this;
+}
+var controlFns = {
+	login : function(params){
+		var php = {
+			'users' : '/auth/login',
+			'disguise' : '/auth/login_disguise'
+		};
+		this.ajaxTo(php[params]);
+	}
+	,logout : function(params) {
+		var php = {
+				'do_logout' : '/auth/logout'
+		}
+		this.ajaxTo(php[params]);
+	},time:function(params){
+		"use strict";
+		var php ={
+			'my' : '/meeting/get_my_meeting_list',
+			'add': '/routine/user_time_add',
+			'get': '/routine/user_time_get',
+			'update': '/routine/user_time_update',
+			'decline':'/routine/user_time_reject',
+			'delete':'/routine/user_time_delete'
+		};
+		this.ajaxTo(php[params]);
+	}
+	,meeting : function(params){
+		// 会议室 我的时间相关ajax接口
+		var php = {
+			'rooms' : '/meeting/get_room',
+			'search_rooms' : '/meeting/search_available_room',
+			'add':'/book/meeting_book_add',
+			'update':'/book/meeting_book_update',
+			'decline':'/book/invite_reply',
+			'delete':'/book/meeting_book_delete',
+			'overview' : '/book/book_overview',
+			'get_room_service' : '/meeting/get_room_service',
+			'get_book_list' : '/book/get_room_books',
+			'ajax_book_all' : '/book/get_book_list',
+			'ajax_book_add' : '/book/meeting_book_add',
+			'ajax_book_delete' :'/book/meeting_book_delete',
+			'ajax_book_read' :'/book/get_book',
+			'ajax_meeting_update_time':'/book/meeting_update_time',
+			'ajax_meeting_reject':'/book/invite_reply',//拒绝
+			'ajax_meeting_update':'/book/meeting_book_update',//修改
+			'mytime_ajax_all' :'/routine/user_time_batch_get',
+			'mytime_ajax_add' :'/routine/user_time_add',
+			'mytime_ajax_delete' :'/routine/user_time_delete',
+			'mytime_ajax_update' :'/routine/user_time_update',
+			'mytime_ajax_update_time' :'/routine/user_time_update_time',
+			'mytime_ajax_reject' :'/routine/user_time_reject',
+			'getCheckIn' :'/book/get_meeting_sign_list',
+			'checkIn' :'/book/meeting_sign_confirm'
+		};
+		this.ajaxTo(php[params]);
+	}
+	,share_time : function(params){
+		// 审批选项接口，审批全部
+		var php = {
+			'user_share_add' : '/routine/user_share_add',
+			'user_share_delete' : '/routine/user_share_delete',
+			'user_share_update' : '/routine/user_share_update',
+		}
+		this.ajaxTo(php[params]);
+	}
+	,check : function(params){
+		// 审批选项接口，审批全部
+		var php = {
+			'check_all' : '/box/ajax_box',
+
+		}
+		this.ajaxTo(php[params]);
+	}
+	,address : function(params){
+		// 搜人名接口 
+		var php = {
+			'ajax_search_name' : '/contacts/ajax_search',
+			'ajax_search_mobile':'/contacts/ajax_search_mobile'
+
+		}
+		this.ajaxTo(php[params]);
+	}
+	,user : function(params){
+		// 个人中心接口
+		var php = {
+			'ajaxSendSmsCaptcha':'/user/ajaxSendSmsCaptcha',
+			'AjaxEditPwd':'/user/AjaxEditPwd',
+			'user_avatar_upload' : '/user/user_avatar_upload',
+			'user_avatar_save'	:'/user/user_avatar_save',
+			'selfInfoUpdate':'/user/selfInfoUpdate',
+			'mls_user_info':'/account/get_meilishuo_user_info'
+		};
+		this.ajaxTo(php[params]);
+	}
+	,it : function(params){
+		// IT服务接口
+		var php = {
+			//wifi修改密码接口
+			'WifiEditPwd':'/wifi/EditPwd',
+			//访客WiFi创建接口
+			'VisitorWifiCreate':'/wifi/VisitorWifiCreate',
+			//访客wifi禁用
+			'VisitorWifiDisable':'/wifi/VisitorWifiDisable',
+			//修改vpn密码
+			'VPNEditPwd':'/vpn/EditPwd'
+
+		};
+		this.ajaxTo(php[params]);
+	}
+};
+exports.__create = controller.__create(aj , controlFns);

@@ -1,0 +1,118 @@
+@import "nav.less";
+#page-content {
+  padding: 20px 62px;
+  min-width: 1030px;
+}
+#page-content{padding: 45px 52px}
+.panel.gray{
+  border: 1px solid #f4f4f4;
+  border-bottom: none !important;
+  .panel-heading,.panel-foot{
+    height: 40px !important;
+    &:after{border-bottom: 1px solid #f4f4f4}
+    line-height: 40px;
+  }
+  &>.panel-heading,.panel-foot{
+    background-color: #f4f4f4;
+    &:after{border-bottom: hidden}
+  }
+  .panel{box-shadow:none}
+}
+.officesupply{
+  display: inline-block;
+  width: 32.5%;
+  min-height: 100px;
+  margin-bottom: 20px;
+  background-color: #f4f4f4;
+  padding: 5px;
+  &:hover{
+    background-color: #f4f4f0;
+    cursor: pointer;
+  }
+  .detail{
+    display: block;
+    height: 50px;
+    overflow: auto;
+  }
+}
+.panel.left{width: 69%}
+.panel.right{
+  .panel-heading{padding-left: 10px}
+  width: 30%;
+  li{margin-bottom: 20px}
+  .panel-foot{
+    li{margin-bottom: 0}
+  }
+}
+#navbar{
+  z-index: 9999;
+}
+.supplytittle{
+  display: inline-block;
+  width: 68%;
+}
+.supplyconstrol{
+  height: 23px;
+  display: inline-block;
+  width: 30%;
+  input{
+    width: 30px;
+  //  height: 23px;
+    outline: none;
+  }
+
+  .numcontrol{
+    display: inline-block;
+    height: 23px;
+    line-height: 21px;
+  }
+  .garbage{
+    width: 10px;
+    text-indent: 9999px;
+    background-color: red;
+  }
+}
+.floornum{
+  margin-left: 10px;
+  width: 50% !important;
+  margin-top: 7px;
+  button.dropdown-toggle{line-height: 14px}
+}
+.dropdown.open>.btn, .btn-group.open .dropdown-toggle{
+  box-shadow: none;
+}
+.approval-badge {
+  color: orange;
+  margin-left: 4px;
+}
+.submit{
+  line-height: 18px !important;
+}
+.menu-office-btn{
+  height: 30px;
+  width: 35px;
+  float: left;
+  display: inline;
+  position: relative;
+  background-color: white;
+  margin-left: 50px;
+  top: 10px;
+}
+.office-menu-detail{
+  position: absolute;
+  //height: 100px;
+  width: 100%;
+  background: white;
+  left: 0px;
+  top: 0px;
+  z-index: 9;
+  a{
+    display: inline-block;
+    width:23%;
+    height: 30px;
+    margin-left: 1.3%;
+    //margin-right: 1%;
+    //background-color: blue;
+  }
+}
+

@@ -1,0 +1,159 @@
+@extends('layouts.master')
+@section('content')
+    <link rel="stylesheet" href="/static/bootstrap/css/bootstrap-datetimepicker.min.css">
+    <script src="/static/bootstrap/js/bootstrap-datetimepicker.min.js"></script>
+    <div class="panel" >
+        <div class="panel-body" >
+        <div class="table-container">
+            <form name="send_msg" id="send_msg">
+
+                <table class="table " style="font-size:14px;">
+                    <tbody>
+                    <tr>
+                        <td>ID:</td>
+                        <td><input  readonly type="text" value="{{ $data['msg_id'] or '' }}" class="form-control " name="msg_id"/></td>
+                    </tr>
+                    <tr>
+                        <td class="col-xs-2">发送对象:</td>
+                        <td>
+                            {{--<input type="radio" name="send_object" class="send-obj" value="1"/> 按部门--}}
+                            <input type="radio" name="send_object" class="send-obj" value="2" @if((isset($data['send_object']) && $data['send_object'] == '2')) checked @endif/> 在职员工
+                            <input type="radio" name="send_object" class="send-obj" value="3" @if((isset($data['send_object']) && $data['send_object'] == '3')) checked @endif/> 离职员工
+                            <input type="radio" name="send_object" class="send-obj" value="4" @if((isset($data['send_object']) && $data['send_object'] == '4')) checked @endif/> 手机号(仅支持发送短信)
+                            <input type="radio" name="send_object" class="send-obj" value="5" @if((isset($data['send_object']) && $data['send_object'] == '5')) checked @endif /> 邮箱(支持发送邮件和短信)
+                            {{--<input type="radio" name="send_object" class="send-obj" value="6"/> 输入员工号(A140002)--}}
+
+                            <option
+                        </td>
+                    </tr>
+                    <tr class="send-info" style="display: none">
+                        <td class="col-xs-2"></td>
+
+                        <td><textarea name="send_user"  cols="50" rows="5" class="form-control" placeholder="输入信息">@if (isset($data['send_user']))  @foreach ($data['send_user'] as $t) {{ $t }} @endforeach @endif</textarea></td>
+                    </tr>
+                    <tr class="send-depart-info" style="display: none">
+                        <td class="col-xs-2"></td>
+                        <td class="depart-info"></td>
+                    </tr>
+
+                    <tr>
+                        <td>类型:</td>
+                        <td><input type="radio" name="channel" class="channel" value="1" @if((isset($data['channel']) && $data['channel'] == '1')) checked @endif> 邮件
+                            <input type="radio" name="channel" class="phone_channel" value="2" @if((isset($data['channel']) && $data['channel'] == '2')) checked @endif> 短信
+                            {{--<input type="radio" name="channel" value="3"> IM--}}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>模板:</td>
+                        <td><input type="text" class=" form-control"  name="template_id" value="{{ $data['template_id'] or '' }}"/></td>
+                    </tr>
+                    <tr>
+                        <td>权重:</td>
+                        <td><input type="radio" value="10" name="weights"@if((isset($data['weights']) && $data['weights'] == '10')) checked @endif/>非常紧急<input type="radio" checked value="30" name="weights"@if((isset($data['weights']) && $data['weights'] == '30')) checked @endif/>紧急<input type="radio" value="50" name="weights"@if((isset($data['weights']) && $data['weights'] == '50')) checked @endif/>不紧急</td>
+                    </tr>
+                    <tr>
+                        <td>标题:</td>
+                        <td><input type="text" class=" form-control" value="{{ $data['title'] or '' }}" name="title"/></td>
+                    </tr>
+                    <tr>
+                        <td>发送内容:</td>
+                        <td><textarea cols="50" id="zh" rows="5" value="{{ $data['content'] or '' }}" class=" form-control" name="content">{{ $data['content'] or '' }}</textarea>
+                            {{--<input type="button" class="btn btn-info" value="#name#员工姓名">--}}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>发送时间:</td>
+                        <td><input type="text" value="{{ $data['send_at'] or '' }}" class="form-control form_datetime" name="send_at"/></td>
+                    </tr>
+                    <tr>
+                        <td>有效:</td>
+                        <td>
+                        <input type="radio" value="0" class=""  name="status" @if((isset($data['status']) && $data['status'] == '0')) checked @endif/> 无效
+                            <input type="radio" value="1" class="" @if(!isset($data['status']) || (isset($data['status']) && $data['status'] == '1')) checked @endif  name="status"/> 有效
+                        </td>
+                    </tr>
+                    <tr>
+                        <td></td>
+                        <td><input type="button" id="submit" name="button" class="btn btn-info" value="提交"/></td>
+                    </tr>
+                    </tbody>
+                </table>
+            </form>
+            <div class="pagination-left panel-body">
+            </div>
+        </div>
+
+    </div>
+        </div>
+    <link rel="stylesheet" href="/static/css/validator.css">
+    <script type="text/javascript" src="/static/js/Validform_v5.3.2_min.js"></script>
+    <script type="text/javascript">
+        $(function () {
+            var send_obj_value = $("input[name='send_object']:checked").val()
+            if(send_obj_value ==4){
+                $('.channel').attr('disabled',true);
+                $('.send-info').show();
+                $('.phone_channel').attr('checked',true);
+            }else if(send_obj_value ==5){
+                $('.send-info').show();
+                $('.send-depart-info').hide();
+            }
+            $('.send-obj').click(function () {
+                var check_value = $(this).val();
+                if (check_value == 2 || check_value == 3) {
+                    $('.send-depart-info').hide();
+                    $('.send-info').hide();
+                }
+                if (check_value == 1) {
+
+                    $('.send-depart-info').show();
+                    $('.send-info').hide();
+                }
+                if (check_value == 4 || check_value == 5 || check_value == 6) {
+                    $('.send-info').show();
+                    $('.send-depart-info').hide();
+                }
+                if(check_value ==4 ){
+                    $('.channel').attr('disabled',true);
+                    $('.phone_channel').attr('checked',true);
+                }else{
+                    $('.channel').removeAttr('disabled');
+
+                }
+
+            })
+            $(".form_datetime").datetimepicker({format: 'yyyy-mm-dd hh:ii:ss', autoclose: true});
+            var validform_obj =  $("#send_msg").Validform({
+                tiptype:3,
+                postonce:true,
+                showAllError:true,
+                ajaxPost:true
+            });
+            $('#submit').click(function () {
+                var form_data = $('#send_msg').serialize();
+                var _this = $(this);
+                _this.attr('disabled', true);
+                $.ajax({
+                    method: "POST",
+                    url: "/message_send/ajax_message_send",
+                    async: true,
+                    data: form_data,
+                    success: function (msg) {
+                        _this.removeAttr('disabled');
+                        msg = $.parseJSON(msg);
+                        if (msg.code == 200) {
+                            show_message(msg.code, msg);
+                            window.location.reload();
+                        } else {
+                            var ret = [];
+                            ret['error_msg'] = msg['error_msg'];
+                            show_message(msg.code, ret);
+                        }
+                    }
+                })
+            })
+
+        })
+    </script>
+
+@endsection

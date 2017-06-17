@@ -1,0 +1,215 @@
+//apply
+.panel-form{
+  .panel-heading{
+    padding:46px 0 2px 0;
+    height:auto;
+    text-align: center;
+    &:after{
+      display: none;
+    }
+  }
+  .panel-title{
+    padding:0;
+    font-size:24px;
+    line-height: 1;
+  }
+  .panel-body{
+    padding:0 20px;
+  }
+
+
+  .panel-footer{
+    border-top:none;
+    background-color:#fff;
+    padding: 40px 15px 80px;
+
+    .btn-submit{
+      background-color: #fba416;
+    }
+    .btn-save-draft{
+      background-color: #90c320;
+    }
+  }
+}
+
+.form-apply{
+  fieldset{
+    margin: 24px+22px 0 0 0;
+    position: relative;
+  }
+  legend{
+    font-size:16px;
+    margin:0 0 24px 0;
+    padding:0 0 0 10px;
+    border-left:4px solid #eeaf3e;
+    border-bottom:0;
+
+    .addItemContent{
+      position: absolute;
+      left:130px;
+      width: 30px;
+      visibility: visible;
+      font-size: 15px;
+      text-align: center;
+      cursor: pointer;
+
+      >a{
+        display: inline-block;
+        width: 20px;
+        height: 22px;
+        padding: 2px;
+      }
+    }
+
+    span:nth-of-type(2){
+      position: absolute;
+      left:200px;
+      color: #e76789;
+      font-size:14px;
+    }
+
+  }
+  select.form-control{
+    height:34px;
+  }
+  &.form-horizontal{
+    .control-label.text-long{
+      padding-left: 0;
+      margin-left: -4px;
+      width: 102px;
+    }
+  }
+
+
+  //基本信息
+  .basic-info{
+    padding-right:75px;
+
+  }
+
+  .machineBill-info{
+    padding-left: 30px;
+    padding-right: 30px;
+
+    legend{
+      margin-left: -30px;
+      display: block;
+    }
+
+    .row:nth-of-type(2),
+    .row:nth-of-type(3),
+    .row:nth-of-type(4),
+    .row:nth-of-type(5){
+      margin-right: 10px;
+      margin-left: -70px;
+    }
+
+    .row:nth-of-type(1){
+      padding-left: 35%;
+      padding-bottom: 25px;
+
+      >span{
+        &:nth-last-of-type(1){
+          position: relative;
+          left: 22%;
+        }
+        input{
+          margin-right: 5px;
+        }
+
+        .pointType{
+          display: inline-block;
+          width: 150px;
+          height: 25px;
+          line-height: 25px;
+          padding-left: 25px;
+          font-size: 10px;
+          color: #a0a0a0;
+          background-color: #eeeeee;
+          border-radius: 10px;
+        }
+      }
+
+    }
+
+    .row:nth-last-of-type(1),.row:nth-last-of-type(2){
+      .col-xs-1{
+        width:10.3%;
+      }
+
+      .col-xs-11{
+        width:86%;
+      }
+    }
+
+    .symbolSpan{
+      padding:0;
+      padding-top: 5px;
+      text-align: center;
+
+      color:#a0a0a0;
+    }
+
+    .col-xs-3{
+      width:136px;
+    }
+
+    .col-xs-5-justify{
+      width:45.5%;
+    }
+
+    .no-padding-left{
+      padding-left: 0;
+    }
+
+    .no-padding-right{
+      padding-right: 0;
+    }
+
+    //附加费用input宽度
+    .token-input-token{
+      white-space: normal;
+    }
+  }
+
+}
+
+.table tr>th,.table tr>td {
+  width: 100px;
+  box-sizing:border-box;
+}
+
+.table.text-left{
+  th, td{
+    text-align: left;
+  }
+  td{
+    border-top: 1px solid #dddddd;
+  }
+
+}
+
+.has-error{
+  .control-label{
+    color:#f56245;
+  }
+  .token-input-list{
+    border:1px solid #f56245;
+  }
+}
+.has-success{
+  .control-label{
+    color:#8abe2e;
+  }
+  .token-input-list{
+    border:1px solid #8abe2e;
+  }
+}
+
+//view
+.panel{
+  min-height: 850px;
+}
+
+
+

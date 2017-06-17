@@ -1,0 +1,134 @@
+<?php
+namespace Admin\Modules\Structure\User;
+
+use Admin\Modules\Common\BaseModule;
+use Admin\Package\Common\Response;
+use Admin\Package\Account\UserInfo;
+use Admin\Package\Account\WorkInfo;
+use Admin\Package\Account\PersonalInfo;
+use Admin\Package\Account\PrivacyInfo;
+/**
+ * 添加用户信息
+ * @author hongzhou@meilishuo.com
+ * @since 2015-9-14 下午12:53:13
+ */
+class AjaxAddUser extends BaseModule {
+
+    protected $errors = NULL;
+    private   $params = NULL;
+    public static $VIEW_SWITCH_JSON = TRUE;
+    
+    public function run() {
+        $this->_init();
+        if($this->post()->hasError()){
+            $return = Response::gen_error(10001, '', $this->post()->getErrors());
+            return $this->app->response->setBody($return);
+        }
+        if(ord($this->params['name_cn']) <= 122){
+            return $this->app->response->setBody(Response::gen_error(30001,'请核对中文名字,必须使用中文'));
+        }
+        if(isset($this->params['mail'])&&( ord($this->params['mail']) <= 57 ||ord($this->params['mail']) > 122) ){
+            return $this->app->response->setBody(Response::gen_error(30001,'请核对邮箱,必须使用拼音'));
+        }
+        $return_data = UserInfo::getInstance()->createUserInfo($this->params);
+        if(empty($return_data)){//返回user_id
+            return $this->app->response->setBody(Response::gen_error(50001,'添加失败'));
+        }
+        $this->params['user_id'] = isset($return_data['user_id'])?$return_data['user_id']:'';
+
+        if(!$this->createById(array('user_id'=>$this->params['user_id']))){
+            return $this->app->response->setBody(Response::gen_error(50001,'创建失败'));
+        }
+        $this->app->response->setBody(Response::gen_success(array('user_id'=>$this->params['user_id'])));
+
+    }
+
+    protected function createById($params){
+        $ret =NULL;
+        $return_data_privacy =PrivacyInfo::getInstance()->createPrivacyInfo($params);
+        $return_data_personal =PersonalInfo::getInstance()->createPersonalInfo($params);
+        $return_data_work = WorkInfo::getInstance()->createWorkInfo($params);
+
+        if($return_data_privacy&&$return_data_personal&&$return_data_work){
+            $ret =TRUE;
+        }
+        return $ret;
+    }
+
+
+
+    private function _init() {
+
+        $this->rules  = array(
+//user_info
+           'depart_id' => array(
+                  'required' => TRUE,
+                'allowEmpty' => FALSE,
+                'type'=>'integer',
+            ),
+            'job_role_id' => array(
+                'type'=>'integer',
+
+            ),
+            'name_cn' => array(
+                'type'=>'string',
+                'required' => TRUE,
+                'allowEmpty' => FALSE,
+                'maxLength'=> 30,
+            ),
+            'name_en' => array( //可不填
+                'type'=>'string',
+                'maxLength'=> 30,
+            ),
+            'mail' => array(
+                'required' => TRUE,
+                'allowEmpty' => FALSE,
+                'type'=>'string',
+                'maxLength'=> 30,
+            ),
+            'hire_time' => array(
+                'type'=>'datetime',
+            ),
+            'positive_time' => array(
+                'type'=>'datetime',
+            ),
+            'staff_id' => array(
+                'type'=>'string',
+                'required' => TRUE,
+                'allowEmpty' => FALSE,
+                'maxLength'=> 10,
+            ),
+            'gender' => array(
+                'type'=>'integer',
+                'enum'=> array(0,1)//性别0女1男
+            ),
+            'flag' => array(
+                'required' => TRUE,
+                'allowEmpty' => FALSE,
+                'type'=>'integer',
+                'enum'=> array(1,2,3,4)//标记:1实习2试用3正式4申请离职
+            ),
+            'status' => array(
+                'type'=>'integer',
+                 'required' => TRUE,
+                'allowEmpty' => FALSE,
+                'enum'=> array(1,2,3)
+            ),
+            'graduation_time' => array(
+                'type'=>'datetime',
+                'required' => TRUE,
+                'allowEmpty' => FALSE,
+            ),
+            'direct_leader' => array(
+               'type'=>'string',
+                'required' => TRUE,
+                'allowEmpty' => FALSE,
+           )
+        );
+
+        $this->params   = $this->post()->safe();
+        $this->errors   = $this->post()->getErrors();
+
+    }
+    
+}

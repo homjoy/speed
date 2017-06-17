@@ -1,0 +1,74 @@
+fml.define('fms/query/loan', ['jquery', 'plugin/bootstrap/datepicker','plugin/tokeninput', 'component/notify','fms/common/utils', 'component/TreeSelect', 'fms/common/SearchTable'], function (require, exports) {
+    var $ = require('jquery');
+    var notify = require('component/notify');
+    var utils = require('fms/common/utils');
+    var SearchTable = require('fms/common/SearchTable');
+
+
+    /**
+     * 加载部门树.
+     */
+    $.post('/aj/query/depart', function (data) {
+        $("input[name=departmentId]").TreeSelect({
+            multiple: true,
+            data: data
+        });
+    }, 'json');
+    /**
+     * 日期控件.
+     */
+    $("#sTime,#eTime").datepicker({
+        'format': 'yyyy-mm-dd',
+        'autoclose': true,
+        'todayHighlight': true
+    });
+
+
+    $('[name=approId]').tokenInput("/aj/user/search",{
+        tokenLimit: 1
+    });
+
+
+    /**
+     * 数据导出.
+     */
+    $('.btn-export').on('click', function () {
+        var queryParams = $('form').serialize();
+        $(this).attr('href', '/export/loan?' + queryParams);
+    });
+
+
+    var table = new SearchTable({
+        container: ".table-container",
+        searchForm: ".query-form",
+        ajax: {
+            url: '/aj/query/search_loan'
+        },
+        headers: [
+            '单据编号',
+            '申请部门',
+            '申请人',
+            '金额',
+            '申请日期',
+            '单据状态'
+        ],
+        columns: [
+            'billNo',
+            'applyDeptName',
+            'applyPersonName',
+            'applyAmount',
+            'applyDate',
+            'approvalState'
+        ],
+        columnFormatter: function (column, value, row) {
+            if(column == 'applyAmount'){
+                return utils.formatCurrency(value);
+            }
+            return value;
+        },
+        rowFormatter: function (columns, obj) {
+            var id = obj['billId'] || 0;
+            return '<tr dbl-open="/reimburse/loan/view?id=' + id + '">' + columns + '</tr>';
+        }
+    });
+});

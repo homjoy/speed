@@ -1,0 +1,50 @@
+
+//主色调
+
+//局部使用 用于当前状态
+@queen-primary: #ff4584;
+//局部使用 用于搜索框及按钮选中
+@queen-primary-dark: #ff5e93;
+//多用 用于二级页面标题
+@queen-primary-light : #ff7ea9;
+//多用 用于按钮normal状态
+@queen-primary-tint: #ff94b7;
+
+//局部使用，用于导航及重要信息
+@queen-important: #32404f;
+//大面积使用，用于背景.
+@queen-primary-bg: #e7ebee;
+//局部使用 用于列表及栏目头部
+@queen-minor: #d5d5d5;
+//大面积使用 用于信息列表栏目 可与白色交替排列
+@queen-tint: #e7ebee;
+
+
+
+
+//重要  一级标题
+@text-very-important: #515151;
+//次重要 二级标题
+@text-important: #626262;
+//一般  内容字
+@text-normal: #6a6a6a;
+//不重要 小标题、操作提醒
+@text-unimportant: #a0a0a0;
+
+
+//一般样式的按钮
+@btn-normal-bg:#f98fb3;
+@btn-normal-color:#fff;
+
+//HOVER 样式
+@btn-hover-bg:#ff377a;
+@btn-hover-color:#fff;
+
+//禁用样式
+@btn-disable-bg:#eee;
+@btn-disable-color:#b4b4b4;
+@btn-disable-border:#dddbdd;
+
+
+//默认的圆角大小.
+@border-radius: 5px;

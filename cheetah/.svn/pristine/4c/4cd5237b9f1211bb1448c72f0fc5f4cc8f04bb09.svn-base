@@ -1,0 +1,233 @@
+<script type="text/html" id="adjust-table-tpl">
+    <table class="table table-bordered table-printed">
+        <tr>
+            <th colspan="7">
+                <h3 class="text-center">预算调整单</h3>
+            </th>
+        </tr>
+        <tr class="title">
+            <th colspan="7">基本信息</th>
+        </tr>
+        <tr>
+            <td>
+                <label>申请人</label>
+            </td>
+            <td colspan="3">{{budgetApplication.budgetAdjustFormEntity.applyPersonName || ''}} </td>
+            <td>
+                <label>申请部门</label>
+            </td>
+            <td colspan="2">{{budgetApplication.budgetAdjustFormEntity.applyDeptName || ''}}</td>
+        </tr>
+        <tr>
+            <td>
+                <label>单据编号</label>
+            </td>
+            <td colspan="3">{{budgetApplication.budgetAdjustFormEntity.billNo || ''}} </td>
+            <td>
+                <label>申请日期</label>
+            </td>
+            <td colspan="2">{{budgetApplication.budgetAdjustFormEntity.applyDateStr || ''}}</td>
+        </tr>
+        <tr>
+            <td>
+                <label>预算年度</label>
+            </td>
+            <td colspan="3">{{budgetApplication.budgetAdjustFormEntity.budgetYear || ''}} </td>
+            <td>
+                <label>编制期间</label>
+            </td>
+            <td colspan="2">{{budgetApplication.budgetAdjustFormEntity.draftTerm || ''}}</td>
+        </tr>
+        <tr class="title">
+            <th colspan="7">单据内容</th>
+        </tr>
+        <tr>
+            <td colspan="7" style="padding:0;">
+                <div class="overflow-container">
+                    <table class="table table-bordered">
+                        <thead>
+                        <tr class="head">
+                            <th class="column-project text-center">预算项目</th>
+                            <th class="column-q1">
+                                <div class="column-wrap">
+                                    <p>Q1</p>
+                                    <p>
+                                        <span class="before">调整前</span><span class="limit">调整额</span><span class="after">调整后</span>
+                                    </p>
+                                </div>
+                            </th>
+                            <th class="column-q2">
+                                <div class="column-wrap">
+                                    <p>Q2</p>
+                                    <p>
+                                        <span class="before">调整前</span><span class="limit">调整额</span><span class="after">调整后</span>
+                                    </p>
+                                </div>
+                            </th>
+                            <th class="column-q3">
+                                <div class="column-wrap">
+                                    <p>Q3</p>
+                                    <p>
+                                        <span class="before">调整前</span><span class="limit">调整额</span><span class="after">调整后</span>
+                                    </p>
+                                </div>
+                            </th>
+                            <th class="column-q4">
+                                <div class="column-wrap">
+                                    <p>Q4</p>
+                                    <p>
+                                        <span class="before">调整前</span><span class="limit">调整额</span><span class="after">调整后</span>
+                                    </p>
+                                </div>
+                            </th>
+                            <th class="column-total">
+                                <div class="column-wrap">
+                                    <p>全年合计</p>
+                                    <p>
+                                        <span class="before">调整前</span><span class="limit">调整额</span><span class="after">调整后</span>
+                                    </p>
+                                </div>
+                            </th>
+                            <th width="104">备注</th>
+                        </tr>
+                        </thead>
+
+
+                       <tbody>
+                       {{ each budgetApplication.BudgetAdjustDetailFormEntity as detail }}
+                       <tr>
+                           <td class="text-center"><div>{{detail.budgetItemFullCode}}</div><div>{{ detail.budgetItemFullName || '' }}</div></td>
+                           <td class="money">
+                               <span class="before">{{ detail.budgetFirQuaBefore | currencyFormat }}</span>
+                               <span class="limit">{{ detail.budgetFirQua | currencyFormat }}</span>
+                               <span class="after">{{ detail.budgetFirQuaAfter | currencyFormat }}</span>
+                           </td>
+                           <td class="money">
+                               <span class="before">{{ detail.budgetSecQuaBefore | currencyFormat }}</span>
+                               <span class="limit">{{ detail.budgetSecQua | currencyFormat }}</span>
+                               <span class="after">{{ detail.budgetSecQuaAfter | currencyFormat }}</span>
+                           </td>
+                           <td class="money">
+                               <span class="before">{{ detail.budgetThiQuaBefore | currencyFormat }}</span>
+                               <span class="limit">{{ detail.budgetThiQua | currencyFormat }}</span>
+                               <span class="after">{{ detail.budgetThiQuaAfter | currencyFormat }}</span>
+                           </td>
+                           <td class="money">
+                               <span class="before">{{ detail.budgetFourQuaBefore | currencyFormat }}</span>
+                               <span class="limit">{{ detail.budgetFourQua | currencyFormat }}</span>
+                               <span class="after">{{ detail.budgetFourQuaAfter | currencyFormat }}</span>
+                           </td>
+                           <td class="money">
+                               <span class="before">{{ detail.budgetAmmountBefore | currencyFormat }}</span>
+                               <span class="limit">{{ detail.budgetAmmount | currencyFormat }}</span>
+                               <span class="after">{{ detail.budgetAmmountAfter | currencyFormat }}</span>
+                           </td>
+                           <td>{{ detail.budgetRemark }}</td>
+                       </tr>
+                       {{ each detail.listBudgetExtraFormEntity as extra index }}
+                       <tr class="extra {{ (index+1) == detail.listBudgetExtraFormEntity.length ? 'last':'' }}">
+                           <td class="text-center">{{ extra.extraName}}</td>
+                           <td class="money">
+                               <span class="before">{{ extra.budgetFirQuaBefore | currencyFormat }}</span>
+                               <span class="limit">{{ extra.budgetFirQua | currencyFormat }}</span>
+                               <span class="after">{{ extra.budgetFirQuaAfter | currencyFormat }}</span>
+                           </td>
+                           <td class="money">
+                               <span class="before">{{ extra.budgetSecQuaBefore | currencyFormat }}</span>
+                               <span class="limit">{{ extra.budgetSecQua | currencyFormat }}</span>
+                               <span class="after">{{ extra.budgetSecQuaAfter | currencyFormat }}</span>
+                           </td>
+                           <td class="money">
+                               <span class="before">{{ extra.budgetThiQuaBefore | currencyFormat }}</span>
+                               <span class="limit">{{ extra.budgetThiQua | currencyFormat }}</span>
+                               <span class="after">{{ extra.budgetThiQuaAfter | currencyFormat }}</span>
+                           </td>
+                           <td class="money">
+                               <span class="before">{{ extra.budgetFourQuaBefore | currencyFormat }}</span>
+                               <span class="limit">{{ extra.budgetFourQua | currencyFormat }}</span>
+                               <span class="after">{{ extra.budgetFourQuaAfter | currencyFormat }}</span>
+                           </td>
+                           <td class="money">
+                               <span class="before">{{ extra.budgetAmmountBefore | currencyFormat }}</span>
+                               <span class="limit">{{ extra.budgetAmmount | currencyFormat }}</span>
+                               <span class="after">{{ extra.budgetAmmountAfter | currencyFormat }}</span>
+                           </td>
+                           <td>{{ extra.budgetRemark }}</td>
+                       </tr>
+                       {{/each}}
+                       {{/each}}
+                       </tbody>
+
+                        <tfoot>
+                        <tr class="foot">
+                            <th class="text-center">{{budgetApplication.SumBudgetAdjustDetailFormEntity.budgetItemFullName }}</th>
+                            <td class="money">
+                                <span class="before">{{ budgetApplication.SumBudgetAdjustDetailFormEntity.budgetFirQuaBefore | currencyFormat }}</span>
+                                <span class="limit">{{ budgetApplication.SumBudgetAdjustDetailFormEntity.budgetFirQua | currencyFormat }}</span>
+                                <span class="after">{{ budgetApplication.SumBudgetAdjustDetailFormEntity.budgetFirQuaAfter | currencyFormat }}</span>
+                            </td>
+                            <td class="money">
+                                <span class="before">{{ budgetApplication.SumBudgetAdjustDetailFormEntity.budgetSecQuaBefore | currencyFormat }}</span>
+                                <span class="limit">{{ budgetApplication.SumBudgetAdjustDetailFormEntity.budgetSecQua | currencyFormat }}</span>
+                                <span class="after">{{ budgetApplication.SumBudgetAdjustDetailFormEntity.budgetSecQuaAfter | currencyFormat }}</span>
+                            </td>
+                            <td class="money">
+                                <span class="before">{{ budgetApplication.SumBudgetAdjustDetailFormEntity.budgetThiQuaBefore | currencyFormat }}</span>
+                                <span class="limit">{{ budgetApplication.SumBudgetAdjustDetailFormEntity.budgetThiQua | currencyFormat }}</span>
+                                <span class="after">{{ budgetApplication.SumBudgetAdjustDetailFormEntity.budgetThiQuaAfter | currencyFormat }}</span>
+                            </td>
+                            <td class="money">
+                                <span class="before">{{ budgetApplication.SumBudgetAdjustDetailFormEntity.budgetFourQuaBefore | currencyFormat }}</span>
+                                <span class="limit">{{ budgetApplication.SumBudgetAdjustDetailFormEntity.budgetFourQua | currencyFormat }}</span>
+                                <span class="after">{{ budgetApplication.SumBudgetAdjustDetailFormEntity.budgetFourQuaAfter | currencyFormat }}</span>
+                            </td>
+                            <td class="money">
+                                <span class="before">{{ budgetApplication.SumBudgetAdjustDetailFormEntity.budgetAmmountBefore | currencyFormat }}</span>
+                                <span class="limit">{{ budgetApplication.SumBudgetAdjustDetailFormEntity.budgetAmmount | currencyFormat }}</span>
+                                <span class="after">{{ budgetApplication.SumBudgetAdjustDetailFormEntity.budgetAmmountAfter | currencyFormat }}</span>
+                            </td>
+                            <th></th>
+                        </tr>
+                        </tfoot>
+                    </table>
+                </div>
+            </td>
+        </tr>
+        <tr>
+            <th>备注</th>
+            <td colspan="6">{{#budgetApplication.budgetAdjustFormEntity.remark}}</td>
+        </tr>
+        <tr>
+            <td>
+                <label>预算附件</label>
+            </td>
+            <td colspan="6" class="text-left">
+                {{ each listAttach as item }}
+                <a href="/download/file/?cabid={{item.id}}" class="btn btn-defalut btn-download"
+                   target="_blank" download="{{item.fileName||''}}">{{item.fileName}}</a>
+                {{/each}}
+            </td>
+        </tr>
+    </table>
+
+    <div class="row data-preview">
+        <div class="col-xs-12">
+            <button class="btn btn-primary">部门预算全貌</button>
+        </div>
+        <div class="col-xs-12" style="display:none;">{{#budgetHtmlStr}}</div>
+    </div>
+</script>
+<script type="text/html" id="adjustDetail">
+    <div class="panel-body">
+        <div class="info-head">
+            {{include 'adjust-table-tpl'}}
+        </div>
+        <div class="info-body">
+            <hr class="line-horizontal"/>
+            <a href="javascript:void(0);" class="history-icon active approval-history" data-budget-id="{{budgetApplication.budgetAdjustFormEntity.id}}" data-task_id="{{taskid || 1}}">审批记录</a>
+            {{include 'approval-history-timeline'}}
+        </div>
+    </div>
+</script>
+
+<%#partial/approval_history_timeline.html%>

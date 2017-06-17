@@ -1,0 +1,1 @@
+Hi! {{receive_name}}：{{username}}撤销了申请。申请类型：{{order_type}}

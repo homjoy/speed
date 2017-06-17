@@ -1,0 +1,84 @@
+<?php 
+namespace WorkFlowAtom\Modules\User;
+
+use WorkFlowAtom\Modules\Common\BaseModule;
+use WorkFlowAtom\Package\Common\Response;
+use WorkFlowAtom\Package\User\UserRoleMap;
+use Libs\Util\Format;
+
+/**
+ * 用户角色信息列表
+ * @author jingjingzhang@meilishuo.com
+ * @date 2015-7-16 
+ */
+
+class UserRoleMapList extends BaseModule {
+
+	protected $user_role;
+	protected $errors = array();
+	private $sample;
+
+	public function run() {
+
+		$this->_init();
+
+		$this->sample = UserRoleMap::getInstance()->getFields();
+
+		if($this->post()->hasError()){
+        	$return = Response::gen_error(10001, '', $this->errors);
+        	return $this->app->response->setBody($return);
+        }
+
+        $queryParams = array();
+        if (!empty($this->user_role['map_id'])) {
+        	$queryParams['map_id'] = $this->user_role['map_id'];
+        }
+        if (!empty($this->user_role['user_id'])) {
+        	$queryParams['user_id'] = $this->user_role['user_id'];
+        }
+        if (!empty($this->user_role['role_id'])) {
+			$this->user_role['role_id'] = explode(',', $this->user_role['role_id']);
+			if(count($this->user_role['role_id']) == 1) {
+				$this->user_role['role_id'] = array_pop($this->user_role['role_id']);
+			}
+        	$queryParams['role_id'] = $this->user_role['role_id'];
+        }
+        if ($this->user_role['status'] !== '') {
+        	$queryParams['status'] = $this->user_role['status'];
+        } 
+
+        $result = UserRoleMap::getInstance()->getDataList($queryParams);
+
+		if ($result === FALSE) {
+        	$return = Response::gen_error(50001);
+        }elseif (empty($result) && !is_array($result)) {
+        	$return = Response::gen_error(50002);
+        }else{
+        	$return = Response::gen_success(Format::outputData($result, $this->sample, TRUE));
+        }
+
+        $this->app->response->setBody($return);
+	}
+
+	private function _init() {
+
+		$this->rules = array(
+			'map_id'  => array(
+				'type' => 'integer', 
+			),
+			'user_id' => array(
+				'type' => 'integer', 
+			),
+			'role_id' => array(
+				'type' => 'string', 
+			),
+			'status'  => array(
+				'type'    => 'integer',
+				'default' => 1,
+			),
+		);
+
+		$this->user_role = $this->post()->safe();
+		$this->errors = $this->post()->getErrors();
+	}
+}

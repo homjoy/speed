@@ -1,0 +1,33 @@
+fml.define('speed/user/index', ['jquery','plugin/bootstrap/validator'], function (require, exports) {
+    var $ = require('jquery');
+    // 表单验证
+    $('#form-userinfo').bootstrapValidator({
+        container: '#cc'
+    }).on('success.form.bv', function (e) {
+        e.preventDefault();
+        $('.save_basic_info').button('loading').delay(3000);
+        var myForm = $('#form-userinfo').serializeArray();
+        console.log(myForm);
+        $.post('/aj/user/selfInfoUpdate', myForm, function (ret) {
+            console.warn(ret);
+            if (ret.code == 200) {
+                show_message(200, '操作成功');
+            } else if (ret.code == 400 || ret.code == 500) {
+                show_message(400, ret.error_msg);
+            }
+            $('.save_basic_info').button('reset');
+        }, 'json');
+        return false;
+    });
+    $('#coat_size').focus(function(){
+        $('.input-select').removeClass('hide');
+    }).blur(function(){
+        setTimeout(function () {
+            $('.input-select').addClass('hide');
+        },100);
+
+    }).next().children().click(function(e){
+        var coat_size = $(this).html();
+        $('#coat_size').val(coat_size);
+    });
+});

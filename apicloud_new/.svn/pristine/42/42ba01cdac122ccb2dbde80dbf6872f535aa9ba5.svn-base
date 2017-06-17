@@ -1,0 +1,20 @@
+<?php
+
+ini_set('display_errors', 1);
+error_reporting(E_ALL);
+
+
+define("SMS_API", 'http://smsapi.meilishuo.com/smssys/interface/smsapi.php?smsKey=1392711224481&type=sms&');
+define("DEFAULT_PHOTO", 'http://static.speed.meilishuo.com/img/tortoise.jpg');
+defined('BEANSDB_DOMAIN') || define("BEANSDB_DOMAIN", 'http://172.16.0.20/');
+defined('BEANSDB_HOST') || define("BEANSDB_HOST", 'http://172.16.0.199:8080/pic/commupload');
+
+//MEM 前缀
+defined('MEM_PREFIX') || define('MEM_PREFIX','family');
+//REDIS 前缀
+defined('REDIS_PREFIX') || define('REDIS_PREFIX','family');
+
+defined('MAIL_URL') || define('MAIL_URL','http://yz.it.api01.meiliworks.com/apis/mailtest/');
+
+//蘑菇街接口的url
+defined('MOGUJIE_URL') || define('MOGUJIE_URL','http://my.meilishuo.com/mogujie.php');

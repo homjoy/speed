@@ -1,0 +1,35 @@
+fml.define("speed/hr/leave/my",['jquery','component/approval','plugin/store'],function(require,exports){
+    var $ = require('query');
+    var store = require('plugin/store');
+    var approval = require('component/approval');
+    store.set('leave-approval',window.location.pathname);
+
+    var option={
+        leftwidth:'326px',
+        urlLeft: '/aj/hr/leave_list_get',
+        urlRight :'/aj/hr/get_approve_request',
+        url1:'/aj/hr/leave_revoke',
+        url2:'/aj/hr/leave_revoke',
+        urlApproval:'/aj/hr/approve_leave_info',
+        urlApplicationHistory:'/aj/hr/history_leave_list',
+        tokeninputurl:'/aj/address/ajax_search_name',
+        timeSearch:true,
+        departSearch:false,
+        usernameSearch:false,
+        approveStatusSearch:true,
+        identifierSearch:false,
+        headercheckOthers:''
+
+    }
+    approval.approval(option);
+    //$.ajax({
+    //    url:"../../page/jsonleft/",
+    //    type:"get",
+    //    data:"",
+    //    datatype:"json",
+    //    succecss:function(data){
+    //        console.log('cool');
+    //        console.log(data);
+    //    }
+    //});
+});

@@ -1,0 +1,76 @@
+<?php
+namespace Admin\Modules\Itserver;
+use Admin\Package\Itserver\Itserver;
+use Libs\Util\Format;
+use Admin\Modules\Common\BaseModule;
+use Admin\Package\Common\Response;
+use Admin\Package\Log\Log;
+/**
+ *
+ * hongzhou@meilishuo.com
+ * 2015-01-19
+ */
+
+class AjaxDeleteOfficialMail extends  BaseModule {
+    protected $errors = NULL;
+    private   $params = NULL;
+    public static $VIEW_SWITCH_JSON = TRUE;
+    const IT =8;
+    public function run() {
+       $this->_init();
+        if($this->post()->hasError()){
+            $return = Response::gen_error(10001, '', $this->post()->getErrors());
+            return $this->app->response->setBody($return);
+        }
+       $ret = Itserver::getInstance()->deleteMail(
+           array(
+                'mail'=>$this->params['mail_name']
+             )
+       );
+       if($ret){
+           $result = Itserver::getInstance()->updateOfficialMail($this->params);
+           if($result){
+               $result = Response::gen_success($result);
+               $this->doLog($this->params);
+           }else{
+               $result = Response::gen_error(50004,'','speed删除失败');
+           }
+
+       }else{
+           $result = Response::gen_error(50004,'','IT删除失败');
+       }
+
+        $this->app->response->setBody($result);
+    }
+    protected function doLog($new_param=array(),$old_param='delete'){
+        $ret = Log::getInstance()->createLogs(array(
+                'user_id'=>$this->user['id'],
+                'handle_id'=>100000,
+                'operation_type'=>$old_param,
+                'after_data'=>json_encode($new_param),
+                'handle_type'=>self::IT
+            )
+        );
+        return $ret;
+    }
+
+    private function _init() {
+
+        $this->rules  = array(
+            'mail_name' => array(
+                'required' => TRUE,
+                'allowEmpty' => FALSE,
+                'type'=>'string',
+            ),
+            'status' => array(
+                'type'=>'integer',
+                'default'=>0,
+            ),
+
+        );
+
+        $this->params   = $this->post()->safe();
+        $this->errors   = $this->post()->getErrors();
+
+    }
+}

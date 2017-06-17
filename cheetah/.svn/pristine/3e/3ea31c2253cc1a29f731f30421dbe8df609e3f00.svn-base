@@ -1,0 +1,75 @@
+fml.define('speed/time/duration',['jquery','plugin/moment'],function(require,exports){
+    "use strict";
+    var $ = require('jquery');
+    var moment = require('plugin/moment');
+
+    /**
+     * 绑定SELECT的变更事件.
+     */
+    $(".duration select").on('change',function(){
+        var self = $(this);
+        var timeBeginInput = self.closest('.form-group.time-span').find('.time-choose input');
+        var timeEndInput = self.closest('.form-group.time-span').next().find('.time-choose input');
+        //以开始时间为计算点
+        var baseTime = moment(timeBeginInput.val());
+
+        var value = self.val() || 'm0';
+        var type = value[0] || 'm';
+        type = type == 'c' ? 'm' : type;
+        var duration = parseInt(value.substring(1),10) || 0;
+        baseTime.add(duration,type);
+        timeEndInput.val(baseTime.format('YYYY-MM-DD HH:mm'));
+
+    }).on('sync',function(event,change){
+        var self = $(this);
+        var timeBeginInput = self.parents('.form-group.time-span').find('.time-choose input');
+        var timeEndInput = self.parents('.form-group.time-span').next().find('.time-choose input');
+        //以开始时间为计算点
+        var timeStart = moment(timeBeginInput.val());
+        var timeEnd = moment(timeEndInput.val());
+
+        var duration = timeEnd.diff(timeStart);
+        //开始时间大于结束时间.
+        if(change == 'start' || duration <= 0){
+            var value = self.val();
+            var endTime = timeStart.add(value.slice(1),value[0] == 'c' ? 'm':value[0]).format('YYYY-MM-DD HH:mm');
+            timeEndInput.val(endTime);
+            return ;
+        }
+        duration = duration / (1000*60);//换算成分钟.
+        var option = null;
+        if(duration > 0 && duration <= 120){
+            //0-120分钟
+            option = self.find("option[value='m"+duration+"']");
+        }else if(duration > 120 && duration <= 480){
+            //2-8小时
+            option = self.find("option[value='h"+(duration/60)+"']");
+        }else if(duration > 1440 && duration <= 4320){
+            //1-3天
+            option = self.find("option[value='d"+(duration/1440)+"']");
+        }else{
+            option = null;
+        }
+        self.find(':selected').prop('selected',false);
+        if(option && option.size() > 0){
+            option.prop('selected',true);
+        }else{
+            self.find('option[value^=c]').remove();
+            self.prepend('<option value="c'+duration+'" selected="selected">'+timeStart.preciseDiff(timeEnd)+'</option>')
+        }
+    });
+
+    $(".form_datetime").on('change',function(){
+        //$(this).parent().next().find('select').trigger('sync');
+        var self = $(this);
+        var group = self.closest('.form-group.time-span');
+        var select = group.find('.duration select');
+        var change = 'start';
+        if(select.size() == 0){
+            change = 'end';
+            select = group.prev().find('.duration select');
+        }
+        console.log(change);
+        select.trigger('sync',[change]);
+    });
+});

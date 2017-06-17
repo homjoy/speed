@@ -1,0 +1,1 @@
+Hi！{{username}}：{{initiator}}刚刚取消了{{meeting_time}} 的“{{meeting_topic}}”，记得调整自己的时间安排哦！

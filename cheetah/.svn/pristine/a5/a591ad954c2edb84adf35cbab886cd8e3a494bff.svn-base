@@ -1,0 +1,74 @@
+fml.define('speed/home/wizard',['lib/cookie'],function(require,exports){
+    "use strict";
+    //var $ = require('jquery');
+    var Cookies = require('lib/cookie');
+
+    ////无需进行引导
+    if(Cookies.get('passWizard')){
+        return ;
+    }
+
+    var wizardHTML = '<div class="home-wizard"><div class="mask"></div>' +
+        '<div class="wizard wizard-nav"></div>'+
+        '<div class="wizard wizard-often"></div>'+
+        '<div class="wizard wizard-schedule"></div>'+
+        '<div class="wizard wizard-user"></div>'+
+        '<a href="javascript:void(0);" class="wizard wizard-close"></a>'+
+        '</div>';
+
+    var wizard = $(wizardHTML);
+
+    function relocateTips()
+    {
+        wizard.css({
+            height:$('#container').height()
+        });
+        var oftenOffset = $(".antenna").offset();
+        wizard.find('.wizard-often').css({
+            left:oftenOffset.left,
+            top:oftenOffset.top
+        });
+
+        var schedule = $(".panel_time .panel_head");
+        wizard.find('.wizard-schedule').css({
+            top:schedule.offset().top -3,
+            left:schedule.offset().left + schedule.width() - wizard.find('.wizard-schedule').width()
+        });
+
+
+        var userDropdown = $('#dropdown-user');
+        userDropdown.addClass('open');
+        var right = userDropdown.offset().left + userDropdown.width() -wizard.find('.wizard-user').width();
+        wizard.find('.wizard-user').css({
+            left:right
+        });
+
+
+        var width = $(window).width(),
+            height = $(window).height();
+        wizard.find('.wizard-close').css({
+            top:height - 138,
+            left:width - 300
+        });
+    }
+    wizard.appendTo("body");
+
+    wizard.find('.wizard-close').on('click',function(e){
+        e.preventDefault();
+
+        wizard.fadeOut(function(){
+            $(this).remove();
+        });
+        $('body').css('overflow','auto');
+        //设置过期时间，免得关闭浏览器就失效了
+        Cookies.set('passWizard',1,{ expires: 365 });
+        return false;
+    });
+    relocateTips();
+
+    $(window).on('resize',function(e){
+        relocateTips();
+    });
+
+    $('body').css('overflow','hidden');
+});

@@ -1,0 +1,26 @@
+/*见http://redmine.meilishuo.com/projects/oa/wiki/7%E5%BC%B9%E6%A1%86*/
+
+
+.modal-header{
+  padding: 12.5px 30px;
+  border-bottom: 1px solid #f6f5f6;
+  .modal-title{
+    font-size: 16px;
+    color:#515151;
+  }
+  &:after{
+    content:none;
+  }
+}
+.modal-body{
+  padding:25px 30px;
+}
+.modal-footer{
+  border-top: 1px solid #f6f5f6;
+  padding: 9px 30px;
+  background-color: #f8f8f8;
+
+  .btn{
+    font-size: 16px;
+  }
+}

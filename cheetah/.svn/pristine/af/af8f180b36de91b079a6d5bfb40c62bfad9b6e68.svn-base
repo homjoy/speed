@@ -1,0 +1,15 @@
+
+.nav-tabs>li>a{
+  font-size: 14px;
+}
+@image-base: "../../../../img";
+#page-content{position: relative}
+.slope{
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+//宽度问题
+.tab-pane{padding: 0 8px}
+.yy{  color: #f4f4f4;}

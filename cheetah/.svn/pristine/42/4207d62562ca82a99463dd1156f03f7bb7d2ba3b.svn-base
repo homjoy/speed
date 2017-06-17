@@ -1,0 +1,114 @@
+fml.define('fms/myapply/index', ['jquery','plugin/bootbox','fms/common/common','fms/common/notify','plugin/bootstrap/dataTables','plugin/bootstrap/validator','plugin/cookie'], function (require, exports) {
+    var $ = require('jquery');
+    // var Cookies = require('plugin/cookie');
+    var bootbox = require('plugin/bootbox');
+    var common = require('fms/common/common');
+    var notify = require('fms/common/notify');
+
+    common.panelClick('panel_type','a[href="#over"]','a[href="#waiting"]');
+    
+    var applyUrl = {
+        hurry: '/aj/myapply/hurry',  //催审
+        del: '/aj/myapply/del',    //删除
+        view:'/aj/myapply/view'
+    };
+    var $pageDom = {
+        tabcnt: $('#myTabContent')
+    };
+    $('#tb-waitlist').dataTable({
+        "sDom": "<'row'<'col-md-6'l><'col-md-6'f>r>t<'row-fluid'<'col-md-6'i><'col-md-6'p>>", //定义DataTable布局的一个强大属性
+        "oLanguage": { //语言设置
+            "sLengthMenu": "每页显示  _MENU_ 条记录",
+            "sInfo": "从 _START_ 到 _END_ /共 _TOTAL_ 条数据",
+            "oPaginate": {
+                "sFirst": "首页",
+                "sPrevious": "前一页",
+                "sNext": "后一页",
+                "sLast": "尾页"
+            },
+            "sZeroRecords": "抱歉， 没有找到",
+            "sInfoEmpty": "没有数据",
+            "sInfoFiltered":"(从_MAX_条记录中搜索)"
+        },
+        "aaSorting": [
+            [2, 'desc']
+        ],
+        "bAutoWidth": true,
+        "bProcessing": true //当datatable获取数据时候是否显示正在处理提示信息。
+    });
+    $('#tb-overlist').dataTable({
+        "sDom": "<'row'<'col-md-6'l><'col-md-6'f>r>t<'row-fluid'<'col-md-6'i><'col-md-6'p>>", //定义DataTable布局的一个强大属性
+        "oLanguage": { //语言设置
+            "sLengthMenu": "每页显示  _MENU_ 条记录",
+            "sInfo": "从 _START_ 到 _END_ /共 _TOTAL_ 条数据",
+            "oPaginate": {
+                "sFirst": "首页",
+                "sPrevious": "前一页",
+                "sNext": "后一页",
+                "sLast": "尾页"
+            },
+            "sZeroRecords": "抱歉， 没有找到",
+            "sInfoEmpty": "没有数据",
+            "sInfoFiltered":"(从_MAX_条记录中搜索)"
+        },
+        "aaSorting": [
+            [2, 'desc']
+        ],
+        // "aoColumnDefs": [{
+        //     "sWidth": "80px",
+        //     "aTargets": [5]
+        // }],
+        // "bAutoWidth": true,
+        "bProcessing": true //当datatable获取数据时候是否显示正在处理提示信息。
+        // "bServerSide": true, //客户端处理分页 与ajax选项一起使用
+        // "sAjaxSource": "/rule/list", //ajax请求地址
+        // 'bStateSave': true //开关，是否打开客户端状态记录功能。这个数据是记录在cookies中的，打开了这个记录后，即使刷新一次页面，或重新打开浏览器，之前的状态都是保存下来的
+    });
+
+    $('body').on('click', '.btn-del', function(e) {
+        e.stopPropagation();
+        // params.did = $(this).attr('data-id');
+        var did = $(this).getId(),
+            dtype = $(this).getType();
+        bootbox.dialog({
+        	className:"smModal",
+        	title:"确认框",
+            message:"您确定要删除这条记录吗？",
+            buttons:{
+                success:{
+                    label:"确定",
+                    className:"btn-success btn-sure",
+                    callback:function(){
+                        console.log("发送请求");
+                        $.post(applyUrl.del, {'billId':did,'billType':dtype}, function(data) {
+                            if(data.rcode == 200){
+                                console.log(data, '删除成功');
+                                notify.success(data.rmessage);
+                                window.location.reload();
+                            }else{
+                                notify.error(data.rmessage);
+                            }
+                            
+                        },'json');
+                    }
+                },
+                cancel:{
+                    label:"取消",
+                    className:"btn-default btn-cancel"
+                }
+            }
+        })
+    });
+    // 催审
+    $('.btn-hurry').on('click',function(){
+        var aid = $(this).getId();
+        $.post(applyUrl.hurry,{'cabid':aid},function(data){
+            if(data.rcode == 200){
+                notify.success(data.rmessage);
+            }else{
+                notify.error(data.rmessage);
+            }
+        },'json');
+    });
+
+});

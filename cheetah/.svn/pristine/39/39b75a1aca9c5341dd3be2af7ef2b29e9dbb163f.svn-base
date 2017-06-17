@@ -1,0 +1,83 @@
+<nav id="mainnav-container">
+    <div id="mainnav">
+        <!-- 占位 不能删除 -->
+        <div id="mainnav-shortcut">
+            <ul class="nav navbar-top-links pull-left">
+                <li class="tgl-menu-btn">
+                    <a class="mainnav-toggle" href="#" >
+                         <!--<img src="<%= this.PICTURE_URL %>img/fms/navicon/menu.png" width="20" height="20">-->
+                        <svg class="icon-sidebar icon-menu"><use xlink:href="/page/icon/#icon-menu"></use></svg>
+                   </a>
+                </li>
+            </ul> 
+        </div>
+        <div id="mainnav-menu-wrap">
+            <div class="nano">
+                <div class="nano-content">
+                    <ul id="mainnav-menu" class="list-group">
+                        <%this.permissionMenu.forEach(function(menu,index){%>
+                        <li data-id="<%=menu.id || 0 %>">
+                            <a href="<%=menu.url || 'javascript:void(0);'%>">
+                                <svg class="icon-sidebar <%=menu.icon%>"><use xlink:href="/page/icon/#<%=menu.icon%>"></use></svg>
+                                <span class="menu-title"><%=menu.name || ''%></span>
+                            </a>
+                        </li>
+                        <%})%>
+
+                        <%*
+                        <!-- 首页-->
+                        <!--<li class="active-link" >-->
+                            <!--<a href="/home">-->
+                                <!--<svg class="icon-sidebar icon-home"><use xlink:href="/page/icon/#icon-home"></use></svg>-->
+                                <!--<span class="menu-title">首页</span>-->
+                            <!--</a>-->
+                        <!--</li>-->
+                        <!-- 我的申请-->
+                        <!--<li>-->
+                            <!--<a href="/myapply">-->
+                                <!--<svg class="icon-sidebar icon-myapply"><use xlink:href="/page/icon/#icon-myapply"></use></svg>-->
+                                <!--<span class="menu-title">我的申请</span>-->
+                            <!--</a>-->
+                        <!--</li>-->
+                        <!-- 我的审批-->
+                        <!--<li>-->
+                            <!--<a href="/myapproval">-->
+                               <!--<svg class="icon-sidebar icon-myapproval"><use xlink:href="/page/icon/#icon-myapproval"></use></svg>-->
+                                <!--<span class="menu-title">我的审批</span>-->
+                            <!--</a>-->
+                        <!--</li>-->
+                        <!-- 我的管理-->
+                        <!--<li>-->
+                            <!--<a href="/contract/filing/">-->
+                              <!--<svg class="icon-sidebar icon-mymanage"><use xlink:href="/page/icon/#icon-mymanage"></use></svg>-->
+                                <!--<span class="menu-title">我的管理</span>-->
+                            <!--</a>-->
+                        <!--</li>-->
+                        <!-- 单据查询-->
+                        <!--<li>-->
+                            <!--<a href="/query">-->
+                                <!--<svg class="icon-sidebar icon-receipt"><use xlink:href="/page/icon/#icon-receipt"></use></svg>-->
+                                <!--<span class="menu-title">单据查询</span>-->
+                            <!--</a>-->
+                        <!--</li>-->
+                        <!-- 报表查询-->
+                        <!-- <li>
+                            <a href="#">
+                                <svg class="icon-sidebar icon-excel"><use xlink:href="/page/icon/#icon-excel"></use></svg>
+                                <span class="menu-title">报表查询</span>
+                            </a>
+                        </li> -->
+                        <!-- 制度规定-->
+                        <!-- <li>
+                            <a href="#">
+                               <svg class="icon-sidebar icon-rules"><use xlink:href="/page/icon/#icon-rules"></use></svg>
+                                <span class="menu-title">制度规定</span>
+                            </a>
+                        </li> -->
+                        *%>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</nav>

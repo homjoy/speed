@@ -1,0 +1,114 @@
+fml.define('speed/user/login', ['jquery', 'plugin/cookie', 'component/CountDown'], function (require, exports) {
+    "use strict";
+    var $ = require('jquery');
+    var Cookies = require('plugin/cookie'), CountDown = require('component/CountDown');
+
+    $("form").on("submit", function (e) {
+        e.preventDefault();
+        return false;
+    });
+
+    var sendVerifyBtn = new CountDown('#send-verify-code', {
+        storeKey: "login_count_down_time",
+        ajax: {
+            url: '/aj/user/send_login_verify',
+            type: 'post',
+            dataType: 'json'
+        },
+        onComplete: function (ret) {
+            if (ret.code != 200) {
+                $('.error-message').text(ret.error_msg || '发送验证码失败.');
+                return false;
+            }
+            $('.error-message').text('');
+        },
+        getData: function () {
+            var username = $("#username").val();
+            if (!username) {
+                $('.error-message').text('请填写用户名.');
+                return false;
+            }
+
+            return {
+                send_type: "sms",
+                type: 6,
+                username: $("#username").val(),
+                password: $("#password").val()
+            };
+        }
+    });
+
+    $("[data-switch]").on("click", function () {
+        var corner = $(".card-corner"),
+            target = $(this).attr('data-switch');
+        $(".card.active").removeClass('active');
+        $('.' + target).addClass('active');
+
+        if (target == 'card-login') {
+            corner.removeClass('corner-pc');
+            corner.attr("data-switch", 'card-download');
+        } else {
+            corner.addClass('corner-pc');
+            corner.attr("data-switch", 'card-login');
+        }
+    });
+
+    function login() {
+        var username = $('#username').val().replace(/(^\s*)|(\s*$)/g, "");
+        var password = $('#password').val().replace(/(^\s*)|(\s*$)/g, "");
+        var captcha = $('input[name=captcha]').val().replace(/(^\s*)|(\s*$)/g, "");
+        if (!username || !password) {
+            $('.error-message').text('用户名和密码不能为空');
+            return false;
+        }
+        if (!captcha) {
+            $('.error-message').text('请输入验证码.');
+            $('input[name=captcha]').focus();
+            return false;
+        }
+        if(captcha.length != 6){
+            $('.error-message').text('验证码格式为6位数字.');
+            $('input[name=captcha]').focus();
+            return false;
+        }
+
+        $('.error-message').text('');
+
+
+        $.post('/aj/user/login', {
+            "username": username,
+            "password": password,
+            "captcha": captcha
+        }, function (res) {
+            if (res.code != 200) {
+                return $('.error-message').text(res.error_msg);
+            } else {
+                $('.error-message').text(''); //清空提示.
+            }
+
+            Cookies.remove('speed_token', {domain: 'meilishuo.com'});
+            Cookies.remove('speed_token');
+            Cookies.set('speed_token', res.data.speed_token, {expires: 7, domain: window.location.hostname});
+            window.location.href = '/home';
+        }, 'json');
+    }
+
+    /**
+     * 登陆
+     */
+    $('.btn-sign-in').on('click', function () {
+        login();
+        return false;
+    });
+
+
+    //响应回车
+    $(document).on('keydown', function (e) {
+        var currKey = e.keyCode || e.which || e.charCode;
+        if (currKey == 13) {
+            login();
+        }
+    });
+
+
+});

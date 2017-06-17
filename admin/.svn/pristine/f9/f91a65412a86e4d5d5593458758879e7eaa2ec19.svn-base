@@ -1,0 +1,245 @@
+<?php
+namespace Admin\Modules\Mail;
+
+use Admin\Modules\Common\BaseModule;
+use Admin\Package\Common\Response;
+use Admin\Package\Mail\MailGroupUser;
+use Admin\Package\Mail\MailGroup;
+use Admin\Package\Account\UserOutsourcingInfo;
+use Admin\Package\Account\UserInfo;
+/**
+ * 人员编辑
+ *
+ * @author guojiezhu@meilishuo.com
+ * @since  2015-11-04
+ */
+class AjaxMailUserEdit extends BaseModule
+{
+
+    protected $errors = null;
+    private $params = null;
+
+    public static $VIEW_SWITCH_JSON = TRUE;
+    public function run()
+    {
+        $this->_init();
+        if(!empty($this->params['mail'])) {
+            $mail_list = explode(',', $this->params['mail']);
+            $mail_list = array_unique($mail_list);
+        }else{
+            $mail_list = array();
+        }
+
+        //获取组的 email
+        $mail_group_list = MailGroup::getInstance()->getMailGroupList(array('group_id'=>$this->params['group_id']));
+        if(!empty($mail_group_list)){
+            $u = $mail_group_list[0]['group_name'].'@meilishuo.com';
+        }else{
+            $return = Response::gen_error('50001','邮件组不存在');
+            return $this->app->response->setBody($return);
+        }
+        //对数据库中邮箱数据进行处理
+        $tmp_mail_list = $mail_list;
+       // $tmp_mail_list = array_map(function($p){ return $p.'@meilishuo.com'; },$tmp_mail_list);
+        //调用第三方接口发送数据
+        $params = array(
+            'act' => 'modMlist',
+            'u' => $u
+        );
+        //要同步的邮箱的列表
+        $data['forwardmaillist'] = implode(',',$tmp_mail_list);
+        $return = MailGroupUser::getInstance()->pushMailUserList($params,$data);
+        if(empty($return) ||  strtoupper($return['__STATUS__']) != 'OK'){
+            $return = Response::gen_error(Response::DS_DATA_NO_DATA,'','邮件系统创建失败');
+            return $this->app->response->setBody($return);
+        }
+        //获取组下的所有用户
+        $search_group_user = array(
+            'all' => 1,
+            'group_id' => $this->params['group_id'],
+            'mail_suffix_type' => array(1,2)
+        );
+      
+        //获取数据
+        $email_user_list = MailGroupUser::getInstance()->getMailUserList($search_group_user);
+
+        //由于是这边进行控制用户，所以只需要比较可以使用的用户就可以了
+        $allDbMails = array();
+        if(!empty($email_user_list)){
+            foreach ($email_user_list as $k => $v) {
+                $mail_suffix = UserOutsourcingInfo::getInstance()->get_mail_suffix($v['mail_suffix_type']);
+                $allDbMails[] = $v['user_mail'].$mail_suffix;
+            }
+        }else{
+            $allDbMails = array();
+        }
+        //新的用户
+        $new_mail_user = array_diff($mail_list, $allDbMails);
+        //查询用户的信息
+        $add = self::addNewMails($new_mail_user, $this->params['group_id']);
+        //需要删除的用户
+        $del_mails = array_diff($allDbMails, $mail_list);
+        $info = self::delMails($del_mails, $this->params['group_id']);
+        $return = Response::gen_success('数据更新成功');
+        return $this->app->response->setBody($return);
+
+    }
+
+    /**
+     * 增加邮件组成员
+     * @param $newMails
+     * @param $group_id
+     *
+     * @return bool
+     */
+    public static function  addNewMails($new_mails,$group_id){
+        if (empty($new_mails) || empty($group_id)) {
+            return FALSE;
+        }
+        $search_user_params = array('status' => array(1,2,3));
+        $add_return_array = array();
+        foreach ($new_mails as $key => $value) {
+            $mail_array = explode('@',$value);
+            $suffix = '';
+            $user_mail = '';
+            if(!empty($mail_array)){
+                $suffix = $mail_array[1];
+                $user_mail = $mail_array[0];
+            }
+            $mail_suffix_type =UserOutsourcingInfo::getInstance()->get_mail_suffix_type($suffix);
+
+            //先查询一下，这个用户是否存在 当前组
+            $search_group_user = array(
+                'status' => array(0,1),
+                'group_id' => $group_id,
+                'user_mail' => $user_mail,
+                'mail_suffix_type' => $mail_suffix_type
+            );
+            $mail_group_user = MailGroupUser::getInstance()->getMailUserList($search_group_user);
+            if(!empty($mail_group_user)){
+                $mail_group_user = current($mail_group_user);
+                $update_exit_user = array('id' => $mail_group_user['id'],
+                                          'user_id' =>$mail_group_user['user_id'],
+                                          'group_id' =>$mail_group_user['group_id'],
+                                          'user_mail' =>$mail_group_user['user_mail'],
+                                          'status' => 1,
+                                          'mail_suffix_type' => $mail_suffix_type
+                );
+                $res_data = MailGroupUser::getInstance()->updateMailGroupUser($update_exit_user);
+                $add_return_array[$group_id][$mail_group_user['user_mail']]=$res_data;
+                continue;
+            }
+
+            //查询用户信息
+            if($mail_suffix_type  ==1) {
+                $search_user_params['mail'] = $user_mail;
+                $user = UserInfo::getInstance()->getUserInfo($search_user_params);
+
+                if (empty($user)) {
+                    continue;
+                }
+                $user = current($user);
+                $new = array('user_mail' => $user['mail'],
+                             'user_id' => $user['user_id'],
+                             'group_id' => $group_id,
+                             'mail_suffix_type' => 1
+                );
+            }else if($mail_suffix_type ==2 ){
+                $search_user_params['mail'] = $user_mail;
+                $user = UserOutsourcingInfo::getInstance()->searchUserOutsourcingInfo($search_user_params);
+                if (empty($user)) {
+                    continue;
+                }
+                $user = current($user);
+                $new = array('user_mail' => $user['mail'],
+                             'user_id' => $user['out_user_id'],
+                             'group_id' => $group_id,
+                             'mail_suffix_type' => 2
+                );
+            }
+            $res = MailGroupUser::getInstance()->createMailGroupUser($new);
+            $add_return_array[$group_id][$user['mail']] =  $res;
+        }
+
+        return $add_return_array;
+    }
+
+    /**
+     * 删除 邮件 组的成员 标示为 0
+     * @param $del_mail
+     * @param $group_id
+     *
+     * @return bool
+     */
+    public static function delMails($del_mail,$group_id){
+        if (empty($del_mail)) {
+            return FALSE;
+        }
+
+        $all_return = array();
+        foreach ($del_mail as $key => $value) {
+            $mail_array = explode('@',$value);
+            $suffix = '';
+            $user_mail = '';
+            if(!empty($mail_array)){
+                $suffix = $mail_array[1];
+                $user_mail = $mail_array[0];
+            }
+            $mail_suffix_type =UserOutsourcingInfo::getInstance()->get_mail_suffix_type($suffix);
+            if($mail_suffix_type  ==1) {
+                $serach_user_params['mail'] = $user_mail;
+                $user = UserInfo::getInstance()->getUserInfo($serach_user_params);
+                if (empty($user)) {
+                    continue;
+                }
+                $user = current($user);
+                $delete = array('user_mail' => $user['mail'],
+                             'user_id' => $user['user_id'],
+                             'group_id' => $group_id,
+                             'mail_suffix_type' => 1,
+                              'status' => 0,
+                );
+            }else if($mail_suffix_type ==2 ){
+                $serach_user_params['mail'] = $user_mail;
+                $user = UserOutsourcingInfo::getInstance()->searchUserOutsourcingInfo($serach_user_params);
+                if (empty($user)) {
+                    continue;
+                }
+                $user = current($user);
+                $delete = array('user_mail' => $user['mail'],
+                             'user_id' => $user['out_user_id'],
+                             'group_id' => $group_id,
+                             'mail_suffix_type' => 2,
+                             'status' => 0,
+                );
+            }
+            $res = MailGroupUser::getInstance()->updateMailGroupUser($delete);
+            $all_return[$value] = $res;
+        }
+        return $all_return;
+
+    }
+
+
+
+    private function _init()
+    {
+
+        $this->rules = array(
+                'group_id' => array(
+                    'required' => TRUE,
+                    'allowEmpty' => FALSE,
+                    'type'=>'integer',
+                ),
+                'mail' => array(
+                    'required' => TRUE,
+                    'allowEmpty' => FALSE,
+                    'type'=>'string'
+                )
+               
+        );
+        $this->params = $this->request()->safe();
+        $this->errors = $this->request()->getErrors();
+    }
+
+}

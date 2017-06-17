@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8" />
+	<title><%== this.pageTitle || this.defaultTitle %></title>
+	<meta name="description" content="<%= this.meta_description ||''%>" />
+	<meta content="<%= this.JCSTATIC_BASE %>img/speed/favicon.png" itemprop="image">
+	<meta name="keywords" content="<%= this.keywords||''%>" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+	<%if(this.author){%>
+	<meta name="author" content="<%= this.author%>"/>
+	<%}%>
+	<meta http-equiv="x-ua-compatible" content="IE=edge,chrome=1" />
+	<meta content="http://i.meilishuo.net/css/images/custom_icon_precomposed.png" itemprop="image">
+	<link rel="apple-touch-icon-precomposed" href="http://i.meilishuo.net/css/images/custom_icon_precomposed.png"/>
+	<link rel="shortcut icon" href="<%= this.JCSTATIC_BASE %>img/speed/favicon.ico"/>
+	<% if(!this.noBasecss){ %>
+	<link rel="stylesheet" type="text/css" href="<%= this.JCSTATIC_BASE %>css/nifty/bootstrap.css?<%=this.SVERSION%>" />
+	<link rel="stylesheet" type="text/css" href="<%= this.JCSTATIC_BASE %>css/nifty/nifty.css?<%=this.SVERSION%>" />
+	<link rel="stylesheet" type="text/css" href="<%= this.JCSTATIC_BASE %>css/nifty/font-awesome.css?<%=this.SVERSION%>" />
+	<link rel="stylesheet" type="text/css" href="<%= this.JCSTATIC_BASE %>css/nifty/animate.css?<%=this.SVERSION%>" />
+	<link rel="stylesheet" type="text/css" href="<%= this.JCSTATIC_BASE %>css/nifty/bootstrap-select.min.css?<%=this.SVERSION%>" />
+	<link rel="stylesheet" type="text/css" href="<%= this.JCSTATIC_BASE %>css/speed/common.css?<%=this.SVERSION%>" />
+	<link rel="stylesheet" type="text/css" href="<%= this.JCSTATIC_BASE %>css/queen/king.css?<%=this.SVERSION%>" />
+	<% } %>
+
+	<%= (function(files){
+	var link = [];
+	var base = this.JCSTATIC_BASE;
+	var sversion = this.SVERSION;
+	files && files.map(function(src){
+	link.push('<link rel="stylesheet" type="text/css" href="'+base+'css/'+src+'.css?'+ sversion +'"/>');
+	});
+	return link.join('');
+	})(this._CSSLinks)%>
+	<script type="text/javascript" src="<%= this.JCSTATIC_BASE + this.SCRIPT_BASE %>fml.js?<%= this.SVERSION%>" ></script>
+	<script>
+		fml.setOptions({'sversion' : '<%= this.SVERSION %>','defer' : <%= this.JS_Defer %> ,'modulebase' : '<%= this.JCSTATIC_BASE + this.SCRIPT_BASE %>'});
+	</script>
+	<% if(this.userInfo && this.userInfo.code == 200){ %>
+	<script>
+		var SPEED = {
+			"user":{
+				"user_id" : '<%= this.userInfo.data.user.user_id || 0 %>',
+				"mail" : '<%= this.userInfo.data.user.mail || "" %>',
+				"name_cn" : '<%= this.userInfo.data.user.name_cn || "" %>',
+			},
+			"share_user_id" : '<%= this.share_user_id || "" %>',
+			"monitor" : {"message":"<%= (this.userInfo.data.user.monitor ? this.userInfo.data.user.monitor.message : '' )%>"}
+		};
+	</script>
+	<% } %>
+</head>
+<body>

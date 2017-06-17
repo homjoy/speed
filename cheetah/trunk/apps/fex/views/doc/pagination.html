@@ -1,0 +1,101 @@
+<%#head.html%>
+
+
+
+<header class="feature">
+    <div class="container wide">
+        <h1 class="title">分页插件</h1>
+        <p class="subtitle">让分页变得更简单</p>
+    </div>
+</header>
+
+<div class="container block main" role="main">
+
+    <section>
+        <h2>依赖：</h2>
+        <p>less 模块: <span class="label label-dark">queen/pagination</span></p>
+        <p>文件路径: <span class="label label-dark">apps/static/less/queen/pagination.less</span></p>
+    </section>
+
+    <section>
+    <h2>基本使用.</h2>
+        <ul class="pagination" id="pagination-basic"></ul>
+<pre class="language-javascript"><code>
+$("#pagination-basic").pagination({
+    totalPage:200,
+    currentPage:1,
+    lastPagesCount:1
+}).on("switch",function(e,page){
+    console.log(page);
+});
+</code></pre>
+    </section>
+
+
+    <section>
+    <h2>精简版</h2>
+        <ul class="pagination pagination-mini" id="pagination-minimal"></ul>
+<pre class="language-javascript"><code>
+$("#pagination-minimal").pagination({
+    totalPage: 30, //总页数，默认值为10
+    startPage: 1, //起始页数，默认为1开始
+    currentPage: 1, //初始选中的页码，默认值为1
+    firstPagesCount: 0, //最前面的展现页数，默认值为2
+    preposePagesCount: 2,  //当前页的紧邻前置页数，默认值为2
+    postposePagesCount: 0, //当前页的紧邻后置页数，默认值为1
+    lastPagesCount: 2,//最后面的展现页数，默认值为0
+    href: false,    //不生成链接
+    first: '', //取消首页
+    prev: '<',
+    next: '>',
+    last: '', //取消尾页
+    go: '' //取消页面跳转
+}).on("switch",function(e,page){
+    console.log(page);
+});
+</code></pre>
+    </section>
+
+
+
+    <section>
+    <h2>所有配置选项</h2>
+<pre class="language-javascript"><code>
+var defaults = {
+    totalPage: 10, //总页数，默认值为10
+    startPage: 1, //起始页数，默认为1开始
+    currentPage: 1, //初始选中的页码，默认值为1
+    firstPagesCount: 2, //最前面的展现页数，默认值为2
+    preposePagesCount: 2,  //当前页的紧邻前置页数，默认值为2
+    postposePagesCount: 1, //当前页的紧邻后置页数，默认值为1
+    lastPagesCount: 0,//最后面的展现页数，默认值为0
+    href: false,    //是否生成链接
+    hrefVariable: '{{number}}',
+    first: '首页',
+    prev: '上一页',
+    next: '下一页',
+    last: '尾页',
+    breakText: '...',
+    go: 'Go',
+    loop: false,
+    paginationClass: 'pagination',
+    nextClass: 'next',
+    prevClass: 'prev',
+    lastClass: 'last',
+    firstClass: 'first',
+    pageClass: 'page',
+    goClass: 'go-page',
+    activeClass: 'active',
+    breakClass: 'break',
+    disabledClass: 'disabled'
+};
+</code></pre>
+    </section>
+
+
+
+
+
+
+<%! $_ENGINE_SELF.callFn("useModule")("fml.use('fex/doc/pagination');", this._JSstack , this._JSmods); %>
+<%#foot.html%>

@@ -1,0 +1,526 @@
+fml.define('speed/meeting/room',['lib/cookie'],function(require,exports){
+    "use strict";
+    var Cookies = require('lib/cookie');
+
+
+    var data = $('#calendar').data();
+    var room_id = $('#room_id').val();
+    $('#notice_1').hide();
+// $.each(data,function(k,v){
+//   console.log(k);
+//   console.warn(v);
+// });
+// console.log($('#notice_1').html());
+    function getTime(s) {
+        var index = s.indexOf(" ");
+        var time = s.substr((index + 1));
+        return time.replace(/:/g, "");
+    }
+
+    function checkTime(start, end) {
+
+        $("#time_alert").children("p").html("");
+        if (end - start > 100) {
+            $("#time_alert").show();
+            $("#time_alert").children("p").html("亲，你预订会议室超过1小时啦，请确定效率不能再提高了吗？");
+            if (end - start == 200) {
+                $("#time_alert").children("p").html("亲，你预订会议室达到2小时啦，如果发现不合理使用可能会有处罚哦！");
+            } else if (end - start > 200) {
+                $("#time_alert").children("p").html("亲，你预订会议室超过2小时啦，如果发现不合理使用可能会有处罚哦！");
+            }
+        }
+        ;
+    }
+
+    $(".form_datetime").change(function () {
+        var start = $("#start").val();
+        var end = $("#end").val();
+        var s = getTime(start);
+        var e = getTime(end);
+        // checkTime(s, e);
+    });
+    if ($('#notice_1').html() == undefined) {
+        $("[name='meeting_type'][value='2']").attr('disabled', true);
+    }
+    if ($('#notice_5').html() == undefined) {
+        $("[name='meeting_type'][value='3']").attr('disabled', true);
+    }
+// 会议室种类选择
+    var meeting_type = '1';
+    $('input[name=meeting_type]').click(function () {
+        if ($(this).val() != '1') {
+            $('.add_meeting_button_div').removeClass('hide');
+            $('.notice_1').removeAttr('name');
+            if ($(this).val() == '2') {
+                $('#notice_1').hide();
+                $('#notice_5').show();
+                $('.notice_1').attr('name', 'service_id[]').val('1');
+            } else {
+                $('#notice_5').hide();
+                $('#notice_1').hide();
+                $('.notice_1').attr('name', 'service_id[]').val('5');
+            }
+            $('.user_lable').html($('.meeting_room_name').html());
+        } else {
+            $('.user_lable').html('参与人员');
+            $('.add_meeting_button_div').addClass('hide');
+            $('.notice_1').removeAttr('name');
+        }
+        if ($(this).val() != meeting_type) {
+            $('.add_meeting_div').remove();
+            meeting_type = $(this).val();
+        }
+    });
+// 添加会议室
+    $('.add_meeting_button').click(function () {
+        var part_div = '<div class="form-group add_meeting_div">' +
+            '<label class="col-lg-2 col-md-2 col-sm-2"><select class="part_select select_part" style="font-size:18px;margin-top:5px">' +
+            '</select></label>' +
+            '<div class="col-lg-8 col-md-8 col-sm-8" id="inputUserBox_add">' +
+            '<input type="text" class="form-control users_add add_user" >' +
+            '</div>' +
+            '<div class="col-lg-2 col-md-2 col-sm-2" >' +
+            '<a class="btn btn-warning delete_meeting_div">删除</a>' +
+            '</div>' +
+            '</div>';
+        $('.add_meeting_button_div').before(part_div);
+        if (meeting_type == '2') {
+            // console.log(meeting_type);
+            $('.part_select').append($('.meeting_rooms').html()).removeClass('part_select');
+        } else {
+            // console.log(meeting_type);
+            $('.part_select').append($('.telephone').html()).removeClass('part_select');
+        }
+
+        $(".users_add").tokenInput("/aj/address/ajax_search_name", {
+            prePopulate: ''
+        }).removeClass('users_add');
+    });
+// 删除会议室
+    $('form').delegate(".delete_meeting_div", "click", function () {
+        $(this).parent().parent().remove();
+    });
+// 需求部分
+    $('.father_service_input').on('click', function () {
+        var checked = !!$(this).prop('checked');
+        $(this).prop('checked', checked);
+        $(this).parent().next().toggleClass('hide').find("[type='checkbox']").prop('checked', checked);
+        //取消选中
+        //if (!checked) {
+        //    $(this).parent().next().removeClass('hide').find("[type='checkbox']").prop('checked',!checked);
+        //} else {
+        //    $(this).parent().next().addClass('hide').find("[type='checkbox']").prop('checked',!checked);
+        //}
+    });
+// 提交
+    $('#btn_submit').click(function () {
+        // 添加功能,删除功能
+//提交 方法_数据整理方法，待封装
+        // 序列化
+        var _this = $(this);
+        _this.attr('disabled', 'false');
+
+        var select_part = [], add_user = [], book_id = [];
+        select_part = $('.select_part');
+        add_user = $('.add_user');
+        book_id = $('.book_id');
+        var length = select_part.length;
+        console.log(length);
+        for (var i = 0; i < select_part.length; i++) {
+            var select_part_name = 'zones[' + i + '][room_id]';
+            var add_user_name = 'zones[' + i + '][users]';
+            var add_book_id = 'zones[' + i + '][book_id]';
+            $(select_part[i]).attr('name', select_part_name);
+            $(add_user[i]).attr('name', add_user_name);
+            if ($('.book_id')) {
+                $(book_id[i]).attr('name', add_book_id);
+            }
+        }
+        ;
+        // console.warn(length);
+        var myForm = $('#myForm').serializeArray();
+        console.log(myForm);
+        // 拿到以数组保存的数据
+        // var array_tag =[];
+        // array_tag = $('#myForm').find('[datatype=array]');
+        // var array_tag_name =[];
+        // $.each(array_tag,function(n,value){
+        //     array_tag_name.push($(value).attr('name'));
+        // });
+        // var formData ={};
+        // // 遍历数据，以存入formData
+        // for(var i in myForm){
+        //   var k = myForm[i].name;
+        //   var v = myForm[i].value;
+        //   // 判断是否是以数组保存的数据，是，push，不是，保存
+        //   if(array_tag_name.indexOf(k)>-1){
+        //     if(formData[k]== undefined){
+        //       formData[k]=[];
+        //       formData[k].push(v);
+        //     }else{
+        //       formData[k].push(v);
+        //     }
+        //   }else{
+        //     formData[k]=v;
+        //   }
+        // }
+        // // 单选框，待添加
+        // formData.zones=[];
+        // if(formData.zones_room_id){
+        //   $.each(formData.zones_room_id,function(a,b){
+        //     var data ={
+        //       room_id:b,
+        //       user_id:['669','1117']
+        //     }
+        //     formData.zones.push(data);
+        //   });
+        // }
+
+
+        // console.log(formData);
+        var url = $(this).attr('submit-url');
+        $.post(url, myForm, function (ret) {
+            console.warn(ret);
+            if (ret.code == 200) {
+                $(".modal-content .alert").slideDown();
+                $(".modal-content .alert").children("p").html('').hide();
+                $(".modal-content .alert").removeClass("alert-danger").addClass("alert-success");
+                $(".modal-content .alert").children("h4").html("操作成功!");
+                setTimeout("$('.modal').modal('hide');", 1000);
+                setTimeout("location.reload();", 1300);
+            } else if (ret.code == 400) {
+                _this.removeAttr('disabled');
+                $(".modal-content .alert").slideDown();
+                $(".modal-content .alert").children("p").html(ret.error_msg).show();
+                $(".modal-content .alert").addClass("alert-danger");
+                $(".modal-content .alert").children("h4").html("操作失败!");
+                if (ret.code == 400 && ret.data.status == 1) {
+                    $('#is_check').val('0');
+                }
+            }
+        }, 'json');
+    });
+// 再次提交
+    $('#btn_submit_again').click(function () {
+        // 序列化
+        var _this = $(this);
+        $('#notice_again').modal('hide');
+        _this.attr('disabled', 'false');
+        var myForm = $('.form_again').serializeArray();
+        // console.log(myForm);
+
+
+        // console.log(formData);$('#btn_submit_again').attr('submit-url')
+        var url = $(this).attr('submit-url');
+        $.post(url, myForm, function (ret) {
+            console.warn(ret);
+            if (ret.code == 200) {
+                $.niftyNoty({
+                    type: 'info',
+                    icon: 'fa fa-heart fa-lg',
+                    title: '操作成功',
+                    message: '',
+                    timer: '10000'
+                })
+                _this.removeAttr('disabled');
+            } else if (ret.code == 400) {
+                $.niftyNoty({
+                    type: 'pink',
+                    icon: 'fa fa-heart fa-lg',
+                    title: '操作失败',
+                    message: ret.error_msg,
+                    timer: '10000'
+                })
+                _this.removeAttr('disabled');
+            }
+        }, 'json');
+    });
+
+// 删除
+    $(".Gate_book_delete").click(function () {
+        $(".Gate_book_delete").hide();
+        $(".modal-body p").show();
+        $(".modal-body form").slideUp();
+        $(".modal-title").html("删除预定？");
+        $('#btn_submit').attr('submit-url', '/aj/meeting/ajax_book_delete');
+        $(".modal-body p.modal-message").html("是否要删除预定？");
+    });
+// 时间插件
+    $(".form_datetime").datetimepicker({
+        startView: 1,
+        format: "yyyy-mm-dd hh:ii",
+        autoclose: true,
+        todayBtn: true,
+        pickerPosition: "bottom-left",
+        //startDate: "2013-02-14 10:00",
+        minuteStep: 10
+    });
+
+// 插件
+    var calendar = $('#calendar').fullCalendar({
+        defaultView: 'agendaWeek',
+        header: {
+            left: 'prev,next today',
+            center: 'title',
+            right: 'month,agendaWeek,agendaDay'
+        },
+        minTime: 8,
+        maxTime: 24,
+        // firstDay:1,
+        selectable: true,
+        selectHelper: true,
+        select: function (start, end, allDay) {
+            console.log(1);
+            $('.user_lable').html('参与人员');
+            $('.add_meeting_button_div').addClass('hide');
+            $("input[name='meeting_type']").removeAttr("checked");
+            $("input[name='meeting_type'][value='1']").attr("checked", "checked");
+            $(".modal-content .alert").slideUp();
+            $('.service_input').addClass('hide');
+            $('#btn_submit').attr('submit-url', '/aj/meeting/ajax_book_add');
+            var myDate = new Date();
+            if (Cookies.get('OA_MEILISHUO_TIME_TYPE') != 'month' && start < myDate) {
+                // $('#notice_time').modal('show');
+                show_message(400, '亲，本系统不支持穿越回去哦，请选择其他时间');
+                return false;
+            }
+            if (start > myDate || start.getDate() == myDate.getDate()) {
+                $("#inputUserBox").html('<input type="text" class="form-control" id="invite_users" name="invite_users" placeholder="参加人员">');
+                $("#invite_users").tokenInput("/aj/address/ajax_search_name", {
+                    prePopulate: ''
+                });
+                //清空上次选择,分会场隐藏
+                $('.add_meeting_div').remove();
+                // 复选框清空
+                $('form').find("[type='checkbox']").removeAttr('checked');
+                // 表单重置
+                $(".form-horizontal").each(function () {
+                    $(this)[0].reset();
+                });
+                // 删除按钮隐藏，插件时间重置并赋值
+                $(".Gate_book_delete").hide();
+                var start_time = $.fullCalendar.formatDate(start, 'yyyy-MM-dd HH:mm');
+                var end_time = $.fullCalendar.formatDate(end, 'yyyy-MM-dd HH:mm');
+                var a = start_time.split(' ');
+                if (a[1] == '00:00') {
+                    var start_time = a[0] + ' 08:00';
+                    var end_time = a[0] + ' 08:30';
+                }
+                $('#start').val(start_time);
+                $('#end').val(end_time);
+
+                $('#bookModal').modal('show');
+// 、、、
+                $(".modal-body p.modal-message").hide();
+                $(".modal-body form").show();
+                $(".modal-title").html("预定会议室：" + $('.meeting_room_name').html());
+                checkTime($.fullCalendar.formatDate(start, 'HHmm'), $.fullCalendar.formatDate(end, 'HHmm'));
+            };
+        },
+        viewDisplay: function (view) {
+            // 初始化界面展示
+            var room_id = $('#room_id').val();
+            var viewStart = $.fullCalendar.formatDate(view.start, "yyyy-MM-dd HH:mm");
+            var viewEnd = $.fullCalendar.formatDate(view.end, "yyyy-MM-dd HH:mm");
+            $("#calendar").fullCalendar('removeEvents');
+            $.getJSON('/aj/meeting/get_book_list', {
+                room_id: room_id,
+                book_start: viewStart,
+                book_end: viewEnd
+            }, function (ret) {
+                var data = ret.data || [];
+                for (var i = 0; i < data.length; i++) {
+                    var obj = new Object();
+                    obj.id = data[i].id;
+                    obj.title = data[i].title;
+                    obj.color = data[i].color;
+                    obj.start = data[i].start;
+                    obj.end = data[i].end;
+                    obj.users = data[i].users;
+                    obj.user_id = data[i].user_id;
+                    obj.allDay = data[i].allDay;
+                    obj.repeat_type = data[i].repeat_type;
+                    obj.editable = data[i].editable;
+                    // obj.meeting_type = data[i].meeting_type;
+                    // console.log(obj);
+                    calendar.fullCalendar('renderEvent', obj, true);
+                }
+            }); //把从后台取出的数据进行封装以后在页面上以fullCalendar的方式进行显示
+        },
+        eventClick: function (event, element) {
+            // 单击，修改，
+            $('.user_lable').html('参与人员');
+            $('.add_meeting_button_div').addClass('hide');
+            $("input[name='meeting_type']").removeAttr("checked");
+            $(".modal-content .alert").slideUp();
+            $('.service_input').addClass('hide');
+            var book_id = event.id;
+            $.getJSON('/aj/meeting/ajax_book_read', {book_id: book_id}, function (ret) {
+                console.log(ret);
+                if (event.editable == true) {
+                    $('#btn_submit').attr('submit-url', '/aj/meeting/ajax_meeting_update');
+                    //清空上次选择,分会场隐藏
+                    $('.add_meeting_div').remove();
+                    // 复选框清空
+                    $('form').find("[type='checkbox']").removeAttr('checked');
+                    // 重置表单
+                    $(".form-horizontal").each(function () {
+                        $(this)[0].reset();
+                    });
+                    // 参与人重置
+                    $("#inputUserBox").html('<input type="text" class="form-control" id="invite_users" name="invite_users" placeholder="参加人员">');
+
+                    $("#invite_users").tokenInput("/aj/address/ajax_search_name", {
+                        prePopulate: ret.data.invite_users
+                    });
+                    // 会议种类
+                    $("input[name='meeting_type'][value='" + ret.data.meeting_type + "']").attr("checked", "checked");
+                    // 设备需求
+                    $.each(ret.data.services, function (key, item) {
+                        $("input[type=checkbox][value=" + item + "]").prop('checked', 'checked').parent().parent().removeClass('hide').prev().children().prop('checked', 'checked');
+                    });
+                    // 分会场
+                    $.each(ret.data.zones, function (a, b) {
+                        var part_div = '<div class="form-group add_meeting_div">' +
+                            '<label class="col-lg-2 col-md-2 col-sm-2"><select class="part_select select_part" style="font-size:18px;margin-top:5px">' +
+                            '</select></label>' +
+                                // '<select class="part_select select_part col-lg-2" >'+
+                                // '</select>'+
+                            '<div class="col-lg-8 col-md-8 col-sm-8" id="inputUserBox_add">' +
+                            '<input type="text" class="form-control users_add add_user" >' +
+                            '<input type="text" class="form-control book_id hide" value="' + b.book_id + '">' +
+                            '</div>' +
+                            '<div class="col-lg-2 col-md-2 col-sm-2" >' +
+                            '<a class="btn btn-warning delete_meeting_div">删除</a>' +
+                            '</div>' +
+                            '</div>';
+                        $('.add_meeting_button_div').before(part_div);
+                        var meeting_type = ret.data.meeting_type;
+                        if (meeting_type == '1') {
+                            $('.add_meeting_button_div').removeClass('hide');
+                        } else if (meeting_type == '2') {
+                            console.log(meeting_type);
+                            $('.part_select').append($('.meeting_rooms').html()).val(b.room_id).removeClass('part_select');
+                        } else if (meeting_type == '3') {
+                            console.log(meeting_type);
+                            $('.part_select').append($('.telephone').html()).val(b.room_id).removeClass('part_select');
+                        }
+                        $(".users_add").tokenInput("/aj/address/ajax_search_name", {
+                            prePopulate: b.invite_users
+                        }).removeClass('users_add');
+                        // b.book_id  b.inviete_users    b.room_id
+                    });
+                    // modal其他参数字段修改
+                    $(".Gate_book_delete").show();
+                    $(".modal-title").html("修改预定：" + $('.meeting_room_name').html());
+                    $('#book_id').val(event.id);
+                    $('#meeting_topic').val(event.title);
+                    $('#start').val($.fullCalendar.formatDate(event.start, 'yyyy-MM-dd HH:mm'));
+                    $('#end').val($.fullCalendar.formatDate(event.end, 'yyyy-MM-dd HH:mm'));
+                    if (ret.data.memo) {
+                        $('#memo').val(ret.data.memo).parent().removeClass('hide');
+                    }
+
+                    $('#repeat_type').val(event.repeat_type);
+                    $('#bookModal').modal('show');
+                    $(".modal-body p.modal-message").hide();
+                    $(".modal-body form").show();
+                    calendar.fullCalendar('updateEvent', event);
+// });
+                } else {
+                    var user_id_user = $('.user_id_user').val();
+                    if (user_id_user == ret.data.user_id) {
+                        $(".Gate_book_delete").hide();
+                        $(".modal-body p").show();
+                        $(".modal-body form").slideUp();
+                        $(".modal-title").html("拒绝预定？");
+                        $('#btn_submit').attr('submit-url', '/aj/meeting/ajax_meeting_reject');
+                        $(".modal-body p.modal-message").html("是否要拒绝预定？");
+                    }
+                }
+            });
+        },
+        eventDragStart: function (event, jsEvent, ui, view) {
+            console.log(4);
+            window.drag_start = $.fullCalendar.formatDate(event.start, 'yyyy-MM-dd HH:mm:ss'),
+                window.drag_end = $.fullCalendar.formatDate(event.end, 'yyyy-MM-dd HH:mm:ss');
+            // checkTime($.fullCalendar.formatDate(start,'HHmm'), $.fullCalendar.formatDate(end,'HHmm'));
+        },
+        eventDragStop: function (event, jsEvent, ui, view) {
+            console.log(8);
+        },
+        eventDrop: function (event, jsEvent, ui, view) {
+            console.log(7);
+            var do_user_id = $('.do_user_id').val();
+            $(".Gate_book_delete").show();
+            $.post("/aj/meeting/ajax_meeting_update_time", {
+                book_id: event.id,
+                book_start: $.fullCalendar.formatDate(event.start, 'yyyy-MM-dd HH:mm:ss'),
+                book_end: $.fullCalendar.formatDate(event.end, 'yyyy-MM-dd HH:mm:ss'),
+                user_id: do_user_id
+            }, function (result) {
+                console.log(result);
+                if (result.code == 200) {
+                    show_message(result.code, '操作成功');
+                } else if (result.code == 400 || result.code == 300) {
+                    show_message(result.code, result.error_msg);
+                    event.start = window.drag_start;
+                    event.end = window.drag_end;
+                    if (result.code == 400 && result.data.status == 1) {
+                        $('.notice_again_text').html(result.error_msg);
+                        $('.id_again').val(event.id);
+                        $('.start_time_again').val($.fullCalendar.formatDate(event.start, 'yyyy-MM-dd HH:mm:ss'));
+                        $('.end_time_again').val($.fullCalendar.formatDate(event.end, 'yyyy-MM-dd HH:mm:ss'));
+                        $('#btn_submit_again').attr('submit-url', '/aj/meeting/ajax_meeting_update_time');
+                        $('#notice_again').modal('show');
+                    }
+                }
+                ;
+                calendar.fullCalendar('updateEvent', event);
+            }, "json");
+        },
+        eventResizeStart: function (event, jsEvent, ui, view) {
+            console.log(5);
+            window.drag_start = $.fullCalendar.formatDate(event.start, 'yyyy-MM-dd HH:mm:ss'),
+                window.drag_end = $.fullCalendar.formatDate(event.end, 'yyyy-MM-dd HH:mm:ss');
+            // checkTime($.fullCalendar.formatDate(start,'HHmm'), $.fullCalendar.formatDate(end,'HHmm'));
+        },
+        eventResize: function (event, jsEvent, ui, view) {
+            console.log(6);
+            var do_user_id = $('.do_user_id').val();
+            $(".Gate_book_delete").show();
+            $.post("/aj/meeting/ajax_meeting_update_time", {
+                book_id: event.id,
+                book_start: $.fullCalendar.formatDate(event.start, 'yyyy-MM-dd HH:mm:ss'),
+                book_end: $.fullCalendar.formatDate(event.end, 'yyyy-MM-dd HH:mm:ss'),
+                user_id: do_user_id
+            }, function (result) {
+                if (result.code == 200) {
+                    show_message(result.code, '操作成功');
+                } else if (result.code == 400 || result.code == 300) {
+                    show_message(result.code, result.error_msg);
+                    event.start = window.drag_start;
+                    event.end = window.drag_end;
+                    if (result.code == 400 && result.data.status == 1) {
+                        $('.notice_again_text').html(result.error_msg);
+                        $('.id_again').val(event.id);
+                        $('.start_time_again').val($.fullCalendar.formatDate(event.start, 'yyyy-MM-dd HH:mm:ss'));
+                        $('.end_time_again').val($.fullCalendar.formatDate(event.end, 'yyyy-MM-dd HH:mm:ss'));
+                        $('#btn_submit_again').attr('submit-url', '/aj/meeting/ajax_meeting_update_time');
+                        $('#notice_again').modal('show');
+                    }
+                }
+                ;
+                calendar.fullCalendar('updateEvent', event);
+            }, "json");
+        }
+
+    });
+
+});
+//$(function () {
+//    "use strict";
+//
+//// 菜单高亮
+//    $('#mainnav-menu-wrap a[href="/meeting"]').parent().addClass('active-link').parent().parent().addClass('active-sub').addClass('active');
+//});

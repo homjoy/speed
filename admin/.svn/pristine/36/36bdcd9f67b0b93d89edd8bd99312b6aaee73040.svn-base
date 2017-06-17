@@ -1,0 +1,177 @@
+@extends('layouts.master')
+@section('content')
+    <div class="panel-heading" style="overflow: hidden; line-height: 32px">
+        <ol class="breadcrumb">
+            <li><a href="/prompt/prompt_home">Home</a></li>
+            <li class="active">添加&修改</li>
+        </ol>
+
+      <div class="table-container">
+        <div class="row row-offcanvas row-offcanvas-right">
+                <form class="form-horizontal" id="noticeForm" role="form" action="#" method="post">
+                    <input type="hidden" name="room_id" id="room_id" value="{{ $data['room_id'] or '' }} ">
+                    <div class="container">
+                        <div class="col-lg-12">
+                            <div class="form-group">
+                                <label for="title" class="col-xs-2 control-label">通知编号：</label>
+                                <div class="col-xs-8">
+                                    <input  readonly type="text" class="form-control form-input input-xlarge" id="notice_id" name="notice_id" value="{{ $data['notice_id'] or ''}}"  />
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="title" class="col-xs-2 control-label">类型：</label>
+                                <div class="col-xs-8">
+                                    <select class="form-control form-input input-xlarge" id="type" name="type">
+                                        <option value='1' @if(isset($data['type']  ) && $data['type'] ==1)  SELECTED @endif >success</option>
+                                        <option value='2' @if(isset($data['type']  ) && $data['type'] ==2)  SELECTED @endif>warning</option>
+                                        <option value='3' @if(isset($data['type']  ) && $data['type'] ==2)  SELECTED @endif>danger</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="title" class="col-xs-2 control-label">用户id：</label>
+
+                                <div class="col-xs-8">
+                                    <input type="text" class="form-control form-input input-xlarge" placeholder="" id="user_id" name="user_id" value="{{ $data['user_id'] or ''}}" datatype="*" errormsg="不能为空"  />
+                                    <span class="Validform_checktip"></span>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="title" class="col-xs-2 control-label">样式：</label>
+
+                                <div class="col-xs-8">
+                                    <input type="text" class="form-control form-input input-xlarge" placeholder="" id="style" name="style" value="{{ $data['style'] or ''}}"  datatype="*" errormsg="不能为空"/>
+                                    <span class="Validform_checktip"></span>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="extension" class="col-xs-2 control-label">标题：</label>
+                                <div class="col-xs-8">
+                                    <input type="text" class="form-control form-input input-xlarge" placeholder="" id="title" name="title" value="{{ $data['title'] or '' }}" datatype="*" errormsg="不能为空"   />
+                                    <span class="Validform_checktip"></span>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="type" class="col-xs-2 control-label">状态：</label>
+                                <div class="col-xs-8">
+                                    <select class="form-control form-input input-xlarge" id="status" name="status">
+                                        <option value='1' @if(isset($data['status']  ) && $data['status'] ==1)  SELECTED @endif >有效</option>
+                                        <option value='0' @if(isset($data['status']  ) && $data['status'] ==0)  SELECTED @endif>无效</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="type" class="col-xs-2 control-label">显示：</label>
+
+                                <div class="col-xs-8">
+                                    <select class="form-control form-input input-xlarge" id="is_always" name="is_always">
+                                        <option value='1' @if(isset($data['is_always']  ) && $data['is_always'] ==1)  SELECTED @endif >一直显示</option>
+                                        <option value='0' @if(isset($data['is_always']  ) && $data['is_always'] ==0)  SELECTED @endif>只显示一次，点击后消失</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="type" class="col-xs-2 control-label">图标：</label>
+
+                                <div class="col-xs-8">
+                                    <input type="text" class="form-control form-input input-xlarge" placeholder="" id="icon" name="icon" value="{{ $data['icon'] or ''}}" datatype="*" errormsg="不能为空"  />
+                                    <span class="Validform_checktip"></span>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="type" class="col-xs-2 control-label">窗口：</label>
+
+                                <div class="col-xs-8">
+                                    <select class="form-control form-input input-xlarge" id="new_window" name="new_window">
+                                        <option value='1' @if(isset($data['new_window']  ) && $data['new_window'] ==1)  SELECTED @endif >新窗口</option>
+                                        <option value='0' @if(isset($data['new_window']  ) && $data['new_window'] ==0)  SELECTED @endif>当前窗口</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="title" class="col-xs-2 control-label">开始日期：</label>
+                                <div class="col-xs-8">
+                                   <input type="search" class="form-control  form-input input-xlarge search" placeholder="开始日期（含）" id="start_time" name="start_time"value="{{$data['start_time'] or  ''}}">
+                                    <span class="Validform_checktip"></span>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="title" class="col-xs-2 control-label">结束日期：</label>
+                                <div class="col-xs-8">
+                                    <input type="search" class="form-control form-input input-xlarge search" placeholder="结束日期（含）" id="end_time" name="end_time"value="{{$data['end_time'] or  ''}}">
+                                    <span class="Validform_checktip"></span>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="content" class="col-xs-2 control-label">点击链接：</label>
+                                <div class="col-xs-8">
+                                    <input type="text" class="form-control form-input input-xlarge" placeholder="" id="link" name="link" value="{{ $data['link'] or '' }}"   />
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="title" class="col-xs-2 control-label">内容：</label>
+                                <div class="col-xs-8">
+                                    <textarea class="form-control form-input input-xlarge" rows="3" placeholder="" id="content"  datatype="*" errormsg="不能为空" name="content"  >{{$data['content'] or ''}}</textarea>
+                                    <span class="Validform_checktip"></span>
+                                </div>
+                            </div>
+
+                            <div class="form-group text-center">
+                                <button type="button" class="btn btn-success" id="saveNoticeBtn">
+                                    <i class="glyphicon glyphicon-plus"></i>保存
+                                </button>
+                            </div>
+                        </div>
+
+                    </div>
+                </form>
+            </div>
+        </div>
+<!--    </div>-->
+</div>
+    <!--end container-->
+
+    <link rel="stylesheet" href="/static/css/validator.css">
+    <script type="text/javascript" src="/static/js/Validform_v5.3.2_min.js"></script>
+    <link type="text/css" rel="stylesheet" href="/static/bootstrap/css/bootstrap-datetimepicker.min.css">
+    <script src="/static/bootstrap/js/bootstrap-datetimepicker.min.js"></script>
+    <script type="text/javascript">
+        $('.search').datetimepicker({format: 'yyyy-mm-dd',minView: 'month',autoclose:true});
+        $(function () {
+            var validform_obj =  $("#noticeForm").Validform({
+                tiptype:3,
+                postonce:true,
+                showAllError:true,
+                ajaxPost:true
+            });
+
+            $("#saveNoticeBtn").on('click',function(){
+                var valid_result = validform_obj.check(false)
+                if(!valid_result){
+                    return false;
+                }
+                $.ajax({
+                    url: "/prompt/ajax_update_add",
+                    method: "POST",
+                    data: $("#noticeForm").serialize(),
+                    dataType: "json",
+                    success: function (msg) {
+
+                        if (msg.code == 200) {
+                            show_message(msg.code, msg);
+                            window.location.reload();
+                        } else {
+                            var ret = [];
+                            ret['error_msg'] = msg['error_detail'];
+                            show_message(msg.code, ret);
+                        }
+                    }
+                });
+
+            });
+
+
+        })
+    </script>
+@endsection

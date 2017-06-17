@@ -1,0 +1,102 @@
+function my() {
+    return this;
+}
+var controlFns = {
+    'index': function () {
+        return this.redirectTo('/my/apply/');
+    },
+    //我的申请
+    'apply': {
+        'index': function(){
+            return this.redirectTo('/my/apply/contract');
+        },
+        //合同
+        'contract':function(){
+            var php = {};
+            this.bindDefault(php);
+            this.bridgeMuch(php);
+            this.listenOver(function (data) {
+                data._CSSLinks = ['plugin/bootstrap/daterangepicker','nifty/bootstrap-select.min','queen/approval','queen/timeline','fms/my/base'];
+                data._JSLinks = ['s/ueditor/ueditor.parse.min'];
+                this.render('my/apply/contract.html', data);
+            });
+        },
+        //付款
+        'pay':function(){
+            var php = {};
+            this.bindDefault(php);
+            this.bridgeMuch(php);
+            this.listenOver(function (data) {
+                data._CSSLinks = ['plugin/bootstrap/daterangepicker','nifty/bootstrap-select.min','queen/approval','queen/timeline','fms/my/base'];
+                data._JSLinks = ['s/ueditor/ueditor.parse.min'];
+                this.render('my/apply/pay.html', data);
+            });
+        },
+        'budget':function(){
+            var php = {};
+            this.bindDefault(php);
+            this.bridgeMuch(php);
+            this.listenOver(function (data) {
+                data._CSSLinks = ['plugin/bootstrap/daterangepicker','nifty/bootstrap-select.min','queen/approval','queen/timeline','fms/my/base'];
+                data._JSLinks = ['s/ueditor/ueditor.parse.min'];
+                this.render('my/apply/budget.html', data);
+            });
+        }
+    },
+    'approval':{
+        'index': function(){
+            return this.redirectTo('/my/approval/contract');
+        },
+        'contract':function(){
+            var php = {};
+            this.bindDefault(php);
+            this.bridgeMuch(php);
+            this.listenOver(function (data) {
+                data._CSSLinks = ['plugin/bootstrap/daterangepicker','nifty/bootstrap-select.min','queen/approval','queen/timeline','fms/my/base'];
+                this.render('my/approval/contract.html',data)
+            });
+        },
+        'pay':function(){
+            var php = {};
+            this.bindDefault(php);
+            this.bridgeMuch(php);
+            this.listenOver(function (data) {
+                data._CSSLinks = ['plugin/bootstrap/daterangepicker','nifty/bootstrap-select.min','queen/approval','queen/timeline','fms/my/base'];
+                this.render('my/approval/pay.html',data)
+            });
+        },
+        'budget':function(){
+            var php = {};
+            this.bindDefault(php);
+            this.bridgeMuch(php);
+            this.listenOver(function (data) {
+                data._CSSLinks = ['plugin/bootstrap/daterangepicker','nifty/bootstrap-select.min','queen/approval','queen/timeline','fms/my/base'];
+                this.render('my/approval/budget.html',data)
+            });
+        }
+    },
+    'manage':{
+        'index': function(){
+            return this.redirectTo('/my/manage/contract');
+        },
+        'contract':function(){
+            var php = {};
+            this.bindDefault(php);
+            this.bridgeMuch(php);
+            this.listenOver(function (data) {
+                data._CSSLinks = ['queen/upload','fms/my/manage/base'];
+                this.render('my/manage/contract.html', data);
+            });
+        },
+        'pay': function () {
+            var php = {};
+            this.bindDefault(php);
+            this.bridgeMuch(php);
+            this.listenOver(function (data) {
+                data._CSSLinks = ['fms/my/manage/base'];
+                this.render('my/manage/pay.html', data);
+            });
+        }
+    }
+};
+exports.__create = controller.__create(my, controlFns);

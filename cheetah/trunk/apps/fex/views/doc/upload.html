@@ -1,0 +1,125 @@
+<%#head.html%>
+
+
+
+<header class="feature">
+    <div class="container wide">
+        <h1 class="title">附件上传</h1>
+        <p class="subtitle">满足各种需求的附件上传插件</p>
+    </div>
+</header>
+
+<div class="container block main" role="main">
+
+    <section>
+        <h2>依赖：</h2>
+        <p>less 模块: <span class="label label-dark">queen/upload</span></p>
+        <p>文件路径: <span class="label label-dark">apps/static/less/queen/upload.less</span></p>
+    </section>
+
+    <section>
+    <h2>基本使用.</h2>
+        <a class="btn btn-default btn-xs btn-queen-upload" id="upload-btn" href="javascript:void(0)">点击上传</a>
+<pre class="language-javascript"><code>
+var upload = $("#upload-btn").QueenUpload({
+    action: "/upload/file",
+    multiple: true,
+    draggable: false,
+    maxFileCount: 10,
+    maxFileSize: 50000,
+    allowTypes: ['jpg','png','doc','ppt'],
+});
+//upload.QueenUpload('addExistFiles',{"identify": "123", "name": "医院证明.jpg", "type": "jpg"});
+//upload.QueenUpload('addExistFiles',{"identify": "123", "name": "医院证明.jpg", "type": "jpg"});
+</code></pre>
+    </section>
+
+
+    <section>
+    <h2>拖拽上传.</h2>
+        <a class="btn btn-default btn-xs btn-queen-upload" id="dnd-upload-btn" href="javascript:void(0)">点击上传</a>
+<pre class="language-javascript"><code>
+var upload = $("#upload-btn").QueenUpload({
+    action: "/upload/file",
+    multiple: true,
+    draggable: true,
+    maxFileCount: 10,
+    maxFileSize: 50000,
+    allowTypes: ['jpg','png','doc','ppt'],
+    //showProgressBar: false,
+    //初始化文件列表（用于增加已经上传的文件列表，数据修改的时候会用得到）
+    //existFiles: [
+    //    {"identify": "123", "name": "图片1.jpg", "type": "jpg"},
+    //    {"identify": "1235", "name": "图片2.jpg", "type": "png"}
+    //],
+    onSuccess: function (response, file) {
+        //response 是上传接口的返回数据
+        //file是文件对象.
+        console.log(response, file);
+    },
+    onError: function (message, file) {
+        console.log(message, file);
+    },
+    //onProgress: function (percent, file) {
+    //    console.log(percent, file);
+    //},
+    onFileRemove: function (file) {
+        console.log(file);
+    }
+});
+//upload.QueenUpload('addExistFiles',{"identify": "123", "name": "医院证明.jpg", "type": "jpg"});
+//upload.QueenUpload('addExistFiles',{"identify": "123", "name": "医院证明.jpg", "type": "jpg"});
+</code></pre>
+    </section>
+
+
+
+    <section>
+    <h2>所有配置选项</h2>
+<pre class="language-javascript"><code>
+var defaults = {
+    name: null, //上传文件的字段名字
+    action: "", //上传路径
+    draggable: false, //是否允许拖拽上传
+    crossDomain: false, //是否是跨域请求
+    backUri: null, //配合crossDomain使用
+    multiple: false, //是否允许多文件上传
+    headers: {}, //需要添加的HTTP 头
+    data: {}, //需要额外提交的数据
+    timeout: 0,//超时时间
+    allowTypes: null, //允许的文件类型
+    maxFileCount: 0, //允许同时上传的最大文件数
+    maxFileSize: 0, //允许上传的最大文件大小 0为不限制
+    existFiles: [], //初始化的文件列表：必须是{"identify":"文件标识","name":"文件名","type":"文件类型jpg"}的对象数组
+    showProgressBar: true, //是否显示进度条
+    message: {
+        textChooseFile: "选择文件",
+        textContinueUpload: "继续上传",
+        allowTypeTips: "仅支持JPG,PDF格式.",
+        draggableTips: "或将文件拖拽至此区域",
+        statusText: {
+            uploading: '上传中...',
+            success: '上传成功!',
+            error: '上传失败!',
+            timeout: '上传超时'
+        },
+        "error": {
+            "tooMuch": "每次最多上传{count}个文件,请重新选择",
+            "tooLarge": "文件大小不符合.",
+            "typeNotAllowed": "文件类型不允许."
+        }
+    },
+    onSuccess: $.noop,
+    onError: $.noop,
+    onProgress: $.noop,
+    onFileRemove: $.noop
+};
+</code></pre>
+    </section>
+
+
+
+
+
+<%! $_ENGINE_SELF.callFn("useModule")("fml.use('fex/doc/upload');", this._JSstack , this._JSmods); %>
+<%#foot.html%>

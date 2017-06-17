@@ -1,0 +1,159 @@
+// 时间插件需要的数据
+var today_date = new Date();
+var year = today_date.getFullYear();
+var month = today_date.getMonth()+1;
+var next_month = today_date.getMonth()+2;
+var begin = year+'-'+month+'-01 00:00';
+var end = year+'-'+next_month+'-01 00:00';
+var dates_before=[];
+var tips = [];
+$.getJSON('/aj/meeting/mytime_ajax_all',{start_time:begin, end_time:end},function(ret) {    
+  // console.warn(ret);
+  if (ret.code==200){
+    $.each(ret.data,function(k,v){
+      var data1 = v.start.split(' ');
+      var data2 = data1[0].split('-');
+      var str = data2[1]+'/'+data2[2]+'/'+data2[0];
+      var str_index = dates_before.indexOf(str);
+      // console.warn('index'+str_index);
+      if(str_index == -1){
+        // console.log('fyc');
+        dates_before.push(str);
+        tips.push(v.title);
+        // console.warn(dates_before);
+      }else{
+        tips[str_index]+=','+v.title;
+        // 加备注，
+      }
+    });
+  }
+  var dates = dates_before;
+  // console.log(dates);
+  // 时间插件、
+  $('#demo-dp-range').datepicker({
+    todayHighlight:true,
+    // todayBtn:'today',
+    beforeShowDay:function(date){
+        // console.warn(date);
+        // 这个 option返回一个对象，对象的三个属性如 return 中显示的那样。  
+        //日期的格式，默认为m/d/y. 如果写错，Date类型不能正确转换
+        // var dates = ['05/19/2015', '05/24/2015', '05/26/2015'];
+        // var dates = dates_before;
+              // var tips = ['05/19/2015', '揍你', '05/26/2015'];
+            for (var i = 0; i < dates.length; i++) {
+                if (new Date(dates[i]).toString() == date.toString()) {
+                  return {enabled:true, classes:'something_to_do',tooltip:tips[i]};
+                  // 这三个参数分别代表：你想高亮的日期是否可选
+                  // 想给它们加什么类名，高亮的 在 这个插件中的样式 是 today，其他插件中可能是highlight
+                  // 该日期的title 显示什么。比如滑过24号 ，就会显示出揍你。
+                }
+            }
+            // return {enabled:true,classes:''};
+            // 至于最后这个return  我不太明白这是干什么的。可能是 数组为空就 什么也不做？？？所以我给注掉 了。
+      }
+  }).on('changeDate',function(event){
+    mytime(event.date.valueOf());
+  });
+
+});
+
+// 把我的时间明细加到当日待办事项中
+function mytime(mytime){
+  var today_date,next_month,today_month,next,today;
+  if(mytime==undefined){
+    today_date = new Date();
+  }else{
+    today_date = new Date(mytime);
+  }
+   
+  // console.log(today_date);
+  var date = today_date.valueOf();
+  // console.log(date);
+  var next_date = new Date(date +(24*60*60*1000));
+  // console.warn(next_date);
+  
+  if (next_date.getMonth()<10){
+    next_month="0"+(next_date.getMonth()+1);
+  }else{
+    next_month=next_date.getMonth()+1;
+  }
+  if (today_date.getMonth()<10){
+    // console.warn('fyc');
+    today_month="0"+(today_date.getMonth()+1);
+  }else{
+    today_month=today_date.getMonth()+1;
+  }
+  if (next_date.getDate()+1<10){
+    next="0"+next_date.getDate();
+  }else{
+    next=next_date.getDate();
+  }
+  if (today_date.getDate()+1<10){
+    today="0"+today_date.getDate();
+  }else{
+    today=today_date.getDate();
+  }
+  var next_date = next_date.getFullYear()+'-'+next_month+'-'+next+' 00:00';
+  var today_date = today_date.getFullYear()+'-'+today_month+'-'+today+' 00:00';
+  $.getJSON('/aj/meeting/mytime_ajax_all',{start_time:today_date, end_time:next_date},function(ret) {    
+    // console.log(ret);
+    $('.todo_today .panel_body div').empty();
+    if(ret.code==400){
+      // var str='';
+      // console.log('empty');
+      $('.todo_today').find('.img_div').removeClass('hide');
+    }else if (ret.code==200){
+      $('.todo_today').find('.img_div').addClass('hide');
+      var data = ret.data;
+      var str='<ul>';
+      for(var i=0; i < data.length; i++) {
+        data[i].start.format
+        var start = data[i].start.split(' ');
+        var end = data[i].end.split(' ');
+        start_time = start[1].substring(0,5);
+        end_time = end[1].substring(0,5);
+        str +='<li><span class="right">'+start_time+'-'+end_time+'</span><span class="mytime_title">'+data[i].title+'</span></li>';
+      }
+      str +='</ul>';
+      $('.todo_today .panel_body div').empty().append(str);
+    }
+      
+  });
+}
+// 初始化当天的我的时间内容
+mytime();
+
+
+    // var a = this.readData('username',this.req._get,0);
+// $('.button_select').click(function(){
+//   // 搜索框左边点击展示ul
+//   var _this = $(this).children('ul');
+//   if($(_this).hasClass('hide')){
+//     $(_this).removeClass('hide');
+//   }else{
+//     $(_this).addClass('hide');
+//   }
+// });
+// $('.choose_select li').click(function(){
+//   // 更改，赋值
+//   $('.button_select_word').html($(this).html()).attr('name',$(this).attr('name'));
+// });
+$('.select_pic').click(function(){
+  var q = $('.input_select').val();
+  if(q==''){
+    q = 'undefined';
+    return false;
+  }
+  // window.location.href="/contacts/search?q="+q+"&key="+$('.button_select_word').attr('name');
+  window.location.href="/contacts/mulity_search/?q="+q;
+});
+// 回车响应
+$(document).on('keydown', function(e) {
+  var e = e || event;
+  var currKey = e.keyCode || e.which || e.charCode;
+  if (currKey == 13) {
+    $('.select_pic').click();
+  }
+});
+$('#mainnav-menu-wrap a[href="/home"]').parent().addClass('active-link');
+

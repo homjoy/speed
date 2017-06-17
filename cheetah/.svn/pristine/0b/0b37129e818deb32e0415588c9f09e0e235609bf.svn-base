@@ -1,0 +1,78 @@
+fml.define('speed/home/index', ['jquery', 'plugin/moment', 'plugin/bootstrap/datepicker','plugin/store'], function (require, exports) {
+    "use strict";
+    var $ = require('jquery');
+    var moment = require('plugin/moment');
+    var store = require('plugin/store');
+
+
+    /*
+     * tab选项卡
+     * */
+    var $frLis = $('.frListTitle li'),$curListContents = $('.friendLinkLists').find('div[id$="Class"]');
+    $(document).on('click','.frListTitle li',function(){
+        var $curTab = $(this),tabId = $curTab.attr('data-id');
+        $frLis.removeClass('active');
+        $curTab.addClass('active');
+
+        $curListContents.css({"display":"none"});
+        $curListContents.each(function(index,item){
+            var $tab = $(item);
+
+            if($tab.attr('id') == tabId){
+                $tab.css({"display":"block"});
+            }
+        });
+    });
+
+    $('.frListTitle li.active').trigger('click');
+
+    /**
+     *天气插件
+     */
+    var skyconsOptions = {
+        "color": "#FC6E48",
+        "resizeClear": true
+    }
+
+    /* Main Icon */
+    var skycons = new Skycons(skyconsOptions);
+    //skycons.add("demo-weather-xs-icon", Skycons.PARTLY_CLOUDY_DAY);
+    var demo_weather_skycon = {
+        'demo-weather-skycon-today':$('#demo-weather-skycon-today').val(),
+        'demo-weather-skycon-0':$('#demo-weather-skycon-0').val(),
+        'demo-weather-skycon-1':$('#demo-weather-skycon-1').val(),
+        'demo-weather-skycon-2':$('#demo-weather-skycon-2').val(),
+
+        'demo-weather-skycon-today2':$('#demo-weather-skycon-today2').val(),
+        'demo-weather-skycon-02':$('#demo-weather-skycon-02').val(),
+        'demo-weather-skycon-12':$('#demo-weather-skycon-12').val(),
+        'demo-weather-skycon-22':$('#demo-weather-skycon-22').val()
+    }
+    skycons.add("demo-weather-icon-today", Skycons[demo_weather_skycon['demo-weather-skycon-today']]);
+    skycons.add("demo-weather-icon-0",Skycons[demo_weather_skycon['demo-weather-skycon-0']]);
+    skycons.add("demo-weather-icon-1",Skycons[demo_weather_skycon['demo-weather-skycon-1']]);
+    skycons.add("demo-weather-icon-2",Skycons[demo_weather_skycon['demo-weather-skycon-2']]);
+
+    skycons.add("demo-weather-icon-today2", Skycons[demo_weather_skycon['demo-weather-skycon-today2']]);
+    skycons.add("demo-weather-icon-02",Skycons[demo_weather_skycon['demo-weather-skycon-02']]);
+    skycons.add("demo-weather-icon-12",Skycons[demo_weather_skycon['demo-weather-skycon-12']]);
+    skycons.add("demo-weather-icon-22",Skycons[demo_weather_skycon['demo-weather-skycon-22']]);
+    skycons.play();
+    setTimeout(function(){
+        $('.input_select').focus();
+    },500);
+
+    //天气隐藏
+    if($('.workcityfyc').val()=='1'){
+        $('#demo-weather-widget').parents('.we').removeClass('hide');
+    }else{
+        $('#demo-weather-widget2').parents('.we').removeClass('hide');
+    }
+    var a = store.get('FAMILYBBS_KEY');
+    var head= document.getElementsByTagName('head')[0];
+    var script= document.createElement('script');
+    script.type= 'text/javascript';
+    script.src= a;
+    head.appendChild(script);
+
+});

@@ -1,0 +1,22 @@
+function pages_search_results() {
+	return this;
+}
+var controlFns = {
+	'index' : function(){
+		this.pages_search_results()
+	},
+	'pages_search_results' : function(){
+		var php = {
+			
+		}
+        this.bindDefault(php);
+		this.bridgeMuch(php);
+		this.listenOver(function(data){
+			console.log(data)
+
+			data._CSSLinks = ['fontfamily','bootstrap','nifty.min','font-awesome.min','switchery.min','bootstrap-select.min','nifty-demo.min','pace.min'];
+			this.render('pages_search_results.html' , data);
+		})
+	}
+};
+exports.__create = controller.__create(pages_search_results, controlFns);

@@ -1,0 +1,27 @@
+{{if listBudget.length> 0}}
+    <hr class="line-horizontal"/>
+    <h5 class="budget-table-title">预算执行分析————{{contractPay.cpbBugetitemName}}</h5>
+    <table class="table table-bordered record-print budget-table">
+        <thead>
+        <tr>
+            <td colspan="1">预算期间</td>
+            <td colspan="2">预算金额</td>
+            <td colspan="2">累计执行</td>
+            <td colspan="2">执行进度</td>
+            <td colspan="2">预算余额</td>
+        </tr>
+        </thead>
+        <tbody>
+        {{each listBudget as item}}
+        <tr>
+            <td colspan="1">{{item.termCode}}</td>
+            <td colspan="2">{{item.budget | currencyFormat}}</td>
+            <td colspan="2">{{item.used | currencyFormat}}</td>
+            <td colspan="2">{{item.scale || '0%'}}</td>
+            <td colspan="2">{{item.balance | currencyFormat}}</td>
+        </tr>
+        {{/each}}
+     </tbody>
+    </table>
+{{/if}}
+

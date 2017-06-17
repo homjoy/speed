@@ -1,0 +1,144 @@
+fml.define('speed/user/login', ['jquery', 'plugin/cookie','component/select','plugin/store'], function (require, exports) {
+    "use strict";
+    var $ = require('jquery');
+    var Cookies = require('plugin/cookie');
+    var store = require('plugin/store');
+
+    $("form").on("submit", function (e) {
+        e.preventDefault();
+        return false;
+    });
+    $("#company-email").select({
+        'placeholder': "请选择"
+    }).on('change',function(){
+        $('.btn-sign-in').removeAttr('disabled');
+    });
+    //发短信
+    //var sendVerifyBtn = new CountDown('#send-verify-code', {
+    //    storeKey: "login_count_down_time",
+    //    ajax: {
+    //        url: '/aj/user/send_login_verify',
+    //        type: 'post',
+    //        dataType: 'json'
+    //    },
+    //    onComplete: function (ret) {
+    //        if (ret.code != 200) {
+    //            $('.error-message').text(ret.error_msg || '发送验证码失败.');
+    //            return false;
+    //        }
+    //        $('.error-message').text('');
+    //    },
+    //    getData: function () {
+    //        var username = $("#username").val();
+    //        if (!username) {
+    //            $('.error-message').text('请填写用户名.');
+    //            return false;
+    //        }
+    //
+    //        return {
+    //            send_type: "sms",
+    //            type: 6,
+    //            username: $("#username").val(),
+    //            password: $("#password").val()
+    //        };
+    //    }
+    //});
+
+    //登陆方法
+    function login() {
+        var username = $('#username').val().replace(/(^\s*)|(\s*$)/g, "");
+        var password = $('#password').val().replace(/(^\s*)|(\s*$)/g, "");
+        var suffix = $('#company-email').val();
+        if (!username || !password) {
+            $('.error-message').text('用户名和密码不能为空');
+            return false;
+        }
+
+        $('.error-message').text('');
+
+        var logindata ={
+            "username": username,
+            "password": password,
+            "suffix":suffix
+        }
+        var logindata2 ={
+            "email": username,
+            "pwd": password
+        }
+        if (logindata.suffix==1){
+            logindata2.email=logindata.username+'@meilishuo.com'
+        }else if (logindata.suffix==2){
+            logindata2.email=logindata.username+'@mogujie.com'
+        }
+        var strfamily = $('.familypost').attr('href');
+        console.warn(strfamily);
+
+        $.ajax({
+            url : '/aj/user/login',
+            data:logindata,
+            cache : false,
+            async : false,
+            type : "POST",
+            dataType : 'json',
+            success : function (res){
+                if (res.code != 200) {
+                    return $('.error-message').text(res.error_msg);
+                } else {
+                    $.ajax({
+                        url : strfamily,
+                        data:logindata2,
+                        cache : false,
+                        async : false,
+                        type : "POST",
+                        dataType : 'json',
+                        success : function (r){
+                            if (r.code == 200) {
+                                store.set('FAMILYBBS_KEY', r.data);
+                            }
+                        }
+                    });
+                    $('.error-message').text(''); //清空提示.
+                    Cookies.remove('speed_token', {domain: 'meilishuo.com'});
+                    Cookies.remove('speed_token');
+                    Cookies.set('speed_token', res.data.speed_token, {expires: 365, domain: window.location.hostname});
+                    window.location.href = '/home';
+                }
+            }
+        });
+
+        //$.post('/aj/user/login',logindata, function (res) {
+        //    if (res.code != 200) {
+        //        return $('.error-message').text(res.error_msg);
+        //    } else {
+        //        $.post(strfamily,logindata2, function (r) {
+        //            if (r.code == 200) {
+        //                store.set('FAMILYBBS_KEY', r.data);
+        //            }
+        //        }, 'json');
+        //        $('.error-message').text(''); //清空提示.
+        //        Cookies.remove('speed_token', {domain: 'meilishuo.com'});
+        //        Cookies.remove('speed_token');
+        //        Cookies.set('speed_token', res.data.speed_token, {expires: 365, domain: window.location.hostname});
+        //        window.location.href = '/home';
+        //    }
+        //}, 'json');
+    }
+
+    /**
+     * 登陆
+     */
+    $('.btn-sign-in').on('click', function () {
+        login();
+        return false;
+    });
+
+
+    //响应回车
+    $(document).on('keydown', function (e) {
+        var currKey = e.keyCode || e.which || e.charCode;
+        if (currKey == 13) {
+            login();
+        }
+    });
+
+});

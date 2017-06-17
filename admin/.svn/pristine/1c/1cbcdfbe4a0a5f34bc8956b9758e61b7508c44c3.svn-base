@@ -1,0 +1,107 @@
+@extends('layouts.master')
+
+@section('content')
+<link type="text/css" rel="stylesheet" href="/static/css/pagination.css">
+<script src="/static/js/pagination.js"></script>
+<script src="/static/bootstrap/js/bootstrap-datetimepicker.min.js"></script>
+<style type="text/css">
+</style>
+<!--<div class="col-xs-6 col-sm-2">-->
+<!--    @include('hr/attendance/Navbar')-->
+<!--</div>-->
+<!--<div class="col-xs-12 col-sm-10">-->
+<div class="panel-heading" style="overflow: hidden; line-height: 32px">
+    <ol class="breadcrumb">
+        <li class="active" role="presentation"><a href="/hr/attendance/attendance_group" class="application_num">考勤组管理</a></li>
+    </ol>
+    <div class="panel panel-default">
+        <p></p>
+        <form  id="attendance" class="form-horizontal" role="form" action="">
+             <input  type="hidden"  name="id"  value="{{ $data['id'] or 0 }}">
+            <div class="form-group">
+                <label class="control-label col-lg-3" for="">名称</label>
+                <div class="col-lg-5">
+                    <input  type="text" class="form-control " placeholder="" name="name" id = 'name' value="{{ $data['name'] or '' }}">
+                </div>
+
+            </div>
+            <div class="form-group">
+                <label class="control-label col-lg-3" for="">上午上班时间</label>
+                <div class="col-lg-5">
+                    <input  type="text" class="form-control date-time" placeholder="10:00:00" name="morning_start" id = 'morning_start'value="{{ $data['morning_start'] or '' }}">
+                </div>
+
+            </div>
+            <div class="form-group">
+                <label class="control-label col-lg-3" for="">上午下班时间</label>
+                <div class="col-lg-5">
+                    <input  type="text" class="form-control date-time" placeholder="10:00:00" name="morning_end" id = 'morning_end' value="{{ $data['morning_start'] or '13:00:00'}}">
+                </div>
+
+            </div>
+            <div class="form-group">
+                <label class="control-label col-lg-3" for="">下午上班时间</label>
+                <div class="col-lg-5">
+                    <input  type="text" class="form-control date-time " placeholder="10:00:00" name="afternoon_start" id = 'afternoon_start' value="{{ $data['afternoon_end'] or '14:00:00'}}">
+                </div>
+
+            </div>
+            <div class="form-group">
+                <label class="control-label col-lg-3" for="">下午下班时间</label>
+                <div class="col-lg-5">
+                    <input  type="text" class="form-control date-time" placeholder="19:00:00" name="afternoon_end" id = 'afternoon_end' value="{{ $data['afternoon_end'] or ''}}">
+                </div>
+
+            </div>
+            <div class="form-group">
+                <div class="col-lg-10 text-center">
+                    <button  formId="userForm" class="btn btn-primary add_new submit_btn" id="submit" type="button" data-toggle="modal" data-target="#cateModal">保存</button>
+                </div>
+            </div>
+        </form>
+    </div>
+
+
+
+</div>
+
+
+
+<link type="text/css" rel="stylesheet" href="/static/bootstrap/css/bootstrap-datetimepicker.min.css">
+<script src="/static/bootstrap/js/bootstrap-datetimepicker.min.js"></script>
+<script>
+    //时间
+    // $('.date-time').datepicker({'pickerPosition': 'bottom-left',dateFormat: 'hh:ii:ss','minView':'hour','maxView':'hour'});
+    $('#submit').click(function () {
+        var name = $('#name').val();
+        var morning_start = $('#morning_start').val();
+        var morning_end = $('#morning_end').val();
+        var afternoon_start = $('#afternoon_start').val();
+        var afternoon_end = $('#afternoon_end').val();
+        if(name == '' || morning_start =='' || morning_end =='' || afternoon_start =='' || afternoon_end ==''){
+            var ret = [];
+            ret['error_msg'] = '必须填写';
+            show_message(400, ret);
+            return;
+        }
+        $.ajax({
+            url: "/hr/attendance/ajax_attendance_update_add",
+            method: "GET",
+            data: $("#attendance").serialize(),
+            dataType: "json",
+            success: function (msg) {
+                if (msg.code == 200) {
+                    show_message(msg.code, msg);
+                    window.location.reload();
+                } else {
+                    var ret = [];
+                    ret['error_msg'] = msg['error_detail'];
+                    show_message(msg.code, ret);
+                }
+            }
+        });
+
+    })
+
+</script>
+@endsection

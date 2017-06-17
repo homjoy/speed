@@ -1,0 +1,198 @@
+<?php 
+namespace WorkFlowApi\Modules\Task;
+
+/**
+ * 任务创建
+ * @author jingjingzhang@meilishuo.com
+ * @since 2015-07-30
+ */
+
+use WorkFlowApi\Modules\Common\BaseModule;
+use WorkFlowApi\Package\Common\Response;
+use WorkFlowApi\Package\Task\TaskTransfer;
+use Libs\Log\Log;
+use Libs\Log\BasicLogWriter;
+
+class TaskCreate extends BaseModule {
+
+	protected $errors = NULL;
+	private $task = NULL;
+
+	public function run() {
+
+		$log = new log(new BasicLogWriter());
+		$this->_init();
+		
+		// 参数校验
+		if ($this->post()->hasError()) {
+			$return = Response::gen_error(10001, '', $this->errors);
+        	return $this->app->response->setBody($return);
+		}
+
+		if (empty($this->task['sub_type_id']) || empty($this->task['user_id'])) {
+			$return = Response::gen_error(10001);
+        	return $this->app->response->setBody($return);
+		}
+		
+		// 获取任务节点列表
+		$processInfo = self::getClient()->call('workflowatom', 'process/process_node_list', array(
+			'type_id' 	=> $this->task['sub_type_id'],
+			'status'	=> 1
+		));
+		$processInfo = $this->parseApiData($processInfo);
+		
+		if ($processInfo === FALSE) {
+			return;
+		} else if (empty($processInfo)) {
+			$return = Response::gen_error(10001, '', '任务流程节点为空');
+			return $this->app->response->setBody($return);
+		}
+
+		// 判断用户是否有创建任务的权限
+		$firstNode = $this->getFirstNode($processInfo);
+		if (empty($firstNode)) {
+			$return = Response::gen_error(10001, '', '任务流程头节点为空');
+			return $this->app->response->setBody($return);
+		}
+
+		$auth = $this->checkCreateAuth($firstNode, $this->task['user_id']);
+		if ($auth == FALSE) {
+			$return = Response::gen_error(90001, '', '用户没有创建任务的权限');
+			return $this->app->response->setBody($return);
+		}
+		
+		// 新建任务时，current_user_id=0， current_node_id=0，状态为新建
+		$queryParams = array(
+			'tasktype_id'     => $this->task['sub_type_id'],
+			'user_id'         => $this->task['user_id'],
+			'task_name'       => $this->task['task_name'],
+			'task_content'    => json_encode($this->task['task_content']),
+			'current_user_id' => 0,
+			'status'          => 1,
+			'current_node_id' => 0,
+		);
+		
+		$taskInfo = self::getClient()->call('workflowatom', 'process/task_create', $queryParams);
+		$taskInfo = $this->parseApiData($taskInfo);
+		
+		if ($taskInfo === FALSE) {
+			return;
+		}
+		
+		// 初始化任务
+		$initInfo = TaskTransfer::taskInitialize(array(
+			'taskInfo'		=> $taskInfo,
+			'processInfo'	=> $processInfo
+		));
+		
+		if (!empty($initInfo['error_msg'])) {
+			return $this->app->response->setBody(Response::gen_error($initInfo['error_code'], $initInfo['error_msg']));
+		}
+		
+		// 初始化后更新任务相关数据
+		$taskInfo = array_merge($taskInfo, $initInfo);
+	
+		// 启动任务开始流转
+		$transferInfo = TaskTransfer::operateTransfer(array(
+			'taskInfo'			=> $taskInfo,
+			'operator'			=> $this->task['user_id'],
+			'action_type'		=> 0,
+			'progress_content'	=> '填写任务内容，开启任务审批流转',
+			'depart_id'			=> $this->task['depart_id'],
+			'processInfo'		=> $processInfo
+		));
+		
+		if (!empty($transferInfo['error_msg'])) {
+			return $this->app->response->setBody(Response::gen_error($transferInfo['error_code'], $transferInfo['error_msg']));
+		}
+
+		$log->log('workflow_api_task_create', array(
+			'params' => $this->task,
+			'return' => array(
+				'taskId'	=> $taskInfo['task_id'],
+				'status'	=> $transferInfo,
+			),
+		));
+		
+		$this->app->response->setBody(Response::gen_success(array(
+			'taskId'	=> $taskInfo['task_id'],
+			'status'	=> $transferInfo
+		)));
+	}
+
+	private function checkCreateAuth($firstNode = array(), $user_id) {
+
+		if (empty($firstNode) || empty($user_id)) {
+			return FALSE;
+		}
+
+		if (strstr($firstNode['role_id'], 'wf_')) {
+			$role_id = str_replace('wf_', '', $firstNode['role_id']);
+			$userRole = self::getClient()->call('workflowatom', 'user/user_role_map_list', array(
+				'role_id' => $role_id,
+				'user_id' => $user_id,
+				'status'  => 1,
+			));
+			$userRole = $this->parseApiData($userRole);
+
+			if (empty($userRole)) {
+				return FALSE;
+			}
+		}
+		
+		return TRUE;
+	}
+
+	private function getFirstNode($processInfo = array()) {
+
+		if (empty($processInfo)) {
+			return array();
+		}
+
+		$firstNode = array();
+		foreach ($processInfo as $k => $v) {
+			if ($v['pre_process_ids'] == 0) {
+				$firstNode = $v;
+				break;
+			}
+		}
+
+		return $firstNode;
+	}
+
+	private function _init() {
+
+		$this->rules = array(
+			'sub_type_id' => array(
+				'required'   => TRUE,
+				'type'       => 'integer',
+				'maxLength'  => 5,
+			),
+			'user_id' => array(
+				'required'   => TRUE,
+				'type'       => 'integer',
+				'maxLength'  => 11,
+			),
+			'task_name' => array(
+				'required'   => TRUE,
+				'allowEmpty' => FALSE,
+				'type'       => 'string',
+				'maxLength'  => 100,
+			),
+			'depart_id' => array(
+				'type'       => 'integer',
+				'default'	 => 0
+			),
+			//'task_content' => array(
+			//	'required'   => TRUE,
+			//	'allowEmpty' => FALSE,
+			//	'type'       => 'string',
+			//),
+		);
+
+		$this->task = $this->post()->safe();
+		$this->errors = $this->post()->getErrors();
+		
+		$this->task['task_content'] = isset($this->request->POST['task_content']) ? $this->request->POST['task_content'] : array();
+	}
+}

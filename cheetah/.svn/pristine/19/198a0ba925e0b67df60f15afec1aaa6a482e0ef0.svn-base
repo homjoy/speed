@@ -1,0 +1,19 @@
+function error_404() {
+	return this;
+}
+var controlFns = {
+	'index' : function(){
+		this.error_404()
+	}
+	,'error_404' : function(){
+		var php = {}
+        this.bindDefault(php);
+		this.bridgeMuch(php);
+		this.listenOver(function(data){
+			console.log(data)
+			data._CSSLinks = ['fontfamily','bootstrap','nifty.min','font-awesome.min','pace.min'];
+			this.render('error_404.html' , data);
+		})
+	}
+};
+exports.__create = controller.__create(error_404, controlFns);

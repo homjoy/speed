@@ -1,0 +1,223 @@
+@import "../../base.less";
+@import "nav.less";
+.position-r{
+  position: relative;
+}
+#page-content{
+  padding: 20px 62px;
+}
+.search-fyc{
+  width: 185px !important;
+}
+.th-name{width: 130px}
+//当前页样式
+.right-info{
+  .pad-lr78{
+    padding: 25px 25px 0px 68px;
+    position: relative;
+  }
+  .pad-lr70{
+    padding: 25px 25px 0px 60px;
+    position: relative;
+  }
+}
+
+dl{
+  width: 100%;
+  display: block;
+  text-align: left;
+  dt{
+    text-align: right;
+    float: left;
+    width: 14%;
+  }
+  dd{
+    padding-left: 5%;
+    float: left;
+    width: 86%;
+    margin-bottom: 18px;
+  }
+}
+.avatar-name,.depart-date{
+  display: inline-block;
+  text-align: center;
+  float: left;
+}
+.depart-date{
+  margin-bottom: 40px;
+  height: 47px;
+  width: 80%;
+  dl{
+    .bottom{
+      position: relative;
+    }
+    dt{width:30%}
+    dd{
+      width: 70%;
+      margin-bottom: 5px
+    }
+  }
+}
+//查看过往数据
+.old-info{
+  display: inline-block;
+  background:url("../../../../img/queen/approval/olddata.png") no-repeat 0 2px;
+  height: 25px;
+  position: relative;
+  padding-top: 4px;
+  text-indent: 24px;
+  margin-left: 5px;
+  &:hover{color: #ff5e93;}
+}
+
+.leave{
+  position: absolute;
+  background-color: #f8f5d8;
+  left: 100px;
+  top: -4px;
+  border-radius: 5px;
+  border:solid 1px #f5e0a7;
+  display: inline-block;
+  padding: 2.5px 5px;
+  ul{
+    font-size: 12px;
+    display: inline;
+    li{
+      display: inline-block;
+      margin-right: 5px;
+      color:#6a6a6a;
+      span{color: #d68145;}
+    }
+  }
+
+}
+.timelinepl,.timeline{
+  padding-left: 3px;
+  &:before{
+    margin-left: 3px;
+  }
+}
+
+
+.badge-warning {
+  background-color: #ebaa4b !important;
+}
+.left-dt{
+  max-width: 75px
+}
+.left-pink{
+  border-left:solid 3px #ff84aa ;
+}
+
+//请假引导
+.wizard-container{
+  position: fixed;
+}
+.wizard{
+  &.wizard-leave-list{
+    position: absolute;
+    z-index: 9999;
+    top: 240px;
+    right: 170px;
+    width: 980px;
+    height: 760px;
+    background: transparent url('@{image-base}/speed/wizard/leave-yindao1.png') center 0 no-repeat;
+  }
+  &.wizard-leave-history{
+    position: absolute;
+    z-index: 9999;
+    top: 267px;
+    right: -33px;
+    width: 1006px;
+    height: 838px;
+    background: transparent url('@{image-base}/speed/wizard/leave-yindao2.png') center 0 no-repeat;
+  }
+}
+//右下footer样式
+.info-foot{
+  position: absolute;
+  bottom: 0px;
+  height: 40px;
+  background-color: #f6f8fa;
+  width: 100%;
+  left: 0;
+  line-height: 40px;
+  padding:0 20px;
+
+}
+.more{
+  color: #ff84aa;
+  margin-bottom: 10px !important;
+  display: block;
+  &:hover{color: deeppink}
+}
+.speed-search-head .usernameSearch-div {
+  min-width: 180px ;
+}
+.speed-search-head {
+  padding-left: 0px !important;
+}
+#page-content{min-width: 1035px;}
+.approval-history{margin-left:5px}
+.remark{margin-top:3px}
+.dropdown-menu>li>a:hover {
+  background-color: #ff80a9;
+  color: #ffffff;
+}
+hr{
+  float: left;
+  width: 90%;
+  margin-top: 8px;
+  margin-bottom: 16px;
+  border-style: dashed;
+}
+#statusSearch+.bootstrap-select{
+  &>.btn span{
+    color: #ff6397;
+  }
+
+}
+
+.hide-td-fat{
+  .avatarth{min-width: 64px;width: 64px;}
+  .checkth{width:5%}
+  .typeth{width: 10%}
+  .dateth{width: 18%}
+  .daysth{width: 8%}
+  .memoth{width: 350px}
+}
+
+.hide-td-narrow{
+  overflow-x: hidden;
+  .checkth{width:10%}
+  .nameth{width: 40%}
+  .daysth{width:20%}
+  table{width: 324px;}
+}
+.hide-td-narrow .my{
+  .checkth{width:10%}
+  .nameth{width: 40%}
+  .daysth{width:40%}
+  //width:auto;
+}
+
+.hide-td-fat .my{
+  .checkth{width:5%}
+  .typeth{width: 10%}
+  .dateth{width: 18%}
+  .daysth{width: 8%}
+}
+.createtimetd{
+    position: relative;
+}
+.createtime{
+    position: absolute;
+    right: 2px;
+    top: 3px;
+  font-size: 12px;
+  color: #a0a0a0;
+}
+.datetd{
+  padding-top: 7px !important;
+  padding-bottom: 6px !important;
+}

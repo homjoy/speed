@@ -1,0 +1,19 @@
+function home() {
+    return this;
+}
+var controlFns = {
+    'index': function () {
+        var php = {
+            //天气预报接口
+            'weather':'/weather/get',
+        };
+
+        this.bindDefault(php);
+        this.bridgeMuch(php);
+        this.listenOver(function (data) {
+            data._CSSLinks = ['speed/home/index'];
+            this.render('home/index.html', data);
+        });
+    }
+};
+exports.__create = controller.__create(home, controlFns);

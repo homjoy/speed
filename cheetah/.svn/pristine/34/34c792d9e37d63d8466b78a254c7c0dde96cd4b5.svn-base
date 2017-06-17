@@ -1,0 +1,218 @@
+<%#head.html%>
+<div id="container" class="effect mainnav-lg">
+    <%#navbar.html%>
+    <div class="boxed">
+        <div id="content-container">
+            <div id="page-content">
+                <%if(this.payInfo && this.payInfo.rcode != 200){%>
+                <div class="alert alert-danger fade in"><%= this.payInfo ? (this.payInfo.rmessage || '获取付款信息出错.') : ''%></div>
+                <%}else{%>
+                <div class="panel">
+                        <% var payInfo = this.payInfo.contractPay;%>
+                    <div class="panel-body">
+                        <div class="panel-footer text-right">
+                            <% if(this.payInfo.canApproveFlag == 1){ %>
+                            <a href="javascript:;" class="btn btn-agree btn-pay-confirm" data-id="<%=this.payInfo.contractPay.cpbId%>" data-taskId="<%=this.payInfo.taskid%>" data-formkey="<%=this.payInfo.formkey%>">审核</a>
+                            <a href="javascript:;" class="btn btn-reject"  data-id="<%=this.payInfo.contractPay.cpbId%>" data-taskId="<%=this.payInfo.taskid%>" data-formkey="<%=this.payInfo.formkey%>">驳回</a>
+                            <% } %>
+                            <% if(this.payInfo.canModifyFlag == 1){ %>
+                            <a class="btn btn-primary btn-edit"
+                               href="/pay/edit/?cpbId=<%=this.payInfo.contractPay.cpbId%>">修改</a>
+                            <% } %>
+                            <button class="btn btn-default con-export">打印</button>
+                        </div>
+                        <!--startprint-->
+                        <table class="table table-bordered table-printed">
+                            <tr>
+                                <th colspan="4">
+                                    <h3>付款申请单</h3>
+                                </th>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <label>单据编号</label>
+                                </td>
+                                <td><%=payInfo.cpbPayRequestCode || ''%> </td>
+                                <td>
+                                    <label>填报日期</label>
+                                </td>
+                                <td><%= payInfo.cpbApplyTimeStr || ''%></td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <label>申请人</label>
+                                </td>
+                                <td><%=payInfo.cpbPersonName || ''%> </td>
+                                <td>
+                                    <label>申请部门</label>
+                                </td>
+                                <td><%= payInfo.cpbDepartmentName || ''%></td>
+                            </tr>
+
+                            <tr>
+                                <td>
+                                    <label>业务线</label>
+                                </td>
+                                <td colspan="3" class="text-left"><%= payInfo.businesslineName || '无' %></td>
+                            </tr>
+
+                            <tr>
+                                <td>
+                                    <label>是否签订合同</label>
+                                </td>
+                                <td colspan="3" class="text-left"><%= payInfo.cpbContractFlag == 'yes' ? '是':'否' %></td>
+                            </tr>
+
+                            <tr>
+                                <td>
+                                    <label>合同编号</label>
+                                </td>
+                                <td><%=payInfo.cpbContractCode || ''%> </td>
+                                <td>
+                                    <label>合同签订时间</label>
+                                </td>
+                                <td><%= payInfo.cpbContractSignTimeStr || ''%></td>
+                            </tr>
+
+
+                            <tr>
+                                <td>
+                                    <label>合同名称</label>
+                                </td>
+                                <td colspan="3" class="text-left"><%= payInfo.cpbContractName || ''%></td>
+                            </tr>
+
+
+                            <tr>
+                                <td>
+                                    <label>付款条件</label>
+                                </td>
+                                <td colspan="3" class="ueditor-content text-left"><%= payInfo.cpbContractPayterm || '' %></td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <label>预算项目</label>
+                                </td>
+                                <td colspan="3" class="text-left"><%= payInfo.cpbBugetitemId || '' %></td>
+                            </tr>
+
+                            <tr>
+                                <td>
+                                    <label>付款单位</label>
+                                </td>
+                                <td><%=payInfo.cpbContractCompany || ''%> </td>
+                                <td>
+                                    <label>付款金额</label>
+                                </td>
+                                <td class="show-money"><%= payInfo.cpbMoney || '0'%></td>
+                            </tr>
+
+                            <tr>
+                                <td>
+                                    <label>收款方式</label>
+                                </td>
+                                <td><%= ['电汇','支票','现金',][parseInt(payInfo.cpbCollectType)]%> </td>
+                                <td>
+                                    <label>收款单位</label>
+                                </td>
+                                <td><%= payInfo.cpbCustomerCompany || ''%></td>
+                            </tr>
+
+                            <tr>
+                                <td>
+                                    <label>收款银行</label>
+                                </td>
+                                <td><%=payInfo.cpbBank || ''%> </td>
+                                <td>
+                                    <label>收款支行</label>
+                                </td>
+                                <td><%= payInfo.cpbBranchBank || ''%></td>
+                            </tr>
+
+                            <tr>
+                                <td>
+                                    <label>收款账号</label>
+                                </td>
+                                <td><%=payInfo.cpbAccountNumber || ''%> </td>
+                                <td>
+                                    <label>组织机构代码</label>
+                                </td>
+                                <td><%= payInfo.cpbGroupSimplename || ''%></td>
+                            </tr>
+
+                            <tr>
+                                <td>
+                                    <label>预计付款日期</label>
+                                </td>
+                                <td><%=payInfo.cpbPayTimeStr || ''%> </td>
+                                <td>
+                                    <label>付款对应服务周期</label>
+                                </td>
+                                <td><%= payInfo.cpbServerTerm || ''%></td>
+                            </tr>
+
+                            <tr>
+                                <td>
+                                    <label>备注</label>
+                                </td>
+                                <td colspan="3" class="ueditor-content"><%= payInfo.cpbRemark  || ''%></td>
+                            </tr>
+
+                            <tr class="hidden-print">
+                                <td>
+                                    <label>付款附件</label>
+                                </td>
+                                <td colspan="3" class="text-left">
+                                    <% console.log(this.payInfo.listAttach); %>
+                                    <% if(this.payInfo.listAttach && this.payInfo.listAttach.length){ %>
+                                    <% this.payInfo.listAttach.forEach(function(item,index){%>
+                                        <% console.log(item); %>
+                                        <a href="/download/file/?cabid=<%=item.id%>" class="btn btn-defalut btn-download"
+                                           target="_blank" download="<%=item.fileName||''%>"><%=item.fileName||''%></a>
+                                        <%})%>
+                                    <%}%>
+                                </td>
+                            </tr>
+                        </table>
+                        <!-- 申请人-->
+                        <%if(this.payInfo.listAppHis.length>0){%>
+                        <table class="table record-print">
+                            <thead>
+                            <tr>
+                                <th colspan="10" class="text-left">审批记录</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr>
+                                <th>操作人</th>
+                                <th>操作/状态</th>
+                                <th>意见</th>
+                                <th>操作时间</th>
+                            </tr>
+                            <!-- 如果全部通过   pay-over显示 -->
+                            <%this.payInfo.listAppHis.forEach(function(info,index){%>
+                            <tr>
+                                <td><%=info.userName||''%></td>
+                                <td><%=info.ahResult||''%></td>
+                                <td><%=info.ahRemark||''%></td>
+                                <td><%=info.ahTimeStr||''%></td>
+                            </tr>
+                            <%})%>
+                            </tbody>
+                        </table>
+                        <%}%>
+
+                        <!--endprint-->
+                    </div>
+                </div>
+                <%}%>
+            </div>
+        </div>
+        <%#sidebar.html%>
+    </div>
+    <%#footer.html%>
+</div>
+<%! $_ENGINE_SELF.callFn("useModule")("<<<_use:
+        fml.use('fms/pay/view');
+_use:", this._JSstack , this._JSmods); %>
+<%#foot.html%>

@@ -1,0 +1,115 @@
+<%#head.html%> <div id="container" class="effect mainnav-lg">
+<%#navbar.html%>
+<div class="boxed">
+    <div id="content-container">
+        <div id="page-content">
+                <div class="panel panel-nav">
+                    <div class="panel-heading">
+                        <ul class="nav nav-tabs slope">
+                            <li class="active"><a href="javascript:void(0);">归档</a></li>
+                            <li><a href="/my/manage/pay">付款</a></li>
+                        </ul>
+                    </div>
+                    <div class="panel-body">
+                        <div id="tab-filing">
+                            <div class="toolbar">
+                                <div class="left">
+                                    <input type="checkbox" class="check-all">
+                                    <a href="javascript:void(0);" class="btn btn-success btn-mail">通知领取</a>
+                                    <!--<span class="line"></span>-->
+                                    <!--<a href="javascript:void(0);" class="btn btn-success">过滤器</a>-->
+                                </div>
+                                <!--<div class="selected-condition">-->
+                                <!--过滤条件：<span>各种条件。。。。各种条件。。。。各种条件。。。。各种条件。。。。各种条件。。。。</span>-->
+                                <!--</div>-->
+                                <div class="right">
+                                    <a href="javascript:void(0);" class="btn btn-success btn-filing">归档</a>
+                                </div>
+                            </div>
+                            <div class="table-container">
+                                <table class="table table-bordered" id="contract-table">
+                                    <thead>
+                                    <tr>
+                                        <th></th>
+                                        <th>单据编号</th>
+                                        <th>申请时间</th>
+                                        <th>申请人</th>
+                                        <th>申请部门</th>
+                                        <th>合同名称</th>
+                                        <th>对方公司名称</th>
+                                        <th>合同编号</th>
+                                        <th>归档编号</th>
+                                        <th>签订日期</th>
+                                        <th>备注</th>
+                                        <th>附件</th>
+                                        <th>归档状态</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <ul class="pagination" id="pagination"></ul>
+                        </div>
+                    </div>
+                </div>
+        </div>
+    </div>
+    <%#sidebar.html%>
+</div>
+<script id="fillingList" type="text/html">
+
+    {{each archives as archive }}
+    <tr dbl-open="/contract/view/?type=CA&id={{archive.requestId}}" class="{{if archive.archiveStateCode ==0 }}unarchive{{else}}archive{{/if}}">
+    <td><input type="checkbox" value="{{archive.contractId}}" ></td>
+    <td>
+        {{ archive.requestBillCode || '' }}
+        <input type="hidden" name="requestId" value="{{archive.requestId}}"/>
+        <input type="hidden" name="conId" value="{{archive.contractId}}"/>
+    </td>
+    <td>{{archive.requestDate || ''}}</td>
+    <td>{{archive.requestPerson || ''}}</td>
+    <td>{{archive.requestDepartment || ''}}</td>
+    <td>{{archive.contractName || ''}}</td>
+    <td>{{archive.customerCompany || ''}}</td>
+    <td>{{archive.contractCode || ''}}</td>
+    <td>{{archive.archiveCode || ''}}</td>
+    <td>
+        <input type="text" name="signDate" class="form-control overSignDate can-edit"
+               value="{{archive.signDate || ''}}" disabled readonly>
+    </td>
+    <td>
+        <textarea class="min-wd" name="remark" disabled>{{archive.remark || ''}}</textarea>
+    </td>
+    <td>
+        <a class="btn btn-default btn-xs btn-upload-attach" href="javascript:void(0);" data-exists="{{archive.attach | json}}">上传附件</a>
+        <input type="hidden" name="cFilePath" value="" disabled>
+        {{if archive.attach }}
+        <input type="hidden" name="delAttachId" value="" disabled>
+        {{/if}}
+        <ul class="attach-list">
+        {{each archive.attach as attachment }}
+            <li><a href="/download/file/?cabid={{attachment.id}}" target="_blank" class="btn btn-download" download="{{attachment.fileName || ''}}">{{attachment.fileName || ''}}</a></li>
+        {{/each}}
+        </ul>
+    </td>
+    <td>
+        {{archive.archiveState || ''}}
+    </td>
+    </tr>
+    {{/each}}
+</script>
+
+
+<script id="preview-template" type="text/html">
+    <div class="dz-preview dz-file-preview">
+        <div class="dz-details">
+            <div class="dz-filename"><span data-dz-name></span></div>
+        </div>
+    </div>
+</script>
+<%#footer.html%></div>
+<%! $_ENGINE_SELF.callFn( "useModule")( "<<<_use:
+        fml.use('fms/my/manage/contract')
+_use:", this._JSstack , this._JSmods); %>
+<%#foot.html%>

@@ -1,0 +1,111 @@
+<?php
+namespace Admin\Modules\Log;
+
+use Admin\Package\Account\UserInfo;
+use Libs\Util\Format;
+use Admin\Modules\Common\BaseModule;
+use Admin\Package\Common\Response;
+use Admin\Package\Log\Log;
+use Libs\Util\ArrayUtilities;
+/**
+ * Created by guojiezhu@meilishuo.com
+ * User: MLS  ConfigHome
+ * Date: 15/12/25
+ * Time: 下午12:18
+ */
+class LogHome extends BaseModule
+{
+    protected $errors = null;
+    private $params = null;
+    private $page_size = 20;
+    protected $handle_type = array(
+        1 =>'请假',
+        2 =>'办公用品',
+        3 => '固定资产',
+        4 =>'用户',
+        5 => '部门',
+        6 => '考勤',
+        7 => '会议室',
+        8 => 'IT'
+    );
+
+    //protected $checkUserPermisssion = TRUE;
+    public function run()
+    {
+        $this->_init();
+
+        //分页控制
+        if (isset($this->params['page'])) {
+            if ($this->params['page'] <= 0) {
+                $this->params['offset'] = 1;
+            }else {
+                $this->params['offset'] = $this->params['page'];
+            }
+            $this->params['limit'] = $this->page_size;
+        }
+
+
+        //查询总的页数
+        $count_params = $this->params;
+        $count_params['count'] = 1;
+        $temp_count = Log::getInstance()->getLogs($count_params);
+
+        //获取邮箱的列表
+        $logs_list = array();
+        if($temp_count >0){
+            //获取数据
+            $logs_list =  Log::getInstance()->getLogs($this->params);
+
+            if(!empty($logs_list)) {
+                $work_user_info = ArrayUtilities::my_array_column($logs_list, 'user_id');
+                $work_user_info = array_unique($work_user_info);
+                $query_user_params = array(
+                    'all' => 1,
+                    'status' => array(1,2,3),
+                    'user_id' => implode(',',$work_user_info)
+                );
+                $user_info_list =  UserInfo::getInstance()->getUserInfo($query_user_params);
+
+                foreach ($logs_list as &$log_info) {
+                    $log_info['name'] = isset($user_info_list[$log_info['user_id']]) ? $user_info_list[$log_info['user_id']]['name_cn'] :
+                        $log_info['name'];
+                    $log_info['before_data'] = ($log_info['before_data']);
+                    $log_info['after_data'] = ($log_info['after_data']);
+                    $log_info['handle_type'] = isset($this->handle_type[$log_info['handle_type']]) ? $this->handle_type[$log_info['handle_type']]
+                        : '默认';
+                }
+                unset($log_info);
+            }
+            $return['data'] = $logs_list;
+        }
+        $return['search_params'] = $this->params;
+        $return['count'] = ceil(intval($temp_count) / $this->page_size);
+        $return['page'] = $this->params['page'];
+        return $this->app->response->setBody($return);
+    }
+
+    private function _init()
+    {//path  father_id
+
+        $this->rules = array(
+            'page' => array(
+                'type'    => 'integer',
+                'default' => 1
+            ),
+            'user_id' => array(
+                'type'    => 'string',
+                'default' => ''
+            )
+
+        );
+        $this->params = $this->query()->safe();
+        $this->errors = $this->query()->getErrors();
+    }
+
+    private function _dump($data)
+    {
+        echo "<pre>";
+        print_r($data);
+        echo "</pre>";
+    }
+}

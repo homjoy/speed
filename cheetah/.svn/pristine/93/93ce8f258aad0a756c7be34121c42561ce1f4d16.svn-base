@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8" />
+	<title><%== this.pageTitle || this.defaultTitle %></title>
+    <meta name="description" content="<%= this.meta_description ||''%>" />
+	<meta content="<%= this.JCSTATIC_BASE %>img/favicon_128.png" itemprop="image">
+    <meta name="keywords" content="<%= this.keywords||''%>" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+    <%if(this.author){%>
+		<meta name="author" content="<%= this.author%>"/>
+    <%}%>
+    <meta http-equiv="x-ua-compatible" content="IE=edge,chrome=1" />
+	<meta content="http://i.meilishuo.net/css/images/custom_icon_precomposed.png" itemprop="image">
+	<link rel="apple-touch-icon-precomposed" href="http://i.meilishuo.net/css/images/custom_icon_precomposed.png"/>
+	<link rel="shortcut icon" href="http://www.meilishuo.com/favicon.ico">
+	<% if(!this.noBasecss){ %>
+	<link rel="stylesheet" type="text/css" href="<%= this.JCSTATIC_BASE %>css/nifty/bootstrap.css?<%=this.SVERSION%>" />
+	<link rel="stylesheet" type="text/css" href="<%= this.JCSTATIC_BASE %>css/nifty/nifty.css?<%=this.SVERSION%>" />
+	<link rel="stylesheet" type="text/css" href="<%= this.JCSTATIC_BASE %>css/nifty/font-awesome.css?<%=this.SVERSION%>" />
+	<link rel="stylesheet" type="text/css" href="<%= this.JCSTATIC_BASE %>css/nifty/animate.css?<%=this.SVERSION%>" />
+	<link rel="stylesheet" type="text/css" href="<%= this.JCSTATIC_BASE %>css/nifty/morris.css?<%=this.SVERSION%>" />
+	<link rel="stylesheet" type="text/css" href="<%= this.JCSTATIC_BASE %>css/nifty/switchery.css?<%=this.SVERSION%>" />
+	<link rel="stylesheet" type="text/css" href="<%= this.JCSTATIC_BASE %>css/nifty/bootstrap-select.min.css?<%=this.SVERSION%>" />
+	<link rel="stylesheet" type="text/css" href="<%= this.JCSTATIC_BASE %>css/nifty/nifty-demo.css?<%=this.SVERSION%>" />
+	<link rel="stylesheet" type="text/css" href="<%= this.JCSTATIC_BASE %>css/left_nav.css?<%=this.SVERSION%>" />
+	<link rel="stylesheet" type="text/css" href="<%= this.JCSTATIC_BASE %>css/common.css?<%=this.SVERSION%>" />
+	<% } %>
+
+	<%= (function(files){
+		var link = [];
+		var base = this.JCSTATIC_BASE;
+		var sversion = this.SVERSION;
+		files && files.map(function(src){
+			link.push('<link rel="stylesheet" type="text/css" href="'+base+'css/'+src+'.css?'+ sversion +'"/>');
+			});
+		return link.join('');
+		})(this._CSSLinks)%>
+	<script type="text/javascript" src="<%= this.JCSTATIC_BASE + this.SCRIPT_BASE %>fml.js?<%= this.SVERSION%>" ></script>
+	<script>
+	fml.setOptions({'sversion' : '<%= this.SVERSION %>','defer' : <%= this.JS_Defer %> ,'modulebase' : '<%= this.JCSTATIC_BASE + this.SCRIPT_BASE %>'});
+	</script>
+</head>
+<body>
+	<div id="container" class="effect mainnav-lg">
+		
+		
+		<!--NAVBAR-->
+		<!--===================================================-->
+		<header id="navbar">
+			<div id="navbar-container" class="boxed">
+
+				<!--Brand logo & name-->
+				<!--================================-->
+				<div class="navbar-header-fyc">
+					<a href="/home" >
+						<img src="<%= this.PICTURE_URL  %>img/logo.png" alt="Speed Logo" class="brand-icon-fyc">
+						
+					</a>
+				</div>
+				<!--================================-->
+				<!--End brand logo & name-->
+
+
+				<!--Navbar Dropdown-->
+				<!--================================-->
+				<div class="navbar-content clearfix" style="margin-left:200px">
+					
+					<ul class="nav navbar-top-links pull-right">
+						<!-- messages -->
+						<li class="dropdown">
+							<a href="#" data-toggle="dropdown" class="dropdown-toggle">
+								<img src="<%= this.PICTURE_URL  %>img/notification-bell.png" style="width:20px;height:25px">
+								<span class="badge badge-header badge-warning"></span>
+							</a>
+
+							<div class="dropdown-menu dropdown-menu-right with-arrow panel-default">
+							<ul class="head-list head-list-append ">
+								<!-- <div class="pad-all bord-btm">
+									<p class="text-lg text-muted text-thin mar-no">You have 3 messages.</p>
+								</div> -->
+								<!-- <li>
+									English
+									<a href="#" class="active">
+										<img class="lang-flag" src="<%= this.PICTURE_URL  %>img/united-kingdom.png" alt="English">
+										<span class="lang-id">EN</span>
+										<span class="lang-name">English</span>
+									</a>
+								</li> -->
+								
+							</ul>
+							</div>
+						</li>
+						
+						
+						
+						<!--User dropdown-->
+						<!--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
+						<li id="dropdown-user" class="dropdown">
+							<a href="#" data-toggle="dropdown" class="dropdown-toggle text-right">
+								<span class="pull-right">
+									<img class="img-circle img-user media-object" src="<%= this.userInfo.data.user.avatar.avatar_small%>" alt="Profile Picture">
+								</span>
+								<div class="username ">
+									<%= this.userInfo.data.user.name_cn%>
+									<input type="hidden" class="mail_name" value="<%= this.userInfo.data.user.mail%>">
+									<input type="hidden" class="user_id_user" value="<%= this.userInfo.data.user.user_id%>">
+								</div>
+							</a>
+
+
+							<div class="dropdown-menu dropdown-menu-right with-arrow panel-default">
+
+								<ul class="head-list head-list-user">
+									
+									<li>
+										<a href="/home/window/?f=user&s=profile">
+											<img src="<%= this.PICTURE_URL  %>img/home/gerenzhongxin.png">
+											<!-- <span class="badge badge-danger pull-right">9</span> -->
+											<span>个人中心</span> 
+										</a>
+									</li>
+									<li>
+										<a href="http://speed.meilishuo.com/uploads/words/15/03/661_20150319161503.pdf" target="_Blank">
+											<img src="<%= this.PICTURE_URL  %>img/home/shubao.png">
+											<span>我的小书包</span>
+										</a>
+									</li>
+									<li>
+										<a href="javascript:void(0)"  id="logout">
+											<img src="<%= this.PICTURE_URL  %>img/home/exit.png">
+											<span>退出登录</span>
+										</a>
+									</li>
+								</ul>
+								<!-- Dropdown footer -->
+								<!-- <div class="pad-all ">
+									<font color='red' id="logout_error"></font>
+									&nbsp;&nbsp;
+									<a href="javascript:void(0)" class="btn btn-primary" id="logout">
+										<i class="fa fa-sign-out fa-fw"></i> 退出登录
+									</a>
+								</div> -->
+							</div>
+						</li>
+						<!--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
+						<!--End user dropdown-->
+						<li id="download-client" class="dropdown">
+							<a href="#" data-toggle="dropdown" class="dropdown-toggle ">
+								
+								<div class="username hidden-xs">
+									客户端下载
+								</div>
+							</a>
+
+
+							<div class=" dropdown-menu dropdown-menu-right with-arrow panel-default">
+
+								<ul class="head-list">
+									
+									<li style="text-align:center">
+										<a href="#">
+											<img src="<%= this.PICTURE_URL  %>img/home/app.png">
+										</a>
+									</li>
+									<li class="down_load">
+										<a href="http://m.com/speed/speedIM_v0.0.3_for_mac.zip">
+											<img src="<%= this.PICTURE_URL  %>img/home/mac.png">
+										</a>
+									</li>
+									<li class="down_load">
+										<a href="http://m.com/speed/speedIM_setup_v0.0.3.exe">
+											<img src="<%= this.PICTURE_URL  %>img/home/win.png">
+										</a>
+									</li>
+								</ul>
+								
+							</div>
+						</li>
+					</ul>
+				</div>
+				<!--================================-->
+				<!--End Navbar Dropdown-->
+
+			</div>
+		</header>
+		<div id="message-container" style="width:100%; top:50px; z-index: 100; position: fixed;display:none; ">
+	      <div class="text-center container" style="width:400px;">
+	        <div class="alert alert-danger" id="message-alert"></div>
+	      </div>
+	    </div>
+		<!--===================================================-->
+		<!--END NAVBAR-->

@@ -1,0 +1,320 @@
+.speed-search-head{
+  text-align: left;
+  padding-left: 13px;
+  margin-bottom: 3px;
+  font-size: 12px !important;//edit by liuji
+  .check-all{
+    margin-right: 7px;
+  }
+  .approval-btn-div{
+    display: inline;
+    padding-right: 10px;
+    margin-right: 10px;
+    border-right: dotted #eee;
+  }
+  .btn{//edit by liuji
+    margin-left: 5px;
+    min-width: 50px;
+    font-size: 12px !important;
+    //width: 54px;
+    height: 22px;
+    line-height: 21px;
+  }
+  input.search-fyc{
+    width: 162px;
+    margin-left: 8px;
+    margin-right: 8px;
+    cursor: pointer;
+  }
+  .usernameSearch-div{
+    display: inline-block;
+    min-width: 124px;//edit by liuji
+    position: relative;
+    top: 10px;
+    margin:0 8px;
+  }
+  .applyDepart, .approvalState{//edit by liuji
+    margin-right: 8px;
+  }
+
+
+  .token-input-list{ //edit by liuji
+    position: relative;
+    top: 2px;
+    height: 31px !important;
+  }
+
+  select{
+    margin-left: 8px;
+    border: 1px solid #e9e9e9;
+    height: 28px;
+    background-color: white;
+
+  }
+}
+
+//左侧样式
+.left-list{
+  float: left;
+  position: relative;
+  min-height: 400px;
+  .control-table{
+    //height: 576px;
+    width: 100%;
+    min-height: 576px;
+    //margin-right: 5px;
+    border: solid 1px #E8E8E8;
+    table{
+      margin-bottom: 0;
+      border-bottom: solid 1px #E8E8E8;
+      tr:first-child{
+        border-right: 1px solid #eee;
+        //&:hover{background-color: #fff !important;}
+      }
+    }
+  }
+  .control-hide{
+    height: 50px;
+    width: 22px;
+    cursor: pointer;
+    position: absolute;
+    right: -20px;
+    top: 150px;
+    z-index: 9;
+    background:url("../../img/queen/approval/push_active.png") no-repeat;
+    background-size: contain;
+  }
+  .pagination{margin-right: 5px;}
+  tr{
+    &:hover{background-color:#f6fbff;}
+    &.flag td{
+      background-color:#ccd9e2 ;
+    }
+    td{
+      text-align: left;
+    }
+    cursor: pointer;
+  }
+  .bottom-word{
+    color: #a0a0a0;
+    font-size: 12px;
+  }
+}
+.afternotice{
+  text-align: center !important;color: #a0a0a0;font-size: 12px;padding:6px;cursor: default;
+  &:hover{background-color: #fff !important;}
+}
+
+//左侧列表统一样式
+//.control-hide{
+//
+//}
+.hide-td-narrow .hidden-narrow,.hide-td-fat .hidden-fat{display: none}
+td{
+  vertical-align: middle !important;
+  text-align: left;
+  font-size: 14px;
+}
+th{
+  text-align: left;
+  cursor: default;
+  font-size: 12px;
+  color:#6a6a6a;
+}
+.text-left{text-align: left;}
+.avatar{
+  height: 48px;
+  width: 48px;
+  border-radius: 24px;
+  border: 1px solid #eee;
+  display: block;
+  margin: 0 auto;
+}
+//左侧内容根据状态的颜色变化
+
+.flagcheck{
+  background-color: #F6FBFF;
+}
+
+//右侧具体内容
+.right-info{
+  border: solid 1px #cbd9e2;
+  min-height: 400px;
+  .info-head{
+    font-size: 14px;
+  }
+  .null-picture{
+    background: url("../../img/queen/approval/kong.png") no-repeat;
+    height: 130px;
+    width: 175px;
+    margin: 120px auto 0;
+    h4{padding-top: 135px}
+  }
+  .panel-heading{
+    padding: 10px 10px 0 10px;
+    height: 40px;
+    background-color: #fbfbfb;
+    color: black;
+    border: none;
+    .btn{
+      float: right;
+      margin-left:8px;
+    }
+  }
+  .history-icon{
+    display: inline-block;
+    height: 20px;
+    line-height: 20px;
+    text-indent: 24px;
+    color: #626262;
+  }
+  .approval-history,.approval-history-fms{
+    width: 88px;
+    //background: url("../../img/queen/approval/shenpi.png") no-repeat;
+    background: url("../../img/queen/approval/shenpiactive.png") no-repeat;
+    &.active{
+      color: #FF80A9;
+    }
+  }
+  .application-history,.application-history-fms{
+    width: 115px;
+    //background: url("../../img/queen/approval/lishi.png") no-repeat;
+    background: url("../../img/queen/approval/lishiactive.png") no-repeat;
+    &.active{
+      color: #FF80A9;
+    }
+  }
+  .null-word{
+    font-size: 12px;
+    color: #a0a0a0;
+    text-align: center;
+  }
+  .speedim{
+    color: #f98fb3;
+    span{
+      display: inline-block;
+      text-indent: 21px;
+      background: url("../../img/speed/paopao.png") no-repeat 0px;
+      &:hover{
+        background: url("../../img/speed/paopaohover.png") no-repeat 0px;
+      }
+    }
+  }
+}
+.token-input-list{
+  position: relative;
+  top: 2px;
+  height: 31px !important;
+}
+//按钮组
+.btn-group{
+  .btn{
+    border-radius: 10px;
+    box-shadow: none !important;
+    line-height: 20px;
+    &.active{
+      background-color: #ccd9e2;
+      color: white;
+    }
+    &.btn-left{padding-left: 10px}
+    &.btn-right{padding-right:10px}
+
+  }
+}
+.approval-badge {
+  color: orange;
+  margin-left: 4px;
+}
+.token-input-list{
+  z-index: 9 !important;
+}
+.single{min-width: 50px;}
+.word-break{
+  word-break:break-all;
+
+}
+//无内容class
+.full{
+  margin-left: 0 !important;
+  width: 100% !important;
+  display: block !important;
+}
+//备注和日期宽度。timeline样式，
+.memoth{width: 400px}
+.dateth{width: 168px;}
+.timeline-wraper{margin-bottom: 40px}
+.timeline-left{width: 54%;display: inline-block;}
+.timeline-right{width: 45%;display: inline-block;}
+.timeline-right{margin-left: 0 !important;float: right}
+.timeline.approval-progress .timeline-label.inwait .uname{color:#a0a0a0 !important;}
+.uname,.time{display: block !important;}
+//插件修改后可能没用的东西
+select{
+  margin-right: 5px;
+}
+.history{
+  span{  font-size: 12px !important;  }
+  .type{
+    width: 20px;
+    right: -5px;
+  }
+}
+
+
+#container .info-head .table{
+  .tt{
+    width:120px;
+  }
+  .ct{
+    font-weight: normal;
+  }
+}
+.font12{
+  font-size: 12px;
+}
+#statusSearch{width: 100px}
+.file-download{
+  background: url('../../img/queen/approval/download.png') no-repeat 0 0;
+  display: inline-block;
+  width: 20px;
+  height: 17px;
+  position: relative;
+  top: 4px;
+}
+button[data-id='statusSearch']{
+  line-height: 17px !important;
+  border-radius: 0px !important;
+  width: 100px !important;
+}
+.status-notice{
+  line-height: 20px;
+  display: inline-block;
+  height: 33px;
+  vertical-align: middle;
+  font-size: 12px;
+}
+.status-notice{color: #a0a0a0}
+
+.mt-20{margin-top: -20px}
+//下拉框
+#statusSearch+.bootstrap-select{
+  width: 160px !important;
+  &>.btn.btn-default{
+    background-color: white;
+    border-color: white ;
+  }
+  &.open .btn.btn-default{
+    border-color: #eeeeee !important;
+  }
+  .dropdown-menu{margin-top: 0}
+}
+.position-fix{
+  position: absolute;
+  background-color: white;
+}
+.nav-row{margin:37px 0}
+.overfloarhidden{
+  overflow: hidden;
+  table:last-child{width: 120%}
+}
+.overfloarauto{overflow-y: auto;overflow-x: hidden}

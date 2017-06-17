@@ -1,0 +1,90 @@
+<?php
+namespace WorkFlowAtom\Modules\Tree;
+
+use WorkFlowAtom\Package\Tree\TreePermissions ;
+use WorkFlowAtom\Package\Common\Response;
+use Libs\Util\ArrayUtilities;
+use Libs\Util\Format;
+
+class TreePermissionsAdd extends \WorkFlowAtom\Modules\Common\BaseModule{
+
+    protected $params = array();
+
+    public function run() {
+        $this->_init();
+
+        $this->sample = TreePermissions::getInstance()->getFields();
+        //参数校验
+        if($this->post()->hasError()){
+            $return = Response::gen_error(10001, '', $this->post()->getErrors());
+            return $this->app->response->setBody($return);
+        }
+
+        $treeInfo = TreePermissions::getInstance()->getDataList(array(
+            'tree_id'     => $this->params['tree_id'],
+            'role_id'     => $this->params['role_id']
+        ));
+
+        if(empty($this->params['id'])) {
+            unset($this->params['id']);
+            
+            if(!empty($treeInfo)) {
+                $return = Response::gen_error(10002, '', array(
+                    'tree_name' => array('该权限已加！')
+                ));
+                return $this->app->response->setBody($return);
+            }
+            
+            $result = TreePermissions::getInstance()->insert($this->params);
+        }else {
+            unset($treeInfo[$this->params['tree_id']]);
+            
+            if(!empty($treeInfo)) {
+                $return = Response::gen_error(10002, '', array(
+                    'tree_name' => array('该名称已存在！')
+                ));
+                return $this->app->response->setBody($return);
+            }
+            
+            $result = TreePermissions::getInstance()->update($this->params);
+        }
+
+        if ($result === FALSE) {
+            $return = Response::gen_error(50001);
+        }elseif (empty($result)) {
+            $return = Response::gen_error(50012);
+        }else{
+            if(!isset($this->params['tree_id'])) {
+                $this->params['tree_id'] = $result;
+            }            
+            $return = Response::gen_success(Format::outputData($this->params, $this->sample));
+        }
+
+        $this->app->response->setBody($return);
+        
+    }
+
+
+    private function _init(){
+        $this->rules = array(
+            'tree_id'   => array(
+                'required'  => true,
+                'type'      => 'integer',
+                'default'   => 0,
+            ),
+            'role_id' => array(
+                'required'      => true,
+                'type'          => 'integer',
+                'default'   => 0,
+            ),
+            'status'    => array(
+                'required'  => true,
+                'type'      => 'integer',
+                'default'   => 1,
+            ),
+        );
+        
+        $this->params = $this->post()->safe();
+        $this->errors = $this->post()->getErrors();
+    }
+}

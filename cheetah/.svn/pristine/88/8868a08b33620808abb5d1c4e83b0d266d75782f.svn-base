@@ -1,0 +1,51 @@
+fml.define('fms/user/login',['jquery','plugin/bootstrap/validator'],function (require,exports){
+
+    var $ = require('jquery');
+    // var cookies = require("plugin/cookie");
+
+    function setcookie(name, value) {
+        var Days = 7;
+        var exp = new Date();
+        exp.setTime(exp.getTime() + Days * 24 * 60 * 60 * 1000);
+        // domain=meilishuo.com;
+        document.cookie = name + "=" + escape(value) + ";domain=meilishuo.com;expires=" + exp.toGMTString();
+    }
+
+    $('form').bootstrapValidator({
+        container: 'login-layout',
+        message: '不能为空哦~'
+    }).on('success.form.bv',function(e){
+        e.preventDefault();
+        // 防止二次点击
+        $('.btn-block').button('loading').delay(100).queue(function(){
+            // var info= $('form').serialize();
+            var name = $.trim($('#inputName').val());
+            var pass = $.trim($('#inputPassword').val());
+            $.post('/aj/user/login',{"usercode":name,"password":pass},function(data){
+                if(!data.rcode || data.rcode != 200 ){
+                    console.log(1);
+                    $.niftyNoty({
+                        type: 'danger',
+                        container: '.fr',
+                        message : data.rmessage,
+                        timer : 2000
+                    });
+                }else{
+                    $.niftyNoty({
+                        type: 'info',
+                        container: '.fr',
+                        message : data.rmessage,
+                        timer : 2000
+                    });
+                    // setcookie("speed_token", res.data.speed_token);
+                    window.location.href = '/home';
+                }
+
+                $(".btn-block").button('reset');
+                
+            },'json');
+            $(this).dequeue();
+        });
+    })
+
+});

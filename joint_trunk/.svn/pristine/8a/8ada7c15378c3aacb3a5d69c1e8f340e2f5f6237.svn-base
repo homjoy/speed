@@ -1,0 +1,55 @@
+<?php
+namespace Joint\Package\Im;
+
+use Libs\Util\ArrayUtilities;
+use Joint\Package\Common\BaseMemcache;
+use Joint\Package\Common\VirusCurlTool;
+
+/**
+ * Class ChatHistory
+ * @package Joint\Package\im
+ * @author yongzhao
+ */
+class ChatHistory extends \Joint\Package\Common\BasePackage{
+
+    const IM_SNAKE_DOMAIN = "http://imsnake.meilishuo.com/";
+    const IM_VIRUS_DOMAIN = "http://im.meilishuo.com/";
+    //const TEST_DOMAIN = "http://115.47.16.168:82/";
+
+    private static $instance = null;
+    private static $expireTime = 600;
+
+    private function __construct() {}
+
+    public static function getInstance()
+    {
+        if(is_null(self::$instance)){
+            self::$instance = new self();
+        }
+        return self::$instance;
+    }
+
+    /**
+     * 查询
+     */
+    public static function getChatHistory($params = array()) {
+
+
+        $history = VirusCurlTool::getInstance()->post(self::IM_SNAKE_DOMAIN . "im/open_history_workorder", $params);
+
+        $cacheKey = 'Joint:ChatHistory:getChatHistory:';
+        $cacheKey .= ArrayUtilities::genParamsCacheKey($params);
+        if(!empty($history)){
+            //生成缓存
+            BaseMemcache::instance()->set($cacheKey, $history, self::$expireTime);
+        }else{
+            //查询缓存
+            $history = BaseMemcache::instance()->get($cacheKey);
+        }
+        $historyArr = json_decode($history, true);
+
+        $returnData = !empty($historyArr['data']) ? $historyArr['data'] : FALSE;
+        return $returnData;
+    }
+
+}

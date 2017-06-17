@@ -1,0 +1,139 @@
+fml.define('fms/common/utils', ['jquery'], function (require, exports) {
+    var $ = require('jquery');
+
+    /**
+     * 构造task提交参数
+     * @param taskId
+     * @param params
+     * @returns {*}
+     */
+    exports.buildTaskParams = function (taskId, params) {
+        //数据格式不正确
+        if (!taskId || !params || !params.length) {
+            return {};
+        }
+
+        var keys = [],
+            values = [],
+            types = [];
+        $.each(params, function (index,param) {
+            keys.push(param.key);
+            values.push(param.value);
+            types.push(param.type);
+        });
+
+        var object = {
+            'var.keys': keys.join(','),
+            'var.values': values.join(','),
+            'var.types': types.join(',')
+        };
+
+        if(!$.isArray(taskId)){
+            object.taskid = taskId;
+        }else{
+            object.taskids = taskId.join(',');
+        }
+
+        return object;
+    };
+    /**
+     * 表单元素 name属性处理
+     * @param form
+     * @returns {*}
+     */
+    exports.dealAttrName = function(form) {
+        var a = form.find('input,select,textarea');
+        $.each(a, function(i, v) {
+            var oName = $(v).attr('name'),
+                newName,
+                oVal = $(v).val();
+            if (oName) {
+                newName = oName.replace('_', '.');
+                $(v).attr('name', newName);
+            }
+        });
+        return form;
+    };
+
+
+    /**
+     *
+     * @param form      需要处理的表单.
+     * @param prefix    字段前缀
+     * @param exclude   排除的字段.
+     * @returns {*}
+     */
+    exports.wrapForm = function (form, prefix, exclude) {
+        var $form = $(form);
+        var fields = $form.serializeArray();
+        prefix = prefix || '';
+        exclude = exclude || [];
+        if (!prefix) {
+            return $.param(fields);
+        }
+        var wrappedFields = [];
+
+        $.each(fields, function (index, value) {
+            if ($.inArray(value, name, exclude)) {
+                return;
+            }
+
+            value.name = prefix + value.name;
+            wrappedFields.push(value);
+        });
+
+        return $.param(wrappedFields);
+    };
+
+    /**
+     * 生成dataTables选项.
+     */
+    exports.buildDTOptions = function(options)
+    {
+        var defaultOptions = {
+            "oLanguage": { //语言设置
+                "sLengthMenu": "每页显示  _MENU_ 条记录",
+                "sInfo": "从 _START_ 到 _END_ /共 _TOTAL_ 条数据",
+                "oPaginate": {
+                    "sFirst": "首页",
+                    "sPrevious": "前一页",
+                    "sNext": "后一页",
+                    "sLast": "尾页"
+                },
+                "sZeroRecords": "抱歉， 没有找到",
+                "sInfoEmpty": "没有数据",
+                "sInfoFiltered":"(从_MAX_条记录中搜索)"
+            },
+            "aaSorting": [
+                [1, 'desc']
+            ],
+            "bWidth": false,
+            "bProcessing": true,
+            "bDestroy": true
+        };
+
+        return $.extend(defaultOptions,options);
+    };
+
+
+
+    /**
+     * 将普通数字格式化成货币显示
+     * 例如: 12345678 格式化为 123,456,78.00
+     */
+    exports.formatCurrency = function formatCurrency(number)
+    {
+        if(typeof number !== 'string'){
+            number = number.toString();
+        }
+        if (/[^0-9\.]/.test(number)) return number;
+        number = number.replace(/^(\d*)$/, "$1.");
+        number = (number + "00").replace(/(\d*\.\d\d)\d*/, "$1");
+        number = number.replace(".", ",");
+        var re = /(\d)(\d{3},)/;
+        while (re.test(number))
+            number = number.replace(re, "$1,$2");
+        number = number.replace(/,(\d\d)$/, ".$1");
+        return number.replace(/^\./, "0.");
+    };
+});

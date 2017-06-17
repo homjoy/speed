@@ -1,0 +1,198 @@
+fml.define('fms/query/query', ['jquery','fms/common/notify','plugin/bootstrap/datepicker', 'plugin/bootstrap/dataTables','fms/query/selectTree', 'fms/common/common'], function (require, exports) {
+    var $ = require('jquery');
+    var notify = require('fms/common/notify');
+    var treeSelect = require('fms/query/selectTree');
+    var common = require('fms/common/common');
+
+    //var options = '<option value="">全部</option>';
+    //function optionTree(data, prefix, level) {
+    //    var prefix = prefix || '',
+    //        level = level || 0;
+    //    for (var key in data) {
+    //        var root = level == 0 ? data[key].name : prefix + '--' + data[key].name;
+    //        // options +='<optgroup label="'+data[key].id+'"><option value="'+data[key].id+'">'+root+'</option></optgroup>'
+    //        options += '<option value="' + data[key].id + '">' + root + '</option>';
+    //        if (data[key].children.length > 0) {
+    //            arguments.callee(data[key].children, root, level + 1);
+    //        }
+    //    }
+    //    $('#department').html(options);
+    //}
+    //查询路径
+    var queryUrl = {
+        qcon: '/aj/query/qcon',
+        depart: '/aj/query/depart'
+
+    };
+    $.post(queryUrl.depart, function (data) {
+        treeSelect('input[name=departmentId]', data);
+    }, 'json');
+
+    // table初始化
+    //$('#tb-filing-query').dataTable({
+    //    "scrollX": true,
+    //    "sDom": "<'row'<'col-md-6'l><'col-md-6'f>r>t<'row-fluid'<'col-md-6'i><'col-md-6'p>>", //定义DataTable布局的一个强大属性
+    //    "oLanguage": { //语言设置
+    //        "sLengthMenu": "每页显示  _MENU_ 条记录",
+    //        "sInfo": "从 _START_ 到 _END_ /共 _TOTAL_ 条数据",
+    //        "oPaginate": {
+    //            "sFirst": "首页",
+    //            "sPrevious": "前一页",
+    //            "sNext": "后一页",
+    //            "sLast": "尾页"
+    //        },
+    //        "sZeroRecords": "抱歉， 没有找到",
+    //        "sInfoEmpty": "没有数据",
+    //
+    //    },
+    //    "aaSorting": [
+    //        [2, 'desc']
+    //    ],
+    //    "bAutoWidth": false,
+    //    "bProcessing": true,
+    //    //"paging": false,
+    //    //"bLengthChange":false,
+    //    "bDestroy": true
+    //})
+    $("#sTime,#eTime").datepicker({
+        'format': 'yyyy-mm-dd',
+        'autoclose': true,
+        'todayHighlight': true
+    });
+    /**
+     * 时间比较
+     * @returns {*|jQuery}
+     */
+    function timeCompare() {
+        var stime = $('#sTime').val(),
+            etime = $('#eTime').val(),
+            info = $('form').serialize(),
+            slen = stime.length > 0,
+            elen = etime.length > 0;
+        // console.log(info);
+        if (slen && elen && stime >= etime) {
+            notify.error('截止日期应大于起始日期');
+            //common.notice('danger', null, '截止日期应大于起始日期', null);
+            //$.niftyNoty({
+            //    type: 'info',
+            //    container: 'floating',
+            //    message: '合同签订截止日期应大于起始日期',
+            //    timer: 5000
+            //});
+            return;
+        }
+        return info;
+    }
+
+    $('.btn-export').on('click', function () {
+        var info = timeCompare();
+        $(this).attr('href', '/export/file?' + info);
+    });
+    // 查询
+    $('.btn-query').on('click', function () {
+        var _this = this;
+        var info = timeCompare();
+        $(this).button('loading').delay('2000').queue(function () {
+            $(this).button('reset');
+        });
+        $.post(queryUrl.qcon, info, function (data) {
+            $(_this).button('loading');
+            if (data.rcode == 200) {
+                renderResultTable(data.data || []);
+                $(_this).button('reset');
+            } else {
+                $.niftyNoty({
+                    type: 'warning',
+                    container: 'floating',
+                    message: data.rmessage,
+                    timer: 5000
+                });
+            }
+            // window.location.reload();
+        }, 'json')
+    });
+
+
+    /**
+     * 渲染查询结果.
+     * @param data
+     */
+    function renderResultTable(data) {
+        var options = {
+            "scrollX": true,
+            "data": data || [],
+            "columns": [{
+                    data: 'contractApplicationCode'
+                },
+                {
+                    data: 'contractCode'
+                },
+                {
+                    data: 'contractTypeName'
+                },
+                {
+                    data: 'contractName'
+                },
+                {
+                    data: 'signDate'
+                },
+                {
+                    data: 'amount'
+                },
+                {
+                    data: 'contractTerm'
+                },
+                {
+                    data: 'contractCompany'
+                },
+                {
+                    data: 'customerCompany'
+                },
+                {
+                    data: 'contractPerson'
+                },
+                {
+                    data: 'telephone'
+                },
+                {
+                    data: 'departmentName'
+                },
+                {
+                    data: 'handingPersonName'
+                },
+                {
+                    data: 'approveState'
+                },
+                {
+                    data: 'fileDetail'
+                }],
+            "bDestroy": true,
+            "sDom": "<'row'<'col-md-6'l><'col-md-6'f>r>t<'row-fluid'<'col-md-6'i><'col-md-6'p>>", //定义DataTable布局的一个强大属性
+            "oLanguage": { //语言设置
+                "sLengthMenu": "每页显示  _MENU_ 条记录",
+                "sInfo": "从 _START_ 到 _END_ /共 _TOTAL_ 条数据",
+                "oPaginate": {
+                    "sFirst": "首页",
+                    "sPrevious": "前一页",
+                    "sNext": "后一页",
+                    "sLast": "尾页"
+                },
+                "sZeroRecords": "抱歉， 没有找到",
+                "sInfoEmpty": "没有数据",
+                "sInfoFiltered": "(从_MAX_条记录中搜索)"
+            },
+            "aaSorting": [
+                [2, 'desc']
+            ],
+            "bAutoWidth": false,
+            "bProcessing": true,
+            "paging": false,
+            "fnCreatedRow": function (nRow, aData, iDataIndex) {
+                $(nRow).data('id', aData.contractApplicationId || 0); //
+                $(nRow).data('type', "CA"); //
+            }
+        };
+
+        $('#tb-filing-query').removeClass('hide').dataTable(options);
+    }
+});

@@ -1,0 +1,17 @@
+{
+    "name": "speed/logger",
+    "description": "meilishuo speed logger class, copy from psr/log",
+    "authors": [
+        {
+            "name": "Feng Pan",
+            "email": "fengpan@meilishuo.com"
+        }
+    ],
+    "require": {
+    },
+    "autoload": {
+        "psr-0": {
+            "Speed\\Logger": ""
+        }
+    }
+}

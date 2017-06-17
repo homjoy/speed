@@ -1,0 +1,104 @@
+<?php
+
+namespace Worker\Scripts\Notification;
+
+use Worker\Package\Notification\Notification;
+use Worker\Package\Notification\Request;
+use Worker\Package\Notification\RequestFactory;
+use Worker\Package\Notification\RequestSender;
+
+/**
+ * Im通知的推送脚本.
+ * Class ImSender
+ *
+ * @package Worker\Scripts\Notification
+ */
+class ImSender extends \Frame\Script
+{
+
+    /**
+     * @throws \Exception
+     */
+    public function run()
+    {
+        $sender = new RequestSender(array($this, 'finish'));
+        RequestFactory::setApi('im', $this->app->config->imApi);
+
+        //记录发送时间.
+        $start = microtime(true);
+        $count = 0;
+        //开始发送，获取到的脚本会自动标记为发送中.
+        $notifications = Notification::model()->pop(50, Notification::CHANNEL_IM);
+        if (empty($notifications)) {
+            $this->app->response->setBody(date('Y-m-d H:i:s') . "没有需要发送的IM通知.\n");
+            return;
+        }
+
+        //先清空之前的发送队列，再继续处理下一批.
+        foreach ($notifications as $notify) {
+
+            $sender->clearQueue();
+
+            try {
+                $requests = RequestFactory::build($notify);
+            } catch (\Exception $e) {
+                $this->app->log->log('worker/notification/im_error', array(
+                    'message' => $e->getMessage() . PHP_EOL,
+                ));
+                continue;
+            }
+            $count += count($requests);
+            $sender->pushArray($requests);
+
+            try {
+                $sender->start();
+                $this->app->response->setBody(date('Y-m-d H:i:s') . "发送中...\n");
+            } catch (\Exception $e) {
+                $this->app->log->log('worker/notification/im_error', array(
+                    'message' => $e->getMessage() . PHP_EOL,
+                ));
+            }
+        }
+
+
+        //$notifications = Notification::model()->pop(1, Notification::CHANNEL_IM);
+
+
+        $end = microtime(true);
+        $total = $end - $start;
+        $this->app->response->setBody(date('Y-m-d H:i:s') . "发送结束.总用时：{$total}秒\n");
+    }
+
+    /**
+     * 发送结束回调处理
+     *
+     * @param         $output
+     * @param         $info
+     * @param Request $request
+     * @param         $error
+     *
+     * @return bool
+     * @throws \Exception
+     */
+    public function finish($output, $info, Request $request, $error)
+    {
+        $response = json_decode($output, true);
+        $notification = $request->getNotification();
+        //接口有返回错误.
+        if ($error || !$response || $response['code'] != 200) {
+            //发送失败
+            //记录日志
+            $this->app->log->log('worker/notification/im_error', array(
+                'response'   => $output,
+                'curl_error' => $error,
+            ));
+            Notification::model()->statusChanged($notification['notify_id'], Notification::STATUS_FAILED);
+
+            return false;
+        }
+
+        Notification::model()->statusChanged($notification['notify_id'], Notification::STATUS_SUCCESS);
+
+        return true;
+    }
+}

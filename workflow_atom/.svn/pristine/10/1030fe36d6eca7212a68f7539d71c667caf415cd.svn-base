@@ -1,0 +1,92 @@
+<?php
+namespace WorkFlowAtom\Modules\Tree;
+
+use WorkFlowAtom\Package\Tree\Tree as TreeObj;
+use WorkFlowAtom\Package\Treeuserrole\UserRole ;
+use WorkFlowAtom\Package\Tree\TreePermissions ;
+use Libs\Util\ArrayUtilities;
+use Libs\Util\Format;
+use WorkFlowAtom\Package\Common\Response;
+
+class TreeByUid extends \WorkFlowAtom\Modules\Common\BaseModule{
+
+     public function run() {
+        $this->_init();
+
+        //参数校验
+        if($this->query()->hasError()){
+            $return = Response::gen_error(10001, '', $this->query()->getErrors());
+            return $this->app->response->setBody($return);
+        }
+
+        $roleIds = $treeIds = $treeInfo =  array();
+
+        //得到角色id
+        $userRoleInfo = UserRole::getInstance()->getDataList(array('user_id' => $this->params['user_id']));
+        if(!empty($userRoleInfo)){
+            $roleIds = ArrayUtilities::my_array_column($userRoleInfo, 'role_id');
+        }
+        if(!empty($roleIds)){
+            //得到菜单
+            $permissionsInfo = TreePermissions::getInstance()->getDataList(array('role_id' => $roleIds));
+            if(!empty($permissionsInfo)){
+                $treeIds = ArrayUtilities::my_array_column($permissionsInfo, 'tree_id');
+                $parentIds = ArrayUtilities::my_array_column($permissionsInfo, 'parent_id');
+
+                $treeIds = array_merge($treeIds,$parentIds);
+            }
+        }
+
+        if(!empty($treeIds)){
+            $treeInfo = TreeObj::getInstance()->getDataList(array('tree_id' => $treeIds));
+        }
+
+        if ($treeInfo === FALSE) {
+            $return = Response::gen_error(50001);
+        }elseif (empty($treeInfo)) {
+            $return = Response::gen_error(50002);
+        }else{
+            $this->sample = TreeObj::getInstance()->getFields();           
+            $return = Response::gen_success(Format::outputData($treeInfo, $this->sample, true));
+        }
+
+        $this->app->response->setBody($return);
+        
+    }
+
+    private function formatTree($data, $pid = 0){
+        if(empty($data)){
+            return false;
+        }
+
+        $tree = array();
+        foreach($data as $k => $v)
+        {
+          if($v['parent_id'] == $pid){
+            //父亲找到儿子
+            $v['parent_info'] = $this->formatTree($data, $v['tree_id']);
+            $tree[] = $v;
+          }
+        }
+        return $tree;
+    }
+
+    private function _init(){
+        $this->rules = array(
+            'user_id'   => array(
+                'required'  => true,
+                'type'      => 'integer',
+                'default'   => 0,
+            ),
+            'status'   => array(
+                'required'  => false,
+                'type'      => 'integer',
+                'default'   => 1,
+            ),
+        );
+        
+        $this->params = $this->query()->safe();
+        $this->errors = $this->query()->getErrors();
+
+    }
+}

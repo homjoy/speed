@@ -1,0 +1,28 @@
+<?php
+
+namespace Libs\Log;
+
+class BasicLogWriter extends LogWriter {
+
+	private static $LOGPATH = '/home/work/webdata/logs/';
+
+    public function write($mark, $str) {
+        //目录
+        $path_parts = pathinfo($mark);
+        if ($path_parts["dirname"] == '.') {
+            $realpath = self::$LOGPATH;
+        }else{
+            $realpath = self::$LOGPATH . $path_parts["dirname"];
+        }
+
+        if (!is_dir($realpath)) {
+            system("mkdir -p " . $realpath . ";chmod -R 777 " . $realpath);
+        }
+        $realfile = $path_parts["basename"] . "." . date("YmdH");
+
+		$currentTime = date("Y-m-d H:i:s");
+		$file = $realpath . "/" . $realfile;
+		@file_put_contents($file, $str . PHP_EOL, FILE_APPEND);
+    }
+
+}

@@ -1,0 +1,317 @@
+<script src="http://cdn.bootcss.com/html5shiv/3.7.0/html5shiv.min.js"></script>
+<script src="http://cdn.bootcss.com/respond.js/1.3.0/respond.min.js"></script><!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta name="description" content="">
+	<meta name="author" content="">
+	
+	<title>美丽说后台管理</title>
+	
+	<!-- Bootstrap core CSS -->
+	<link rel="stylesheet" href="/static/bootstrap/css/bootstrap.min.css">
+	
+	<!-- Custom styles for this template -->
+	<link rel='stylesheet' href='/static/css/cupertino/jquery-ui-1.10.4.custom.min.css' />
+	<link rel="stylesheet" href="/static/css/main.css" />
+	<link rel="stylesheet" href="/static/font-awesome/css/font-awesome.css" />
+
+	<script type='text/javascript' src="/static/js/jquery-2.1.4.min.js"></script>
+	<script type='text/javascript' src="/static/js/jquery-ui-1.10.4.custom.min.js"></script>
+	<script type='text/javascript' src="/static/bootstrap/js/bootstrap.min.js"></script>
+	
+	<!-- Just for debugging purposes. Don't actually copy this line! -->
+	<!--[if lt IE 9]><script src="/static/js/ie8-responsive-file-warning.js"></script><![endif]-->
+	
+	<!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+	<!--[if lt IE 9]>
+	<script src="http://cdn.bootcss.com/html5shiv/3.7.0/html5shiv.min.js"></script>
+	<script src="http://cdn.bootcss.com/respond.js/1.3.0/respond.min.js"></script>
+
+
+	<![endif]-->
+</head>
+
+<body>
+
+<link type="text/css" rel="stylesheet" href="/static/css/backtotop.css">
+<script src="/static/js/backtotop.js"></script>
+<style type="text/css">
+#container {
+	margin: 0;
+	padding: 0;
+	max-width: none;
+}
+
+.sidebar {
+	position: fixed;
+	float: left;
+	width: 15%;
+	height: 100%;
+	top: 50px;
+}
+
+#navbar {
+	height: 100%;
+}
+
+.right_container {
+	float: right;
+	position: relative;
+	margin-left: 1%; 
+	margin-right: 1%;
+	margin-top: 10px;
+	bottom: 60px;
+	width: 83%;
+	top: 0;
+}
+
+#footer {
+	right: 0;
+	width: 85%;
+	margin-top: 0;
+}
+
+.sidebar ul {
+	padding: 0;
+	margin: 0;
+	width: 100% !important;
+}
+
+/*一级菜单*/
+.menu-first {
+    height:45px;
+    line-height:45px;
+    background-color: #e9e9e9;
+    border-top: 1px solid #efefef;
+    border-bottom: 1px solid #e1e1e1;
+    padding-left: 20px;
+    font-size: 14px;
+    font-weight: normal;
+    list-style-type: none;
+}
+
+.menu-first a {
+	color: #777;
+}
+
+/*一级菜单鼠标划过状态*/
+.menu-first:hover {
+    text-decoration: none;
+    background-color: #d6d4d5;
+    border-top: 1px solid #b7b7b7;
+    border-bottom: 1px solid #acacac;
+}
+
+/*二级菜单*/
+.menu-second {
+	height: 35px;
+	line-height: 35px;
+	font-size: 13px;
+	padding-left: 40px;
+	margin-right: 0px;
+	/*border-top: 1px solid #efefef;
+    border-bottom: 1px solid #e1e1e1;*/
+    font-weight: normal;
+    list-style-type: none;
+	width: 100% !important;
+}
+
+/*二级菜单鼠标划过状态*/
+.menu-second:hover {
+    text-decoration: none;
+    /*background-color: #d6d4d5;*/
+    border-top: 1px solid #b7b7b7;
+    border-bottom: 1px solid #acacac;
+    margin-right: 0px;
+
+}
+
+/*三级菜单*/
+.menu-third {
+	height: 30px;
+	line-height: 30px;
+	font-size: 13px;
+	padding-left: 60px;
+	/*border-top: 1px solid #efefef;
+    border-bottom: 1px solid #e1e1e1;*/
+    font-weight: normal;
+    list-style-type: none;
+}
+
+/*覆盖bootstrap的样式*/
+.nav-list,.nav-list li a{
+    padding: 0px;
+    margin: 0px;
+}
+
+.sidebar-icon {
+	float: right;
+	display: block;
+	line-height: inherit;
+	padding-right: 10px;
+	vertical-align: middle;
+}
+
+</style>
+	<!-- Static navbar -->
+	<div class="navbar navbar-default navbar-fixed-top" role="navigation">
+		<div class="container">
+			<div class="navbar-header">
+				<a class="navbar-brand" href="/"><img src="http://i.meilishuo.net/css/images/header/logo_n4.png"></a>
+			</div>
+			<div class="navbar-collapse collapse">
+				<ul class="nav navbar-nav">
+					<li class="top_menu" treeid="-1"><a href="/">管理后台首页</a></li>
+					@section('topNav')
+						@if ($treeInfo)
+						@foreach ($treeInfo as $k => $t)
+							<li class="top_menu" treeid="{{$t['tree_id']}}">
+								<a href="{{$t['tree_url']}}" class="dropdown-toggle" data-toggle="dropdown">{{ $t['tree_name'] }}</a>
+							</li>
+						@endforeach
+						@endif
+					@show
+				</ul>
+				<ul class="nav navbar-nav navbar-right">
+					<li class="dropdown ">
+						<a href="#" class="dropdown-toggle" data-toggle="dropdown"> <img src="{{ $userInfo['avatar_small'] }}" class="img-40 img-circle" /> {{ $userInfo['name'] }} <b class="caret"></b></a>
+						<ul class="dropdown-menu">
+							<li><a href="/auth/logout"><span class="glyphicon glyphicon-off"></span> 退出</a></li>
+						</ul>
+					</li>
+					<li class=""><a href="/help">帮助</a></li>
+				</ul>
+			</div>
+		</div>
+	</div>
+	<div style="top:50px; z-index: 100; position: fixed; width:100%;">
+		<div class="text-center container" style="width:400px;">
+			<div class="alert alert-danger" id="message-container" style="display: none;">
+			</div>
+		</div>
+	</div>
+	<div class="container" id="container">
+		<div class="sidebar">
+			<div class="navbar navbar-default" id="navbar" role="navigation">
+				<input type="hidden" id="path_url" value="{{$pathUrl}}">
+				@if ($treeInfo)
+				@foreach ($treeInfo as $k => $t)
+					@if ($t['child_info'] && !empty($t['child_info']))	
+						<ul class="ul-first" parentid="{{$t['tree_id']}}">
+							@foreach ($t['child_info'] as $l)
+								@if ($l['child_info'] && !empty($l['child_info']))
+									<li class="menu-first start" treeurl="{{$l['tree_url']}}" href="#{{$l['tree_id']}}" data-toggle="collapse"><a>{{ $l['tree_name'] }}</a><span class="glyphicon glyphicon-hand-down sidebar-icon"></span></li>
+									<ul id="{{$l['tree_id']}}" class="collapse">
+										@foreach ($l['child_info'] as $m)
+											@if ($m['child_info'] && !empty($m['child_info']))
+												<li class="menu-second start" treeurl="{{$m['tree_url']}}" href="#{{$m['tree_id']}}" data-toggle="collapse"><a>{{ $m['tree_name'] }}</a><span class="glyphicon glyphicon-hand-down sidebar-icon"></span></li>
+												<ul id="{{$m['tree_id']}}" class="collapse">
+													@foreach ($m['child_info'] as $n)
+														<li class="menu-third" treeurl="{{$n['tree_url']}}"><a href="{{$n['tree_url']}}">{{ $n['tree_name'] }}</a></li>
+													@endforeach
+												</ul>
+											@else
+												<li class="menu-second" treeurl="{{$m['tree_url']}}"><a href="{{$m['tree_url']}}">{{ $m['tree_name'] }}</a></li>
+											@endif 
+										@endforeach
+									</ul>	
+								@else
+									<li class="menu-first" treeurl="{{$l['tree_url']}}"><a href="{{ $l['tree_url'] }}">{{ $l['tree_name'] }}</a></li>
+								@endif
+							@endforeach	
+						</ul>
+					@endif
+				@endforeach
+				@endif
+			</div>
+		</div>
+		<div class="right_container" id="right_container">
+			<div style="top:50px; z-index: 100; position: fixed; width:85%;">
+				<div class="text-center container" style="width:400px;">
+					<div class="alert alert-danger" id="message-container" style="display: none;">
+					</div>
+				</div>
+			</div>
+			@if( (isset($code) && $code != 200) || ( isset($error_code) && $error_code != 0) )
+			<div role="alert" class="alert alert-danger">
+				<strong>{{ $error_msg }}</strong> {{ $error_detail or '' }}
+			</div>
+			@endif
+			@yield('content')
+	        <p id="back-to-top"><a href="#top" >▲</a></p>
+	        <div id="footer">
+				<div class="container">
+					<span class="text-muted">2014 &copy; Meilishuo.com</span>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	
+
+	<script type="text/javascript">
+
+		$(document).ready(function() {
+
+			var urlList = <?php echo json_encode($urlList) ?>;
+			console.log(urlList);
+
+			var path_url = $("#path_url").val();
+			console.log(path_url);
+
+			$(".menu-first").hide();
+			$(".top_menu").click(function() {
+				var tree_id = $(this).attr("treeid");
+
+				$("ul[parentid][parentid='"+tree_id+"']").children(".menu-first").show();
+				$("ul[parentid][parentid!='"+tree_id+"']").children(".menu-first").hide();
+
+				path_url = '';
+				$("ul[class='in']").attr("class", "collapse");
+				$("right_container").html("");
+			});
+
+			$("li[class^='menu-']").click(function() {
+				console.log($(this).hasClass('collapsed'));
+				console.log(typeof($(this).attr('class')));
+				if ($(this).hasClass('collapsed') || $(this).hasClass('start')) {
+					$(this).removeClass("start");
+					$(this).children("span").attr("class", "glyphicon glyphicon-hand-up sidebar-icon");
+				} else {
+					$(this).children("span").attr("class", "glyphicon glyphicon-hand-down sidebar-icon");
+				}
+			});
+
+			console.log(path_url);
+
+			if (path_url) {
+				path_url = "/" + $("#path_url").val();
+				var parent_id = $("li[treeurl='"+path_url+"']").closest("ul[parentid]").attr("parentid");
+				console.log(parent_id);
+
+				// url不在菜单中
+				if (typeof(parent_id) == "undefined" && urlList.hasOwnProperty(path_url)) {
+					path_url = urlList[path_url];
+					console.log(path_url);
+					parent_id = $("li[treeurl='"+path_url+"']").closest("ul[parentid]").attr("parentid");
+					console.log(parent_id);
+				}
+
+				$("ul[parentid='"+parent_id+"']").children(".menu-first").show();
+				$("li[treeurl='"+path_url+"']").parents("ul[class='collapse']").attr("class", "in");
+				$("ul[class='in']").prev().children("span").attr("class", "glyphicon glyphicon-hand-up sidebar-icon");
+				$("ul[class='collapse']").prev().children("span").attr("class", "glyphicon glyphicon-hand-down sidebar-icon");
+			}	
+		});
+	</script>
+
+	<!-- Bootstrap core JavaScript
+	================================================== -->
+	<!-- Placed at the end of the document so the pages load faster -->
+	<script type='text/javascript' src="/static/js/jquery.form.min.js"></script>
+	<script type='text/javascript' src="/static/js/main.js"></script>
+</body>
+</html>

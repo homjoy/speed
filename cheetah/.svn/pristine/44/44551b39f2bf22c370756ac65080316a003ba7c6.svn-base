@@ -1,0 +1,102 @@
+fml.define('speed/it/wifi', ['jquery', 'plugin/bootstrap/validator', 'plugin/store', 'component/notify'], function (require, exports) {
+    var $ = require('jquery');
+    var store = require('plugin/store');
+    var notify = require('component/notify');
+
+    var LAST_VISIT_TAB = 'last-visit-tab';
+    var tabId = store.get(LAST_VISIT_TAB);
+    tabId && $('a[href='+tabId+']').click();
+
+    $(".nav-tabs  > li > a").on("click",function(){
+        store.set(LAST_VISIT_TAB,$(this).attr('href'));
+    });
+
+
+    $(document).on('click', ".event dt", function (e) {
+        var isBtn = $(e.target).hasClass('.btn');
+        if (!isBtn) {
+            var dt = $(e.target).closest('dt');
+            var isShow = dt.next().css('display') == 'none';
+            //dt.next().stop().slideToggle();
+            dt.closest('.event-list').find('.event dd:visible').slideUp();
+            if (isShow) {
+                dt.next().stop().slideDown();
+            } else {
+                dt.next().stop().slideUp();
+            }
+        }
+
+    });
+    //自写下拉框
+
+    function select(function1) {
+        $('.select-input').focus(function () {
+            $(this).next().removeClass('hide');
+        }).blur(function () {
+            var _this = this;
+            setTimeout(function () {
+                $(_this).next().addClass('hide');
+            }, 200);
+        }).next().find('li').click(function () {
+            $(this).parent().prev().val($(this).html()).trigger('input');
+            function1($(this).html());
+        });
+    }
+
+    select(function1);
+
+    function function1(v) {
+        if (v == 'WIFI密码') {
+            $('.wifi-notice').removeClass('hide');
+            $('.vpn_notice').addClass('hide');
+        } else {
+            $('.wifi-notice').addClass('hide');
+            $('.vpn_notice').removeClass('hide');
+        }
+    }
+
+
+    $('#form_password_fix').bootstrapValidator({
+        container: '#cc'
+    }).on('success.form.bv', function (e) {
+        e.preventDefault();
+        if (expand()) {
+            //$('.save_basic_info').button('loading').delay(3000);
+            var myForm = $('#form_password_fix').serializeArray();
+            $.post('/aj/it/create_visitor_wifi', myForm, function (ret) {
+                if (ret.code == 200) {
+                    notify.success('操作成功');
+                } else if (ret.code == 400 || ret.code == 500) {
+                    notify.error(ret.error_msg || '操作失败');
+                }
+                $('.save_basic_info').button('reset');
+            }, 'json');
+            return false;
+        }
+
+    });
+
+    function expand() {
+        return true;
+    }
+
+    //禁用
+    var data;
+    $('.btn-warning').click(function (e) {
+        e.stopPropagation();
+        data = $(this).data();
+        $('#notice_bear').modal('show');
+    });
+    $('.bear').click(function () {
+        $.post('/aj/it/disable_visitor_wifi', data, function (ret) {
+            if (ret.code == 200) {
+                notify.success('操作成功');
+                store.set(LAST_VISIT_TAB, '#visitor_wifi_list');
+                window.location.reload();
+            } else if (ret.code == 400 || ret.code == 500) {
+                notify.error( ret.error_msg || '操作失败');
+            }
+            $('.save_basic_info').button('reset');
+        }, 'json');
+    });
+});

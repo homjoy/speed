@@ -1,0 +1,109 @@
+<?php
+namespace Admin\Modules\Structure\Depart;
+use Libs\Util\Format;
+use Admin\Modules\Common\BaseModule;
+use Admin\Package\Common\Response;
+use Admin\Package\Log\Log;
+use Admin\Package\Department\DepartSub;
+use Admin\Package\Department\DepartRelation;
+/**
+ * Created by hongzhou@meilishuo.com
+ * User: MLS
+ * Date: 15/11/25
+ * Time: 下午9:52
+ */
+
+class AjaxUpdateLeader extends BaseModule {
+
+    protected $errors = NULL;
+    private $params = NULL;
+    private static $DEPART_TYPE = 5;
+    public static $VIEW_SWITCH_JSON = TRUE;
+
+    public function run() {
+
+        $this->_init();
+        $return= $old =array();
+        switch($this->params['type']){
+            case 1:
+                $old =DepartRelation::getInstance()->getRelationInfo(array('depart_id'=>$this->params['depart_id'],
+                    'is_virtual'=>0));
+                $return = DepartRelation::getInstance()->updateRelationInfo(array('depart_id'=>$this->params['depart_id'],
+                    'user_id'=>$this->params['leader_id']));
+
+                break;
+            case 2:
+                $rel =DepartRelation::getInstance()->getRelationInfo(array('depart_id'=>$this->params['depart_id'],
+                    'is_virtual'=>0));
+                is_array($rel)&&$rel=array_pop($rel);
+                if(isset($rel['relation_id'])){//多代理这有问题 TODO
+                    $old =DepartSub::getInstance()->getSubInfo(array('user_id'=>$this->params['leader_id'],
+                        'relation_id'=>$rel['relation_id']));
+                    if($old){
+                        $return = DepartSub::getInstance()->updateSubInfo(array('user_id'=>$this->params['leader_id'],
+                            'relation_id'=>$rel['relation_id']));
+                    }else{
+                        $old = $this->params;
+                        $return = DepartSub::getInstance()->createSubInfo(array('user_id'=>$this->params['leader_id'],
+                            'relation_id'=>$rel['relation_id']));
+                    }
+
+                }
+                break;
+
+        }
+
+
+        if(!$return){
+            $return = Response::gen_error(50001,'修改领导信息失败');
+        }else{
+            $return = Response::gen_success($return);
+        }
+        $this->doLog($this->params,$old);
+        $this->app->response->setBody($return);
+
+
+    }
+
+
+    protected function doLog($new_param=array(),$old_param=array()){
+        $old = $old_param;
+        is_array($old)&&$old=array_pop($old);
+        $old = json_encode($old);
+        $new =$new_param;
+        $depart =isset($new['depart_id'])?$new['depart_id']:'';
+        $new = json_encode($new);
+        $ret = Log::getInstance()->createLogs(array('user_id'=>$this->user['id'],'handle_id'=>$depart,
+            'before_data'=>$old,'after_data'=>$new,'handle_type'=>self::$DEPART_TYPE));
+        return $ret;
+    }
+
+    private function _init() {
+
+        $this->rules  = array(
+            'depart_id' => array(
+                'required' => TRUE,
+                'allowEmpty' => FALSE,
+                'type'=>'string',
+                'maxLength'=> 30,
+            ),
+            'leader_id' => array(
+                'required' => TRUE,
+                'allowEmpty' => FALSE,
+                'type'=>'integer',
+            ),
+            'type' => array(//类型
+                'required' => TRUE,
+                'allowEmpty' => FALSE,
+                'type'=>'integer',
+                'enum'=>array(1,2)
+            )
+
+        );
+
+        $this->params   = $this->post()->safe();
+        $this->errors   = $this->post()->getErrors();
+
+
+    }
+}

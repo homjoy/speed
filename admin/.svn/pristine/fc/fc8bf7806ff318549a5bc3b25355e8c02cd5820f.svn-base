@@ -1,0 +1,593 @@
+<?php
+
+/**
+ * Created by PhpStorm.
+ * User: apple
+ * Date: 15-11-17
+ * Time: 上午11:57
+ */
+
+namespace Admin\Modules\Hr\Attendance;
+
+use Libs\Util\Format;
+use Admin\Modules\Common\BaseModule;
+use Admin\Package\Common\Response;
+use Admin\Package\Attendance\Attendance;
+use Admin\Package\Attendance\PunchLog;
+use Admin\Package\Attendance\WorkingHours;
+use Admin\Package\Hr_leave\LeaveList;
+use Admin\Package\Hr_leave\WorkingCalendarList;
+/**
+ * Created by guojiezhu@meilishuo.com
+ * User: MLS  PersonalLeave
+ * Date: 15/11/13
+ * Time: 下午12:18
+ */
+class AjaxAttendanceStatistics  extends BaseModule {
+
+    protected $errors = null;
+    private $params = null;
+    //protected $checkUserPermission = true;
+    protected $return_statis = array(); //整理后数据
+    public static $VIEW_SWITCH_JSON = TRUE;
+    public function run() {
+        $this->_init();
+        //1.获取用户的数据
+        //TODO 备注
+        $start_date = $this->params['attendance_start_date'];
+        $end_date = $this->params['attendance_end_date'];
+        
+        if($start_date > $end_date ){
+            $return = Response::gen_error(Response::DS_DATA_NO_DATA, '', '开始不能比结束时间大');
+            return $this->app->response->setBody($return);
+        }
+        if(empty($start_date) || empty($end_date)){
+            $return = Response::gen_error(Response::DS_DATA_NO_DATA, '', '开始时间和结束时间不能为空');
+            return $this->app->response->setBody($return);
+        }
+        //考勤天数统计
+        $num = $this->getDayBetweeTwoDay($start_date, $end_date);
+       
+        if (!empty($num)) {
+            $num = intval($num);
+        } else {
+            $num = 1;
+        }
+        //获取所有的用户和考勤规则
+        $attendance_staff = $this->getAttendanceStaff($this->params);
+        $leave_params = array(
+            'gt_start_date' => $start_date, 'lt_end_date' => $end_date
+        );
+        $leave_list = $this->getLeaveList($leave_params);
+
+        //获取节假日和工作日
+        $working_params = array(
+            'start_date' => $start_date, 'end_date' => $end_date
+        );
+        $working_calendar_list =  $this->getWorkingCalendarList($working_params);
+      
+        if (!empty($attendance_staff)) {
+            $start_date_time = strtotime($start_date);
+            //循环需要考勤的人
+            //用户的考勤记录
+            foreach ($attendance_staff as $staff) {
+                $punch_log_prams = array(
+                    'user_id' => $staff['user_id'],
+                    'start_time' => $start_date,
+                    'end_time' => $end_date,
+                    'all' => 1,
+                );
+
+                //获取指定人的打卡记录
+                $all_punch_log = $this->getDailyPunchLog($punch_log_prams);
+                //当前人的请假记录
+                $current_staff_leave = isset($leave_list[$staff['user_id']]) ?$leave_list[$staff['user_id']] : array() ;
+          
+                //循环考勤天数
+                for ($i = 0; $i < $num; $i++) {
+                    $current_date = date('Y-m-d', strtotime($i . ' days', $start_date_time));
+                    //如果当前没有，则保存进入数据库
+                    $default_daily_punch_info = array(
+                        'user_id' => $staff['user_id'],
+                        'staff_id' => $staff['staff_id'],
+                        'name_cn' => $staff['name_cn'],
+                        'status' => $staff['status'],
+                        'end_time' => '0000-00-00 00:00:00',
+                        'start_time' => '0000-00-00 00:00:00',
+                    );
+                    //统计考勤的时间，这个人的打卡信息
+                    if (!empty($all_punch_log[$current_date])) {
+                        //当前的打卡的数据
+                        $current_date_punch_log = $all_punch_log[$current_date];
+                        //最后一次打卡时间
+                        $current_date_punch_log['end_time'] == '0000-00-00 00:00:00' ? $last_punch_time = 0 : $last_punch_time = strtotime($current_date_punch_log['end_time']);
+                        //晚上考勤时间标准
+                        $afternoon_end = strtotime($current_date . ' ' . trim($staff['afternoon_end']));
+                        //第一次打卡时间
+                        $current_date_punch_log['start_time'] == '0000-00-00 00:00:00' ? $first_punch_time = 0 : $first_punch_time = strtotime($current_date_punch_log['start_time']);
+
+                        //早上考勤时间标准
+                        $morning_start = strtotime($current_date . ' ' . trim($staff['morning_start']));
+                    } else {
+                        $current_date_punch_log = array();
+                        $last_punch_time = 0;
+                        $first_punch_time = 0;
+                        $afternoon_end = 0;
+                        $morning_start = 0;
+                        
+                    }
+
+                    //当前天的考勤日志  
+                    $current_calendar_list = !empty($working_calendar_list[$current_date]) ? $working_calendar_list[$current_date] : array();
+                    //正常上班1上午请假 2下午请假3全天请假 6 节假日未打卡 7 周六日未打卡 8 节假日打卡9 周六日打卡
+                    //     $staff_leave = $params['staff_leave'];
+
+                   
+                    $attendance_params = array(
+                        'calendar_list' => $current_calendar_list,
+                        'punch_log' => $current_date_punch_log,
+                        'default_punch_info' => $default_daily_punch_info,
+                        'current_date' => $current_date,
+                        'last_punch_time' => $last_punch_time,
+                        'first_punch_time' => $first_punch_time,
+                        'afternoon_end' => $afternoon_end,
+                        'morning_start' => $morning_start,
+                        'staff_leave' => $current_staff_leave
+                    );
+                    //1.判断休息日
+                    $week = date('w', strtotime($current_date));
+                    //是 周六日 且 没有在 串休表中 即 type = 2
+                    if ($week == 0 || $week == 6) {
+                        // ($calendar_list,$punch_log,$default_punch_info,$current_date) 
+                        //如果 这一天是周六日，并且 在假期表中，不是串休的，直接返回
+                        $stat_return = $this->saturdayJudgment($attendance_params);
+                        if ($stat_return) {
+                            continue;
+                        }
+                    }
+
+                    //2. 是法定节假日
+                    $holiday_return = $this->holidayJudgment($attendance_params);
+                    if ($holiday_return) {
+                        continue;
+                    }
+
+                    //3.判断是否请假 ,请假做了上午和下午的处理
+                    if (!empty($current_staff_leave)) {
+                        $leave_return = $this->leaveJudgement($attendance_params);
+                        if ($leave_return) {
+                            continue;
+                        }
+                    }
+
+                    //4.统计每天的考勤情况
+                    $this->workDayJudgement($attendance_params);
+                }
+            }
+        }
+        $return = Response::gen_success('数据统计成功');
+        return $this->app->response->setBody($return);
+    }
+
+    /**
+     *执行考勤的更新和插入
+     * @param $current_data
+     *
+     * @return array
+     *
+     */
+    public function execUpdate($current_data) {
+    
+        //更新接口
+        $return_data = array();
+        if (!empty($current_data['id'])) {
+            $edit = PunchLog::getInstance()->updateDailyPunchlog( $current_data);
+            $return_data['edit'] = array('id' => $current_data['id'], 'ret' => $edit);
+        } else {
+            //插入接口
+            $ins = PunchLog::getInstance()->createDailyPunchLog($current_data);
+            $return_data['ins'] = array('id' => $current_data['staff_id'], 'date' => $current_data['attendance_date'], 'ret' => $ins);
+        }
+        return $return_data;
+    }
+
+    /**
+     * 判断是否是周六日
+     * @param array $params
+     *
+     * @return bool
+     */
+    public function saturdayJudgment($params = array()) {
+        $calendar_list = $params['calendar_list'];
+        $punch_log = $params['punch_log'];
+        $default_punch_info = $params['default_punch_info'];
+        $current_date = $params['current_date'];
+        if (empty($calendar_list)) {
+            if (!empty($punch_log)) {
+                //周六日打卡
+                $news_staff_info = array(
+                    'id' => $punch_log['id']
+                );
+            } else {
+                //周六日 没有上班，也要记录一下，方便统计
+                $news_staff_info = $default_punch_info;
+                $news_staff_info['attendance_date'] = $current_date;
+            }
+            $news_staff_info['approval_half'] = 9;
+            $news_staff_info ['is_statistics'] = 1;
+            $news_staff_info ['statistical_date'] = date('Y-m-d H:i:s');
+            //数据保存到数据库
+         
+            $this->return_statis[] = $this->execUpdate($news_staff_info);
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * 判断节假日
+     * @param array $params
+     *
+     * @return bool
+     */
+    public function holidayJudgment($params = array()) {
+       
+        $calendar_list = $params['calendar_list'];
+        $punch_log = $params['punch_log'];
+        $default_punch_info = $params['default_punch_info'];
+        $current_date = $params['current_date'];
+
+        if (!empty($calendar_list) && $calendar_list['type'] == 2) {
+            if (!empty($punch_log)) {
+                //节假日打卡
+                $news_staff_info = array(
+                    'id' => $punch_log['id']
+                );
+            } else {
+                //节假日未打卡
+                $news_staff_info = $default_punch_info;
+                $news_staff_info['attendance_date'] = $current_date;
+            }
+            $news_staff_info['approval_half'] = 8;
+            $news_staff_info ['is_statistics'] = 1;
+            $news_staff_info ['statistical_date'] = date('Y-m-d H:i:s');
+       
+            $this->return_statis[] = $this->execUpdate($news_staff_info);
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * 请假判断
+     * @param array $params
+     *
+     * @return bool
+     */
+    public function leaveJudgement($params = array()) {
+        $staff_leave = $params['staff_leave'];
+        $punch_log = $params['punch_log'];
+        $default_punch_info = $params['default_punch_info'];
+        $current_date = $params['current_date'];
+        $last_punch_time = $params['last_punch_time'];
+        $first_punch_time = $params['first_punch_time'];
+        $afternoon_end = $params['afternoon_end'];
+        $morning_start = $params['morning_start'];
+        //上午请假信息
+        $am_approval = !empty($staff_leave[$current_date . '-1']) ?
+                $staff_leave[$current_date . '-1'] : array();
+        //下午请假信息
+        $pm_approval = !empty($staff_leave[$current_date . '-2']) ?
+                $staff_leave[$current_date . '-2'] : array();
+        //全天请假
+        if (!empty($am_approval) || !empty($pm_approval)) {
+            if (!empty($am_approval) && !empty($pm_approval)) {
+                $news_staff_info = array(
+                    'attendance_date' => $current_date,
+                    'approval_half' => 3,
+                    'approval_am_type' => $am_approval['absence_type'],
+                    'approval_pm_type' => $pm_approval['absence_type'],
+                    'approval_am_status' => $am_approval['status'],
+                    'approval_pm_status' => $pm_approval['status'],
+                    'abnormal_state' =>0,
+                    'late_time' => 0,
+                    'early_time' => 0,
+
+                );
+                $news_staff_info = array_merge($news_staff_info, $default_punch_info);
+                //判断是否请了假，也打卡,如果打卡，则更新记录
+                if (!empty($punch_log)) {
+                    $news_staff_info['id'] = $punch_log['id'];
+                }
+            } else {
+                if (!empty($am_approval)) { //上午请假
+                    $news_staff_info = array(
+                        'attendance_date' => $current_date,
+                        'approval_half' => 1,
+                        'approval_pm_type' => $am_approval['absence_type'],
+                        'approval_pm_status' => $pm_approval['status'],
+                        'late_time' => 0,
+                        'early_time' => 0,
+                        'abnormal_state' =>0
+                        );
+                    //判断请半天假，是否打卡
+                    if (!empty($punch_log)) {
+                        //判断一下，上午请假，下午是否早退
+                        if (!empty($last_punch_time) && ($last_punch_time < $afternoon_end)) {
+                            $news_staff_info['early_time'] = $afternoon_end - $last_punch_time;
+                        }
+                        $news_staff_info['id'] = $punch_log['id'];
+                    } else {
+                        $news_staff_info = array_merge($news_staff_info, $default_punch_info);
+                        $news_staff_info['abnormal_state'] = 2; //考勤异常，下午请假但上午午未打卡
+                    }
+                } else if (!empty($pm_approval)) { //下午请假
+                    $news_staff_info = array(
+                        'attendance_date' => $current_date,
+                        'approval_half' => 2,
+                        'approval_pm_type' => $pm_approval['absence_type'],
+                        'approval_pm_status' => $pm_approval['status'],
+                        'late_time' => 0,
+                        'early_time' => 0,
+                        'abnormal_state' =>0
+                    );
+                    //判断请半天假，是否打卡
+                    if (!empty($punch_log)) {
+                        //判断一下，下午请假，上午是否迟到
+                        if (!empty($first_punch_time) && ($first_punch_time > $morning_start)) {
+                            $news_staff_info['late_time'] = $first_punch_time - $morning_start;
+                        }
+                        $news_staff_info['id'] = $punch_log['id'];
+                    } else {
+
+                        $news_staff_info = array_merge($news_staff_info, $default_punch_info);
+                        $news_staff_info['abnormal_state'] = 1;//上午请假但下午未打卡
+                    }
+                }
+            }
+            $news_staff_info ['is_statistics'] = 1;
+            $news_staff_info ['statistical_date'] = date('Y-m-d H:i:s');
+            $this->return_statis[] = $this->execUpdate($news_staff_info);
+        
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * 工作日判断
+     * @param array $params
+     */
+    public function workDayJudgement($params = array()) {
+
+        $punch_log = $params['punch_log'];
+        $default_punch_info = $params['default_punch_info'];
+        $current_date = $params['current_date'];
+        $last_punch_time = $params['last_punch_time'];
+        $first_punch_time = $params['first_punch_time'];
+        $afternoon_end = $params['afternoon_end'];
+        $morning_start = $params['morning_start'];
+        $news_staff_info = array(
+            'late_time' =>0,
+            'early_time' =>0
+        );
+        if (!empty($punch_log)) {
+            if (!empty($first_punch_time) && ($first_punch_time > $morning_start)) {//迟到
+                $news_staff_info ['late_time'] = ($first_punch_time - $morning_start);
+            } else {
+                $news_staff_info ['late_time'] = 0;
+            }
+
+            if (!empty($last_punch_time) && ($last_punch_time < $afternoon_end)) { //早退
+                $news_staff_info ['early_time'] = ($afternoon_end - $last_punch_time);
+            } else {
+                $news_staff_info ['early_time'] = 0;
+            }
+            $news_staff_info ['id'] = $punch_log['id'];
+        } else {//当天考勤缺失，插入数据库记录一下
+            $news_staff_info = array(
+                'abnormal_state' => 3, //考勤确实
+                'attendance_date' => $current_date
+            );
+            $news_staff_info = array_merge($news_staff_info,$default_punch_info);
+        }
+
+        //表示考勤统计状态和考勤时间
+        $news_staff_info ['is_statistics'] = 1;
+        $news_staff_info ['statistical_date'] = date('Y-m-d H:i:s');
+        $this->return_statis[] = $this->execUpdate($news_staff_info);
+    }
+
+    //TOOL 类
+    /**
+     * 获取两天之间的天数  传入2015-11-16 -2015-11-18 计算的是  2015-11-16 00:00:00 2015-11-18 23:59:59 之间的天数  3天
+     * @param type $day1
+     * @param type $day2
+     * @return int
+     */
+    public function getDayBetweeTwoDay($day1, $day2) {
+        if ($day1 > $day2) {
+            return 0;
+        }
+        $data1 = date('Y-m-d 00:00:00', strtotime($day1));
+        $data2 = date('Y-m-d 23:59:59', strtotime($day2));
+
+        $diff_day = ceil((strtotime($data2) - strtotime($data1)) / 86400);
+        return $diff_day;
+    }
+
+    /**
+     * 获取指定人的打卡记录
+     * @param array $params
+     *
+     * @return mixed
+     */
+    public function getDailyPunchLog($params = array()) {
+        if (empty($params['start_time']) || empty($params['end_time']) || empty($params['user_id']))
+            return array();
+        $daily_punch_log = PunchLog::getInstance()->getDailyPunchLog( $params);
+        $new_daily_punch_log = array();
+        if(!empty($daily_punch_log)) {
+            foreach ($daily_punch_log as $key => $value) {
+                $new_daily_punch_log[$value['attendance_date']] = $value;
+            }
+        }
+        return $new_daily_punch_log;
+    }
+
+    /**
+     * 获取需要考勤的人员，以及考勤的规则
+     */
+    protected function getAttendanceStaff($params = array() ) {
+        $params_search = array(
+            'all' => 1
+        );
+        //获取所有的考勤规则
+        $working_rules = WorkingHours::getInstance()->getWorkingHours( $params_search);
+        if (empty($working_rules))
+            return array();
+        //TODO 做测试
+        $params_search['status'] = 1;//所有要考勤的用户
+        //$params_search['user_id']
+        //针对指定的用户进行查询
+        if(!empty($params['staff_id']))  $params_search['staff_id'] = $params['staff_id'];
+        if(!empty($params['name_cn']))  $params_search['name_cn'] = $params['name_cn'];
+        $working_staff = WorkingHours::getInstance()->getStaffWorkingHours($params_search);
+        if (!empty($working_staff)) {
+            foreach ($working_staff as &$value) {
+                if (isset($value['work_id']) && !empty($value['work_id'])) {
+                    $work_id = intval($value['work_id']);
+                    $rules = isset($working_rules[$work_id]) ? $working_rules[$work_id] : array();
+                    if (empty($rules))
+                        continue;
+                    $value['morning_start'] = $rules['morning_start'];
+                    $value['morning_end'] = $rules['morning_end'];
+                    $value['afternoon_start'] = $rules['afternoon_start'];
+                    $value['afternoon_end'] = $rules['afternoon_end'];
+                    $value['overtime_start'] = $rules['overtime_start'];
+                }else {
+                    continue;
+                }
+            }
+            return $working_staff;
+        }
+        return array();
+    }
+
+    /**
+     * 读取一个时间段内的所有的请假信息
+     */
+    protected function getLeaveList($params = array()) {
+        if (empty($params['gt_start_date']) || empty($params['lt_end_date'])) {
+            return array();
+        }
+        $params['all'] = 1;
+        $params['status'] = array(1, 2, 3, 4);
+        $leave_list_info = LeaveList::getInstance()->getLeaveList($params);
+        //整理后的数据
+
+        if (!empty($leave_list_info)) {
+            //将请假的记录整理为 人=>日期->请假类型关系表
+            $after_sortout_list = array();
+            foreach ($leave_list_info as $leave_info) {
+                if($leave_info['end_date'] >$params['lt_end_date']){
+                    $leave_info['end_date'] = $params['lt_end_date'];
+                }
+                if($leave_info['start_date'] < $params['gt_start_date']){
+                    $leave_info['start_date'] = $params['gt_start_date'];
+                }
+
+                $length = ceil((strtotime($leave_info['end_date'] . ' 23:59:59') - strtotime($leave_info['start_date']
+                                . ' 00:00:00')) / 86400);
+                for ($i = 0; $i < $length; $i++) {
+                    $start_date = strtotime($leave_info['start_date']);
+                    //如果 start_half 为空或者为am 则上午请假，如果为pm 则下午请假
+                    $date_time = date('Y-m-d', strtotime($i . ' days', $start_date));
+                    //上午请假，标记为1
+                    //如果开始时间和当前计算的时间相等，则是请假的第一天
+                    if ($leave_info['start_date'] == $date_time) {
+                        $key = $leave_info['user_id'];
+                        //如果请假的开始表示为空或者 等于AM 则上午请假
+                        if (empty($leave_info['start_half']) || strtoupper($leave_info['start_half']) == 'AM') {
+                            $after_sortout_list[$key][$date_time . '-1'] = array('status' => $leave_info['status'], 'absence_type' => $leave_info['absence_type']);
+                        } else if (!empty($leave_info['start_half']) && strtoupper($leave_info['start_half']) == 'PM') {
+                            //如果开始的标示不为空，且=PM 则是下午请假
+                            $after_sortout_list[$key][$date_time . '-2'] = array('status' => $leave_info['status'], 'absence_type' => $leave_info['absence_type']);
+                        }
+                        //如果当前时间小于 结束时间，则标示下午也请假
+                        if ($date_time < $leave_info['end_date']) {
+                            if (empty($leave_info['start_half']) || strtoupper($leave_info['start_half']) == 'AM') {
+                                $after_sortout_list[$key][$date_time . '-2'] = array('status' => $leave_info['status'], 'absence_type' => $leave_info['absence_type']);
+                            }
+                        }
+                    }
+
+                    //如果结束时间和当前的时间相等,请假的最后一天
+                    if ($leave_info['end_date'] == $date_time) {
+                        //如果结束表示为空或者结束表示 =PM 则标示下午请假
+                        if (empty($leave_info['end_half']) || strtoupper($leave_info['end_half']) == 'PM') {
+                            $after_sortout_list[$key][$date_time . '-2'] = array('status' => $leave_info['status'], 'absence_type' => $leave_info['absence_type']);
+                        } if (!empty($leave_info['end_half']) && strtoupper($leave_info['end_half']) == 'AM') { //上午请假
+                            $after_sortout_list[$key][$date_time . '-1'] = array('status' => $leave_info['status'], 'absence_type' => $leave_info['absence_type']);
+                        }
+                    }
+                    //中间有多天请假，即使周六日也表示为请假
+                    if ($date_time > $leave_info['start_date'] && $date_time < $leave_info['end_date']) {
+                        $after_sortout_list[$key][$date_time . '-1'] = array('status' => $leave_info['status'], 'absence_type' => $leave_info['absence_type']);
+                        $after_sortout_list[$key][$date_time . '-2'] = array('status' => $leave_info['status'], 'absence_type' => $leave_info['absence_type']);
+                    }
+                }
+            }
+
+            return $after_sortout_list;
+        }
+        return array();
+    }
+
+    /**
+     * 获取 所有的法定节假日和需要工作的周六日
+     * @param array $params
+     *
+     * @return array
+     */
+    protected function getWorkingCalendarList($params = array()) {
+        if (empty($params['start_date']) || empty($params['end_date'])) {
+            return array();
+        }
+        //$working_calendar_list = WorkingCalendarList::getInstance()->getCalendarList( $params);
+  
+        if (!empty($working_calendar_list)) {
+            $after_sourt_list = array();
+            foreach ($working_calendar_list as $working_list) {
+                $after_sourt_list[$working_list['date']]['type'] = $working_list['type'];
+            }
+            return $after_sourt_list;
+        }
+        return array();
+    }
+
+    private function _init() {
+        $this->rules = array(
+            'search' => array(// 邮箱 姓名 拼音
+                'type' => 'string',
+            ),
+            'attendance_start_date' => array(
+                'type' => 'string',
+            ),
+            'attendance_end_date' => array(
+                'type' => 'string',
+            ),
+            'all' => array(
+                'type' => 'integer',
+                'default' => 0,
+            ),
+            'staff_id' => array(
+                'type' => 'string',
+            ),
+        );
+
+        $this->params = $this->query()->safe();
+        $this->errors = $this->query()->getErrors();
+    }
+
+}

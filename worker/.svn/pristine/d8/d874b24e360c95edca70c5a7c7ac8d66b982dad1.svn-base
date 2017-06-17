@@ -1,0 +1,1 @@
+Hi！亲：“{{meeting_topic}}”将于{{meeting_start_time}}在{{place}}举行，需要{{meeting_service}}支持，请提前准备，辛苦啦！查看详情请登陆speed。

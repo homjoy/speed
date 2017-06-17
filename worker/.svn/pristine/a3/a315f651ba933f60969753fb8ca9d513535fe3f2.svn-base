@@ -1,0 +1,1 @@
+Hi! {{receive_name}}：{{username}}的申请还没有批复，别让小伙伴等太久O(∩_∩)O！申请类型：{{order_type}}

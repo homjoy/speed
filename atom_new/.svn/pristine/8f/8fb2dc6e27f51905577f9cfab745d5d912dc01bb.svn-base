@@ -1,0 +1,16 @@
+<?php
+
+namespace Atom\Config\Web;
+
+class Memcache extends \Frame\Config {
+
+    public static function config() {
+        return array(
+            'unixsock' => array(
+                array('host' => '192.168.65.6', 'port' => 11211),
+            )
+        );
+    }
+
+}
+

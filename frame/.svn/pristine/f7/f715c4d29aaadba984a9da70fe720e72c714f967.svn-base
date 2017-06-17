@@ -1,0 +1,43 @@
+<?php
+
+namespace Libs\Serviceclient\Api;
+
+/**
+ * worker 接口配置.
+ */
+class JointApiList extends \Libs\Serviceclient\Api\ApiList {
+
+    /**
+     * @var array
+     */
+    protected static $apiList = array(
+  	    'dayi_recruitment/aes_user_info' => array('service' => 'joint', 'method' => 'GET', 'opt' => array('timeout' => 3)),
+        'releaseauth/alter_msg_remove' => array('service' => 'joint', 'method' => 'POST', 'opt' => array('timeout' => 3)),
+        'releaseauth/online_auth_recover' => array('service' => 'joint', 'method' => 'POST', 'opt' => array('timeout' => 3)),
+        'releaseauth/redmine_auth_recover' => array('service' => 'joint', 'method' => 'POST', 'opt' => array('timeout' => 3)),
+        'releaseauth/vpn_auth_recover' => array('service' => 'joint', 'method' => 'POST', 'opt' => array('timeout' => 3)),
+        'releaseauth/wifi_auth_recover' => array('service' => 'joint', 'method' => 'POST', 'opt' => array('timeout' => 3)),
+
+        'releaseauth/mail_auth_recover' => array('service' => 'joint', 'method' => 'POST', 'opt' => array('timeout' => 3)),
+        'itserver/vpn_edit_pwd' => array('service' => 'joint', 'method' => 'POST', 'opt' => array('timeout' => 3)),
+        'itserver/wifi_edit_pwd' => array('service' => 'joint', 'method' => 'POST', 'opt' => array('timeout' => 3)),
+        'itserver/visitor_wifi_create' => array('service' => 'joint', 'method' => 'POST', 'opt' => array('timeout' => 3)),
+        'itserver/visitor_wifi_approve' => array('service' => 'joint', 'method' => 'POST', 'opt' => array('timeout' => 3)),
+        'itserver/visitor_wifi_disable' => array('service' => 'joint', 'method' => 'POST', 'opt' => array('timeout' => 3)),
+        'itserver/grant_vpn_auth' => array('service' => 'joint', 'method' => 'POST', 'opt' => array('timeout' => 3)),
+        'itserver/grant_redmine_auth' => array('service' => 'joint', 'method' => 'POST', 'opt' => array('timeout' => 3)),
+        'itserver/grant_wifi_auth' => array('service' => 'joint', 'method' => 'POST', 'opt' => array('timeout' => 3)),
+        'grantauth/grant_vpn_auth' => array('service' => 'joint', 'method' => 'POST', 'opt' => array('timeout' => 3)),
+        'grantauth/grant_redmine_auth' => array('service' => 'joint', 'method' => 'POST', 'opt' => array('timeout' => 3)),
+        'grantauth/grant_wifi_auth' => array('service' => 'joint', 'method' => 'POST', 'opt' => array('timeout' => 3)),
+        'itserver/email_create' => array('service' => 'joint', 'method' => 'GET', 'opt' => array('timeout' => 3)),
+        'itserver/email_update' => array('service' => 'joint', 'method' => 'GET', 'opt' => array('timeout' => 3)),
+        'itserver/check_mail' => array('service' => 'joint', 'method' => 'GET', 'opt' => array('timeout' => 3)),
+        'itserver/check_redmine' => array('service' => 'joint', 'method' => 'GET', 'opt' => array('timeout' => 3)),
+        //邮件组管理
+        'itserver/itserver/email_group_manage' => array('service' => 'joint', 'method' => 'POST', 'opt' => array('timeout' => 3)),
+        'itserver/itserver/mail_group_joint' => array('service' => 'joint', 'method' => 'POST', 'opt' => array('timeout' => 3)),
+
+    );
+
+}

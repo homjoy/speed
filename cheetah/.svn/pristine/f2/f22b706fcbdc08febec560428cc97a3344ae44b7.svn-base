@@ -1,0 +1,660 @@
+<script type="text/javascript">
+    var Constant = <%= JSON.stringify(this.constant)%> || {};
+    Constant.user = {id:'<%= this.userInfo.data.userId %>',name_cn:'<%= this.userInfo.data.nameCn %>',name:'<%= this.userInfo.data.nameCn %>'};
+    Constant.expenseitem = Constant.expenseitem || [];
+    Constant.expenseitemcommon = Constant.expenseitemcommon || [];
+    Constant.expenseitemAdditional = Constant.expenseitemallowane || [];
+    Constant.project = Constant.project || [];
+    Constant.vehicle = Constant.vehicle || [];
+    Constant.budgetProjects = <%= this.projects && this.projects.rcode == 200 ? JSON.stringify(this.projects.budgetItemTree) : '[]'; %>;
+    Constant.ctripList = <%= this.ctrip && this.ctrip.rcode == 200 ? JSON.stringify(this.ctrip.data) : '[]'; %>;
+</script>
+<script type="text/html" id="basic-info-tpl">
+    <fieldset class="basic-info">
+        <legend>基本信息</legend>
+        <div class="row">
+            <input type="hidden" name="id" value="{{id}}"/>
+            <div class="form-group col-xs-6">
+                <label class="col-xs-4 control-label">报销人</label>
+
+                <div class="col-xs-8">
+                    {{ if editable }}
+                    <input type="text" name="applyPersonid" value="{{applyPersonid}}" class="form-control">
+                    {{else}}
+                    <input type="hidden" name="applyPersonid" value="{{applyPersonid}}">
+                    <input type="text" name="applyPersonName" value="{{applyPersonName}}" class="form-control" disabled>
+                    {{/if}}
+                </div>
+            </div>
+            <div class="form-group col-xs-6">
+                <label class="col-xs-4 control-label">申请部门</label>
+
+                <div class="col-xs-8">
+                    <input type="text" name="departmentName" value="{{applyDeptName}}" class="form-control" disabled>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="form-group col-xs-6">
+                <label class="col-xs-4 control-label">银行账号</label>
+
+                <div class="col-xs-8">
+                    <input type="text" name="accountno"class="form-control" disabled>
+                </div>
+            </div>
+            <div class="form-group col-xs-6">
+                <label class="col-xs-4 control-label">联系电话</label>
+
+                <div class="col-xs-8">
+                    <input type="text" name="phone" class="form-control" disabled>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="form-group col-xs-6">
+                <label class="col-xs-4 control-label">单据编号</label>
+
+                <div class="col-xs-8">
+                    <input name="billNo" value="{{billNo}}" type="text" class="form-control" readonly>
+                </div>
+            </div>
+            <div class="form-group col-xs-6">
+                <label class="col-xs-4 control-label">申请日期</label>
+
+                <div class="col-xs-8">
+                    <input type="text" name="applyDateStr" value="{{applyDateStr}}" class="form-control" disabled>
+                </div>
+            </div>
+        </div>
+    </fieldset>
+</script>
+
+
+<script type="text/html" id="receipt-info-tpl">
+    <fieldset class="receipt-info">
+        <legend>单据信息</legend>
+        <div class="row">
+            <div class="form-group col-xs-4">
+                <label class="col-xs-4 control-label">是否冲借款</label>
+
+                <div class="col-xs-8">
+                    <div class="checkbox">
+                        <label><input type="checkbox" name="loanFlag" value="1" {{if loanFlag==1}}checked{{/if}} class="offset-borrow">是</label>
+                    </div>
+                </div>
+            </div>
+            <!--<div class="form-group col-xs-4 {{if loanFlag!=1 }}hide{{/if}}">-->
+                <!--<label class="col-xs-4 control-label">财务应付</label>-->
+                <!--<div class="col-xs-8">-->
+                    <!--<input type="text" name="payAmount" value="{{payAmount || 0}}" class="form-control" disabled>-->
+                <!--</div>-->
+            <!--</div>-->
+        </div>
+
+        <div class="row">
+            <div class="form-group col-xs-4">
+                <label class="col-xs-4 control-label">预算项目</label>
+
+                <div class="col-xs-8">
+                    <input name="budgetItem" value="{{budgetItem}}" type="text" class="form-control" />
+                </div>
+            </div>
+
+            <div class="form-group col-xs-4">
+                <label class="col-xs-4 control-label">所属项目</label>
+                <div class="col-xs-8">
+                    <select name="projectCode" class="form-control selectpicker">
+                        {{#constant.project | options:{id:'itemValue',name:'itemName',selected:projectCode} }}
+                    </select>
+                    <span class="help-block">如无特殊业务，请选无</span>
+                </div>
+            </div>
+
+            <div class="form-group col-xs-4 hide">
+                <label class="col-xs-4 control-label">核算公司</label>
+
+                <div class="col-xs-8">
+                    <select class="form-control selectpicker">
+                        <option>请选择</option>
+                        {{#constant.attribution | options:{id:'itemValue',name:'itemName',selected:attribution} }}
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="form-group col-xs-4">
+                <label class="col-xs-4 control-label">报销金额</label>
+
+                <div class="col-xs-8">
+                    <input type="text" name="applyAmount" value="{{applyAmount | currencyFormat }}" class="form-control" disabled/>
+                </div>
+            </div>
+
+            <div class="form-group col-xs-4">
+                <label class="col-xs-4 control-label">附件张数</label>
+
+                <div class="col-xs-8">
+                    <input type="text" name="billNum" value="{{billNum}}" class="form-control"/>
+                </div>
+            </div>
+
+            <div class="form-group col-xs-4">
+                <label class="col-xs-4 control-label">经办人</label>
+
+                <div class="col-xs-8">
+                    <input type="text" name="handlePersonName" value="{{handlePersonName || constant.user.name}}" class="form-control" disabled/>
+                </div>
+            </div>
+        </div>
+    </fieldset>
+</script>
+<script type="text/html" id="general-fee-tpl">
+    <fieldset class="general-fee">
+        <legend>费用明细</legend>
+        <div class="row">
+            <input type="hidden" name="delExpenseItem" value=""/>
+            <div class="form-group col-xs-12">
+                <div class="inner-details">
+                    <div class="detail-row detail-head">
+                        <div class="column column-date">日期</div>
+                        <div class="column column-project">报销项目</div>
+                        <div class="column column-want">报销金额</div>
+                        <div class="column column-remark">备注</div>
+                        <div class="column column-operate"></div>
+                    </div>
+                    {{each details as detail}}
+                        {{detail.constant = constant }}
+                        {{include 'general-fee-row' detail}}
+                    {{/each}}
+                    {{if !details.length }}
+                    {{include 'general-fee-row'}}
+                    {{/if}}
+                    <div class="detail-row detail-foot">
+                        <div class="column">
+                            合计<span class="detail-summary">{{summaryCount | currencyFormat}}</span>
+                        </div>
+                    </div>
+
+                    <div class="btn-group">
+                        <span><a href="javascript:void(0);" class="btn btn-xs btn-success"><i class="fa fa-plus"></i></a>添加</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </fieldset>
+</script>
+<script type="text/html" id="general-fee-row">
+    <div class="detail-row detail-control">
+        <input type="hidden" name="id" value="{{id}}" />
+        <input type="hidden" name="billheadId" value="{{billheadId}}" />
+        <div class="column column-date">
+            <input name="billDate" value="{{billDateStr || billDate}}" type="text" class="form-control"/>
+        </div>
+        <div class="column column-project">
+            <select name="expenseItem" class="form-control">
+                {{#constant.expenseitemcommon | options:{id:'itemValue',name:'itemName',selected:expenseItem} }}
+            </select>
+        </div>
+        <div class="column column-want">
+            <input name="billAmount" value="{{billAmount | currencyFormat}}" type="text" class="form-control" placeholder="0.00"/>
+        </div>
+        <!--<div class="column column-audit">-->
+            <!--<input name="checkAmount" value="{{checkAmount}}" type="text" class="form-control" placeholder="0.00"/>-->
+        <!--</div>-->
+        <div class="column column-remark">
+            <input name="remark" value="{{remark}}" type="text" class="form-control"/>
+        </div>
+        <div class="column column-operate">
+            <a href="javascript:void(0);" class="btn btn-xs btn-danger btn-remove">
+                <i class="fa fa-minus"></i></a>
+        </div>
+    </div>
+</script>
+<script type="text/html" id="transport-fee-tpl">
+    <fieldset class="transport-fee">
+        <legend>交通费用明细</legend>
+        <div class="row">
+            <div class="form-group col-xs-12">
+                <input type="hidden" name="delTrafficItem" value=""/>
+                <div class="inner-details">
+                    <div class="detail-row detail-head">
+                        <div class="column column-date">日期</div>
+                        <div class="column column-start">起始地点</div>
+                        <div class="column column-end">到达地点</div>
+                        <div class="column column-vehicle">交通工具</div>
+                        <div class="column column-want">报销金额</div>
+                        <div class="column column-remark">备注</div>
+                        <div class="column column-operate"></div>
+                    </div>
+                    {{each details as detail}}
+                        {{detail.constant = constant }}
+                        {{include 'transport-fee-row' detail}}
+                    {{/each}}
+                    <div class="detail-row detail-foot">
+                        <div class="column">
+                            合计 <span class="detail-summary">{{summaryCount | currencyFormat}}</span>
+                        </div>
+                    </div>
+                    <div class="btn-group">
+                        <span><a href="javascript:void(0);" class="btn btn-xs btn-success"><i
+                                class="fa fa-plus"></i></a>添加</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </fieldset>
+</script>
+<script type="text/html" id="transport-fee-row">
+    <div class="detail-row detail-control">
+        <input type="hidden" name="id" value="{{id}}" />
+        <div class="column column-date">
+            <input name="billDate" value="{{billDateStr || billDate}}"  type="text" class="form-control" />
+        </div>
+        <div class="column column-start">
+            <input name="departure" value="{{departure}}" type="text" class="form-control"/>
+        </div>
+        <div class="column column-end">
+            <input name="destination" value="{{destination}}" type="text" class="form-control"/>
+        </div>
+        <div class="column column-vehicle">
+            <select name="tools" class="form-control">
+                {{#constant.vehicle | options:{id:'itemValue',name:'itemName',selected:tools} }}
+            </select>
+        </div>
+        <div class="column column-want">
+            <input name="billAmount" value="{{billAmount | currencyFormat}}" type="text" class="form-control" placeholder="0.00"/>
+        </div>
+       <!-- <div class="column column-audit">
+            <input name="checkAmount" value="{{checkAmount}}" type="text" class="form-control" placeholder="0.00"/>
+        </div>-->
+        <div class="column column-remark">
+            <input name="remark" value="{{remark}}" type="text" class="form-control"/>
+        </div>
+        <div class="column column-operate">
+            <a href="javascript:void(0);" class="btn btn-xs btn-danger btn-remove">
+                <i class="fa fa-minus"></i></a></div>
+    </div>
+</script>
+
+<script type="text/html" id="meals-fee-tpl">
+    <fieldset class="meals-fee">
+        <legend>餐费明细</legend>
+        <div class="row">
+            <div class="form-group col-xs-12">
+                <input type="hidden" name="delDiningItem" value=""/>
+                <div class="inner-details">
+                    <div class="detail-row detail-head">
+                        <div class="column column-date">日期</div>
+                        <div class="column column-consume">消费金额</div>
+                        <div class="column column-remark">备注</div>
+                        <div class="column column-operate"></div>
+                    </div>
+                    {{each details as detail}}
+                        {{include 'meals-fee-row' detail}}
+                    {{/each}}
+                    <div class="detail-row detail-foot">
+                        <div class="column">
+                            合计<span class="detail-summary">{{summaryCount | currencyFormat}}</span>
+                        </div>
+                    </div>
+                    <div class="btn-group">
+                        <span><a href="javascript:void(0);" class="btn btn-xs btn-success"><i
+                                class="fa fa-plus"></i></a>添加</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </fieldset>
+</script>
+<script type="text/html" id="meals-fee-row">
+    <div class="detail-row detail-control">
+        <input type="hidden" name="id" value="{{id}}" />
+        <div class="column column-date">
+            <input type="text" name="billDate" value="{{billDateStr || billDate}}" class="form-control"/>
+        </div>
+        <div class="column column-consume">
+            <input type="text" name="billAmount" value="{{billAmount | currencyFormat}}" class="form-control" placeholder="0.00"/>
+        </div>
+       <!-- <div class="column column-audit">
+            <input name="checkAmount" value="{{checkAmount}}" type="text" class="form-control" placeholder="0.00"/>
+        </div>-->
+        <div class="column column-remark">
+            <input type="text" name="remark" value="{{remark}}" class="form-control"/>
+        </div>
+        <div class="column column-operate">
+            <a href="javascript:void(0);" class="btn btn-xs btn-danger btn-remove">
+                <i class="fa fa-minus"></i></a>
+        </div>
+    </div>
+</script>
+
+<script type="text/html" id="business-trip-tpl">
+    <fieldset class="business-trip">
+        <legend>出差信息</legend>
+        <div class="row">
+            <div class="form-group col-xs-4">
+                <label class="col-xs-6 control-label">出差申请编号</label>
+
+                <div class="col-xs-6">
+                    <select name="ctripRequestNo" class="form-control" data-selected="{{ctrip}}">
+                        <option>请选择</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-group col-xs-4">
+                <label class="col-xs-4 control-label">出差天数</label>
+
+                <div class="col-xs-6">
+                    <input type="text" name="ctripDays" value="{{days || ctripDays }}" class="form-control"/>
+                </div>
+                <div class="col-xs-2">天</div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="form-group col-xs-12">
+                <label class="col-xs-2 control-label">出差事由</label>
+
+                <div class="col-xs-10">
+                    <textarea name="ctripReason" class="form-control">{{ctripReason}}</textarea>
+                </div>
+            </div>
+        </div>
+    </fieldset>
+</script>
+<script type="text/html" id="hotel-fee-tpl">
+    <fieldset class="hotel-fee">
+        <legend>住宿费明细</legend>
+        <div class="row">
+            <div class="form-group col-xs-12">
+                <input type="hidden" name="delHotelItem" value=""/>
+                <div class="inner-details">
+                    <div class="detail-row detail-head">
+                        <div class="column column-start">入住日期</div>
+                        <div class="column column-end">离店日期</div>
+                        <div class="column column-days">住宿天数</div>
+                        <div class="column column-want">报销金额</div>
+                        <div class="column column-remark">备注</div>
+                        <div class="column column-operate"></div>
+                    </div>
+                    {{each details as detail}}
+                        {{include 'hotel-fee-row' detail}}
+                    {{/each}}
+                    <div class="detail-row detail-foot">
+                        <div class="column">
+                            合计<span class="detail-summary">{{summaryCount | currencyFormat}}</span>
+                        </div>
+                    </div>
+                    <div class="btn-group">
+                        <span><a href="javascript:void(0);" class="btn btn-xs btn-success"><i
+                                class="fa fa-plus"></i></a>添加</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </fieldset>
+</script>
+<script type="text/html" id="hotel-fee-row">
+    <div class="detail-row detail-control">
+        <input type="hidden" name="id" value="{{id}}" />
+        <input type="hidden" name="billheadId" value="{{billheadId}}" />
+        <div class="input-daterange">
+        <div class="column column-start">
+            <input type="text" name="startDate" value="{{startDateStr || startDate }}" class="form-control"/>
+        </div>
+        <div class="column column-end">
+            <input type="text" name="endDate" value="{{endDateStr || endDate }}" class="form-control"/>
+        </div>
+        </div>
+        <div class="column column-days">
+            <span>0天</span>
+        </div>
+        <div class="column column-want">
+            <input type="text" name="billAmount" value="{{billAmount | currencyFormat}}" class="form-control"/>
+        </div>
+        <!--<div class="column column-audit">-->
+            <!--<input type="text" name="checkAmount" value="{{checkAmount}}" class="form-control"/>-->
+        <!--</div>-->
+        <div class="column column-remark">
+            <input type="text" name="remark" value="{{remark}}" class="form-control"/>
+        </div>
+        <div class="column column-operate">
+            <a href="javascript:void(0);" class="btn btn-xs btn-danger btn-remove">
+                <i class="fa fa-minus"></i></a></div>
+    </div>
+</script>
+
+
+<script type="text/html" id="additional-fee-row">
+    <div class="detail-row detail-control">
+        <input type="hidden" name="id" value="{{id}}" />
+        <input type="hidden" name="billheadId" value="{{billheadId}}" />
+        <div class="column column-date">
+            <input type="text" name="billDate" value="{{billDateStr || billDate}}" class="form-control"/>
+        </div>
+        <div class="column column-project">
+            <select name="expenseItem" class="form-control">
+                {{#constant.expenseitemAdditional | options:{id:'itemValue',name:'itemName',selected:expenseItem} }}
+            </select>
+        </div>
+        <div class="column column-want">
+            <input type="text" name="billAmount" value="{{billAmount | currencyFormat}}" class="form-control"/>
+        </div>
+        <!--<div class="column column-audit">-->
+            <!--<input type="text" name="checkAmount" value="{{checkAmount}}" class="form-control"/></div>-->
+        <div class="column column-remark">
+            <input type="text" name="remark" value="{{remark}}" class="form-control"/></div>
+        <div class="column column-operate"><a href="javascript:void(0);"
+                                              class="btn btn-xs btn-danger btn-remove"><i
+                class="fa fa-minus"></i></a></div>
+    </div>
+</script>
+<script type="text/html" id="additional-fee-tpl">
+    <fieldset class="additional-fee">
+        <legend>补助明细</legend>
+        <div class="row">
+            <div class="form-group col-xs-12">
+                <input type="hidden" name="delAllowanceItem" value=""/>
+                <div class="inner-details">
+                    <div class="detail-row detail-head">
+                        <div class="column column-date">日期</div>
+                        <div class="column column-project">报销项目</div>
+                        <div class="column column-want">报销金额</div>
+                        <div class="column column-remark">备注</div>
+                        <div class="column column-operate"></div>
+                    </div>
+                    {{each details as detail}}
+                        {{detail.constant = constant }}
+                        {{include 'additional-fee-row' detail}}
+                    {{/each}}
+                    <div class="detail-row detail-foot">
+                        <div class="column">
+                            合计<span class="detail-summary">{{summaryCount | currencyFormat}}</span>
+                        </div>
+                    </div>
+                    <div class="btn-group">
+                        <span><a href="javascript:void(0);" class="btn btn-xs btn-success"><i
+                                class="fa fa-plus"></i></a>添加</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </fieldset>
+</script>
+
+<script type="text/html" id="business-fee-tpl">
+    <fieldset class="business-fee">
+        <legend>业务招待费明细</legend>
+        <div class="row">
+            <div class="form-group col-xs-12">
+                <input type="hidden" name="delEntertainItem" value=""/>
+                <div class="inner-details">
+                    <div class="detail-row detail-head">
+                        <div class="column column-date">日期</div>
+                        <div class="column column-want">报销金额</div>
+                        <div class="column column-remark">备注</div>
+                        <div class="column column-operate"></div>
+                    </div>
+                    {{each details as detail}}
+                        {{include 'business-fee-row' detail}}
+                    {{/each}}
+                    <div class="detail-row detail-foot">
+                        <div class="column">
+                            合计<span class="detail-summary">{{summaryCount | currencyFormat}}</span>
+                        </div>
+                    </div>
+                    <div class="btn-group">
+                        <span><a href="javascript:void(0);" class="btn btn-xs btn-success"><i
+                                class="fa fa-plus"></i></a>添加</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </fieldset>
+</script>
+<script type="text/html" id="business-fee-row">
+    <div class="detail-row detail-control">
+        <input type="hidden" name="id" value="{{id}}" />
+        <input type="hidden" name="billheadId" value="{{billheadId}}" />
+        <div class="column column-date">
+            <input type="text" name="billDate" value="{{billDateStr || billDate}}" class="form-control"/>
+        </div>
+        <div class="column column-want">
+            <input type="text" name="billAmount" value="{{billAmount | currencyFormat}}" class="form-control currency"/>
+        </div>
+        <div class="column column-remark">
+            <input type="text" name="remark" value="{{remark}}" class="form-control"/></div>
+        <div class="column column-operate"><a href="javascript:void(0);"
+                                              class="btn btn-xs btn-danger btn-remove"><i
+                class="fa fa-minus"></i></a></div>
+    </div>
+</script>
+
+
+<script type="text/html" id="other-fee-tpl">
+    <fieldset class="other-fee">
+        <legend>其他费用明细</legend>
+        <div class="row">
+            <div class="form-group col-xs-12">
+                <input type="hidden" name="delOtherItem" value=""/>
+                <div class="inner-details">
+                    <div class="detail-row detail-head">
+                        <div class="column column-date">日期</div>
+                        <div class="column column-project">报销项目</div>
+                        <div class="column column-want">报销金额</div>
+                        <div class="column column-remark">备注</div>
+                        <div class="column column-operate"></div>
+                    </div>
+                    {{each details as detail}}
+                    {{detail.constant = constant }}
+                    {{include 'other-fee-row' detail}}
+                    {{/each}}
+                    <div class="detail-row detail-foot">
+                        <div class="column">
+                            合计<span class="detail-summary">{{summaryCount | currencyFormat}}</span>
+                        </div>
+                    </div>
+                    <div class="btn-group">
+                        <span><a href="javascript:void(0);" class="btn btn-xs btn-success"><i
+                                class="fa fa-plus"></i></a>添加</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </fieldset>
+</script>
+<script type="text/html" id="other-fee-row">
+    <div class="detail-row detail-control">
+        <input type="hidden" name="id" value="{{id}}" />
+        <input type="hidden" name="billheadId" value="{{billheadId}}" />
+        <div class="column column-date">
+            <input type="text" name="billDate" value="{{billDateStr || billDate}}" class="form-control"/>
+        </div>
+        <div class="column column-project">
+            <select name="expenseItem" class="form-control">
+                {{#constant.expenseitem | options:{id:'itemValue',name:'itemName',selected:expenseItem} }}
+            </select>
+        </div>
+        <div class="column column-want">
+            <input type="text" name="billAmount" value="{{billAmount | currencyFormat}}" class="form-control currency"/>
+        </div>
+        <div class="column column-remark">
+            <input type="text" name="remark" value="{{remark}}" class="form-control"/></div>
+        <div class="column column-operate"><a href="javascript:void(0);"
+                                              class="btn btn-xs btn-danger btn-remove"><i
+                class="fa fa-minus"></i></a></div>
+    </div>
+</script>
+
+<script type="text/html" id="loan-receipt-tpl">
+    <fieldset class="loan-receipt">
+        <legend>单据信息</legend>
+        <div class="row">
+            <div class="form-group col-xs-4">
+                <label class="col-xs-4 control-label">预算项目</label>
+                <div class="col-xs-8">
+                    <input name="budgetItemCode" value="{{budgetItemCode}}" type="text" class="form-control" />
+                </div>
+            </div>
+
+            <div class="form-group col-xs-4">
+                <label class="col-xs-4 control-label">所属项目</label>
+
+                <div class="col-xs-8">
+                    <select name="forProject" class="form-control selectpicker">
+                        {{#constant.project | options:{id:'itemValue',name:'itemName',selected:projectCode} }}
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="form-group col-xs-4">
+                <label class="col-xs-4 control-label">借款金额</label>
+
+                <div class="col-xs-8">
+                    <input type="text" name="loanMoneyNum" value="{{loanMoneyNum | currencyFormat}}" class="form-control currency" placeholder="0.00"/>
+                </div>
+            </div>
+
+            <div class="form-group col-xs-4">
+                <label class="col-xs-4 control-label text-long">预计还款日期</label>
+
+                <div class="col-xs-8">
+                    <input type="text" name="expectedRepayDate" value="{{expectedRepayDate}}" class="form-control datepicker"/>
+                </div>
+            </div>
+
+            <!--<div class="form-group col-xs-4">
+                <label class="col-xs-4 control-label">历史欠款</label>
+
+                <div class="col-xs-8">
+                    <input type="text" class="form-control"/>
+                </div>
+            </div>-->
+        </div>
+        <div class="row row-full">
+            <div class="form-group col-xs-12">
+                <label class="col-xs-2 control-label">借款理由</label>
+
+                <div class="col-xs-10">
+                    <textarea name="loanReason" class="form-control">{{loanReason}}</textarea>
+                </div>
+            </div>
+        </div>
+        <div class="row row-full">
+            <div class="form-group col-xs-12">
+                <label class="col-xs-2 control-label">借款附件</label>
+
+                <div class="col-xs-10">
+                    <input type="hidden" name="filekeys" />
+                    <input type="hidden" name="deleteattachkeys" />
+                    <a href="javascript:void(0);" class="upload-btn" data-exists="{{listAttach | json }}">上传附件</a>
+                </div>
+            </div>
+        </div>
+    </fieldset>
+</script>

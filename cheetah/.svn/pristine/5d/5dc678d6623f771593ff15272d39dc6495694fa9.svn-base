@@ -1,0 +1,22 @@
+function mailbox_compose() {
+	return this;
+}
+var controlFns = {
+	'index' : function(){
+		this.mailbox_compose()
+	},
+	'mailbox_compose' : function(){
+		var php = {
+			
+		}
+        this.bindDefault(php);
+		this.bridgeMuch(php);
+		this.listenOver(function(data){
+			console.log(data)
+
+			data._CSSLinks = ['fontfamily','bootstrap','nifty.min','font-awesome.min','switchery.min','bootstrap-select.min','summernote.min','nifty-demo.min','pace.min'];
+			this.render('mailbox_compose.html' , data);
+		})
+	}
+};
+exports.__create = controller.__create(mailbox_compose, controlFns);

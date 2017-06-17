@@ -1,0 +1,36 @@
+//#page-content{
+//  background: #fff;
+//  margin: 20px 25px 0;
+//  padding: 20px 30px;
+//
+//}
+
+#page-content{
+  background: #fff;
+  margin:0px 25px;
+  padding: 20px 30px;
+}
+
+#download-client{
+  .head-list{
+    > li:first-child{
+      a:hover{background: #fff;}
+    }
+  }
+}
+
+#footer{
+  .pad-lft{
+    padding-left: 25px;
+  }
+  .pad-rgt{
+    padding-right: 25px;
+  }
+}
+//
+//@media (min-width:768px){
+//  #page-content{background: #fff;margin:10px 20px 0;}
+//}
+//@media (min-width:992px){
+//  #page-content{background: #fff;margin: 20px 30px 0;}
+//}

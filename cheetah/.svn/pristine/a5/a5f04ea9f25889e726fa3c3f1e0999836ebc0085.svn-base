@@ -1,0 +1,21 @@
+fml.define('fms/reimburse/base', ['jquery','plugin/artTemplate'], function (require, exports) {
+    var $ = require('jquery'),
+        Template = require('plugin/artTemplate');
+
+
+    //解析form-block
+    $(".form-block").each(function () {
+        var $block = $(this);
+        var tpl = $block.attr('data-tpl'),
+            json = $block.attr('data-json'),
+            values;
+        try{
+            values = $.parseJSON(json);
+        }catch(e){
+            values = {};
+        }
+
+        $block.replaceWith(Template(tpl,values));
+    });
+
+});

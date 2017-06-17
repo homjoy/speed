@@ -1,0 +1,178 @@
+@extends('layouts.master')
+@section('content')
+<link rel="stylesheet" href="/static/css/easyTree.css">
+<script src="/static/js/easyTree.js"></script>
+
+<style type="text/css">
+</style>
+
+<div class="panel-heading"style="overflow: hidden; line-height: 32px">
+    <ol class="breadcrumb">
+        <li class="active">部门架构管理</li>
+    </ol>
+    <div id="page-content" class="panel">
+        <ul class="nav nav-tabs slope col-lg-12 col-sm-12 col-xs-12" style="margin-bottom: 30px">
+            <li class="active" role="presentation"><a href="/structure/depart/depart_home" class="application_num">部门首页</a></li>
+            <li class="item" role="presentation"> <a href="/structure/depart/application_edit">申请修改</a></li>
+            <li class="item" role="presentation"><a href="/structure/depart/add_title" class="approval_num">添加职位</a></li>
+            <li class="item" role="presentation" ><a href="/structure/depart/depart_leader_home">操作部门leader</a></li>
+        </ul>
+    </div>
+     <div id="content-container">
+        <div class="easy-tree">
+                <?php
+                if(empty($data)) {
+                    echo  '<ul><li></li></ul>';
+                }else{
+                $dept = $data;
+                function dept_ul_li($dept) {
+                    $dept_str = '<ul >';
+                    foreach ($dept as $key => $val) {
+                        $dept_str .= "<li data-depart_id='". $val['depart_id'] ."'>" . $val['depart_name'];
+                        if ($val['child']) {
+                            $dept_str .= dept_ul_li($val['child']);
+                        }
+                    }
+                    $dept_str .= '</li></ul>';
+                    return $dept_str;
+                }
+                $ul_li = dept_ul_li($dept);
+                echo $ul_li;
+                }
+                ?>
+        </div>
+
+        <!-- 查看模版 -->
+        <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                        <h4 class="modal-title" id="myModalLabel">详情</h4>
+                    </div>
+                    <div class="modal-body">
+                        <table class="table table-hover table-striped">
+                            <tbody>
+                            <tr>
+                                <td class="col-sm-3">部门ID</td>
+                                <td class="col-sm-9" id="depart_id"></td>
+                            </tr>
+                            <tr>
+                                <td class="col-sm-3">部门名称</td>
+                                <td class="col-sm-9" id="depart_name"></td>
+                            </tr>
+                            <tr>
+                                <td class="col-sm-3">部门级别</td>
+                                <td class="col-sm-9" id="depart_level"></td>
+                            </tr>
+                            <tr>
+                                <td class="col-sm-3">部门信息</td>
+                                <td class="col-sm-9" id="depart_info"></td>
+                            </tr>
+                            <tr>
+                                <td class="col-sm-3">部门领导</td>
+                                <td class="col-sm-9" id="leader_id"></td>
+                            </tr>
+                            <tr>
+                                <td class="col-sm-3">部门员工</td>
+                                <td class="col-sm-9" id="user_id"></td>
+                            </tr>
+                            <tr>
+                                <td class="col-sm-3">代理领导</td>
+                                <td class="col-sm-9" id="sub_leader_id"></td>
+                            </tr>
+                            <tr>
+                                <td class="col-sm-3">汇报关系</td>
+                                <td class="col-sm-9" id="virtual_leader_id"></td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                    </div>
+                   </div>
+                </div>
+            </div>
+        </div>
+        <p>&nbsp;</p>
+    </div>
+<script>
+    (function ($) {
+        function init() {
+            $('.easy-tree').EasyTree({
+                addable: true,
+                editable: true,
+                deletable: true,
+                selectable: false,
+                speed_show_btn: true,
+                speed_edit_btn: false
+            });
+        }
+        window.onload = init();
+    })(jQuery);
+
+    //查看
+    $('.speed_show_model').click(function(e) {
+        e.stopPropagation();
+        var depart_id = $(this).parent().parent().attr('data-depart_id'),
+            url = '/structure/depart/ajax_get_depart';
+
+        $.get(url, {depart_id:depart_id}, function(ret) {
+
+            if(ret.code == 200) {
+                var tpl = ['depart_id','depart_level','leader_id','depart_info','sub_leader_id','virtual_leader_id', 'user_id'];
+
+                $.each(tpl, function(key, val) {
+                    if(val=='user_id'){
+                        var users = ret.data[val];
+                        var userNames = [];
+                        $.each(users,function(index,u){
+                            userNames.push(u['name_cn'] || '');
+                        });
+                        $('#' + val).text(userNames.join(' '));
+                    }else if(val=='leader_id'){
+                        var l = [ret.data[val]];
+                        var lNames = [];
+                        $.each(l,function(index,u){
+                            lNames.push(u['leader_name'] || '');
+                        });
+                        $('#' + val).text(lNames.join(' '));
+                    }else if(val=='sub_leader_id'){
+                        var s = [ret.data[val]];
+                        var sNames = [];
+                        $.each(s,function(index,u){
+                            sNames.push(u['sub_name'] || '');
+                        });
+                        $('#' + val).text(sNames.join(' '));
+                    }else if(val=='depart_id'){
+                        var  d= [ret.data[val]];
+                        var dNames = [];
+                        var dID= [];
+                        $.each(d,function(index,u){
+                            dNames.push(u['depart_name'] || '');
+                            dID.push(u['depart_id']);
+                        });
+                        $('#' + val).text(dID.join(' '));
+                        $('#depart_name').text(dNames.join(' '));
+                    }else if(val=='virtual_leader_id'){
+                        var  v= [ret.data[val]];
+                        var vNames = [];
+                        $.each(v,function(index,u){
+                            vNames.push(u['virtual_name'] || '');
+                        });
+                        $('#' + val).text(vNames.join(' '));
+                    } else{
+                        $('#' + val).text(ret.data[val]);
+                    }
+                });
+                $('#myModal').modal('toggle');
+            }else {
+                console.log('接口读取错误');
+            }
+        }, 'json');
+
+    });
+
+</script>
+@endsection

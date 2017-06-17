@@ -1,0 +1,191 @@
+@import "mixins/preboot.less";
+
+.queen-upload-container {
+
+  .queen-upload-control {
+    .clearfix();
+    .btn-queen-upload, .queen-upload-tips {
+      float: left;
+    }
+    //上传按钮
+    .btn-queen-upload {
+      margin: 0;
+      padding: 0;
+      display: inline-block;
+      width: 84px;
+      height: 22px;
+      line-height: 22px;
+      text-align: center;
+      -webkit-border-radius: 5px;
+      -moz-border-radius: 5px;
+      border-radius: 5px;
+      background: #fff;
+      border: 1px solid #dddbdd;
+      font-size: 12px;
+      color: #515151;
+      position: relative;
+      overflow: hidden;
+    }
+    //上传提示
+    .queen-upload-tips {
+      margin: 3px 0 0 8px;
+      font-size: 12px;
+      color: #a0a0a0;
+      -ms-word-break: break-all;
+      word-break: break-all;
+      -ms-text-overflow: ellipsis;
+      text-overflow: ellipsis;
+    }
+  }
+
+  //上传文件列表
+  .queen-uploaded-files {
+    margin-top: 16px;
+
+    //一行文件信息
+    .queen-file-item {
+      margin: 0 0 8px 0;
+      padding: 0;
+      line-height: 16px;
+      .clearfix();
+
+      .queen-item-column {
+        float: left;
+        vertical-align: middle;
+      }
+
+      &.uploading .queen-message {
+
+      }
+      &.success .queen-message {
+        color: #98c664;
+      }
+      &.error {
+        .queen-upload-progress {
+          background: #9c9c9c url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAICAMAAADHqI+lAAAABGdBTUEAALGPC/xhBQAAACBjSFJNAAB6JgAAgIQAAPoAAACA6AAAdTAAAOpgAAA6mAAAF3CculE8AAAAeFBMVEUAAAD///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////8AAADGFsK+AAAAJnRSTlMAL/WbFeHMBwbB7B+YcTmp+8hiCx2J7vCWMGrYyWQMAUq6/vGXMfwaJsQAAAABYktHRACIBR1IAAAACXBIWXMAAAsSAAALEgHS3X78AAAATUlEQVQI10XLRRbAQAhEQeKuE3fl/kdMZwPsfr2GiCybmR2Scz20H0iHETpOdJCiOdOmvCghVW2UmrYD9cOoZKb5f1zWTWg/zgt0P+8HcGMGr6faHhAAAAAASUVORK5CYII=") no-repeat center;
+          & > .queen-upload-progress-inner {
+            width: 0;
+            background: transparent;
+          }
+        }
+        .queen-message {
+          color: #f26a43;
+        }
+      }
+    }
+    //文件名
+    .queen-filename {
+      margin-left: 6px;
+      display: inline-block;
+      width: 140px;
+      max-width: 140px;
+      height: 16px;
+      line-height: 16px;
+      font-size: 14px;
+      color: #515151;
+      text-align: left;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      overflow: hidden;
+    }
+    //附件图标
+    .queen-attachment {
+      display: inline-block;
+      width: 16px;
+      height: 16px;
+      background: transparent url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAMAAAAoLQ9TAAAABGdBTUEAALGPC/xhBQAAACBjSFJNAAB6JgAAgIQAAPoAAACA6AAAdTAAAOpgAAA6mAAAF3CculE8AAABdFBMVEUAAADT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09MAAADo06MKAAAAenRSTlMAE5jo8sJMJN2yKxxo81Q16ooBa9hJbzBBN/lg9FbxX43Ae+5kU4EsA5XkLu09nOIqCK7VHwSe4Auz0hsZcQa8xBIMt9AUyL8QKN/RChfLuw0i2aoHOeyDWdOkMueRAk5pJxFFdWZQ1mPXj1w7bRV4oeEdFkvHzRr3ckOmeuUAAAABYktHRACIBR1IAAAACXBIWXMAAAsSAAALEgHS3X78AAAA3UlEQVQY02NggAFGJmYWVjY4l4Gdg5OLm4eXD8bnFxAUAlLCIlC+KIsYg7gEA4OkFIQvLSPLwCYnz8CgoAjmKylLMKjIqDIwqCmrA7kamlraQmo6ugwaevoGQL6hkbGJqZm5AYOFpZW1jS2Dnb2Do5Oziw2Dq5u7h6cXE4OSt4+vn38AQ2BQcEhoWLgQA0eERmSUHUN0TGxcPG8C0Agp/sSqJIZkuRSGVN40kJXpGaaZzlm82UB7csBuyDXP88hXiDbVMzeAOFKjoFC+qLiktKwc7s8IRd6KssoQKA8AeVcjxgI2HPIAAAAASUVORK5CYII=) no-repeat 0 0;
+    }
+
+    //删除文件
+    .queen-remove-file {
+      &, & > i {
+        display: inline-block;
+        width: 16px;
+        height: 16px;
+      }
+      i {
+        background: transparent url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAMAAAAoLQ9TAAAABGdBTUEAALGPC/xhBQAAACBjSFJNAAB6JgAAgIQAAPoAAACA6AAAdTAAAOpgAAA6mAAAF3CculE8AAAAh1BMVEUAAADT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09Pt7e3z8/PV1dXl5eXh4eH////U1NTn5+f4+Pj09PTo6Oj6+vrZ2dn19fXv7+/g4ODy8vLj4+MAAADn83LUAAAAGXRSTlMAKo7X+NYGlP2YCbu9lSv8j/nz1JAs2Pr0wD1WjwAAAAFiS0dEAIgFHUgAAAAJcEhZcwAACxIAAAsSAdLdfvwAAACUSURBVBjTbY/pDoIwEIQXioAH5WrVtcUqgni8//s5tIkx6vejmZl0ulsiEMUiSRZxRIE0y9mTL1fer/nNJkVQ8AcZkSyZD8bCdEfmUlIFaZw58dn1kBUJnPbizODGK6SgmkMSPNch4MHNLdD4CvrjFJLWP9rhPlo3SEUaY+89+vbxxFj9tVjxb/WfzwGptrt9q/SsX2c4FEleMEPAAAAAAElFTkSuQmCC) no-repeat 0 0;
+      }
+    }
+
+    //上传结果
+    .queen-message {
+      margin-left: 26px;
+      font-size: 12px;
+    }
+  }
+
+  //进度条
+  .queen-upload-progress {
+    display: inline-block;
+    height: 8px;
+    background: #fff;
+    width: 162px;
+    margin: 4px 22px 0 38px;
+    border: 1px solid #c9c9c9;
+
+    & > .queen-upload-progress-inner {
+      display: block;
+      width: 0;
+      height: 8px;
+      margin: -1px 0;
+      background: #8fc320;
+      -webkit-transition: width .8s ease;
+      -moz-transition: width .8s ease;
+      transition: width .8s ease;
+    }
+  }
+}
+
+/**
+  支持拖拽上传
+*/
+.queen-upload-container.queen-draggable {
+  border-radius: 5px;
+  border: 1px dashed #c9c9c9;
+  padding: 10px 16px 10px;
+
+  //可拖拽的按钮
+  .queen-upload-control {
+    .btn-queen-upload {
+      height: 24px;
+      background: #8fc320;
+      color: #fff;
+    }
+  }
+
+  .queen-uploaded-files {
+    .queen-message {
+      margin-left: 6px;
+    }
+  }
+
+  /**
+    附件列表为空.
+   */
+  &.queen-upload-empty {
+    width: 290px;
+    height: 116px;
+    padding: 34px 0;
+
+    .queen-upload-control {
+      text-align: center;
+      width: 150px;
+      margin: 0 auto;
+      .btn-queen-upload {
+        margin: 0 33px;
+      }
+      .queen-upload-tips {
+        display: inline-block;
+        margin: 8px auto 0;
+        width: 100%;
+        text-align: center;
+      }
+    }
+
+    .queen-uploaded-files {
+      margin-top: 0;
+    }
+  }
+
+}

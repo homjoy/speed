@@ -1,0 +1,22 @@
+function tables_footable() {
+	return this;
+}
+var controlFns = {
+	'index' : function(){
+		this.tables_footable()
+	},
+	'tables_footable' : function(){
+		var php = {
+			
+		}
+        this.bindDefault(php);
+		this.bridgeMuch(php);
+		this.listenOver(function(data){
+			console.log(data)
+
+			data._CSSLinks = ['fontfamily','bootstrap','nifty.min','font-awesome.min','switchery.min','bootstrap-select.min','footable.core','nifty-demo.min','pace.min'];
+			this.render('tables_footable.html' , data);
+		})
+	}
+};
+exports.__create = controller.__create(tables_footable, controlFns);

@@ -1,0 +1,163 @@
+<?php
+namespace WorkFlowAtom\Package\Process;
+
+/**
+ * 任务
+ * @author jingjingzhang@meilishuo.com
+ * @date 2015-7-20
+ */
+
+use WorkFlowAtom\Package\Common\DbAdapter;
+
+class Task {
+
+    private static $instance = null;
+    private static $conn;
+
+    private static $tableName = 'workflow_task';
+    private static $col = array('task_id', 'tasktype_id', 'user_id', 'task_name', 'task_content', 'current_user_id', 'create_time', 'update_time');
+    private static $pk = 'task_id';
+    private static $fields = array(
+            'task_id'         => 0,
+            'tasktype_id'     => 0,
+            'user_id'         => 0,
+            'task_name'       => '',
+            'task_content'    => '',
+            'current_user_id' => 0,
+            'create_time'     => '',
+            'update_time'     => '',
+    );
+    private static $update_fields = array(
+    	'tasktype_id'     => 'int',
+        'user_id'         => 'int',
+        'task_name'       => 'string',
+        'task_content'    => 'string',
+        'current_user_id' => 'int',
+    );
+
+    private function __construct() {}
+
+    public static function getInstance() {
+        if(is_null(self::$instance)) {
+            self::$instance = new self();
+            self::$conn =  new \Pixie\Connection(new DbAdapter('workflow'));
+        }
+        return self::$instance;
+    }
+
+    
+    public static function getFields() {
+        return self::$fields;
+    }
+
+    /**
+     * 获取单条信息
+     * @param $id
+     * @param array $fields
+     * @return array
+     */
+    public function getDataById($id, $fields = array()) {
+        if (empty($fields)) {
+            $fields = static::$col;
+        }
+
+        //查询
+        $qb = self::$conn->getQueryBuilder();
+        $ret = $qb->table(static::$tableName)
+            ->select(static::$col)
+            ->find($id, static::$pk);
+
+        return $ret;
+    }
+
+    /**
+     * 查询列表
+     */
+    public function getDataList(array $params = array()) {
+
+        //查询
+        $qb = self::$conn->getQueryBuilder();
+        $ret = $qb->table(static::$tableName)
+            ->select(static::$col);
+            //->offset(($page-1)*$pageSize)
+            //->limit($pageSize);
+
+        //查询条件
+        if (isset($params['task_id'])) {
+            if (is_array($params['task_id'])) {
+                $ret->whereIn('task_id', $params['task_id']);
+            }else{
+                $ret->where('task_id', '=', $params['task_id']);
+            }
+        }
+        if (isset($params['tasktype_id'])) {
+            if (is_array($params['tasktype_id'])) {
+                $ret->whereIn('tasktype_id', $params['tasktype_id']);
+            }else{
+                $ret->where('tasktype_id', '=', $params['tasktype_id']);
+            }
+        }
+        if (isset($params['user_id'])) {
+            if (is_array($params['user_id'])) {
+                $ret->whereIn('user_id', $params['user_id']);
+            }else{
+                $ret->where('user_id', '=', $params['user_id']);
+            }
+        }
+        if (isset($params['task_name'])) {
+            $ret->where('task_name', '=', $params['task_name']);
+        }
+        if (isset($params['task_content'])) {
+            $ret->where('task_content', '=', $params['task_content']);
+        }
+        if (isset($params['current_user_id'])) {
+            if (is_array($params['current_user_id'])) {
+                $ret->whereIn('current_user_id', $params['current_user_id']);
+            }else{
+                $ret->where('current_user_id', '=', $params['current_user_id']);
+            }
+        }
+
+        $ret->hash(self::$pk);
+        $ret->orderBy(self::$pk,'DESC');
+        return $ret->get();
+    }
+
+    /**
+     * 添加
+     */
+    public static function insert($params) {
+
+        if (!isset($params['tasktype_id']) || !isset($params['user_id']) || !isset($params['task_name'])) {
+            return FALSE;
+        }
+
+        $params = array_intersect_key($params, self::$fields);
+        $params = array_merge(self::$fields, $params);
+        unset($params[self::$pk]);
+
+        $qb = self::$conn->getQueryBuilder();
+        $ret = $qb->table(static::$tableName);
+        return $ret->insert($params);
+    }
+
+    /**
+     * 更新
+     */
+    public static function update($params) {
+
+        if (!isset($params[self::$pk])) {
+            return FALSE;
+        }
+
+        $params = array_intersect_key($params, self::$fields);
+        $pkid = $params[self::$pk];
+        unset($params[self::$pk]);
+
+        $qb = self::$conn->getQueryBuilder();
+        $ret = $qb->table(static::$tableName);
+        $ret = $ret->where(self::$pk, $pkid);
+        return $ret->update($params);
+    }
+
+}

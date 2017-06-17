@@ -1,0 +1,92 @@
+<?php
+
+namespace Admin\Modules\Mail;
+
+use Admin\Modules\Common\BaseModule;
+use Admin\Package\Common\Response;
+use Admin\Package\Mail\MailGroupUser;
+use Admin\Package\Mail\MailGroup;
+use Admin\Package\Log\Log;
+/**
+ * 邮件列表删除 废弃
+ *
+ * @author guojiezhu@meilishuo.com
+ * @since  2015-11-04
+ */
+class AjaxMailGroupDel extends BaseModule {
+
+    protected $errors = null;
+    private $params = null;
+    public static $VIEW_SWITCH_JSON = true;
+
+    public function run() {
+        $this->_init();
+        //获取组的 email，去掉后缀
+        $mail_group_list = MailGroup::getInstance()->getMailGroupList(array('group_id' => $this->params['group_id']));
+        if (empty($mail_group_list)) {
+            $return = Response::gen_error(Response::DS_DATA_NO_DATA, '', '邮件组不存在');
+
+            return $this->app->response->setBody($return);
+        }
+        $mail_group = current($mail_group_list);
+        //对数据库中邮箱数据进行处理
+        $params = array('act' => 'deleteMlist', 'u' => $mail_group['group_name'] . '@meilishuo.com');
+        //要同步的邮箱的列表
+        $return = MailGroupUser::getInstance()->pushMailUserList($params, array());
+
+        if (empty($return) || strtoupper($return['__STATUS__']) != 'OK') {
+            $return = Response::gen_error(Response::DS_DATA_NO_DATA, '', $return['__MSG__']);
+            return $this->app->response->setBody($return);
+        }
+        //记录log
+        $log_info = array('user_id'=>$this->user['id'],
+                          'handle_id'=> 99999,
+                          'operation_type'=>  'delete',
+                          'after_data'=>  json_encode($params),
+                          'handle_type'=> 12);
+        Log::getInstance()->createLogs($log_info);
+        //删除用户数据
+        $delete = array('group_id' => $this->params['group_id'], 'status' => 0);
+        $res = MailGroupUser::getInstance()->deleteMailGroupUser($delete);
+        //记录log
+        $log_info = array('user_id'=>$this->user['id'],
+                          'handle_id'=> 99999,
+                          'operation_type'=>  'delete',
+                          'after_data'=>  json_encode($delete),
+                          'handle_type'=> 12);
+        Log::getInstance()->createLogs($log_info);
+
+        //删除邮件组数据
+        $delete_group = array(
+            'group_id' => $this->params['group_id'], 
+            'status' => 0,
+            'group_name' => $mail_group['group_name']
+        );
+        $res_group = MailGroup::getInstance()->deleteMailGroup($delete_group);
+        $log_info = array('user_id'=>$this->user['id'],
+                          'handle_id'=> 99999,
+                          'operation_type'=>  'delete',
+                          'after_data'=>  json_encode($delete_group),
+                          'handle_type'=> 12);
+        Log::getInstance()->createLogs($log_info);
+        if ($res_group) {
+            $return = Response::gen_success('删除成功');
+        } else {
+            $return = Response::gen_error(Response::DS_DATA_NO_DATA, '', '删除失败');
+        }
+        return $this->app->response->setBody($return);
+    }
+
+    private function _init() {
+
+        $this->rules = array(
+            'group_id' => array(
+            'required' => true,
+            'allowEmpty' => false,
+            'type' => 'integer',),
+        );
+        $this->params = $this->request()->safe();
+        $this->errors = $this->request()->getErrors();
+    }
+
+}

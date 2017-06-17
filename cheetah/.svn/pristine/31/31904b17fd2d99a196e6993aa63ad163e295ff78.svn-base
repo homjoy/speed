@@ -1,0 +1,218 @@
+<%#head.html%>
+<div id="container" class="effect mainnav-lg">
+    <%#navbar.html%>
+    <div class="boxed">
+        <div id="content-container">
+            <div id="page-content">
+                <div class="row">
+                    <div class="col-lg-9">
+                        <div class="panel">
+                            <div class="panel-heading myhead">
+                                <h4 class="panel-title">申请</h4>
+                            </div>
+                            <div class="panel-body panel-layout">
+                                <div class="apply-layout">
+                                    <a href="/contract/apply/" class="apply-click icon icon-hetong"></a>
+                                    <div >
+                                        <a class="btn icon-btn btn-hetong" href="/contract/apply/">合同</a>
+                                    </div>
+                                </div>
+                                <div class="apply-layout">
+                                    <a href="/pay/apply/" class="apply-click icon icon-fukuan">
+                                    </a>
+                                    <div class="border-turn">
+                                        <a href="/pay/apply/" class="btn icon-btn btn-fukuan">付款</a>
+                                        <ul class="item-list item-list-pay" >
+                                            <li><a href="/pay/apply/">新版付款</a></li>
+                                            <li><a href="http://finance.meiliworks.com/"  target="_blank" >旧版付款</a></li>
+                                        </ul>
+                                        <!--<span class="tips">美丽制造/物流</span>-->
+                                    </div>
+                                </div>
+                                <div class="apply-layout">
+                                    <a href="/budget/apply/"class="apply-click icon icon-yusuan"></a>
+                                    <div class="border-turn">
+                                        <a href="/budget/apply/"class="btn icon-btn btn-yusuan">预算</a>
+                                        <ul class="item-list item-list-yusuan" >
+                                            <li><a href="/budget/apply/">预算申请</a></li>
+                                            <li><a href="/budget/adjust/apply">预算调整</a></li>
+                                        </ul>
+                                    </div>
+                                </div>
+                                <div class="apply-layout">
+                                    <a href="http://finance.meiliworks.com/"  target="_blank" class="apply-click icon icon-baoxiao">
+                                    </a>
+                                    <div class="border-turn">
+                                        <a class="btn icon-btn btn-baoxiao"  target="_blank" href="http://finance.meiliworks.com/">报销</a>
+                                        <ul class="item-list item-list-baoxiao">
+                                            <li><a href="http://finance.meiliworks.com/"  target="_blank" >交通费及餐费</a></li>
+                                            <li><a href="http://finance.meiliworks.com/" target="_blank" >差旅费</a></li>
+                                            <li><a href="http://finance.meiliworks.com/" target="_blank" >通用费用</a></li>
+                                        </ul>
+                                    </div>
+                                </div>
+                                <div class="apply-layout">
+                                    <a href="http://finance.meiliworks.com/"  target="_blank" class="apply-click icon icon-jiekuan"></a>
+                                    <div>
+                                        <span class="btn icon-btn btn-jiekuan">借款</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-3">
+                        <div class="panel help-manual">
+                            <div class="panel-heading myhead">
+                                <h4 class="panel-title">帮助</h4>
+                            </div>
+                            <div class="panel-body">
+                                <div class="manual-links">
+                                    <a href="http://speed.meilishuo.com/uploads/words/15/09/2929_20150908163255.pdf?_from_14" target="_blank" class="text-link">合同</a>
+                                    <a href="http://speed.meilishuo.com/uploads/words/15/10/2929_20151014162317.pdf?_from_2929" target="_blank" class="text-link">付款</a>
+                                </div>
+                                <div class="help-users">
+                                    <p>
+                                        <span class="problem-title">系统问题</span>
+                                        <a href="http://speed.meilishuo.com/contacts/speedim/?u=MTQ=" class="problem-contact" target="_blank">刘隽</a>
+                                    </p>
+                                    <p>
+                                        <span class="problem-title">审批流问题</span>
+                                        <a href="http://speed.meilishuo.com/contacts/speedim/?u=MjgxNQ==" class="problem-contact" target="_blank">吴俣</a>
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="panel wait-item">
+                            <div class="panel-heading myhead">
+                                <h4 class="panel-title">待办事项</h4>
+                            </div>
+                            <div class="panel-body">
+                                <ul class="nav nav-tabs">
+                                    <li class="active"><a href="#myApproval" data-toggle="tab" aria-expanded="false">我的审批</a></li>
+                                    <li><a href="#myApply" data-toggle="tab" aria-expanded="true">我的申请</a></li>
+                                </ul>
+                                <div id="myTabContent" class="tab-content">
+                                    <div class="tab-pane fade active in" id="myApproval">
+                                        <table class="table table-hover">
+                                            <thead>
+                                            <tr>
+                                                <th>类型</th>
+                                                <th>单据名称</th>
+                                                <th>申请人</th>
+                                                <th>申请部门</th>
+                                                <th>金额(￥)</th>
+                                                <!--<th>审批进度</th>-->
+                                            </tr>
+                                            </thead>
+                                            <tbody>
+                                            <%if (this.approvalList.rcode==200){%>
+                                            <% this.approvalList.data.forEach(function(approval, index){  %>
+                                            <% if(index>4){return false} %>
+                                            <% var link = ''; switch(approval.btype) {
+                                            case 'CA': link = '/contract/view/?type=CA&id='+approval.cabid;break;
+                                            case 'CP': link = '/pay/view/?cpbId='+approval.cabid;break;
+                                            case 'CB': link = '/budget/view/?budgetId='+approval.cabid;break;
+                                            case 'BA': link = '/budget/adjust/view?budgetId='+approval.cabid;break;
+                                            default:break;
+                                                }
+                                            %>
+                                            <tr  dbl-open="<%= link %>"  data-id="<%= approval.cabid%>" data-type="<%= approval.btype%>" taskid="<%= approval.taskid %>" formkey="<%= approval.formkey%>">
+                                                <td>
+                                                    <%= approval.btypename %>
+                                                </td>
+                                                <td><%= approval.applyno %></td>
+                                                <td><%= approval.applyusername %></td>
+                                                <td><%= approval.applydeptname %></td>
+                                                <td><%= approval.amount %></td>
+                                                <!--<td><%= approval.approveprogress %></td>-->
+                                            </tr>
+                                            <% })  %>
+                                            <%}%>
+                                            </tbody>
+                                        </table>
+                                        <div class="text-right">
+                                            <a href="/my/approval/" class="btn btn-default btn-more-approval">更多</a>
+                                        </div>
+                                    </div>
+                                    <div class="tab-pane fade" id="myApply">
+                                        <table class="table table-hover">
+                                            <thead>
+                                            <tr>
+                                                <th>类型</th>
+                                                <th>单据编号</th>
+                                                <th>申请时间</th>
+                                                <th>金额(￥)</th>
+                                                <!--<th>审批进度</th>-->
+                                            </tr>
+                                            </thead>
+                                            <tbody>
+                                            <% if(this.applyList.rcode==200){%>
+                                            <% this.applyList.data.forEach(function(apply,index){%>
+                                            <% if(index>4){return false} %>
+                                            <% var link = ''; switch(apply.billType) {
+                                            case 'CA': link = '/contract/view/?type=CA&id='+apply.billId;break;
+                                            case 'CP': link = '/pay/view/?cpbId='+apply.billId;break;
+                                            case 'CB': link = '/budget/view/?budgetId='+apply.billId;break;
+                                            case 'BA': link = '/budget/adjust/view?budgetId='+apply.billId;break;
+                                            default:break;
+                                            }
+                                            %>
+                                            <tr dbl-open="<%= link %>" data-id="<%= apply.billId%>" data-type="<%= apply.billType%>">
+                                                <td><%= apply.billTypeName%></td>
+                                                <td><%= apply.requestCode%></td>
+                                                <td><%= apply.requestTime%></td>
+                                                <td><%= apply.money%></td>
+                                                <!--<td><%= apply.approveProcessName%>-->
+                                                </td>
+                                            </tr>
+                                            <% })%>
+                                            <%}%>
+                                            </tbody>
+                                        </table>
+                                        <div class="text-right">
+                                            <a href="/my/apply/" class="btn btn-default btn-more-apply">更多</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <%#sidebar.html%>
+    </div>
+    <div class="director-wrap wrap-hide">
+        <div class="daohang">
+            <img src="<%= this.PICTURE_URL %>img/fms/director/daohang.png" alt="导航"/>
+        </div>
+        <div class="hetong">
+            <img src="<%= this.PICTURE_URL %>img/fms/director/hetong.png" alt="合同"/>
+        </div>
+        <div class="yingyong">
+            <img src="<%= this.PICTURE_URL %>img/fms/director/yingyong.png" alt="导航"/>
+        </div>
+        <div class="daiban">
+            <img src="<%= this.PICTURE_URL %>img/fms/director/daiban.png" alt="导航"/>
+        </div>
+        <div class="guanbi">
+            <a href="javascript:;"><img src="<%= this.PICTURE_URL %>img/fms/director/guanbi.png" alt="导航"/></a>
+        </div>
+    </div>
+    <%this.permission.forEach(function(item,index){%>
+    <%if(item.res_describe == '/switchuser'){%>
+    <div class="hide-fixed pull-right">
+        <a class="btn btn-success user-change" href="javascript:;" title="用户切换">伪装</a>
+    </div>
+    <%}%>
+    <%})%>
+    <%#footer.html%>
+</div>
+<%! $_ENGINE_SELF.callFn("useModule")("<<<_use:
+        fml.use('fms/home/index')
+_use:", this._JSstack , this._JSmods); %>
+<%#foot.html%>

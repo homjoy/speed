@@ -1,0 +1,471 @@
+body {
+  font: 12px/1.125;
+  letter-spacing: 1px;
+  font-family: "Helvetica Neue", Helvetica, Microsoft Yahei, Heiti, "黑体", Hiragino Sans GB, WenQuanYi Micro Hei, sans-serif;
+}
+
+ul {
+  list-style: none;
+  padding: 0;
+}
+
+.brand-text {
+  min-width: 112px
+}
+
+.table > tbody > tr > td,
+.table > tbody > tr > th,
+.table > tfoot > tr > td,
+.table > tfoot > tr > th,
+.table > thead > tr > td,
+.table > thead > tr > th {
+  font-size: 14px;
+  vertical-align: middle !important;
+}
+
+.table > tbody > tr > td input {
+  font-size: 14px !important;
+}
+
+
+.table>tbody>tr>td.inner-table{
+  padding:0;
+
+  .table{
+    margin:0;
+    border:none;
+
+
+    > tfoot{
+      >tr >td{
+        border:none;
+      }
+    }
+  }
+}
+
+//navheader的宽度
+#navbar-container, .navbar-header-notrans, .navbar-content, .brand-title {
+  height: 50px;
+}
+
+//导航条
+#container.mainnav-in .brand-title,
+#container.mainnav-sm .brand-title,
+#container.mainnav-lg .brand-title {
+  color: #f6ad3e
+}
+
+#container.mainnav-in .navbar-brand,
+#container.mainnav-sm .navbar-brand,
+#container.mainnav-lg .navbar-brand {
+  background-color: #fff;
+}
+
+.navbar-header-notrans {
+  float: left;
+  padding-left: 55px;
+}
+
+/*sidebar的宽度 180px*/
+.mainnav-container
+.mainnav-lg .navbar-header, .mainnav-lg #mainnav {
+  width: 180px
+}
+
+#container.mainnav-lg #mainnav-container {
+  width: 180px !important;
+}
+
+#container.mainnav-lg #footer,
+#container.mainnav-lg #content-container {
+  padding-left: 180px !important;
+}
+
+.navbar-content {
+  margin-left: 180px !important;
+}
+
+/*sidebar*/
+#container.mainnav-lg .icon-sidebar {
+  display: inline-block;
+  width: 22px;
+  height: 20px;
+  margin-left: -8px;
+  fill: #fff;
+}
+
+#container.mainnav-sm .icon-sidebar {
+  display: inline-block;
+  width: 22px;
+  height: 20px;
+  margin-left: -7px;
+  fill: #fff;
+}
+
+#container.mainnav-lg .icon-menu,
+#container.mainnav-sm .icon-menu {
+  margin-left: -2px;
+}
+
+.nav-tabs a {
+  font-size: 16px;
+}
+
+.nav-tabs>li>a{
+  margin-right:0;
+}
+.nav-tabs > li.active > a {
+  border-top: 2px solid #f39800;
+}
+
+.nav-tabs > li.active > a:focus, .nav-tabs > li.active > a:hover {
+  border-top: 2px solid #f39800;
+}
+
+.nav-tabs:not(.slope) > li{
+  margin-bottom: -2px !important;
+}
+
+#page-content {
+  font-size: 14px;
+}
+
+#startTime, #endTime, #sTime, #eTime {
+  background-color: #fff;
+  cursor: default;
+}
+
+//公共样式————————按钮
+.btn {
+  -webkit-border-radius: 5px;
+  -moz-border-radius: 5px;
+  border-radius: 5px;
+
+  &:not(.btn-default,.btn-download):focus{
+    color:#fff;
+  }
+}
+
+.btn-agree {
+  background-color: #68c664;
+  color:#fff;
+  &:hover,&:active ,&:focus {
+    background-color: #7eb242;
+    color:#fff;
+  }
+}
+
+.btn-reject, .btn-del {
+  background-color: #f2663e;
+  color:#fff;
+  &:hover,&:active,&:focus {
+    background-color: #e14e2b;
+    color:#fff;
+  }
+}
+
+/*=====================sidebar样式*/
+.list-group svg {
+  position: absolute;
+}
+
+.list-group .menu-title {
+  margin-left: 30px;
+  line-height: 20px;
+  font-size: 12px;
+}
+
+#container #mainnav-shortcut > ul > li a {
+  display: block;
+  padding: 20px 12px 0 14px;
+  height: 50px;
+  //line-height: 50px;
+}
+
+#container.mainnav-sm #mainnav-shortcut > ul > li a {
+  display: block;
+  //padding: 12px 19px;
+  padding: 20px 12px 0 14px;
+  height: 50px;
+}
+
+/*/*=====================sidebar样式结束*/
+
+#footer {
+  padding-top: 32px;
+}
+
+.table td.empty-content {
+  padding:45px 0;
+  text-align: center;
+  background-color:#fff;
+  font-size:16px;
+  color:#a0a0a0;
+}
+#container .table th {
+  font-size: 1.05em;
+  border-bottom: none;
+}
+
+.modal-dialog {
+  z-index: 3000;
+}
+
+//太致命。。
+//table th,
+//table td {
+//  text-align: center;
+//}
+//
+//table th {
+//  padding-left: 30px;
+//}
+//
+//table td a {
+//  padding-right: 5px;
+//}
+
+.notify-box > .modal-dialog,
+.smModal > .modal-dialog {
+  width: 400px;
+
+}
+
+.passModal > .modal-dialog .modal-body {
+  padding: 20px
+}
+
+// 标签页内边距 20px
+.tab-content {
+  padding-top: 20px;
+}
+
+#container.mainnav-in .navbar-brand,
+#container.mainnav-lg .navbar-brand,
+#container.mainnav-in .brand-title,
+#container.mainnav-lg .brand-title {
+  width: 180px !important;
+}
+
+/*=====================打印样式*/
+@media all {
+  //.table-printed td > label{
+  .table-printed td{
+    min-width: 120px;
+  }
+  .table-printed{
+    >tbody>tr>td{
+      text-align: left;
+      label{
+        padding-left:6px;
+      }
+    }
+  }
+}
+@media print {
+  @page {
+    margin: 1cm;
+    /*margin-top: 1cm;*/
+  }
+  .record-print{
+    > tbody > tr > th{
+      text-align: center;
+    }
+  }
+  .record-print,.table-printed{
+    >tbody>tr>td{
+      padding:4px 0 4px 12px;
+      font-size:12px;
+      > label{
+        margin-bottom: 0;
+      }
+    }
+  }
+
+  .table-printed {
+    border: none !important;
+    margin-top: -10px !important;
+  }
+
+  .finance > tbody > tr > th {
+    border: none !important;
+  }
+
+  .finance, .record-print {
+    margin-bottom: 0 !important;
+  }
+
+  .approval-history {
+    > tbody > tr{
+      > td{
+        padding:4px;
+      }
+      > td:nth-child(1){
+        width:20%;
+      }
+      > td:nth-child(2){
+        width:12%;
+      }
+      > td:nth-child(3){
+        width:45%;
+      }
+      > td:last-child{
+        width:23%;
+      }
+    }
+  }
+}
+
+//使table中button按钮  靠左排列
+.queen-msg-container{
+  .message{
+    padding:5px 0;
+    height:auto;
+    line-height: 1.5;
+  }
+}
+
+.brand-title {
+  background: transparent url(../../../img/fms/navicon/logo.png) 0 0 no-repeat;
+  display: inline-block;
+  .brand-text {
+    //padding-left:60px;
+    display: inline-block;
+    margin-left: 8px;
+  }
+}
+
+#dropdown-user {
+  margin-right: 108px;
+}
+
+//dropzone
+.dropzone {
+  padding: 0 !important;
+  border: 1px solid #eee !important;
+}
+
+.dropzone .dz-preview .dz-details {
+  position: static !important;
+}
+
+//datapicker
+.datepicker {
+  z-index: 1000 !important;
+}
+
+.edui-default .edui-editor {
+  z-index: 9 !important;
+  width: 100% !important;
+}
+
+.btn-download {
+  background-color: #eee;
+  color: #000;
+  &:focus{
+    color: #000;
+  }
+}
+
+
+/**
+覆盖审批页的样式.
+*/
+.left-list .control-hide{
+  background: url("../../../img/queen/approval/caiwu_push_right.png") no-repeat !important;
+}
+.control-hide.fat{
+  background: url("../../../img/queen/approval/caiwu_push_left.png") no-repeat !important;
+}
+
+.right-info.panel-info .info-body .line-horizontal{
+  float: left;
+  width: 100%;
+  margin-top: 8px;
+  margin-bottom: 16px;
+  border-style: dashed;
+}
+
+
+.panel.panel-nav{
+  .panel-heading{
+    height: auto;
+    &:after{
+      content: none;
+    }
+  }
+  .panel-body{
+    padding-top:10px;
+
+    #slope-home{
+      padding: 10px;
+    }
+
+    .search-head{
+      //text-align: center;
+    }
+
+    .search-component-form{
+      padding-left:0;
+    }
+  }
+}
+
+
+
+.overflow-container{
+  overflow-x: scroll;
+  float:left;
+  //width:100%;
+  width: 600px;
+
+  &::-webkit-scrollbar{
+    width:5px;
+    height:8px;
+  }
+  &::-webkit-scrollbar-thumb{
+    //background-color: #e0e0e0;
+    background-color: #000;
+    background-color: rgba(0,0,0,0.6);
+  }
+
+  //内部表格
+  .table{
+    margin:0;
+  }
+  .table>thead>tr>td, .table>thead>tr>th{
+    padding:0;
+    min-width:205px;
+    &.column-q1,&.column-q2,&.column-q3,&.column-q4,&.column-total{
+      min-width:455px;
+    }
+    p{
+      line-height: 35px;
+    }
+  }
+
+  .table>tbody>tr>td, .table>tbody>tr>th, .table>tfoot>tr>td, .table>tfoot>tr>th{
+    padding:20px 0;
+    min-width:205px;
+  }
+
+  .money,.column-wrap{
+    min-width:240px;
+    text-align: center;
+    p{
+      margin:0;
+    }
+    >p:first-child{
+      border-bottom: 1px solid #fff;
+    }
+
+    .before,.limit,.after{
+      float:left;
+      display: inline-block;
+      width:33%;
+      min-width:80px;
+      text-align: center;
+    }
+  }
+}

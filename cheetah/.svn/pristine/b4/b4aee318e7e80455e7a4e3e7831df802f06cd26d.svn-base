@@ -1,0 +1,96 @@
+
+/*自定义合同条件查询 table样式 无边框*/
+.owntable > tbody > tr,
+.owntable > tbody > tr,
+.owntable > tfoot > tr,
+.owntable > tfoot > tr,
+.owntable > thead > tr,
+.owntable > thead > tr {
+  border: none;
+}
+
+.owntable > tbody > tr > td,
+.owntable > tbody > tr > th,
+.owntable > tfoot > tr > th,
+.owntable > tfoot > tr > td,
+.owntable > thead > tr > th,
+.owntable > thead > tr > td {
+  border: none !important;
+}
+
+
+.owntable tr > td[colspan="6"] {
+  text-align: center;
+}
+
+
+
+/*合同查询所有数据table*/
+.tb-width th, .tb-width td {
+  min-width: 125px;
+  max-width: 200px;
+  word-break: break-all;
+}
+
+.tb-width th:first-child, .tb-width td:first-child {
+  min-width: 165px;
+  word-break: break-all;
+  box-sizing: border-box;
+}
+
+select{height: 34px !important;}
+
+input[name=sTime],
+select[name=state],
+input[name=eTime],
+input[name=minAmount],
+input[name=maxAmount]{
+  width:100px !important;
+}
+
+
+.query-form{
+  padding-top:15px;
+
+
+  .text-left{
+    min-width:200px;
+  }
+}
+
+
+#tb-filing-query{
+  tbody > tr > td:nth-child(6){
+    text-align: right;
+    padding:0 15px 0 0 !important;
+  }
+}
+
+::-webkit-scrollbar{
+  width:5px;
+  height:5px;
+}
+::-webkit-scrollbar-thumb{
+  background-color: rgba(0,0,0,0.5);
+}
+.table-container{
+  overflow: scroll;
+  min-height: 360px;
+
+
+  .table{
+    margin-bottom: 0;
+
+    th,td{
+      padding:5px 10px;
+      white-space: nowrap;
+
+
+      &.empty-content{
+        text-align: center;
+        padding:150px 0;
+        background-color:#fff;
+      }
+    }
+  }
+}

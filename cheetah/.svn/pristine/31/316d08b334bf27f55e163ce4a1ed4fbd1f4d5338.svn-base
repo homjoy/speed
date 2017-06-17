@@ -1,0 +1,129 @@
+fml.define('fms/mymanage/contractPay', ['jquery',
+    'plugin/artTemplate',
+    'component/notify'
+], function (require, exports) {
+
+    var $ = require('jquery');
+    var notify = require('component/notify');
+    var template = require('plugin/artTemplate');
+
+    /**
+     * 付款按钮点击
+     */
+    $('.toolbar .btn-pay').on("click", function (e) {
+        e.preventDefault();
+        var self = $(this);
+
+        var cpbIds = getCheckedIds();
+        if (!cpbIds.length) {
+            notify.warning('未选中任何行.');
+            return;
+        }
+
+
+        // 防止二次点击
+        self.prop('disabled', true);
+        $.post('/aj/mymanage/confirmPay', {'cpbId': cpbIds.join(',')}, function (data) {
+            if (data.rcode != 200) {
+                return notify.error(data.rmessage || '付款出错.');
+            }
+
+            self.prop('disabled', false);
+            notify.success("付款成功.");
+            //刷新付款列表
+            loadPays();
+        }, "json");
+    });
+
+
+    /**
+     * 双击行跳转
+     */
+    $("#tb-pay tbody").on('dblclick','td',function(e){
+        console.log(e);
+        var row = $(this).closest('tr');
+        var cpbId = row.find('input[name=cpbId]').val();
+        if(cpbId){
+            window.open('/pay/applyView/?cpbId='+cpbId);
+        }
+    });
+
+    /**
+     *
+     */
+    $('.toolbar .btn-rej').on("click", function (e) {
+        var self = $(this);
+        var cpbIds = getCheckedIds();
+        if (!cpbIds.length) {
+            notify.warning('未选中任何行.');
+            return;
+        }
+
+        if (cpbIds.length !== 1) {
+            notify.warning('驳回不能进行批量操作.');
+            return;
+        }
+
+        var formHtml = template("rejectFormTpl", {
+            cpbId: cpbIds[0] || '0'
+        });
+
+        self.prop('disabled', true);
+        notify.formDialog('付款驳回', formHtml, function () {
+            //$("#rejectForm").serialize()
+            $.post('/aj/mymanage/rejectPay', $("#rejectForm").serialize() , function (data) {
+                if (data.rcode != 200) {
+                    return notify.error(data.rmessage || '驳回出错.');
+                }
+
+                self.prop('disabled', false);
+                notify.success("驳回成功.");
+                //刷新付款列表
+                loadPays();
+            }, "json");
+            //return false;
+        });
+    });
+
+
+    /*
+     * 加载付款列表
+     * */
+
+    function loadPays() {
+        $.getJSON('/aj/mymanage/payList', function (resp) {
+            if (resp && resp.length > 0) {
+                var tBody = template('payList', {pays: resp});
+                $('#tb-pay tbody').html(tBody);
+            } else {
+                $('#tb-pay tbody').html('');
+            }
+        });
+    }
+
+    /*
+     * 加载付款列表
+     * */
+    loadPays();
+
+    /*
+     * 付款列表全选
+     * */
+    $(".check-all").on("change", function () {
+        var checked = $(this).prop('checked');
+        var checkbox = $("#tb-pay tbody input[type=checkbox]");
+        checkbox.prop("checked", checked);
+    });
+
+
+    /**
+     * 批量获取选中的id
+     * @returns {*|jQuery}
+     */
+    function getCheckedIds() {
+        return $('#tb-pay').find('tbody tr input[type=checkbox]:checked')
+            .map(function () {
+                return $(this).val();
+            }).get();
+    }
+});

@@ -1,0 +1,1 @@
+Hi!您的svn账号:{{mail}}密码:{{svn_pwd}},vpn账号:{{mail}}密码:{{vpn_pwd}},wifi账号:{{mail}}密码:{{wifi_pwd}},redmien账号:{{mail}}密码:{{redmien_pwd}},电脑密码:{{computer_pwd}},其中vpn、wifi、redmine、svn密码有效期为一天,请登录speed修改密码哦。

@@ -1,0 +1,82 @@
+<?php
+namespace Admin\Modules\Hr\Working_calendar;
+
+use Admin\Modules\Common\BaseModule;
+use Admin\Package\Common\Response;
+use Admin\Package\Hr_leave\WorkingCalendarList;
+
+/**
+ * 添加或者修改工作日历
+ * Class AjaxWorkingCalendarUpsert
+ * @package Admin\Modules\Hr\Working_calendar
+ */
+class AjaxWorkingCalendarUpsert extends BaseModule
+{
+
+    protected $params = array();
+    protected $errors = array();
+    public static $VIEW_SWITCH_JSON = TRUE;
+
+    public function run()
+    {
+        $this->_init();
+        if ($this->query()->hasError()) {
+            $return = Response::gen_error(10001, '', $this->query()->getErrors());
+            return $this->app->response->setBody($return);
+        }
+
+        if(!empty($this->params['id']) ){
+            //修改
+            $info = WorkingCalendarList::getInstance()->updateCalendarInfo($this->params);
+            if(intval($info) >0){
+                $return = Response::gen_success(array());
+            }else{
+                $return = Response::gen_error(50012,'','无数据更新');
+            }
+        }else{
+            //增加
+            $info = WorkingCalendarList::getInstance()->createCalendarInfo($this->params);
+            if(intval($info) >0){
+                $return = Response::gen_success(array());
+            }else{
+                $return = Response::gen_error(50012,'插入失败');
+            }
+
+        }
+
+        $this->app->response->setBody($return);
+    }
+
+    /**
+     * 参数初始化
+     */
+    protected function _init()
+    {
+        $this->rules = array(
+            'id' => array(
+                'type' => 'integer',
+
+            ),
+            'date' => array(
+                'type' => 'string',
+                'default' => '',
+            ),
+            'type' => array(
+                'type' => 'integer',
+                'default' => 1,
+            ),
+            'title' => array(
+                'type' => 'string',
+                'default' => '',
+
+            ),
+            'status' => array(
+                'type' => 'integer',
+                'default' => 1,
+            ),
+        );
+
+        $this->params = $this->post()->safe();
+    }
+
+}

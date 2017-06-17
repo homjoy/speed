@@ -1,0 +1,176 @@
+<%#head.html %>
+<div id="container" class="effect mainnav-lg">
+    <%#navbar.html %>
+
+    <div class="boxed">
+        <!--CONTENT CONTAINER-->
+        <!--===================================================-->
+        <div id="content-container" >
+            <ol class="breadcrumb">
+                <li><a href="/home">主页</a></li>
+                <li><a href="/home/window/?f=executive&s=all"> 行政中心</a></li>
+                <li class="active">办公用品</li>
+            </ol>
+            <div id="page-content" class="panel">
+                <ul class="nav nav-tabs slope col-lg-12 col-sm-12 col-xs-12" style="margin-bottom: 30px">
+                    <li  role="presentation" ><a href="/administration/officesupply/">办公用品申请</a></li>
+                    <li class="active" role="presentation" ><a href="/administration/officesupply/my" class="application_num">我的申请<span class="approval-badge"><%if(this.apply_num_get.code==200){%><%=this.apply_num_get.data.application_num%><%}%></span></a></li>
+                    <li role="presentation" ><a href="/administration/officesupply/approval" class="approval_num">我的审批<span class="approval-badge"><%if(this.apply_num_get.code==200){%><%=this.apply_num_get.data.approval_num%><%}%></span></a></li>
+                    <%if(this.permission_control.code==200){%>
+                    <%if(!!this.permission_control.data.manager){%>
+                    <li role="presentation" class=""><a href="/administration/officesupply/manage" >我的管理</a></li>
+                    <%}%>
+                    <%}%>
+                </ul>
+                <div class="panel-body" style="min-width:580px">
+
+                    <div class="tab-content">
+                        <div role="tabpanel" class="tab-pane row active">
+                            <div class="row">
+
+                            </div>
+                            <div class="row search-head" style="text-align: center;">
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <%#footer.html%>
+        </div>
+        <%#mainnav.html%>
+    </div>
+</div>
+<script type="text/html" id = "search-head">
+
+</script>
+<script type="text/html" id="left-table">
+    <table class="table position-fix my">
+        <thead>
+        <tr>
+            <th class="checkth"></th>
+            <th class="nameth">类型</th>
+            <th class="mail-num">件数</th>
+            <th class="hidden-narrow departth">状态</th>
+            <th class="hidden-narrow dateth">申请日期</th>
+        </tr>
+        </thead>
+    </table>
+    <table class="table">
+        <thead>
+        <tr>
+            <th class="checkth"></th>
+            <th class="nameth">类型</th>
+            <th class="mail-num">件数</th>
+            <th class="hidden-narrow departth">状态</th>
+            <th class="hidden-narrow dateth">申请日期</th>
+        </tr>
+        </thead>
+        {{each data as info}}
+        <tr class="show-info" data-order_id="{{info.order_id}}">
+            <td>
+                {{if info.status_eng=='submit'||info.status_eng=='waiting'||info.status_eng=='approvaling'}}
+                <!--<input type="checkbox" data-task_id="{{info.task_id}}" data-order_id="{{info.order_id}}" value="{{info.order_id}}"/>-->
+                {{else if !!info.my_status&&!info.status_eng}}
+                <i class="icon icon-{{info.my_status}}"></i>
+                {{else}}
+                <i class="icon icon-{{info.status_eng}}"></i>
+                {{/if}}
+            </td>
+            <td>
+                <div>{{info.category_name}}</div>
+                <div class="hidden-fat bottom-word">{{info.create_time}}</div>
+            </td>
+            <td>
+                <div>{{info.apply_number}}</div>
+                <div class="hidden-fat bottom-word">
+                    {{info.approval_name}}-{{info.status_name}}
+                </div>
+            </td>
+            <td class="hidden-narrow">{{info.depart_name}}</td>
+            <td class="hidden-narrow word-break">{{info.create_time}}</td>
+        </tr>
+        {{/each}}
+    </table>
+</script>
+<script type="text/html" id="right-show">
+    <div class="panel-heading ">
+        <span>申请详情
+            {{if data.status_eng=='submit'||data.status_eng=='waiting'||data.status_eng=='approvaling'}}
+            <a href="javascript:void(0);" data-order_id="{{data.order_id}}" data-task_id="{{data.task_id}}" class="btn btn-default single list-undo btn-xs">撤销</a>
+            <a href="javascript:void(0);" data-order_id="{{data.order_id}}" data-task_id="{{data.task_id}}" class="btn btn-warning single list-pushon btn-xs">催审</a>
+            {{/if}}
+        </span>
+    </div>
+    <div class="panel-body pad-lr78">
+        <div class="info-head">
+            <dl>
+                <dt class="left-dt left-pink">申请人</dt>
+                <dd>
+                    <div class="avatar-name">
+                        <img class="avatar" src="{{data.user_avatar}}" alt=""/>
+                        <span>{{data.name_cn}}</span>
+                    </div>
+                    <div class="depart-date">
+                        <dl>
+                            <dt>申请部门</dt><dd>{{data.depart_name}}</dd>
+                            <dt >申请日期</dt><dd>{{data.create_time}}</dd>
+                            <dt class="bottom">申请编号</dt><dd class="bottom">{{data.order_id}}</dd>
+                        </dl>
+                    </div>
+                </dd>
+                <dt class="left-dt left-pink">物品类型</dt><dd >{{data.category_name}}</dd>
+                {{if !!data.detail}}
+                    <dt class="left-dt">物品详情</dt>
+                        <dd class="word-break">
+                            {{each data.detail as detailnum}}
+                            <hr style="width:100%;margin-top: 0"/>
+                                {{if detailnum.detail_info=='.'||detailnum.detail_info==''}}
+                                    <p >{{detailnum.supply_name}}<span class="applynum">{{detailnum.apply_number}}</span></p>
+                                {{else}}
+                                    <p >{{detailnum.supply_name}}</p>
+                                    <p style="color:#a0a0a0">{{detailnum.detail_info}}<span class="applynum">{{detailnum.apply_number}}</span></p>
+                                {{/if}}
+                            {{/each}}
+                        </dd>
+                {{/if}}
+            </dl>
+        </div>
+        <hr/>
+        <div class="info-body">
+            <a href="javascript:void(0);" class="approval-history history-icon" data-order_id="{{data.order_id}}" data-task_id="{{data.task_id}}">审批记录</a>
+            <div class="timeline-wraper" style="float:right;width: 100%">
+
+            </div>
+        </div>
+        <div class="info-foot">
+            <span>如对此审批流有疑问，请联系 <a href="/contacts/speedim/?u=MzUyMQ==" class="speedim" target="_blank"><span>孙艺鸣</span></a></span>
+        </div>
+    </div>
+
+</script>
+<script type="text/html" id="approve-history">
+    <div class="timeline timeline-mini approval-progress">
+        {{each data as info}}
+        <div class="timeline-entry">
+            <div class="timeline-stat">
+                <div class="timeline-icon"><i class="icon icon-{{info.timeline_status}}"></i></div>
+            </div>
+            <div class="timeline-label {{info.timeline_status}}">
+                <div class="timeline-left">
+                    <div class="uname">{{info.user_name}} <span class="font12">（{{info.name}}）</span></div>
+                    <div class="time">{{info.create_time}}</div>
+                </div>
+                <div class="remark timeline-right">{{info.progress_content}}</div>
+            </div>
+        </div>
+        {{/each}}
+    </div>
+</script>
+
+<%! $_ENGINE_SELF.callFn("useModule")("<<<_use:
+        fml.use('speed/common/base');
+        fml.use('speed/administration/officesupply/my');
+_use:", this._JSstack , this._JSmods); %>
+
+<%#foot.html%>

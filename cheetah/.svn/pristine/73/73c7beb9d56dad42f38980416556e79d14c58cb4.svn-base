@@ -1,0 +1,20 @@
+function home() {
+    return this;
+}
+var controlFns = {
+    'index': function () {
+        var php = {
+            // 我的申请
+            'showAllBillApproval':'/userbillrequest/showAllBillRequestNotApprovalJson',
+            // 我的审批
+            'tasklistJson':'/contract/tasklistJson'
+        };
+        this.bindDefault(php);
+        this.bridgeMuch(php);
+        this.listenOver(function (data) {
+            data._CSSLinks = ['fms/home/index'];
+            this.render('home/index.html', data);
+        });
+    }
+};
+exports.__create = controller.__create(home, controlFns);

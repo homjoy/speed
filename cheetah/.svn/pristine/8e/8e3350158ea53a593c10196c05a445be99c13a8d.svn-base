@@ -1,0 +1,26 @@
+<table class="table record-print approval-history">
+    <thead>
+    <tr>
+        <th colspan="10" class="text-left">审批记录</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr>
+        <th>操作人</th>
+        <th>操作/状态</th>
+        <th>意见</th>
+        <th>操作时间</th>
+    </tr>
+    <%if(this.detail.listAppHis.length>0){%>
+    <!-- 如果全部通过   pay-over显示 -->
+    <% this.detail.listAppHis.forEach(function(info,index){%>
+    <tr>
+        <td><%=info.userName||''%></td>
+        <td><%=info.ahResult||''%></td>
+        <td><%=info.ahRemark||''%></td>
+        <td><%=info.ahTimeStr||''%></td>
+    </tr>
+    <%})%>
+    <%}%>
+    </tbody>
+</table>

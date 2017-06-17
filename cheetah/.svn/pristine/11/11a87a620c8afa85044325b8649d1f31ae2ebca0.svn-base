@@ -1,0 +1,254 @@
+<%#head.html%>
+<div id="container" class="effect mainnav-lg">
+    <%#navbar.html%>
+        <div class="boxed">
+            <div id="content-container">
+                <div id="page-content">
+                    <div class="panel">
+                        <div class="panel-heading">
+                            <h3 class="panel-title">付款申请单</h3>
+                        </div>
+                        <div class="panel-body">
+
+
+                        <form class="form-horizontal" id="formPay" method="POST" action="/aj/pay/submit">
+                            <fieldset>
+                                <legend>基本信息</legend>
+
+                                <div class="row">
+                                    <div class="form-group col-xs-6">
+                                        <label class="control-label col-xs-4">单据编号</label>
+                                        <div class="col-xs-8">
+                                            <input type="text" class="form-control" readonly>
+                                        </div>
+                                    </div>
+                                    <div class="form-group col-xs-6">
+                                        <label class="control-label col-xs-4">填报日期</label>
+                                        <div class="col-xs-8">
+                                            <input type="text" class="form-control apply-date" readonly>
+                                        </div>
+                                    </div>
+                                </div>
+
+
+                                <div class="row">
+                                    <div class="form-group col-xs-6">
+                                        <label class="control-label col-xs-4">申请人</label>
+                                        <div class="col-xs-8">
+                                            <input type="text" class="form-control " name="nameCn" value="<%=this.userInfo.data.nameCn%>" readonly data-bv-notempty>
+                                        </div>
+                                    </div>
+                                    <div class="form-group col-xs-6">
+                                        <label class="control-label col-xs-4">申请部门</label>
+                                        <div class="col-xs-8">
+                                            <input type="text" class="form-control " name="departName" value="<%=this.userInfo.data.department.departName%>" readonly data-bv-notempty>
+                                        </div>
+                                    </div>
+                                </div>
+                            </fieldset>
+                            <fieldset>
+                                <legend>单据内容</legend>
+                                <div class="row">
+                                    <div class="form-group col-xs-12">
+                                        <label class="col-xs-2 control-label">业务线</label>
+                                        <div class="col-xs-4">
+                                            <select name="businesslineCode" class="form-control">
+                                                <option value="">无</option>
+                                                <% if(this.businessLine && this.businessLine.rcode == 200) { %>
+                                                <% this.businessLine.data.forEach(function(line,index){%>
+                                                <option value="<%=line.itemValue %>"><%=line.itemName %></option>
+                                                <% }); %>
+                                                <% } %>
+                                            </select>
+                                        </div>
+                                        <div class="col-xs-6">
+                                            <p class="help-block">非特殊业务线，请选无</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="form-group col-xs-12">
+                                        <label class="control-label col-xs-2">是否签订合同</label>
+                                        <div class="col-xs-8">
+                                            <div class="radio">
+                                                <label class="form-radio form-normal active form-text">
+                                                    <input type="radio" name="sign" value="yes" checked/>是
+                                                </label>
+                                                <label class="form-radio form-normal form-text">
+                                                    <input type="radio" name="sign" value="no"/> 否
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="sign-yes">
+                                    <div class="row">
+                                        <div class="form-group col-xs-6">
+                                            <label class="control-label col-xs-4">合同编号</label>
+                                            <div class="col-xs-8">
+                                                <input type="text" class="form-control" name="cpbContractCode" data-required placeholder="如无编号，请写'无'">
+                                                <!--<div class="input-group mar-btm">-->
+                                                    <!-- -->
+                                                    <!--&lt;!&ndash;<a class="input-group-addon" href="javascript:void(0);">搜索</a>&ndash;&gt;-->
+                                                <!--</div>-->
+                                            </div>
+                                        </div>
+                                        <div class="form-group col-xs-6">
+                                            <label class="control-label col-xs-4">合同签订时间</label>
+                                            <div class="col-xs-8">
+                                                <input type="text" class="form-control" name="cpbContractSignTime" data-required id="signDate" readonly>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="form-group col-xs-12">
+                                            <label class="control-label col-xs-2">合同名称</label>
+                                            <div class="col-xs-10">
+                                                <input type="text" class="form-control" name="cpbContractName" placeholder="合同名称" data-required id="nameContent"/>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="form-group col-xs-12">
+                                            <label class="control-label col-xs-2">付款条件</label>
+                                            <div class="col-xs-10">
+                                                <textarea name="cpbContractPayterm" id="payTips"></textarea>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+
+                                <div class="row">
+                                    <div class="form-group col-xs-12">
+                                        <label class="control-label col-xs-2">预算项目</label>
+                                        <div class="col-xs-10">
+                                            <input type="text" name="cpbBugetitemId" class="form-control"id="preProject" placeholder="预算项目" />
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="form-group col-xs-6">
+                                        <label class="control-label col-xs-4">付款单位</label>
+                                        <div class="col-xs-8">
+                                            <input type="text" class="form-control" name="cpbContractCompany" placeholder="合同中约定的付款单位" data-required id="payCompany">
+                                        </div>
+                                    </div>
+                                    <div class="form-group col-xs-6">
+                                        <label class="control-label col-xs-4">付款金额</label>
+                                        <div class="col-xs-8">
+                                            <input class="form-control" type="text" name="cpbMoney" placeholder="￥" data-required>
+                                        </div>
+                                    </div>
+                                </div>
+
+
+                                <div class="row">
+                                    <div class="form-group col-xs-6">
+                                        <label class="control-label col-xs-4">收款方式</label>
+                                        <div class="col-xs-8">
+                                            <select name="cpbCollectType" id="takeWay" class="form-control" data-required>
+                                                <option value="0">电汇</option>
+                                                <option value="1">支票</option>
+                                                <option value="2">现金</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="form-group col-xs-6">
+                                        <label class="control-label col-xs-4">收款单位</label>
+                                        <div class="col-xs-8">
+                                            <input type="text" class="form-control" name="cpbCustomerCompany" placeholder="收款单位" data-required id="takeCompany">
+                                        </div>
+                                    </div>
+                                </div>
+
+
+                                <div class="row">
+                                    <div class="form-group col-xs-6">
+                                        <label class="control-label col-xs-4">收款银行</label>
+                                        <div class="col-xs-8">
+                                            <input type="text" class="form-control" name="cpbBank" placeholder="收款银行" data-required>
+                                        </div>
+                                    </div>
+                                    <div class="form-group col-xs-6">
+                                        <label class="control-label col-xs-4">收款支行</label>
+                                        <div class="col-xs-8">
+                                            <input type="text" class="form-control" name="cpbBranchBank" placeholder="收款支行" data-required>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="form-group col-xs-6">
+                                        <label class="control-label col-xs-4">收款账号</label>
+                                        <div class="col-xs-8">
+                                            <input type="text" class="form-control" name="cpbAccountNumber" placeholder="收款账号" data-required>
+                                        </div>
+                                    </div>
+                                    <div class="form-group col-xs-6">
+                                        <label class="control-label col-xs-4">组织机构代码</label>
+                                        <div class="col-xs-8">
+                                            <input type="text" class="form-control takeCode" name="cpbGroupSimplename" placeholder="付款金额超过5万必填">
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="form-group col-xs-6">
+                                        <label class="control-label col-xs-4">预计付款日期</label>
+                                        <div class="col-xs-8">
+                                            <input type="text" class="form-control" name="cpbPayTime" id="payDay" data-required readonly>
+                                        </div>
+                                    </div>
+                                    <div class="form-group col-xs-6">
+                                        <label class="control-label col-xs-4">付款对应服务周期</label>
+                                        <div class="col-xs-8">
+                                            <input type="text" class="form-control" name="cpbServerTerm" placeholder="付款对应服务周期" data-required>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="form-group col-xs-12">
+                                        <label class="control-label col-xs-2">备注</label>
+                                        <div class="col-xs-10">
+                                            <textarea name="cpbRemark" id="remark"></textarea>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row" style="display: none;">
+                                    <div class="form-group col-xs-12">
+                                        <label class="control-label col-xs-2">合同附件</label>
+                                        <div class="col-xs-10" id="contract-attach-list" ></div>
+                                    </div>
+                                </div>
+                                <input type="hidden" name="cpbFilePath" value=""/>
+                                <input type="hidden" name="archiveAttachId" value=""/>
+                            </fieldset>
+                        </form>
+                        <div class="row">
+                            <div class="form-group">
+                                <label class="col-xs-2 control-label text-right">付款附件</label>
+                                <div class="col-xs-6">
+                                    <div action="" method="post" class="dropzone file-zone" id="fileZone"></div>
+                                    <!--<input type="file" class="form-control" id="input" name="upload" data-required> 文件拖拽或点击此处实现上传，支持pdf/doc/dpcx/xlsx/xls/ppt/pptx/rar/zip格式-->
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="panel-footer text-right">
+                            <button class="btn btn-info btn-submit" type="submit" form="formPay">提交</button>
+                            <button class="btn btn-info btn-save-drafts" type="button">保存草稿</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+       <%#sidebar.html%>
+</div>
+<%#footer.html%></div>
+<%! $_ENGINE_SELF.callFn( "useModule")( "<<<_use:
+        fml.use('fms/pay/apply');
+_use:", this._JSstack , this._JSmods); %>
+<%#foot.html%>

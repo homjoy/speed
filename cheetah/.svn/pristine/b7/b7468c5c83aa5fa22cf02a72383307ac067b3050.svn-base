@@ -1,0 +1,39 @@
+function home() {
+    return this;
+}
+var controlFns = {
+    'index': function (param) {
+        if(param == 'download'){
+            return this.redirectTo('/page/download/');
+        }
+        return this.redirectTo('/page/404/');
+    },
+    '404': function () {
+        var php = {};
+        this.bridgeMuch(php);
+        this.listenOver(function (data) {
+            data._CSSLinks = ['nifty/fontfamily', 'nifty/font-awesome', 'nifty/bootstrap', 'nifty/nifty', 'nifty/pace.min'];
+            this.render('page/404.html', data);
+        });
+    }
+    ,'download': function () {
+        var php = {
+            'app': '/page/download_app'
+        };
+        this.bridgeMuch(php);
+        this.listenOver(function (data) {
+            this.render('page/download.html', data);
+        });
+    },
+    'jd': function () {
+        var php = {};
+        this.bindDefault(php);
+        this.bridgeMuch(php);
+        this.listenOver(function (data) {
+            data._CSSLinks = [];
+            data._JSLinks = [];
+            this.render('page/jd.html', data);
+        });
+    }
+};
+exports.__create = controller.__create(home, controlFns);

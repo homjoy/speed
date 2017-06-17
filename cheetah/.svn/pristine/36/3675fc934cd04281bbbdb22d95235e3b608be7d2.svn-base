@@ -1,0 +1,95 @@
+<script type="text/html" id="budget-detail-row">
+    <div class="row-columns">
+        <div class="row-columns-inner">
+            <input type="hidden" name="budgetDetailIdStr" value="{{budgetDetailIdStr}}"/>
+            <input type="hidden" name="extraCode" value="{{extraCode}}"/>
+            <div class="column column-project">
+                <input type="text" name="budgetItemFullCode" value="{{budgetItemFullCode}}"/>
+            </div>
+            <div class="column column-q1">
+                {{if quarter > 0 && quarter <= 1}}
+                <input type="text" name="budgetFirQua" value="{{budgetFirQua}}" placeholder="0" class=""/>
+                {{else}}
+                <span class="money">0</span>
+                {{/if}}
+            </div>
+            <div class="column column-q2">
+                {{if quarter > 0 && quarter <= 2}}
+                <input type="text" name="budgetSecQua" value="{{budgetSecQua}}" placeholder="0" class=""/>
+                {{else}}
+                <span class="money">0</span>
+                {{/if}}
+            </div>
+            <div class="column column-q3">
+                {{if quarter > 0 && quarter <= 3}}
+                <input type="text" name="budgetThiQua" value="{{budgetThiQua}}" placeholder="0" class=""/>
+                {{else}}
+                <span class="money">0</span>
+                {{/if}}
+            </div>
+            <div class="column column-q4">
+                {{if quarter > 0 && quarter <= 4}}
+                <input type="text" name="budgetFourQua" value="{{budgetFourQua}}" placeholder="0" class=""/>
+                {{else}}
+                <span class="money">0</span>
+                {{/if}}
+            </div>
+            <div class="column column-total">
+                <span class="total">{{budgetAmmount || 0}}</span>
+            </div>
+            <div class="column column-remark">
+                <input type="text" name="budgetRemark" value="{{budgetRemark || ''}}"/>
+                <a href="javascript:void(0)" class="project-remove"><i class="fa fa-minus"></i></a>
+            </div>
+        </div>
+    </div>
+</script>
+<script type="text/html" id="project-coupon-more">
+    {{each extras as extra index }}
+    <div class="row-columns-inner {{classMap[extra.extraCode] }}">
+        <input type="hidden" name="budgetDetailIdStr" value="{{extra.budgetDetailIdStr}}"/>
+        <input type="hidden" name="budgetExtraIdStr" value="{{extra.budgetExtraIdStr}}"/>
+        <input type="hidden" name="budgetItemFullCode" value="{{budgetItemFullCode}}"/>
+        <input type="hidden" name="extraCode" value="{{extra.extraCode}}"/>
+        <div class="column column-project">
+            <span class="project-name">{{extra.extraName}}</span>
+        </div>
+        <div class="column column-q1">
+            {{if (extra.extraCode != '003' ) && quarter > 0 && quarter <= 1}}
+            <input type="text" name="budgetFirQua" value="{{extra.budgetFirQua}}" placeholder="0" class=""/>
+            {{else}}
+            <span class="money">{{extra.budgetFirQua || 0}}</span>
+            {{/if}}
+        </div>
+        <div class="column column-q2">
+            {{if (extra.extraCode != '003' ) && quarter > 0 && quarter <= 2}}
+            <input type="text" name="budgetSecQua" value="{{extra.budgetSecQua}}"  placeholder="0" class=""/>
+            {{else}}
+            <span class="money">{{extra.budgetSecQua || 0}}</span>
+            {{/if}}
+        </div>
+        <div class="column column-q3">
+            {{if (extra.extraCode != '003' ) && quarter > 0 && quarter <= 3}}
+            <input type="text" name="budgetThiQua" value="{{extra.budgetThiQua}}"  placeholder="0" class=""/>
+            {{else}}
+            <span class="money">{{extra.budgetThiQua || 0}}</span>
+            {{/if}}
+        </div>
+        <div class="column column-q4">
+            {{if (extra.extraCode != '003' ) && quarter > 0 && quarter <= 4}}
+            <input type="text" name="budgetFourQua" value="{{extra.budgetFourQua}}"  placeholder="0" class=""/>
+            {{else}}
+            <span class="money">{{extra.budgetFourQua || 0}}</span>
+            {{/if}}
+        </div>
+        <div class="column column-total">
+            <span class="total">{{extra.budgetAmmount || 0}}</span>
+        </div>
+        <div class="column column-remark">
+            {{if extra.extraCode != '003' }}
+            <input type="text" name="budgetRemark" value="{{extra.budgetRemark}}"  />
+            {{/if}}
+        </div>
+    </div>
+    {{/each}}
+</script>

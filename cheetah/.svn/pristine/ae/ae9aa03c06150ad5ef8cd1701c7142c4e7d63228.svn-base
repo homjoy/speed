@@ -1,0 +1,24 @@
+<%#head.html %>
+<div id="container" class="effect mainnav-lg">
+    <%#navbar.html %>
+    <div class="boxed">
+        <div id="content-container">
+            <ol class="breadcrumb">
+                <li><a href="/home">首页</a></li>
+                <li><a href="#">上一级功能</a></li>
+                <li class="active">当前功能</li>
+            </ol>
+            <div id="page-content">
+
+                内容
+            </div>
+            <%#footer.html%>
+        </div>
+        <%#mainnav.html%>
+    </div>
+</div>
+<%! $_ENGINE_SELF.callFn("useModule")("<<<_use:
+        fml.use('speed/common/base');
+_use:", this._JSstack , this._JSmods); %>
+
+<%#foot.html%>

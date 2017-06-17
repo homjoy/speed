@@ -1,0 +1,360 @@
+<?php
+namespace Admin\Modules\Structure\User;
+
+use Admin\Modules\Common\BaseModule;
+use Admin\Package\Account\UserInfo;
+use Admin\Package\Account\WorkInfo;
+use Admin\Package\Account\PersonalInfo;
+use Admin\Package\Account\PrivacyInfo;
+use Admin\Package\Department\Department;
+use Admin\Package\Department\DepartRelation;
+use Admin\Package\Account\RoleInfo;
+use Admin\Package\Account\LevelInfo;
+use Admin\Package\Log\Log;
+include VENDOR_PATH.'/phpexcel/PHPExcel.php';
+include VENDOR_PATH.'/phpexcel/PHPExcel/IOFactory.php';
+include VENDOR_PATH.'/phpexcel/PHPExcel/Writer/Excel2007.php';
+
+/**
+ * 对用户、私人、工作、保密信息的导出
+ * @author hongzhou@meilishuo.com
+ * @since 2015-8-27 下午2:53:13
+ */
+class ExportInfo extends BaseModule {
+
+	protected $errors = NULL;
+	private   $params = NULL;
+//	public static $VIEW_SWITCH_JSON = TRUE;
+    //导出excel的 表头及顺序
+
+    private $export_field = array(//导出字段
+        'user_id'            => '员工id',
+        'name_cn'            => '用户名字',
+        'leader_name'        => '部门领导',
+        'domain'             => '花名拼音',
+        'nickname'           => '花名',
+        'hire_time'          => '入职时间',
+        'positive_time'      => '转正时间',
+        'mobile'             => '手机',
+        'id_number'          => '身份证号',
+        'depart_name'        => '部门名字',
+        'gender'             => '性别男1女0',
+        'graduation_time'    => '毕业时间',
+        'birthday'           => '生日',
+//        'telephone'          => '电话',
+        'nation'             => '民族',
+//        'qq'                 => 'QQ',
+        'redmineid'          => 'Redmine密码',
+        'mls_id'             => 'MLSID',
+        'mls_nickname'       => 'MLS昵称',
+        'hukou'              => '户口',
+        'education'          => '学历',
+        'speciality'         => '入职时间',
+        'last_work'          => '上份工作',
+        'emergency_person'   => '紧急联系人',
+        'emergency_phone'    => '紧急联系人电话',
+        'contract_start_time'=> '合同开始时间',
+        'contract_end_time'  => '合同到期时间',
+        'address'            => '地址',
+        'personal_mail'      => '私人邮箱',
+        'married'            => '结婚1结婚0没有',
+        'marry_time'         => '结婚时间',
+        'children_birthday'  => '孩子生日',
+        'level_name'         => '级别名称',
+        'role_name'          => '角色名称',
+        'coat_color'         => '上衣颜色',
+        'staff_id'           => '员工编号',
+        'name_cn'            => '用户名字',
+        'direct_leader'      =>  '直属领导(旧)',
+        'position'           => '工位',
+        'name_en'            => '拼音',
+        'mail'               => '邮箱',
+
+//        'bank_card_number'   => '银行卡号',
+
+    );
+    const USER_TYPE = 4;
+	public function run() {
+
+        $this->_init();
+        $this->params = array_filter($this->params);
+        $levelIds =$departIds =  $userIds =$roleIds = array();
+		if(!empty($this->params['search'])) {//按照模糊条件查找
+
+                if(ord($this->params['search']) <= 57) {//qq phone 得到用户私人信息
+                        $this->params['mobile'] = $this->params['search'];
+                        $this->params['qq'] = $this->params['search'];
+                        $user_personal_info = PersonalInfo::getInstance()->getPersonalInfo($this->params);
+                        if (is_array($user_personal_info)) {
+                            foreach ($user_personal_info as $k => $v) {
+                                $userIds[] = $v['user_id'];
+                            }
+                            $this->params['user_id'] = $userIds;
+
+                            $user_info = UserInfo::getInstance()->getUserInfo($this->params);//得到user_info信息
+
+                        }
+                        if (is_array($user_info)) {//未得到相关领导和部门信息做准备
+                            foreach ($user_info as $k => $v) {
+                                $userIds[] = $v['user_id'];
+                                $departIds[] = $v['depart_id'];
+                                $roleIds[] = $v['job_role_id'];
+
+                            }
+                            $departIds = array_unique($departIds);
+                            $roleIds = array_unique($roleIds);
+                        }
+                    //得到部门id
+                }else{
+                        if(ord($this->params['search']) <= 122) {//中英文名字邮箱查询
+
+                            $is_mail = preg_match('/@/', $this->params['search']);
+
+                            if ($is_mail) { // 邮箱
+                                $this->params['search'] = explode("@",$this->params['search']);
+                                $this->params['mail']  = $this->params['search'][0];
+                            } else { // 英文名
+                                $this->params['name_en'] = $this->params['search'];
+                            }
+                        } else { // 中文名
+                            $queryParams['name_cn'] = $this->params['search'];
+                        }
+                        //添加时间控制
+                        $user_info = UserInfo::getInstance()->getUserInfo( $this->params);//获取user_info信息
+                        if (is_array($user_info)) {
+                            foreach ($user_info as $k => $v) {
+                                $userIds[] = $v['user_id'];
+                                $departIds[] = $v['depart_id'];
+                                $roleIds[] = $v['job_role_id'];
+                            }
+                            $departIds = array_unique($departIds);
+                            $roleIds = array_unique($roleIds);//获取用户私人信息
+                            $user_personal_info = PersonalInfo::getInstance()->getPersonalInfo(array('user_id' => implode(',', $userIds)));
+                        }
+
+                }
+
+        }else {
+        // 得到用户信息数据
+        $user_info = UserInfo::getInstance()->getUserInfo($this->params);
+            if (is_array($user_info )) {
+                foreach ($user_info as $k => $v) {
+                    $userIds[] = $v['user_id'];
+                    $departIds[] = $v['depart_id'];
+                    $roleIds[] = $v['job_role_id'];
+
+                }
+                $departIds = array_unique($departIds);
+                $roleIds = array_unique($roleIds);
+                //获取用户私人信息
+                $user_personal_info = PersonalInfo::getInstance()->getPersonalInfo(array('user_id' => implode(',', $userIds),'all'=>1));
+
+            }
+        }
+        //得到工作信息数据
+        $user_work_info = WorkInfo::getInstance()->getWorkInfo(array('user_id' => implode(',', $userIds),'all'=> 1));
+            if (is_array($user_work_info )) {
+                foreach ($user_work_info as $k => $v) {
+                    $levelIds[] = $v['job_level_id'];
+                }
+                $levelIds = array_unique($levelIds);
+            }
+        //获取部门领导相关信息
+        $depart_info = Department::getInstance()->getDepart(array('depart_id' => implode(',', $departIds),'status'=>'0,1','all'=>1));
+        $depart_leader_info = DepartRelation::getInstance()->getRelationInfo(array('depart_id' => $departIds,'is_virtual'=>0,'all'=>1));
+        if (is_array($depart_leader_info)) {
+            $ret_temp = $ret =array();
+            $ret = UserInfo::getInstance()->getUserInfo(array('all'=>1,'status'=>1));
+            foreach ($depart_leader_info as $k => $v) {
+                foreach($ret as $k_u => $v_u ){
+                    if(isset($v_u['user_id'])&& $v_u['user_id']==$v['user_id']){
+                        $ret_temp = $v_u;
+                        $depart_leader_info[$k]['name_cn'] =isset($ret_temp['name_cn'])?$ret_temp['name_cn']:'';
+                    }
+                }
+            }
+        }
+        //depart_leader_info
+        $level_info  = LevelInfo::getInstance()->getLevelInfo(array('level_id' =>  $levelIds));
+        $role_info = RoleInfo::getInstance()->getRoleInfo(array('role_id' =>  $roleIds));
+        $user_privacy_info =PrivacyInfo::getInstance()->getPrivacyInfo(array('user_id' => implode(',', $userIds),'all'=> 1));
+
+       $list =array();// 对数据合并
+
+       if(is_array($user_info)){
+            foreach($user_info as $k => $v){
+                $list[$k] = $user_info[$k];
+                $list[$k]['direct_leader'] = isset($user_info[$v['direct_leader']]['name_cn'])
+                ?$user_info[$v['direct_leader']]['name_cn']:'';
+                if(isset($user_personal_info[$k]) && is_array($user_personal_info[$k])){
+                    $list[$k] = array_merge($list[$k],$user_personal_info[$k]);
+                }
+                if( isset($user_privacy_info[$k]) && is_array($user_privacy_info[$k]) ){
+                    $list[$k] = array_merge($list[$k],$user_privacy_info[$k]);
+                }
+                if(isset($user_work_info[$k]) && is_array($user_work_info[$k])){
+                    $list[$k] = array_merge($list[$k],$user_work_info[$k]);
+                }
+                $list[$k]['depart_name'] = isset($depart_info[$user_info[$k]['depart_id']]['depart_name']) ? $depart_info[$user_info[$k]['depart_id']]['depart_name'] : '';
+                $list[$k]['leader_name'] = isset($depart_leader_info[$v['depart_id']]['name_cn'])?$depart_leader_info[$v['depart_id']]['name_cn']:'';
+                if(isset($user_work_info[$k])){
+                    $list[$k]['level_name'] = isset($level_info[$user_work_info[$k]['job_level_id']]['level_name']) ? $level_info[$user_work_info[$k]['job_level_id']]['level_name'] : '';
+
+                }else{
+                    $list[$k]['level_name'] = '';
+                }
+                $list[$k]['role_name'] =isset($role_info[$v['job_role_id']]['role_name']) ? $role_info[$v['job_role_id']]['role_name']:'';
+
+            }
+       }
+        $this->doLog($this->params);
+        $this->export($list);
+        exit;
+
+	}
+
+    //返回excel的 y坐标 支持A-CZ最多104列, num: 0-103
+    private function getCellLocation($num = 0) {
+        if($num < 0 || $num > 103) {
+            exit('数据列数据超出范围，支持1-104列数据');
+        }
+        $abc = array('A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z');
+        if($num >= 77) {
+            $str = 'C';
+        }else if($num >= 52) {
+            $str = 'B';
+        }else if($num >= 26) {
+            $str = 'A';
+        }else {
+            $str = '';
+        }
+
+        while($num >= 26) {
+            $num = $num - 26;
+        }
+        $str .= $abc[$num] ;
+
+        return $str;
+    }
+
+    private function export($list= array()){
+
+		set_time_limit(0);
+
+		$filename = '美丽说员工信息表.xlsx';
+		$objPHPExcel = new \PHPExcel();
+
+		$objPHPExcel->getProperties()->setCreator("Meilishuo Speed System");
+		$objPHPExcel->getProperties()->setLastModifiedBy("Meilishuo Speed System");
+		$objPHPExcel->getProperties()->setTitle($filename);
+		$objPHPExcel->getProperties()->setSubject($filename);
+		$objPHPExcel->getProperties()->setDescription("System generated automatically");
+
+		$objPHPExcel->createSheet();
+		$objPHPExcel->setActiveSheetIndex(0);
+
+		//表头
+		$sort = $this->export_field;
+		$count = count($sort) ;
+		$index = 0;
+		foreach ($sort as $k => $v) {
+			$location = $this->getCellLocation($index).'1';
+			$objPHPExcel->getActiveSheet()->SetCellValue($location, $v);
+			$index++;
+		}
+
+		//数据
+		$currRow = 2;
+		foreach ($list as $k => $v) {
+			//字段顺序与表头一至
+			//$sort = array('user_id' => $v['user_id']);
+			foreach ($this->export_field as $sk => $sv) {
+				$sort[$sk] = isset($v[$sk]) ? $v[$sk] : '' ;
+			}
+			$v = $sort;
+			$v = array_values($v); //重新索引
+
+			//写入excel对象
+			$index = 0;
+			while ($index < $count) {
+				$location = $this->getCellLocation($index).$currRow;
+                $objPHPExcel->getActiveSheet ()->setCellValueExplicit ($location,
+                        self::getParamsByKey ($v, $index), 's');
+				$index++;
+			}
+			$currRow++;
+		}
+
+		header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+		header('Content-Disposition: attachment;filename="'.$filename.'"');
+		header('Cache-Control: max-age=0');
+        $objWriter = \PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel2007');
+	   // $objWriter = new \PHPExcel_Writer_Excel5($objPHPExcel);
+		$objWriter->save('php://output');
+		exit;
+	}
+    /**
+     *
+     * @param array $params
+     * @param       $key
+     *
+     * @return string
+     */
+    protected function getParamsByKey ($params = array (), $key)
+    {
+        if ( empty($params) ) {
+            return '';
+        }
+        if (isset($params[$key])) {
+            return $params[ $key ];
+        }
+
+        return '';
+    }
+    protected function doLog($new_param=array(),$old_param='export'){
+
+        $ret = Log::getInstance()->createLogs(array(
+                'user_id'=>$this->user['id'],//op
+                'handle_id'=>100000,
+                'operation_type'=>$old_param,
+                'after_data'=>json_encode($new_param),
+                'handle_type'=>self::USER_TYPE
+            )
+        );
+
+        return $ret;
+    }
+
+	private function _init() {
+
+        $this->rules  = array(
+            'flag'=>array(
+                'type'=>'multiId',
+                'default' =>array(1,2,3,4),
+            ),
+
+            'all' => array(
+                'type' => 'integer',
+                'default'=>1,
+            ),
+            'status' => array(
+                'type' => 'multiId',
+                'default' =>array(1,3),
+            ),
+            'search' => array(
+                'type' => 'string',
+            ),
+            'hire_end_time' => array(
+                'type' => 'datetime',
+            ),
+            'hire_start_time'=> array(//入职时间查询
+                'type' => 'datetime',
+            ),
+
+        );
+        $this->params = $this->query()->safe();
+        $this->errors  = $this->query()->getErrors();
+		}
+	
+	
+}

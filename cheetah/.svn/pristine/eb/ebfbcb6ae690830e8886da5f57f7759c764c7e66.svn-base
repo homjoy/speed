@@ -1,0 +1,20 @@
+function hr() {
+    return this;
+}
+var controlFns = {
+    'index': function () {
+        var php = {
+            
+        };
+
+        this.bindDefault(php);
+        this.bridgeMuch(php);
+        this.listenOver(function (data) {
+            data._CSSLinks = [];
+            data._JSLinks = [];
+            this.render('hr/jd.html', data);
+        });
+    }
+    
+};
+exports.__create = controller.__create(hr, controlFns);

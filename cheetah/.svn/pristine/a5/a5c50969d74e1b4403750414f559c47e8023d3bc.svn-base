@@ -1,0 +1,28 @@
+function pay() {
+    return this;
+}
+var controlFns = {
+    'index':function(){
+        return this.redirectTo('/pay/apply/');
+    },
+    'apply':function(){
+        var php = {};
+        this.bindDefault(php);
+        this.bridgeMuch(php);
+        this.listenOver(function (data) {
+            data._CSSLinks = ['fms/contract/contract','plugin/dropzone'];
+            this.render('pay/apply.html', data);
+        });
+    }
+    ,'view':function(){
+        var php = {};
+        this.bindDefault(php);
+        this.bridgeMuch(php);
+        this.listenOver(function (data) {
+            data._CSSLinks = ['fms/contract/contract'];
+            this.render('pay/view.html', data);
+        });
+    }
+
+};
+exports.__create = controller.__create(pay, controlFns);

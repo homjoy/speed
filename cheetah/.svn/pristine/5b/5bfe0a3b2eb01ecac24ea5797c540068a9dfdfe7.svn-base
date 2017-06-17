@@ -1,0 +1,221 @@
+fml.define('fms/reimburse/modules/BasicInfo', ['jquery','fms/common/utils', 'plugin/artTemplate', 'plugin/moment', 'plugin/tokeninput', 'component/notify'], function (require, exports) {
+    "use strict";
+    var $ = require('jquery'),
+        Template = require('plugin/artTemplate'),
+        moment = require('plugin/moment'),
+        notify = require('component/notify'),
+        utils = require('fms/common/utils');
+    var $form = $(".form-apply");
+
+    /**
+     * @param options
+     * @constructor
+     */
+    function Module(options) {
+        options = options || {};
+        this.templateName = 'basic-info-tpl';
+        this.detail = options.values || {};
+        this.detail.constant = window.Constant;
+        this.options = options;
+        this.$block = null;
+        this.templateData = this.formatData();
+        this.editable = !($form.find('[data-module=BasicInfo]').attr('data-editable') === 'false');
+        this.render();
+        this.bindEvent();
+    }
+
+    /**
+     *
+     */
+    Module.prototype = {
+        render: function () {
+            var templateData = this.templateData;
+            //默认值.
+            templateData.applyDateStr =  moment().format('YYYY-MM-DD');
+            templateData.id = templateData.id || templateData.billId;
+            templateData.editable = this.editable;
+            //不能修改并且是添加
+            if(!this.editable && !templateData.applyPersonid){
+                templateData.applyPersonid = this.detail.constant.user.id;
+                templateData.applyPersonName = this.detail.constant.user.name_cn;
+            }
+
+            $form.find('[data-module=BasicInfo]').replaceWith(Template(this.templateName, templateData));
+            this.$block = $form.find('.basic-info');
+        },
+        formatData: function () {
+            //通用费用报销.
+            if (this.detail['ExpenseCommon'] && this.detail['ExpenseCommon'].MlsExpenseCommon) {
+                return this.detail['ExpenseCommon'].MlsExpenseCommon;
+            }else if(this.detail['LoanRequestBill']){
+                return this.detail['LoanRequestBill'];
+            }
+            return {};
+        },
+        bindEvent: function () {
+            var that = this;
+            //各种事件处理
+
+            if(!this.editable){
+                return false;
+            }
+
+            var preData = [];
+            if (this.templateData.applyPersonid && this.templateData.applyPersonName) {
+                preData.push({
+                    id: this.templateData.applyPersonid,
+                    name_cn: this.templateData.applyPersonName,
+                    name: this.templateData.applyPersonName
+                });
+                that.loadUserDebtAmount(this.templateData.applyPersonid);
+            } else {
+                preData.push(this.detail.constant.user);
+                that.loadUserInfo.call(that, this.detail.constant.user.id);
+                that.loadUserDebtAmount(this.detail.constant.user.id);
+
+            }
+
+
+            this.$block.find('[name=applyPersonid]').tokenInput("/aj/user/search", {
+                tokenLimit: 1,
+                prePopulate: preData,
+                onAdd: function (item) {
+                    that.loadUserInfo.call(that, item.id);
+                    that.loadUserDebtAmount(item.id);
+                },
+                tokenFormatter:function(item){
+                    return "<li><p>" + item['name_cn'] + "</p></li>";
+                },
+                onDelete: function (item) {
+                    //直接清空.
+                    that.$block.find('[name=departmentName]').val('');
+                    that.$block.find('[name=accountno]').val('');
+                    that.$block.find('[name=phone]').val('');
+                }
+            });
+        },
+        loadUserInfo: function (userId) {
+            var that = this;
+            $.ajax('/aj/user/get', {
+                type: 'POST',
+                data: {userId: userId},
+                dataType: 'json',
+                success: function (resp) {
+                    if (resp.code != 200) {
+                        return notify.error('')
+                    }
+
+                    that.$block.find('[name=departmentName]').val(resp.data.department.departName || '');
+                    that.$block.find('[name=accountno]').val(resp.data.accountno);
+                    that.$block.find('[name=phone]').val(resp.data.phone);
+
+                    that.reloadBudgetProjects(resp.data.department.departId);
+                    that.loadUserCTrip(userId);
+                }
+            });
+        },
+
+        loadUserDebtAmount:function(userId){
+            var that = this;
+
+            $.ajax('/aj/reimburse/get_user_debt',{
+                type:'POST',
+                data:{userId:userId},
+                dataType:'json',
+                success:function(resp){
+                    if(resp.rcode != 200){
+                        return notify.error('no debt');
+                    }
+                    that.$block.next().find('input[name=debtAmount]').val(utils.formatCurrency(resp.data));
+                }
+            });
+        },
+
+        reloadBudgetProjects:function(departId){
+            if(!departId){
+                return ;
+            }
+
+
+            $.post('/aj/budget/projects',{departId:departId},function(resp){
+                if(resp.rcode != 200){
+                    return notify.error(resp.rmessage);
+                }
+
+
+                Constant.budgetProjects = resp.budgetItemTree || [];
+
+                var input = $form.find('.receipt-info [name=budgetItem]');
+                if(input.data('TreeSelect')){
+                    input.data('TreeSelect').destroy();
+                }
+
+                //重新设置.
+                input.TreeSelect({
+                    valueField: 'fullCode', //值为该字段的数据.
+                    data: Constant.budgetProjects
+                }).on("change",function(event,node){
+                    input.val(node.fullCode);
+                });
+            },'json');
+        },
+
+        loadUserCTrip:function(userId){
+            if(!$form.find('.business-trip').length){
+                return ;
+            }
+
+            $.post('/aj/reimburse/get_user_ctrip',{userId:userId},function(resp){
+                if(resp.rcode != 200){
+                    return notify.error('加载出差信息出错!');
+                }
+                var select = $form.find('.business-trip [name=ctripRequestNo]');
+                var selectedValue = select.attr('data-selected');
+                var options = [
+                    '<option>请选择</option>'
+                ];
+                $.each(resp.data,function(index,ctrip){
+                    options.push(
+                        '<option value="'+ctrip.ctripNo+'" '+(selectedValue == ctrip.ctripNo ? 'selected':'')+'>'+ctrip.ctripNo+'</option>'
+                    );
+                });
+                select.html(options.join(''));
+            },'json');
+        },
+
+        validate: function () {
+            var $block = this.$block;
+
+            var userId = $block.find('[name=applyPersonid]').val();
+            if (!userId) {
+                $block.find('[name=applyPersonid]').closest('.form-group').addClass('has-error');
+                $block.find('[name=applyPersonid]').closest('.form-group').removeClass('has-success');
+                return false;
+            } else {
+                $block.find('[name=applyPersonid]').closest('.form-group').addClass('has-success');
+                $block.find('[name=applyPersonid]').closest('.form-group').removeClass('has-error');
+            }
+
+
+            return true;
+        },
+        //序列化为数组.
+        serializeArray: function (prefix) {
+            prefix = prefix || '';
+            var that = this;
+            var fields = ['id', 'billNo', 'applyPersonid'];
+            var fieldsCopy = fields;
+            var values = [];
+            if(prefix === 'mlsLoanRequestBill.')
+                fieldsCopy = ['billId','billNo','billApplyUserId'];
+
+             $.each(fields, function (index,name) {
+                 values.push({name: prefix + fieldsCopy[index], value: that.$block.find('[name=' + name + ']').val()});
+            });
+
+            return values;
+        }
+    };
+
+    return Module;
+});

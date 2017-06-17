@@ -1,0 +1,22 @@
+function ui_modals() {
+	return this;
+}
+var controlFns = {
+	'index' : function(){
+		this.ui_modals()
+	},
+	'ui_modals' : function(){
+		var php = {
+			
+		}
+        this.bindDefault(php);
+		this.bridgeMuch(php);
+		this.listenOver(function(data){
+			console.log(data)
+
+			data._CSSLinks = ['fontfamily','bootstrap','nifty.min','font-awesome.min','animate.min','switchery.min','bootstrap-select.min','nifty-demo.min','pace.min'];
+			this.render('ui_modals.html' , data);
+		})
+	}
+};
+exports.__create = controller.__create(ui_modals, controlFns);

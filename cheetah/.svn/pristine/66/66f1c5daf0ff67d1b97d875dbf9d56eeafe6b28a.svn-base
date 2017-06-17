@@ -1,0 +1,315 @@
+<script type="text/html" id="travel-table-tpl">
+    <table class="table table-bordered {{extClass}}">
+        <thead>
+        <tr>
+            <th colspan="6">
+                <h3 class="text-center">差旅费报销单
+                    {{if ExpenseCommon.MlsExpenseCommon.approveState == 3 ||ExpenseCommon.MlsExpenseCommon.approveState == 5}}
+                    <span class="exam-pass"></span>
+                    {{else if ExpenseCommon.MlsExpenseCommon.approveState == 4}}
+                    <span class="exam-reject"></span>
+                    {{else}}
+                    <span class="billStatus">{{ExpenseCommon.MlsExpenseCommon.approveStateStr}}</span>
+                    {{/if}}
+                </h3>
+            </th>
+        </tr>
+        </thead>
+
+        <tbody>
+        <tr>
+            <td colspan="6">基本信息<input type="hidden" id="billid" name="expenseCtrip" value="{{ExpenseCommon.MlsExpenseCommon.id}}"/></td>
+        </tr>
+        <tr>
+            <td>申请人</td>
+            <td colspan="2">{{ExpenseCommon.MlsExpenseCommon.applyPersonName}}</td>
+            <td>申请部门</td>
+            <td colspan="2">{{ExpenseCommon.MlsExpenseCommon.applyDeptName}}</td>
+        </tr>
+        <tr>
+            <td>银行账号</td>
+            <td colspan="2">{{ExpenseCommon.MlsExpenseCommon.accountNo}}</td>
+            <td>联系电话</td>
+            <td colspan="2">{{ExpenseCommon.MlsExpenseCommon.phone}}</td>
+        </tr>
+        <tr>
+            <td>单据编号</td>
+            <td colspan="2">{{ExpenseCommon.MlsExpenseCommon.billNo}}</td>
+            <td>申请日期</td>
+            <td colspan="2">{{ExpenseCommon.MlsExpenseCommon.applyDateStr}}</td>
+        </tr>
+        <tr>
+            <td colspan="6">单据信息</td>
+        </tr>
+        <tr>
+            <td>是否冲借款</td>
+            <td>{{ExpenseCommon.MlsExpenseCommon.loanFlagName}}</td>
+            <td>未还款的借款金额</td>
+            <td>{{ExpenseCommon.MlsExpenseCommon.debtAmount | currencyFormat}}</td>
+            <td>财务应付</td>
+            <td>{{ExpenseCommon.MlsExpenseCommon.payAmount | currencyFormat}}</td>
+        </tr>
+        <tr>
+            <td>预算项目</td>
+            <td>{{ExpenseCommon.MlsExpenseCommon.budgetItemName}}</td>
+            <td>所属项目</td>
+            <td>{{ExpenseCommon.MlsExpenseCommon.projectCodeName}}</td>
+            <td>核算公司</td>
+            <td class="needfill">
+                <span>{{ExpenseCommon.MlsExpenseCommon.attribution}}</span>
+                <select name="expenseCtrip" class="attribution hide">
+                    <% if(this.addresses && this.addresses.data){%>
+                    <% this.addresses.data.forEach(function(v,k){ %>
+                    <option value="<%=v.itemValue%>"><%=v.itemName%></option>
+                    <% })%>
+                    <%}%>
+                </select>
+            </td>
+        </tr>
+        <tr>
+            <td>报销金额</td>
+            <td class="totalReimburse">{{ExpenseCommon.MlsExpenseCommon.applyAmount}}</td>
+            <td>附件张数</td>
+            <td>{{ExpenseCommon.MlsExpenseCommon.billNum}}</td>
+            <td>经办人</td>
+            <td>{{ExpenseCommon.MlsExpenseCommon.handlePersonName}}</td>
+        </tr>
+
+
+        <tr>
+            <td colspan="6">出差信息</td>
+        </tr>
+        <tr>
+            <td>出差申请编号</td>
+            <td colspan="3">{{ExpenseCommon.MlsExpenseCommon.ctripRequestNo}}</td>
+            <td>出差天数</td>
+            <td>{{ExpenseCommon.MlsExpenseCommon.ctripDays}}</td>
+        </tr>
+        <tr>
+            <td>出差事由</td>
+            <td colspan="5">{{ExpenseCommon.MlsExpenseCommon.ctripReason}}</td>
+        </tr>
+        <tr>
+            <td colspan="6">交通费明细</td>
+        </tr>
+        <tr>
+            <td colspan="6" class="inner-table">
+                <table class="table table-bordered">
+                    <thead>
+                    <tr>
+                        <th>日期</th>
+                        <th>起始地点</th>
+                        <th>到达地点</th>
+                        <th>交通工具</th>
+                        {{if ExpenseCommon.remark != 'checked'}}
+                        <td>报销金额</td>
+                        <td>核定金额</td>
+                        {{else}}
+                        <td>报销金额</td>
+                        {{/if}}
+                        <th>备注</th>
+                    </tr>
+                    </thead>
+                    <tbody class="needforech">
+                    {{each ExpenseCommon.MlsExpenseTrafficDetail as detail}}
+                    <tr>
+                        <td>{{detail.billDateStr}}</td>
+                        <td>{{detail.departure}}</td>
+                        <td>{{detail.destination}}</td>
+                        <td>{{detail.toolsName}}</td>
+                        {{if ExpenseCommon.remark != 'checked'}}
+                        <td>{{detail.billAmount | currencyFormat }}</td>
+                        {{/if}}
+                        <td class="needfill needfillDetails">
+                            <span>{{detail.checkAmount | currencyFormat}}</span>
+                            <input type="text" class="hide currency" name1="expenseCtripTraffics" name2="checkAmount" value="{{detail.checkAmount | currencyFormat}}"/>
+                            <input type="hidden" name1="expenseCtripTraffics" name2="id" value="{{detail.id}}"/>
+                        </td>
+                        <td>{{detail.remark}}</td>
+                    </tr>
+                    {{/each}}
+                    </tbody>
+                    <tfoot>
+                    <tr>
+                        <td colspan="100%" class="text-center"><span class="span-highlight"><i class="fa fa-jpy"></i> 合计</span>
+                            <span> {{ExpenseCommon.SumCtripTraffic | currencyFormat }}</span>
+                        </td>
+                    </tr>
+                    </tfoot>
+                </table>
+            </td>
+        </tr>
+
+        {{if ExpenseCommon.MlsExpenseCtripHotel.length >=1 }}
+        <tr>
+            <td colspan="6">住宿明细</td>
+        </tr>
+        <tr>
+            <td colspan="6" class="inner-table">
+                <table class="table table-bordered">
+                    <thead>
+                    <tr>
+                        <th>入住日期</th>
+                        <th>离店日期</th>
+                        <th>住宿天数</th>
+                        <th>报销金额</th>
+                        <th>核定金额</th>
+                        <th>备注</th>
+                    </tr>
+                    </thead>
+                    <tbody class="needforech">
+                    {{each ExpenseCommon.MlsExpenseCtripHotel as detail}}
+                    <tr>
+                        <td>{{detail.startDateStr}}</td>
+                        <td>{{detail.endDateStr}}</td>
+                        <td>{{detail.days}}天</td>
+                        <td>{{detail.billAmount | currencyFormat }}</td>
+                        <td class="needfill needfillDetails">
+                            <span>{{detail.checkAmount | currencyFormat}}</span>
+                            <input type="text" class="hide currency" name1="expenseCtripHotels" name2="checkAmount" value="{{detail.checkAmount | currencyFormat}}"/>
+                            <input type="hidden" name1="expenseCtripHotels" name2="id" value="{{detail.id}}"/>
+                        </td>
+                        <td>{{detail.remark}}</td>
+                    </tr>
+                    {{/each}}
+                    </tbody>
+                    <tfoot>
+                    <tr>
+                        <td  colspan="100%" class="text-center"><span class="span-highlight"><i class="fa fa-jpy"></i> 合计</span>
+                            <span>{{ExpenseCommon.SumCtripHotel | currencyFormat }}</span>
+                        </td>
+                    </tr>
+                    </tfoot>
+                </table>
+            </td>
+        </tr>
+        {{/if}}
+
+        {{if ExpenseCommon.MlsExpenseCtripAllowance.length >=1 }}
+        <tr>
+            <td colspan="6">补助明细</td>
+        </tr>
+        <tr>
+            <td colspan="6" class="inner-table">
+                <table class="table table-bordered">
+                    <thead>
+                    <tr>
+                        <th>日期</th>
+                        <th>报销项目</th>
+                        <th>报销金额</th>
+                        <th>核定金额</th>
+                        <th>备注</th>
+                    </tr>
+                    </thead>
+                    <tbody class="needforech">
+                    {{each ExpenseCommon.MlsExpenseCtripAllowance as detail}}
+                    <tr>
+                        <td>{{detail.billDateStr}}</td>
+                        <td>{{detail.expenseItemName}}</td>
+                        <td>{{detail.billAmount | currencyFormat }}</td>
+                        <td class="needfill needfillDetails">
+                            <span>{{detail.checkAmount | currencyFormat}}</span>
+                            <input type="text" class="hide currency" name1="expenseCtripAllowances" name2="checkAmount" value="{{detail.checkAmount | currencyFormat}}"/>
+                            <input type="hidden" name1="expenseCtripAllowances" name2="id" value="{{detail.id}}"/>
+                        </td>
+                        <td>{{detail.remark}}</td>
+                    </tr>
+                    {{/each}}
+                    </tbody>
+                    <tfoot>
+                    <tr>
+                        <td  colspan="100%" class="text-center"><span class="span-highlight"><i class="fa fa-jpy"></i> 合计</span>
+                            <span>{{ExpenseCommon.SumCtripAllowance | currencyFormat }}</span></td>
+                    </tr>
+                    </tfoot>
+                </table>
+            </td>
+        </tr>
+        {{/if}}
+
+        {{if ExpenseCommon.MlsExpenseCtripEntertain.length >=1 }}
+        <tr>
+            <td colspan="6">业务招待费明细</td>
+        </tr>
+        <tr>
+            <td colspan="6" class="inner-table">
+                <table class="table table-bordered">
+                    <thead>
+                    <tr>
+                        <th>日期</th>
+                        <th>报销金额</th>
+                        <th>核定金额</th>
+                        <th>备注</th>
+                    </tr>
+                    </thead>
+                    <tbody class="needforech">
+                    {{each ExpenseCommon.MlsExpenseCtripEntertain as detail}}
+                    <tr>
+                        <td>{{detail.billDateStr}}</td>
+                        <td>{{detail.billAmount | currencyFormat }}</td>
+                        <td class="needfill needfillDetails">
+                            <span>{{detail.checkAmount | currencyFormat}}</span>
+                            <input type="text" class="hide currency" name1="expenseCtripEntertains" name2="checkAmount" value="{{detail.checkAmount | currencyFormat}}"/>
+                            <input type="hidden" name1="expenseCtripEntertains" name2="id" value="{{detail.id}}"/>
+                        </td>
+                        <td>{{detail.remark}}</td>
+                    </tr>
+                    {{/each}}
+                    </tbody>
+                    <tfoot>
+                    <tr>
+                        <td colspan="100%" class="text-center"><span class="span-highlight"><i class="fa fa-jpy"></i> 合计</span>
+                            <span>{{ExpenseCommon.SumCtripEntertain | currencyFormat }}</span>
+                        </td>
+                    </tr>
+                    </tfoot>
+                </table>
+            </td>
+        </tr>
+        {{/if}}
+
+        {{if ExpenseCommon.MlsExpenseCtripOther.length >=1 }}
+        <tr>
+            <td colspan="6">其他费用明细</td>
+        </tr>
+        <tr>
+            <td colspan="6" class="inner-table">
+                <table class="table table-bordered">
+                    <thead>
+                    <tr>
+                        <th>日期</th>
+                        <th>报销项目</th>
+                        <th>报销金额</th>
+                        <th>核定金额</th>
+                        <th>备注</th>
+                    </tr>
+                    </thead>
+                    <tbody class="needforech">
+                    {{each ExpenseCommon.MlsExpenseCtripOther as detail}}
+                    <tr>
+                        <td>{{detail.billDateStr}}</td>
+                        <td>{{detail.expenseItemName}}</td>
+                        <td>{{detail.billAmount | currencyFormat }}</td>
+                        <td class="needfill needfillDetails">
+                            <span>{{detail.checkAmount | currencyFormat}}</span>
+                            <input type="text" class="hide currency" name1="expenseCtripOthers" name2="checkAmount" value="{{detail.checkAmount | currencyFormat}}"/>
+                            <input type="hidden" name1="expenseCtripOthers" name2="id" value="{{detail.id}}"/>
+                        </td>
+                        <td>{{detail.remark}}</td>
+                    </tr>
+                    {{/each}}
+                    </tbody>
+                    <tfoot>
+                    <tr>
+                        <td  colspan="100%" class="text-center"><span class="span-highlight"><i class="fa fa-jpy"></i> 合计</span>
+                            <span>{{ExpenseCommon.SumCtripOther | currencyFormat }}</span>
+                        </td>
+                    </tr>
+                    </tfoot>
+                </table>
+            </td>
+        </tr>
+        {{/if}}
+        </tbody>
+    </table>
+</script>

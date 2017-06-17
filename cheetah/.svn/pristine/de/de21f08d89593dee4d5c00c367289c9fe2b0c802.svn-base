@@ -1,0 +1,461 @@
+
+fml.define("speed/hr/leave/apply", ['jquery','plugin/artTemplate', 'plugin/moment','component/select', 'plugin/bootstrap/datetimepicker','component/notify','plugin/bootstrap/validator','component/upload','plugin/bootbox' ], function (require, exports) {
+    var $ = require('jquery');
+    var moment = require('plugin/moment');
+    var Template = require('plugin/artTemplate');
+    var dateFormat = 'YYYY-MM-DD';
+    var notify = require('component/notify');
+    var bootbox = require('plugin/bootbox');
+
+    //可用天数
+    var usable = 0;
+    //假期类型
+    var leavetype;
+    //假期天数
+    var leavedaysSick= 0,leavetypeSick=false;
+    //上传附件数组
+    var files = [];
+    var leaveuploadshow = function(option){
+        if(leavedaysSick>=3&&leavetypeSick==true){
+            $('.upload-pic').removeClass('hide');$('.queen-upload-tips').html('*病假条');
+        }else if (leavedaysSick<3&&leavetypeSick==true){
+            $('.upload-pic').addClass('hide');
+        }
+    }
+    //leaveuploadshow();
+    //上传图片插件
+    $('.upload-div').QueenUpload({
+        name:"Filedata",
+        action: "/upload/picture",
+        cache:false,
+        message: {
+            allowTypeTips: "可上传图片",
+        },
+        onSuccess: function (response, file) {
+            //response 是上传接口的返回数据
+            //file是文件对象.
+            files.push({identify:file.identify, data:response.data});
+            $('.save_password').removeAttr('disabled');
+            //console.log(response,file);
+            //console.warn(files);
+            var identify = file.identify;
+            $('.queen-file-item[data-identify=identify]').find('.queen-upload-progress').remove();
+        },
+        onFileRemove:function(file){
+            $.each(files,function(k,v){
+                //console.warn(file)
+                if(v.identify==file.identify){
+                    //console.log(k);
+                    files.splice(k,1);
+                }
+            });
+            //console.log(files);
+        },
+        multiple:true,
+        data:{type:'hr_leave'}
+
+    });
+    //$('.upload-div').QueenUpload(destroy());
+    //假期选择
+    $(".select").select({
+        'placeholder': "请选择"
+    }).on("change", function () {
+        var type = $(this).val();
+        setTimeout(function(){
+            $('.absencename').val($('.queen-selected-content span').html());
+        },500);
+        $('.upload-pic').addClass('hide');
+        leavetypeSick=false;
+        switch(type)
+        {
+            case '3':leavetypeSick=true;break;
+            case '4':leavetypeSick=true;break;
+            case '5':$('.upload-pic').removeClass('hide');$('.queen-upload-tips').html('*结婚证');break;
+            case '6':$('.upload-pic').removeClass('hide');$('.queen-upload-tips').html('*死亡证明');break;
+            case '7':$('.upload-pic').removeClass('hide');$('.queen-upload-tips').html('*产假证明');break;
+            case '8':$('.upload-pic').removeClass('hide');$('.queen-upload-tips').html('*宝宝出生证明');break;
+            case '9':$('.upload-pic').removeClass('hide');$('.queen-upload-tips').html('*产检证明');break;
+            case '10':$('.upload-pic').removeClass('hide');$('.queen-upload-tips').html('*医院出示的流产假证明');break;
+        }
+        function2(type);
+        $('.btn-beauty').removeAttr('disabled');
+    });
+
+    //function右侧显示方法
+    var showpopover = function(data,v){
+        leavetype = $('.select option:selected').text();
+        usable = data.usable;
+        var str = "当前可用"+leavetype+usable+"天";
+
+        if(!$('.popover').hasClass('in')){
+            $('.select').parent().popover('show');
+        }
+        $('.now').html(str);
+        $('.popover li').addClass('hide').find('span').html('');
+        if(!!data.last_year_leave&& !!data.last_year_leave.usable){
+            $('.lastyear').removeClass('hide').find('span').html(data.last_year_leave.usable);
+        }
+        if(v=='9'){
+            $('.all').removeClass('hide').html('每月可用<span>1</span>天');
+        }else if(!!data.all||data.all==0){
+            $('.all').removeClass('hide').html('今年可用<span>1</span>天');
+            $('.all').removeClass('hide').find('span').html(data.all);
+        }
+        if(!!data.going||data.going==0){
+            $('.going').removeClass('hide').find('span').html(data.going);
+        }
+        if(!!data.used||data.used==0){
+            $('.used').removeClass('hide').find('span').html(data.used);
+        }
+        $('.notice').html('*'+data.instruction);
+
+        if(data.one_time=='1'){
+            //如果是一次性请完的假期
+            $('.reference').val(data.usable);
+            $('.length').val(data.usable);
+            $('.length-lable').html(data.usable);
+            changeEndDate(data.usable);
+            leavedaysSick = data.usable;
+        }
+    }
+    //function结束时间改变
+    var changeEndDate = function(days){
+        if (days != 0) {
+            days -=1;
+        }
+        var start = $('#input_start').val();
+        var str = moment(start).add(days, 'day').format("YYYY-MM-DD");
+        $('#input_end').val(str).datetimepicker('update');
+    }
+    //function开始时间改变
+    var changeStartDate = function(days){
+        if (days != 0) {
+            days -=1;
+        }
+        var end = $('#input_end').val();
+        var days = 0 - days;
+        var str = moment(end).add(days, 'day').format("YYYY-MM-DD");
+        $('#input_start').val(str).datetimepicker('update');
+    }
+
+    //function右侧信息触发发送信息函数
+    var get_message = function(){
+        var myForm = $('#form_leave').serializeArray();
+        var url ='/aj/hr/user_own_leave';
+        $.getJSON(url, myForm, function (ret) {
+            console.warn(ret);
+            if (ret.code == 200) {
+                showpopover(ret.data);
+                //show_message(200, '操作成功');
+            } else if (ret.code == 400 || ret.code == 500) {
+                notify.error(ret.error_msg);
+            }
+        });
+    }
+
+    //查询天数，向后台发送数据，或js计算
+    function countDays(){
+        var countbyjs = $('.reference').val();
+        console.log(!countbyjs);
+        if($('.iscustom').val()!=true&&!countbyjs){
+            var myForm = $('#form_leave').serializeArray();
+            var url ='/aj/hr/leave_days_calculation';
+            $.getJSON(url, myForm, function (ret) {
+                if (ret.code == 200) {
+                    var days = ret.data;
+                    $('.length').val(days);
+                    $('.length-lable').html(days);
+                    leavedaysSick = days;
+                    if(days>usable&&!!leavetype){
+                        notify.error('亲，你的'+leavetype+'只有'+usable+'天啦');
+                    }
+                    leaveuploadshow('changedays');
+
+                } else if (ret.code == 400 || ret.code == 500) {
+                    notify.error(ret.error_msg);
+                }
+            });
+        }else{
+            var a = new Date($('#input_start').val()),
+                b = new Date($('#input_end').val()),
+                c = (b-a)/86400000+ 1;
+            var half = '';
+            //if(changeLength) {
+            st = $('.start').val();
+            pt = $('.end').val();
+            if (c != 1) {
+                if (st == '' && pt == '' || st == '' && pt == 'pm' || st == 'am' && pt == '' || st == 'am' && pt == 'pm') {
+                    half = 0;
+                } else {
+                    if (st == 'pm' && pt == 'am') {
+                        half = 1;
+                    } else {
+                        half = 0.5;
+                    }
+                }
+            } else {
+                if (st == '') {
+                    half = 0;
+                } else {
+                    half = 0.5;
+                }
+            }
+            var countDayJs = c-half;
+            $('.length').val(countDayJs);
+            $('.length-lable').html(countDayJs);
+            leavedaysSick = countDayJs;
+            if(countDayJs>usable){
+                notify.error('亲，你的'+leavetype+'只有'+usable+'天啦');
+            }
+            leaveuploadshow('changedays');
+
+        }
+    }
+    //半天点击事件
+    $('.select-half').click(function(ev){
+        ev.preventDefault();
+        var _this = $(this),
+            _dropdown_handler = _this.parents('div.input-group-btn').find('button.dropdown-toggle');
+        //_dropdown_handler.attr('time',_this.attr('time'));
+        _dropdown_handler.html(_this.text() + ' <span class="caret"></span>');
+        _dropdown_handler.dropdown('toggle').parents().prev().val(_this.attr('time'));
+        countDays();
+        return false;
+    });
+    //时间插件绑定
+    $(".form_datetime").datetimepicker({
+        minView: 'month',
+        autoclose: true,
+        format: "yyyy-mm-dd"
+    }).val(moment().format(dateFormat)).on("changeDate", function (e) {
+        var _this = $(this);
+        var days = $('.reference').val();
+
+        if($(_this).hasClass('input_start')&&$('.select').val()==9){
+            function2($('.select').val());
+        }
+
+        if(!!days){
+            countDays();
+            $('.end').removeAttr('disabled');
+        }else if($('.input_start').val()>=$('.input_end').val()){
+            //如果日期前后不合理，自动更改
+            if($(_this).hasClass('input_start')){
+                $('.input_end').val($('.input_start').val());
+            }else{
+                $('.input_start').val($('.input_end').val());
+            }
+            countDays();
+            $('.end').attr('disabled','disabled');
+        }else{
+            //正常情况
+            countDays();
+            $('.end').removeAttr('disabled');
+        }
+    });
+    //初始计算天数
+    countDays();
+    //下拉框函数
+    function function2(v){
+        $('.reference').val('');
+        $('.add').remove();
+        if(v==5){
+            var Html = Template('pagination', {});
+            $(".add-after").before(Html);
+
+            $(".date").datetimepicker({
+                minView: 'month',
+                autoclose: true,
+                format: "yyyy-mm-dd"
+            }).val(moment().format(dateFormat)).on("changeDate", function (e) {
+                get_message();
+            });
+            get_message();
+            return;
+        }
+        if(!v){
+            return;
+        }
+        $.getJSON('/aj/hr/user_own_leave',{'absence_type':v,'start_date':$('#input_start').val()}, function (ret) {
+            console.warn(ret);
+            if (ret.code == 200) {
+                $('.add').remove();
+                var data = ret.data;
+                if(!!data.radio){
+                    //单选框
+                    var radio,radio_name;
+                    radio='<div class="form-group add"><div class="col-lg-12 col-md-12 col-sm-12">';
+                    var i=0;
+                    radio += '<div class="col-lg-2"></div>';
+                    $.each(data.radio,function(k,v){
+                        if(!!radio_name){
+                            radio+='<label class="control-label mr-10" id="">'+
+                                '<input type="radio" class="new" name="'+radio_name+'" value="'+i+'" > '+ v+
+                                '</label>';
+                        }else{
+                            radio+='<label class="control-label mr-10" id="">'+
+                                '<input type="radio" class="new" name="'+k+'" value="'+i+'" checked> '+ v+
+                                '</label>';
+                            radio_name = k;
+                        }
+                        i++;
+                    });
+                    radio+='</div></div>';
+                    $(".add-after").before(radio);
+                    //console.log(radio);
+                }else if(!!data.check){
+                    var check = '<div class="form-group add"><div class="col-lg-12 col-md-12 col-sm-12">';
+                    check += '<div class="col-lg-2"></div>';
+                    $.each(data.check,function(k,v){
+                        check+='<label class="control-label mr-10" id="">'+
+                            '<input type="checkbox" class="new" name="'+k+'" value="1"> '+ v+
+                            '</label>';
+                    });
+                    check += '</div></div>';
+                    //console.log(check);
+                    $(".add-after").before(check);
+                }
+                //右侧显示方法
+                showpopover(data,v);
+            } else if (ret.code == 400 || ret.code == 500) {
+                notify.error(ret.error_msg);
+            }
+        });
+        leaveuploadshow();
+    }
+
+    //复选框或单选框点击触发右侧信息提示
+    $('form').delegate('.new','click',function(){
+        //可改一次性修完
+        get_message();
+    });
+
+    //信息提示
+    $('.select').parent().popover({
+        html: true,
+        trigger: 'manual',
+        //placement:'right',
+        template: '<div class="popover" role="tooltip"><div class="arrow"></div><div class="popover-content"></div></div>',
+        content: function () {
+            var Html = Template('user_own_leave', {});
+            return Html;
+        }
+    }).on("shown.bs.popover", function (e) {
+
+    });
+
+    //表单提交
+    $('#form_leave').bootstrapValidator({
+        container: '#cc'
+    }).on('success.form.bv', function (e) {
+        e.preventDefault();
+
+        if (expand()) {
+            var myForm = $('#form_leave').serializeArray();
+            if(!$('.upload-pic').hasClass('hide')){
+                if(files.length!=0){
+                    $.each(files,function(k,v){
+                        //console.log(v);
+                        myForm.push({name:'service_leave_file[]',value:v.data});
+                    });
+                    //console.log(myForm);
+                }
+            }
+            $.post('/aj/hr/leave_submit', myForm, function (ret) {
+                //console.log(1);
+                if (ret.code == 200) {
+                    notify.success('操作成功');
+                    setTimeout(function(){
+                        window.location.href='/hr/leave/my?autuloadlast';
+                    },2000);
+                } else if (ret.code == 400 || ret.code == 500) {
+                    console.log(!!ret.data);
+                    if(!!ret.data){
+                        if(ret.data.type=='annual_leave'||ret.data.type=='sick_leave'){
+                            var message = '<h4>您还有<span class="leave-money">'+ret.error_msg+'</span>天“<span class="leave-money">带薪病假</span>”可以申请，确定要使用“病假”吗？</h4><h5>病假期间，基本工资标准为1720*0.8，不再享受与请假天数对应的餐补</h5>';
+                            if(ret.data.type=='annual_leave'){
+                                message = '<h4>您还有<span class="leave-money">'+ret.error_msg+'</span>天“<span class="leave-money">年假</span>”可以申请，确定要使用“事假”吗？</h4><h5>休假期间，不发放工资和餐补</h5>';
+                            }
+                            var options = {
+                                className: "time-modal",
+                                title: '提示',
+                                message: message,
+                                backdrop: true,
+                                onEscape: function () {
+                                    //关闭对话框.
+                                    //this.modal('hide');
+                                },
+                                buttons: {
+                                    cancel: {
+                                        label: '取消',
+                                        className: 'btn-default btn-cancel',
+                                        callback: function () {
+                                            //暂时不管.
+                                        }
+                                    },
+                                    success: {
+                                        label: '确定',
+                                        className: 'btn-primary',
+                                        callback: function(){
+                                            $('.ischeck').val(0);
+                                            myForm = $('#form_leave').serializeArray();
+                                            if(!$('.upload-pic').hasClass('hide')){
+                                                if(files.length!=0){
+                                                    $.each(files,function(k,v){
+                                                        //console.log(v);
+                                                        myForm.push({name:'service_leave_file[]',value:v.data});
+                                                    });
+                                                    //console.log(myForm);
+                                                }
+                                            }
+                                            $.post('/aj/hr/leave_submit', myForm, function (ret) {
+                                                console.log(1);
+                                                if (ret.code == 200) {
+                                                    notify.success('操作成功');
+                                                    setTimeout(function () {
+                                                        window.location.href = '/hr/leave/my?autuloadlast';
+                                                    }, 2000);
+                                                } else if (ret.code == 400 || ret.code == 500) {
+                                                    notify.error(ret.error_msg);
+                                                }
+                                            },'json');
+                                        }
+                                    }
+                                }
+                            };
+                            bootbox.dialog(options);
+                        }else{
+                            notify.error(ret.error_msg);
+                        }
+                    }else{
+                        notify.error(ret.error_msg);
+                    }
+                }
+                $('.save_basic_info').button('reset');
+            }, 'json');
+            return false;
+        }
+    });
+    //提交前校验
+    function expand(){
+        //添加附件检测
+        if(!$('.upload-pic').hasClass('hide')){
+            if(files.length==0){
+                notify.error('附件没有上传哦，O(∩_∩)O~');
+                return false;
+            }
+        }
+        if($('.length-lable').html()=='0'){
+            notify.error('在检查下提交哈，请假天数咋是0呢？，%>_<%');
+            return false;
+        }
+        if(!$('.select').val()){
+            notify.error('请选择请假类型');
+        }else{
+            return true;
+        }
+    }
+    $('.speedim').click(function () {
+        window.location.href = "speedim://open/";
+    });
+});

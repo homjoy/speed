@@ -1,0 +1,137 @@
+@import "../../base.less";
+@import "nav.less";
+#page-content{
+  padding: 20px 62px;
+}
+.search-fyc{
+  width: 185px !important;
+}
+
+//当前页样式
+.right-info{
+  .pad-lr78{
+    padding: 25px 25px 0px 78px;
+    position: relative;
+  }
+  .pad-lr70{
+    padding: 25px 25px 0px 70px;
+    position: relative;
+  }
+}
+
+dl{
+  width: 100%;
+  display: block;
+  text-align: left;
+  dt{
+    text-align: right;
+    float: left;
+    width: 14%;
+  }
+  dd{
+    padding-left: 5%;
+    float: left;
+    width: 86%;
+    margin-bottom: 18px;
+  }
+}
+.avatar-name,.depart-date{
+  display: inline-block;
+  text-align: center;
+  float: left;
+}
+.depart-date{
+  margin-bottom: 40px;
+  height: 47px;
+  width: 80%;
+  dl{
+    .bottom{
+      position: relative;
+    }
+    dt{width:30%}
+    dd{
+      width: 70%;
+      margin-bottom: 5px
+    }
+  }
+}
+
+
+
+.leave{
+  background-color: #f8f5d8;
+  margin-top: 8px;
+  border-radius: 5px;
+  border:solid 1px #d68145;
+  display: inline-block;
+  padding: 2.5px 5px;
+  ul{
+    font-size: 12px;
+    display: inline;
+    li{
+      display: inline-block;
+      margin-right: 5px;
+      color:#6a6a6a;
+      span{color: #d68145;}
+    }
+  }
+
+}
+.timelinepl{
+  padding-left: 91px;
+  &:before{
+    margin-left: 91px;
+  }
+}
+
+
+.badge-warning {
+  background-color: #ebaa4b !important;
+  margin-left: 5px;
+  top: -2px !important;
+}
+.left-dt{
+  max-width: 75px
+}
+.left-pink{
+  border-left:solid 3px #ff84aa ;
+}
+.application_num.active{margin-bottom: 13px}
+
+//请假引导
+.wizard-container{
+  position: fixed;
+}
+.wizard{
+  &.wizard-leave-list{
+    position: absolute;
+    z-index: 9999;
+    top: 240px;
+    right: 170px;
+    width: 980px;
+    height: 760px;
+    background: transparent url('@{image-base}/speed/wizard/leave-yindao1.png') center 0 no-repeat;
+  }
+  &.wizard-leave-history{
+    position: absolute;
+    z-index: 9999;
+    top: 260px;
+    right:-24px;
+    width: 1006px;
+    height: 838px;
+    background: transparent url('@{image-base}/speed/wizard/leave-yindao2.png') center 0 no-repeat;
+  }
+}
+//右下footer样式
+.info-foot{
+  position: absolute;
+  bottom: 0px;
+  height: 40px;
+  background-color: #f6f8fa;
+  width: 100%;
+  left: 0;
+  line-height: 40px;
+  text-align: right;
+  padding-right: 20px;
+
+}

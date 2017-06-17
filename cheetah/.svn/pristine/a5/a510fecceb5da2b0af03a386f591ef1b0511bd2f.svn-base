@@ -1,0 +1,110 @@
+<script type="text/html" id="general-table-tpl">
+    <table class="table table-bordered {{extClass}}">
+        <thead>
+        <tr>
+            <th colspan="7">
+                <h3 class="text-center">通用费用报销单</h3>
+            </th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+            <td colspan="6">基本信息 <input type="hidden" id="billid" name="expenseCommon" value="{{ExpenseCommon.MlsExpenseCommon.id}}"/></td>
+        </tr>
+        <tr>
+            <td>申请人</td>
+            <td colspan="1">{{ExpenseCommon.MlsExpenseCommon.applyPersonName}}</td>
+            <td>申请部门</td>
+            <td colspan="3">{{ExpenseCommon.MlsExpenseCommon.applyDeptName}}</td>
+        </tr>
+        <tr>
+            <td>银行账号</td>
+            <td colspan="1">{{ExpenseCommon.MlsExpenseCommon.accountNo}}</td>
+            <td>联系电话</td>
+            <td colspan="3">{{ExpenseCommon.MlsExpenseCommon.phone}}</td>
+        </tr>
+        <tr>
+            <td>单据编号</td>
+            <td colspan="1">{{ExpenseCommon.MlsExpenseCommon.billNo}}</td>
+            <td>申请日期</td>
+            <td colspan="3">{{ExpenseCommon.MlsExpenseCommon.applyDateStr}}</td>
+        </tr>
+        <tr>
+            <td colspan="6">单据信息</td>
+        </tr>
+        <tr>
+            <td>是否冲借款</td>
+            <td>{{ExpenseCommon.MlsExpenseCommon.loanFlagName}}</td>
+            <td>未还款的借款金额</td>
+            <td>{{ExpenseCommon.MlsExpenseCommon.debtAmount | currencyFormat}}</td>
+            <td>财务应付</td>
+            <td>{{ExpenseCommon.MlsExpenseCommon.payAmount | currencyFormat}}</td>
+        </tr>
+        <tr>
+            <td>预算项目</td>
+            <td>{{ExpenseCommon.MlsExpenseCommon.budgetItemName}}</td>
+            <td>所属项目</td>
+            <td>{{ExpenseCommon.MlsExpenseCommon.projectCodeName}}</td>
+            <td>核算公司</td>
+            <td class="needfill">
+                <span>{{ExpenseCommon.MlsExpenseCommon.attributionName}}</span>
+                <select name="expenseCommon" class="attribution hide">
+                    <% if(this.addresses && this.addresses.data){%>
+                    <% this.addresses.data.forEach(function(v,k){ %>
+                    <option value="<%=v.itemValue%>"><%=v.itemName%></option>
+                    <% })%>
+                    <%}%>
+                </select>
+            </td>
+        </tr>
+        <tr>
+            <td ><!--如果报销金额==合计金额-->报销金额<!--else,合计金额--></td>
+            <td>{{ExpenseCommon.MlsExpenseCommon.applyAmount | currencyFormat }}</td>
+            <td>附件张数</td>
+            <td>{{ExpenseCommon.MlsExpenseCommon.billNum}}</td>
+            <td>经办人</td>
+            <td>{{ExpenseCommon.MlsExpenseCommon.handlePersonName}}</td>
+        </tr>
+        <!-----------------------------------------通用-->
+        <tr>
+            <td colspan="6">费用明细</td>
+        </tr>
+        <tr>
+            <td colspan="6" class="inner-table">
+                <table class="table table-bordered">
+                    <thead>
+                    <tr>
+                        <td>日期</td>
+                        <td>报销项目</td>
+                        <td>报销金额</td>
+                        <td>核定金额</td>
+                        <td>备注</td>
+                    </tr>
+                    </thead>
+                    <tbody class="needforech">
+                    {{each ExpenseCommon.MlsExpenseCommonDetail as Detail}}
+                    <tr>
+                        <td>{{Detail.billDateStr}}</td>
+                        <td>{{Detail.expenseItemName}}</td>
+                        <td>{{Detail.billAmount | currencyFormat}}</td>
+                        <td class="needfill needfillDetails">
+                            <span>{{Detail.checkAmount | currencyFormat }}</span>
+                            <input type="text" name1="expenseCommonDetails" name2="checkAmount" class="hide currency" value="{{Detail.checkAmount | currencyFormat }}"/>
+                            <input type="hidden" name1="expenseCommonDetails" name2="id" value="{{Detail.id}}"/></td>
+                        <td>{{Detail.remark}}</td>
+                    </tr>
+                    {{/each}}
+                    <tr>
+                        <td  colspan="100%" class="text-center"><span class="span-highlight"><i class="fa fa-jpy"></i> 合计</span> {{ExpenseCommon.SumCommonDetail | currencyFormat }}</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </td>
+        </tr>
+
+
+
+        </tbody>
+    </table>
+
+</script>

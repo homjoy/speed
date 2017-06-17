@@ -1,0 +1,79 @@
+@import "base";
+
+.password_fix {
+  margin-top: 35px;
+  position: relative;
+  left: 100px;
+}
+
+.more {
+  position: relative;
+  left: 20px;
+}
+
+.save_basic_info, .save_password {
+
+  font-size: 16px;
+  width: 75px;
+  height: 33px;
+  display: block;
+  text-align: center;
+  line-height: 20px !important;
+  margin: 0 auto;
+
+  border-radius: 5px;
+
+  &:focus {
+    color: white;
+  }
+}
+
+#page-content{
+  // 修改密码
+  .password_notice {
+    margin-left: 50px;
+    color: #6a6a6a;
+    span {
+      font-size: 12px !important;
+      color: #ff80a9
+    }
+    h4{
+      font-size:14px;
+    }
+    p {
+      font-size: 12px;
+    }
+    .indent {
+      display: block;
+      margin-top:10px;
+      margin-left: 10px;
+      color:#f39700;
+
+      .btn-danger{
+        background-color: #98c664;
+        border-color:  #98c664;
+        color:#fff;
+        margin-left:5px;
+      }
+    }
+  }
+}
+
+.btn-xs {
+  text-align: center;
+}
+
+.send_message {
+  margin: 0 auto;
+  text-align: center;
+  line-height: 20px;
+  font-size: 16px;
+  margin-top: 4px;
+}
+
+.btn_line {
+  text-align: center;
+  margin-top: 40px;
+  position: relative;
+  left: -100px;
+}

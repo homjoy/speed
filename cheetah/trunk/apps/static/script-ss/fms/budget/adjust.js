@@ -1,0 +1,816 @@
+fml.define('fms/budget/adjust', ['jquery', 'plugin/artTemplate', 'component/notify', 'component/upload', 'component/TreeSelect', 'fms/common/utils'], function (require, exports) {
+    var $ = require('jquery');
+    var moment = require('plugin/moment');
+    var artTemplate = require('plugin/artTemplate');
+    var notify = require('component/notify');
+    var utils = require('fms/common/utils');
+
+    //初始化日期
+    $(".current-date").val(moment().format('YYYY-MM-DD'));
+
+    /**
+     * 解析预算项目列表
+     */
+    var budgetProjects = [];
+    try {
+        budgetProjects = $.parseJSON($('.adjust-container').attr('data-projects')) || [];
+    } catch (e) {
+    }
+
+    /**
+     * 解析已上传的附件.
+     */
+    var existFiles = [];
+    try {
+        var files = $.parseJSON($(".upload-btn").attr('data-exists'));
+        $.each(files, function (index, value) {
+            existFiles.push({
+                "identify": value.id,
+                "name": value.fileName,
+                "filePath": value.filePath || '',
+                "fileId": value.id, //删除的时候提交ID 即可
+                "type": "jpg"
+            });
+        });
+    } catch (e) {
+        console.log(e);
+    }
+
+
+    (function(){
+        $.post('/aj/query/depart', function (data) {
+            $("input[name=applyDeptid]").TreeSelect({
+                data: data
+            }).on('change',function(){
+                var departId = $(this).val();
+                $.post('/aj/budget/projects',{departId:departId},function(resp){
+                    if(resp.rcode != 200){
+                        return notify.error(resp.rmessage);
+                    }
+                    budgetProjects = resp.budgetItemTree;
+
+                    //每一个包含项目的行.
+                    $('#adjust-table tbody tr:not(.extra)').each(function(){
+                        var inner = $(this);
+
+                        var input = inner.find('.column-project input[name=budgetItemFullCode]');
+
+                        //销毁插件.
+                        if(input.data('TreeSelect')){
+                            input.data('TreeSelect').destroy();
+                        }
+
+                        //重新设置.
+                        input.TreeSelect({
+                            valueField: 'fullCode', //值为该字段的数据.
+                            data: budgetProjects
+                        }).on("change", changeBudgetProject);
+                    });
+                },'json');
+            });
+        }, 'json');
+    })();
+
+
+    //初始化编辑器
+    var remarkEditor = utils.UEditor('remark', true);
+    //需要特殊处理的项目.
+    var classMap = {
+        '001': 'estimate',
+        '002': 'consume',
+        '003': 'consume-rate'
+    };
+    try {
+        var $tBody = $("#adjust-table tbody");
+        var items = $.parseJSON($tBody.attr('data-items') || '[]');
+        if (items.length) {
+            $tBody.find('.empty-column').remove();
+            $("#adjust-table tfoot").removeClass('hide');
+        }
+        $.each(items, function (index, item) {
+            addBudgetItem(item);
+        });
+    } catch (e) {
+        console.log(e);
+    }
+
+
+
+
+    /**
+     * 附件上传插件.
+     */
+    var filePaths = [], delPath = [];
+    $(".upload-btn").QueenUpload({
+        name: 'upload', //上传文件的字段名字
+        action: '/upload/file', //上传路径
+        draggable: true, //是否允许拖拽上传
+        multiple: true, //是否允许多文件上传
+        existFiles: existFiles,
+        onSuccess: function (response, file) {
+            if (response.rcode != 200) {
+                notify.error(response.rmessage || '上传失败.');
+                return false;
+            }
+            notify.success(response.rmessage || '上传成功.');
+            filePaths.push(response.filePath);
+            file.filePath = response.filePath;
+            $("[name=budgetFilePath]").val(filePaths.join(','));
+        },
+        onError: function (message, file) {
+            notify.error(message);
+        },
+        onFileRemove: function (file) {
+            for (var i = 0; i < filePaths.length; i++) {
+                //删除的新上传的文件.
+                if (filePaths[i] == file.filePath) {
+                    filePaths.splice(i, 1);
+                }
+            }
+            //提交删除已上传文件。
+            if (file.fileId) {
+                delPath.push(file.fileId);
+                $("[name=delAttachId]").val(delPath.join(','));
+            }
+        }
+    });
+
+
+    /**
+     * 调整年限
+     */
+    $('[name=budgetYear]').on("change",function(){
+        var year = $(this).val();
+        function updateValue(values)
+        {
+            $('.summary-amount').each(function(index){
+                var span = $(this);
+                span.find('em').text(values[index] || 0);
+            });
+        }
+        $.ajax({
+            url: '/aj/budget/query_balance',
+            data: {budgetYear: year},
+            dataType: 'json',
+            success: function (response) {
+                if (response.rcode != 200) {
+                    return notify.error(reponse.rmessage || '数据错误.');
+                }
+
+                updateValue([
+                    utils.formatCurrency(response.data.amount_adjust || 0),
+                    utils.formatCurrency(response.data.balance_init || 0) ,
+                    utils.formatCurrency(response.data.balance_end || 0)
+                ]);
+            },
+            error: function () {
+                updateValue([0,0,0]);
+            }
+        })
+    });
+
+
+    /**
+     * 处理编制期间修改.
+     */
+    var fieldNameMap = ['', 'budgetFirQua', 'budgetSecQua', 'budgetThiQua', 'budgetFourQua'];
+
+    //
+    $("input[name^=draftTerm]").on('change', updateAvailableColumns);
+
+    /**
+     * 更新表格可修改的列
+     */
+    function updateAvailableColumns() {
+        var $table = $("#adjust-table"),
+            $body = $table.find('tbody'),
+            $footer = $table.find('tfoot');
+
+        var $terms = $('input:checkbox[name="draftTerm[]"]');
+
+        //处理调整列的显示与隐藏.
+        $terms.each(function () {
+            var checkbox = $(this);
+            var value = checkbox.val() || '';
+            var column = $table.find('.column-' + value.toLowerCase());
+
+            if (checkbox.is(":checked")) {
+                column.removeClass('hide');
+            } else {
+                column.addClass('hide');
+            }
+        });
+
+        //未选中任何季度.
+        if (!$terms.filter(':checked').length) {
+            !$footer.hasClass('hide') && $footer.addClass('hide');
+            $body.html('');
+            $body.html('<tr class="empty-column"><td colspan="1000">请选择编制期间</td></tr>');
+        } else {
+            $body.find('.empty-column').remove();
+            $footer.removeClass('hide');
+            if (!$body.find('tr').length) {
+                addBudgetItem();
+            }
+        }
+    }
+
+    /**
+     * 获取选中的季度列表
+     * @returns {*|jQuery}
+     */
+    function getCheckedQuarters(lower) {
+        return $('input[name="draftTerm[]"]:checked').map(function () {
+            return lower ? this.value.toLowerCase() : this.value;
+        }).get();
+    }
+
+    /**
+     * 转换额外的列表.
+     * @param list
+     */
+    function convertExtraList(list) {
+        var extras = [];
+
+        $.each(list, function (index, attr) {
+            extras.push({
+                extraName: attr.attr_name,
+                extraCode: attr.attr_value
+            });
+        });
+
+        return extras;
+    }
+
+
+    /**
+     * 加载项目的对应数据预算数据.
+     */
+    function loadData() {
+        var year = $("select[name=budgetYear]").val();
+        var quarters = getCheckedQuarters();
+        var departId = $('input[name=applyDeptid]').val();
+        if (!year || !quarters.length) {
+            return;
+        }
+
+        var $body = $("#adjust-table tbody");
+        var codes = [];
+        $body.find('[name=budgetItemFullCode]').each(function () {
+            var value = $(this).val();
+            if (value) {
+                codes.push(value);
+            }
+        });
+        //没有选择项目.
+        if (!codes.length) {
+            return;
+        }
+
+
+        /**
+         * 转换数据类型.
+         * @param list
+         * @returns {{}}
+         */
+        function convertFormat(list) {
+            var obj = {};
+            $.each(list, function (index, value) {
+                obj[value.budgetItemFullCode] = value;
+            });
+            return obj;
+        }
+
+
+        $.ajax({
+            url: "/aj/budget/query_budget_before",
+            type: 'post',
+            data: {
+                budgetFullCode: codes.join(','), //'037.043,037.045,037.455'
+                budgetYear: year,
+                draftTerm:quarters,
+                deptId:departId
+            },
+            dataType: 'json',
+            success: function (response) {
+                if (response.rcode != 200) {
+                    return;
+                }
+                var valueMap = convertFormat(response.data);
+
+                function setBefore(row,value)
+                {
+                    row.find('.column-q1 .before').text(utils.formatCurrency(value.budgetFirQua));
+                    row.find('.column-q2 .before').text(utils.formatCurrency(value.budgetSecQua));
+                    row.find('.column-q3 .before').text(utils.formatCurrency(value.budgetThiQua));
+                    row.find('.column-q4 .before').text(utils.formatCurrency(value.budgetFourQua));
+                    row.find('.column-total .before').text(utils.formatCurrency(value.budgetAmmount));
+                }
+
+                //
+                $body.find('tr:not(.extra)').each(function () {
+                    var inner = $(this);
+                    var code = inner.find('[name=budgetItemFullCode]').val();
+                    if (!code) {
+                        return;
+                    }
+
+                    var value = valueMap[code], $column;
+                    if(!value){
+                        return ;
+                    }
+                    setBefore(inner,value);
+
+                    summaryRow(inner);
+                    var $extraRows = inner.nextAll('.extra');
+                    //处理额外的.
+                    if(value.listBudgetExtraFormEntity && value.listBudgetExtraFormEntity.length){
+                        $.each(value.listBudgetExtraFormEntity,function(index,extra){
+                            //查找第一条额外的列.
+                            var input = $extraRows.find('[name=extraCode][value="'+extra.extraCode+'"]').first();
+                            if(input && input.length){
+                                setBefore(input.closest('.extra'),extra);
+                            }
+                        });
+                    }
+                });
+
+                summaryAll();
+            },
+            error: function () {
+
+            }
+        });
+    }
+
+    function changeBudgetProject(e, node) {
+        var input = $(this);
+        var row = input.closest('tr');
+
+        //如果是取消了.
+        if (!node) {
+            input.val('');
+            //删除优惠券.
+            row.removeClass('has-extra');
+            //删除多余行.
+            row.nextUntil('tr:not(.extra)').remove();
+            return;
+        }
+
+        input.val(node.fullCode);
+
+        loadData(row);
+
+        //处理优惠券项目.
+        if (node && node.listExtra && node.listExtra.length) {
+            row.addClass('has-extra');
+            var $row = $(artTemplate('project-coupon-more', {
+                classMap: classMap,
+                quarters: getCheckedQuarters(true),
+                budgetItemFullCode: node.fullCode,
+                extras: convertExtraList(node.listExtra)
+            }));
+            row.after($row);
+        } else {
+            row.removeClass('has-extra');
+            //删除多余行.
+            row.nextUntil('tr:not(.extra)').remove();
+        }
+
+        updateAvailableColumns();
+    }
+
+    /**
+     * 增加预算项目.
+     * @param item
+     */
+    function addBudgetItem(item) {
+        item = item || {};
+        item.quarters = getCheckedQuarters(true);
+
+        var $body = $('#adjust-table tbody');
+        $body.find('.empty-column').remove();
+        $body.append(artTemplate('detail-row-tpl', item));
+        fixRemoveBtnPosition();
+        var addedRow = $body.find('tr').last();
+
+        //显示可修改的列.
+        updateAvailableColumns();
+
+        /**
+         * 修改预算项目
+         * @param e
+         * @param node
+         */
+        addedRow.find('.column-project input[type=text]').TreeSelect({
+            valueField: 'fullCode', //值为该字段的数据.
+            data: budgetProjects
+        }).on("change", changeBudgetProject);
+
+
+        //处理优惠券.
+        if (item.listBudgetExtraFormEntity && item.listBudgetExtraFormEntity.length) {
+            addedRow.addClass('has-extra');
+            addedRow.after(artTemplate('project-coupon-more', {
+                classMap: classMap,
+                quarters: item.quarters,
+                budgetItemFullCode: item.budgetItemFullCode,
+                extras: item.listBudgetExtraFormEntity
+            }));
+        }
+    }
+
+    /**
+     * 增加一行预算项.
+     */
+    $('.project-add').on("click", function (e) {
+        addBudgetItem();
+        return false;
+    });
+
+    /**
+     * 预算内容的计算.
+     */
+    var deletedBugetItem = [];
+    $('#adjust-table').on("click", '.project-remove', function (e) {
+        /**
+         * 删除预算行.
+         */
+        var btn = $(this);
+        var row = btn.closest('tr');
+        var budgetItemId = row.find('[name=budgetDetailIdStr]');
+        if (budgetItemId) {
+            deletedBugetItem.push(budgetItemId);
+            //写入字段提交.
+            $form.find('[name=delBudgetItem]').val(deletedBugetItem.join(','));
+        }
+
+        if (row.hasClass('has-extra')) {
+            row.nextUntil('tr:not(.extra)').remove();
+        }
+        row.remove();
+
+
+        summaryAll();
+
+
+        return false;
+    }).on("change keyup", '.column-q1 input,.column-q2 input,.column-q3 input,.column-q4 input', function (e) {
+        //数据输入.
+        var input = $(e.target);
+        var row = input.closest('tr');
+        /**
+         * 计算所在行.
+         */
+        summaryRow(row);
+        summaryAll();
+    }).on("blur", 'input', function (e) {
+        toggleMoneyFormat($(this), true);
+    }).on("focus", 'input', function (e) {
+        toggleMoneyFormat($(this), false);
+    });
+
+    /**
+     * 切换金额格式.
+     * @param input
+     * @param format
+     */
+    function toggleMoneyFormat(input, format) {
+        var value = input.val();
+
+        if (!value) {
+            return;
+        }
+        if ($.inArray(input.attr('name'), ['budgetFirQua', 'budgetSecQua', 'budgetThiQua', 'budgetFourQua']) !== -1) {
+            if (format) {
+                input.val(utils.formatCurrency(getCurrencyValue(value)));
+            } else {
+                input.val(getCurrencyValue(value));
+            }
+        }
+    }
+
+    /**
+     * 汇总当前输入框所在行的数据.
+     * @param row
+     */
+    function summaryRow(row) {
+        var hasExtra = row.hasClass('has-extra');
+
+        if (hasExtra) {
+
+        }
+
+        var total = [0.00, 0.00], before, after;
+        $.each(getCheckedQuarters(), function (index, quarter) {
+            var column = row.find('.column-' + quarter.toLowerCase());
+            before = getCurrencyValue(column.find('.before').text());
+            after = getCurrencyValue(column.find('input').val() || 0);
+            //计算调整后的数据
+            column.find('.after').text(utils.formatCurrency(before + after));
+
+
+            total[0] += before;
+            total[1] += after;
+        });
+
+        //总计一列.
+        row.find('.column-total .before').text(utils.formatCurrency(total[0]));
+        row.find('.column-total .limit').text(utils.formatCurrency(total[1]));
+        row.find('.column-total .after').text(utils.formatCurrency(total[0] + total[1]));
+    }
+
+
+    /**
+     * 汇总整个预算表
+     */
+    function summaryAll() {
+        /**
+         * 只汇总第一行.
+         */
+        var $body = $('#adjust-table tbody'), $footer = $('#adjust-table tfoot > tr'), $column;
+        var summary = [0.00, 0.00, 0.00];
+        var quarters = getCheckedQuarters();
+        quarters.push('total');
+
+
+        $.each(quarters, function (index, quarter) {
+            //列汇总.
+            summary = [0.00, 0.00, 0.00];
+            $body.find('tr:not(.extra) .column-' + quarter.toLowerCase()).each(function () {
+                $column = $(this);
+
+
+                summary[0] += getCurrencyValue($column.find('.before').text());
+                summary[1] += getCurrencyValue($column.find('.limit').is('input') ? $column.find('.limit').val() : $column.find('.limit').text());
+                summary[2] += getCurrencyValue($column.find('.after').text());
+            });
+
+            var col = $footer.find('.column-' + quarter.toLowerCase());
+            col.find('.before').text(utils.formatCurrency(summary[0] || 0));
+            col.find('.limit').text(utils.formatCurrency(summary[1] || 0));
+            col.find('.after').text(utils.formatCurrency(summary[2] || 0));
+        });
+    }
+
+    /**
+     * 转换金额到数值进行计算.
+     * @param text
+     * @returns {Number|number}
+     */
+    function getCurrencyValue(text) {
+        return parseFloat((text.toString()).replace(/\,/g, '')) || 0.00;
+    }
+
+
+    var $form = $('.form-horizontal');
+    $form.on("submit", function (e) {
+        e.preventDefault();
+        return false;
+    });
+
+
+    /**
+     *
+     * @returns {boolean}
+     */
+    function checkForm(needFile) {
+        var bPass = true;
+        var period = getCheckedQuarters();
+        //没有选中.
+        if (!period.length) {
+            bPass = false;
+            notify.error('请选择编制期间!');
+            toggleSuccess($(".checkbox"), false);
+            return false;
+        } else {
+            toggleSuccess($(".checkbox"), true);
+        }
+
+        var rows = $("#adjust-table tbody tr");
+        if (!rows.length) {
+            notify.error('请填写预算调整单内容.');
+            return false;
+        }
+
+        var files = $('[name=budgetFilePath]').val();
+        //不是草稿的话必须上传附件
+        if (needFile && !files) {
+            notify.error('请上传附件.');
+            return false;
+        }
+
+
+        rows.each(function () {
+            var inner = $(this);
+            var select = inner.find('.tree-select-container');
+            var code = inner.find("[name=budgetItemFullCode]").val();
+            if (!code) {
+                bPass = false;
+                select.css({
+                    borderColor: '#F56245'
+                });
+            } else {
+                select.css({
+                    borderColor: '#8ABE2E'
+                });
+            }
+        });
+
+        if (!bPass) {
+            notify.error('请选择预算项目.');
+            return false;
+        }
+
+        return bPass;
+    }
+
+    /**
+     * 切换成功失败.
+     * @param input
+     * @param success
+     */
+    function toggleSuccess(input, success) {
+        if (!input || !input.length) {
+            return;
+        }
+        if (success) {
+            input.closest('.form-group').removeClass('has-error').addClass('has-success');
+        } else {
+            input.closest('.form-group').removeClass('has-success').addClass('has-error');
+        }
+    }
+
+    /**
+     * 构造表单的提交数据.
+     * @returns {*[]}
+     */
+    function buildForm() {
+        var form = $('.form-horizontal');
+        var quarters = getCheckedQuarters();
+        var formData = [
+            {"name": 'budgetAdjustFormEntity.id', "value": form.find("[type=hidden][name=id]").val()},
+            {"name": 'budgetAdjustFormEntity.billNo', "value": form.find("[type=hidden][name=billNo]").val()},
+            {"name": 'budgetAdjustFormEntity.adjustType', "value": 'BA'},
+            {"name": 'budgetAdjustFormEntity.budgetYear', "value": form.find("select[name=budgetYear]").val()},
+            {"name": 'budgetAdjustFormEntity.draftTerm', "value": quarters.join(',')},
+            {"name": 'budgetAdjustFormEntity.remark', "value": form.find("[name=remark]").val()},
+            {"name": 'budgetFilePath', "value": form.find("[name=budgetFilePath]").val()},
+            {"name": 'delAttachId', "value": form.find("[name=delAttachId]").val() || ''},
+            {"name": 'delBudgetItem', "value": form.find("[name=delBudgetItem]").val() || ''}
+        ];
+
+
+        var quartersMap = {
+            'q1': 'budgetFirQua',
+            'q2': 'budgetSecQua',
+            'q3': 'budgetThiQua',
+            'q4': 'budgetFourQua'
+        }, notAllowQuarters = [];
+        $.each(['q1','q2','q3','q4'], function (index, q) {
+            //不是选中的季度
+            if($.inArray(q.toUpperCase(),quarters) === -1){
+                notAllowQuarters.push(quartersMap[q]);
+            }
+        });
+
+
+        var fields = [
+            'budgetItemFullCode',
+            'budgetFirQua', 'budgetSecQua', 'budgetThiQua', 'budgetFourQua',
+            'budgetRemark',
+            'budgetDetailIdStr',
+            'budgetExtraIdStr',
+            'extraCode'
+        ];
+        //是否需要转换金额.
+        function needReformat(name) {
+            return $.inArray(name, ['budgetFirQua', 'budgetSecQua', 'budgetThiQua', 'budgetFourQua']) !== -1;
+        }
+
+        $("#adjust-table tbody tr:not(.extra)").each(function (i) {
+            var inner = $(this);
+            var prefix = 'budgetAdjustDetailFormEntitys[' + i + '].';
+
+            $.each(fields, function (index, name) {
+                if (name == 'budgetExtraIdStr' || name == 'extraCode') {
+                    return;
+                }
+
+                var obj = {
+                    'name': prefix + name,
+                    'value': inner.find("[name=" + name + "]").val() || ''
+                };
+                if (needReformat(name)) {
+                    obj.value = getCurrencyValue(obj.value);
+                }
+                //不提交的列,清空数据.
+                if($.inArray(name,notAllowQuarters) !== -1){
+                    obj.value = 0;
+                }
+                formData.push(obj);
+            });
+        });
+
+        var extraId = 0;
+        $("#adjust-table tbody .estimate,#adjust-table tbody .consume").each(function () {
+            var inner = $(this);
+            var prefix = 'budgetAdjustExtraFormEntitys[' + (extraId++) + '].';
+            $.each(fields, function (index, name) {
+                var obj = {
+                    name: prefix + name,
+                    value: inner.find("[name=" + name + "]").val() || ''
+                };
+                if (needReformat(name)) {
+                    obj.value = getCurrencyValue(obj.value);
+                }
+                //不提交的列,清空数据.
+                if($.inArray(name,notAllowQuarters) !== -1){
+                    obj.value = 0;
+                }
+                formData.push(obj);
+            });
+        });
+
+        return formData;
+    }
+
+
+    /**
+     * 保存草稿.
+     */
+    $(".btn-save-drafts").on("click", function (e) {
+        e.preventDefault();
+        if (!checkForm()) {
+            //notify.error('请检查数据是否填写正确.');
+            return false;
+        }
+        //提交预算申请.
+        $.ajax({
+            url: '/aj/budget/save_adjust_draft',
+            type: 'post',
+            data: buildForm(),
+            dataType: 'json',
+            success: function (resp) {
+                if (resp.rcode != 200) {
+                    return notify.error(resp.rmessage || '提交失败.');
+                }
+
+                notify.success(resp.rmessage || '保存草稿成功.', function () {
+                    window.location.href = '/my/apply/budget';
+                });
+            },
+            error: function () {
+                notify.error('出错了~ ');
+            }
+        });
+    });
+
+    /**
+     *
+     * 提交申请单.
+     *
+     */
+    $(".btn-submit").on("click", function (e) {
+        if (!checkForm()) {
+            //notify.error('请检查数据是否填写正确.');
+            return false;
+        }
+
+        //提交预算申请.
+        $.ajax({
+            url: '/aj/budget/submit_adjust',
+            type: 'post',
+            data: buildForm(),
+            dataType: 'json',
+            success: function (resp) {
+                if (resp.rcode != 200) {
+                    return notify.error(resp.rmessage || '提交失败.');
+                }
+
+                notify.success(resp.rmessage || '提交申请成功.', function () {
+                    window.location.href = '/my/apply/budget';
+                });
+            },
+            error: function () {
+                notify.error('出错了~ ');
+            }
+        });
+        return false;
+    });
+
+
+    /**
+     *
+     */
+    function fixRemoveBtnPosition()
+    {
+        var width = $(".adjust-container").width();
+        var baseWidth = $(".column-project").width();
+        $(".project-remove").each(function(){
+            $(this).css('right', 0 - (width- baseWidth + 10) );
+        });
+    }
+
+    $(window).on('resize',fixRemoveBtnPosition);
+});

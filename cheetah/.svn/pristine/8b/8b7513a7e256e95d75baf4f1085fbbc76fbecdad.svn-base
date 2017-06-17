@@ -1,0 +1,17 @@
+@import "nav.less";
+#page-content {
+  padding: 20px 62px;
+}
+td{
+  vertical-align: middle !important;
+  text-align: center;
+}
+th{
+  text-align: center;
+}
+.text-left{text-align: left;}
+.approval-badge {
+  color: orange;
+  margin-left: 4px;
+}
+table{margin-top: 60px}

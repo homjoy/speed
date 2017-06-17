@@ -1,0 +1,14 @@
+<div class="mail-wrapper">
+    <div class="title">
+        <p>Hi！{{applyPersonName}}：</p>
+        <h3>你的付款申请已通过部门最高leader审批啦！</h3>
+    </div>
+
+	<div class="content">
+		请将申请单打印，并粘贴票据到申请单背后，交付财务办理付款手续。
+    </div>
+
+    <div class="btn-group">
+		<a href="{{viewUrl}}" class="btn btn-view">查 看</a>
+    </div>
+</div>

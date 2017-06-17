@@ -1,0 +1,116 @@
+<?php
+namespace Admin\Modules\Meeting;
+
+use Admin\Modules\Common\BaseModule;
+use Admin\Package\Common\Response;
+use Admin\Package\Company\City;
+use Admin\Package\Meeting\Meeting;
+use Admin\Package\Meeting\RoomService;
+use Admin\Package\Account\UserInfo;
+use  Libs\Util\ArrayUtilities;
+
+/**
+ * AjaxRoomInfo
+ * Class
+ *
+ * @package Admin\Modules\Meeting
+ */
+class AjaxRoomInfo extends BaseModule {
+
+    protected $errors = NULL;
+    private   $params = NULL;
+    public static $VIEW_SWITCH_JSON = TRUE;
+    public function run() {
+
+        $this->_init();
+        $return =array();
+        if( $this->post()->hasError()){
+            $return = Response::gen_error(10001,$this->errors);
+            return $this->app->response->setBody($return);
+        }
+        //city
+        $meet_info =Meeting::getInstance()->meetingRoomGet($this->params);
+        $meet_info =isset($meet_info['city_id'])?$meet_info['city_id']:'';
+        $city =City::getInstance()->cityGet(array('city_id'=>$meet_info));
+
+        //room_service_rule
+        $room_service_rule =RoomService::getInstance()->roomServiceRuleGet($this->params);
+        $room_service_rule  =is_array($room_service_rule)?array_pop($room_service_rule):'';
+        $service_id = isset($room_service_rule['service_id'])?$room_service_rule['service_id']:'';
+
+        //room_service
+        $room_service =RoomService::getInstance()->roomServiceGet(array('service_id'=>$service_id));
+        $room_service  =is_array($room_service)?array_pop($room_service):'';
+        if(isset($room_service['multizone'])){
+            switch($room_service['multizone']){
+                case 1:
+                    $room_service['multizone'] ='支持';
+                    break;
+                case 0:
+                    $room_service['multizone'] ='不支持';
+                    break;
+                default:
+                    $room_service['multizone'] ='不支持';
+                    break;
+            }
+        }
+
+        if(isset($room_service['type'])){
+            switch($room_service['type']){
+                case 2:
+                    $room_service['type'] ='餐饮';
+                    break;
+                case 1:
+                    $room_service['type'] ='服务';
+                    break;
+                case 0:
+                default:
+                    $room_service['type'] ='硬件';
+                    break;
+            }
+        }
+        //处理配置
+        $users =array();
+
+        if($room_service_rule['config']){
+
+            $users = json_decode($room_service_rule['config'],true);
+
+        }elseif($room_service['config']){
+
+            $users = json_decode($room_service['config'],true);
+
+        }
+        if(isset($users['user'])){
+            $users =  UserInfo::getInstance()->getUserInfo(array('user_id'=>$users['user']));
+            $users =  ArrayUtilities::my_array_column($users,'name_cn');
+            $users =  implode(",", $users);
+            unset($room_service['config']);
+            $room_service_rule['config'] =$users;
+        }
+
+
+        //组合数组
+        if(is_array($room_service)&&is_array($room_service_rule)&&is_array($city)){
+            $return =array_merge($room_service,$room_service_rule);
+            $return =array_merge($city,$return);
+        }
+        $this->app->response->setBody($return);
+    }
+
+    private function _init() {
+
+        $this->rules = array(
+            'room_id'  => array(
+                'required'	=> TRUE,
+                'allowEmpty' => FALSE,
+                'type'    => 'integer',
+            )
+
+        );
+        $this->params = $this->post()->safe();
+        $this->errors = $this->post()->getErrors();
+    }
+
+
+}

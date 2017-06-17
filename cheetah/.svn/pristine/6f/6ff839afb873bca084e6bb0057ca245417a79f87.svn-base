@@ -1,0 +1,14 @@
+/*--/Users/danni/whornbill/apps/web/views/demo.html--*/ 
+     var est = require(config.path.lib + 'est/est.js'); 
+     var _extFn = require('/Users/danni/whornbill/nest/server/lib/est/extFn.js'); 
+     function requireFn(tpl) { return est.renderFile('/Users/danni/whornbill/apps/web/views/' ,tpl , null , null ,'web' ,true); } ; 
+     function __getHtml (_data) { 
+       function jsRender(tpl , id) { return est.jsRender(requireFn(tpl)(_data), id  ); } ; 
+       var __htm ='';
+__htm += '';
+__htm += est.renderFile("/Users/danni/whornbill/apps/web/views/" ,"head.html",_data,null,"web" )||"";
+__htm += '\n<div>\n	demo page\n</div>\n';
+__htm += est.renderFile("/Users/danni/whornbill/apps/web/views/" ,"foot.html",_data,null,"web" )||"";
+__htm += '';
+return __htm;} 
+ exports.html = __getHtml; 

@@ -1,0 +1,79 @@
+<%#head.html%>
+<div id="container" class="effect mainnav-lg">
+    <%#navbar.html%>
+    <div class="boxed">
+        <div id="content-container">
+            <div id="page-content">
+                <%if(this.detail.rcode!=200){%>
+                <div class="alert alert-danger fade in"><%= this.detail ? this.detail.rmessage : '';%></div>
+                <%}else{%>
+                <div class="panel view">
+                    <div class="panel-body">
+                        <div class="panel-footer text-right">
+                            <%if(this.detail.canApproveFlag == 1){%>
+                            <a href="javascript:;" class="btn btn-agree" data-taskId="<%=this.detail.taskid%>" data-formkey="<%=this.detail.formkey%>">同意</a>
+                            <a href="javascript:;" class="btn btn-reject" data-taskId="<%=this.detail.taskid%>">驳回</a>
+                            <%}%>
+                            <%if(this.detail.canModifyFlag == 1){%>
+                            <a class="btn btn-primary btn-large btn-edit"
+                               href="/contract/edit/?id=<%=this.detail.contractApplication.cabId%>&type=CA">修改</a>
+                            <%}%>
+                            <button class="btn btn-default con-export">打印</button>
+                        </div>
+                        <!--startprint-->
+                        <table class="table text-left contract-header">
+                            <tr>
+                                <td>经办人：<%=this.detail.contractApplication.userName||''%></td>
+                                <td>部门：<%=this.detail.contractApplication.departmentName||''%></td>
+                                <td>联系电话：<%=this.detail.contractApplication.cabHandingPersonTel || '' %></td>
+                            </tr>
+                        </table>
+                        <div class="table-template-container" data-tpl="contract-detail-tpl" data-json="<%== JSON.stringify(this.detail)%>" data-class="table-printed finance"></div>
+                        <%#contract/detail.tpl.html %>
+
+                        <!-- 申请人-->
+                        <%#partial/approval_history.html%>
+                        <table class="table text-left contract-footer">
+                            <tr>
+                                <td colspan="6">合同盖章日期: <span class="blank"></span>年<span
+                                        class="blank"></span>月<span class="blank"></span>日
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><span class="blank"></span></td>
+                            </tr>
+                            <tr>
+                                <td>本合同一式<span class="blank"></span>份，承诺于<span class="blank"></span>年<span
+                                        class="blank"></span>月<span class="blank"></span>日返回<span
+                                        class="blank"></span>份
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><span class="blank"></span></td>
+                            </tr>
+                            <tr>
+                                <td>合同领取人：</td>
+                            </tr>
+                            <tr>
+                                <td><span class="blank"></span></td>
+                            </tr>
+                            <tr>
+                                <td>合同领取日期：<span class="blank"></span>年<span class="blank"></span>月<span
+                                        class="blank"></span>日
+                                </td>
+                            </tr>
+                        </table>
+                        <!--endprint-->
+                    </div>
+                </div>
+                <%}%>
+            </div>
+        </div>
+        <%#sidebar.html%>
+    </div>
+    <%#footer.html%>
+</div>
+<%! $_ENGINE_SELF.callFn("useModule")("<<<_use:
+        fml.use('fms/contract/view');
+_use:", this._JSstack , this._JSmods); %>
+<%#foot.html%>

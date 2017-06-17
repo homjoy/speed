@@ -1,0 +1,9 @@
+{"uploadTmp":false,
+"watchingTpl":true,
+"fussTpl":false,
+"hostID":"0.0.0.0",
+"token":"abcd",
+"defaultAction":"/home/index/",
+"cpuNums":"1",
+"ajaxRefer":"hornbill.com",
+"onPort":9009}

@@ -1,0 +1,42 @@
+/*
+	ajax请求转发
+*/
+function aj(){
+	return this;
+}
+var controlFns = {
+	login : function(params){
+		var php = {
+			'users' : '/auth/login'
+		}
+		this.ajaxTo(php[params]);
+	}
+	,meeting : function(params){
+		// 会议室相关ajax接口
+		var php = {
+			'get_room_service' : '/meeting/get_room_service',
+			'get_book_list' : '/book/get_room_books',
+			'ajax_book_all' : '/book/get_book_list',
+			'ajax_book_add' : '/book/meeting_book_add',
+			'ajax_book_delete' :'/book/meeting_book_delete',
+			'ajax_book_read' :'/book/get_book',
+			'ajax_meeting_update_time':'/book/meeting_update_time',
+			'mytime_ajax_all' :'/routine/userTimeBget',
+			'mytime_ajax_add' :'/routine/user_time_add',
+			'mytime_ajax_delete' :'/routine/user_time_delete',
+			'mytime_ajax_update' :'/routine/user_time_update',
+			'mytime_ajax_update_time' :'/routine/user_time_update_time',
+			'mytime_ajax_reject' :'/routine/user_time_reject',
+		}
+		this.ajaxTo(php[params]);
+	}
+	,address : function(params){
+		// 会议室相关ajax接口
+		var php = {
+			'ajax_search_name' : '/contacts/ajax_search',
+
+		}
+		this.ajaxTo(php[params]);
+	}
+}
+exports.__create = controller.__create(aj , controlFns);

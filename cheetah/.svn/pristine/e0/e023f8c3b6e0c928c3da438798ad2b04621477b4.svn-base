@@ -1,0 +1,122 @@
+
+<%#head2.html%>
+
+		<div class="boxed">
+			<!--CONTENT CONTAINER-->
+			<!--===================================================-->
+			<div id="content-container" >
+				<ol class="breadcrumb">
+		          <li><a href="/home">主页</a></li>
+				  <li><a href="/time">我的时间</a></li>
+		          <li class="active">共享时间</li>
+		        </ol>
+				<div id="page-content" style="min-width:720px">
+
+					<div class="panel min-height" >
+						<h4>添加共享人</h4>
+						
+						<form class="form-horizontal add_form">
+							<div class="form-group">
+								<!-- <div class="col-lg-1"></div> -->
+								<div class="col-lg-5 col-sm-5 col-xs-5 input" >
+									<input class="share_id" name="share_id">
+								</div>
+								<div class="col-lg-6 col-sm-6 col-xs-6 ">
+									<label class=" control-label ">
+		                                <input type="radio" name="is_write"  value="0" checked> 仅查看
+		                            </label>
+		                            <label class=" control-label">
+		                                <input type="radio" name="is_write" value="1"> 查看及修改
+		                            </label>
+		                            <a href="javascript:void(0);" class="btn btn-beauty add">添加</a>
+								</div>
+							</div>
+                        </form>
+						
+						<h5>共享人列表</h5>
+						<div class="share_time_table">
+							<table class="table table-striped table-hover" id="userlist">
+						        <thead>
+						            <tr class="row">
+							            <th class="text-left col-lg-3 " >姓名</th>
+							            <th class="text-left col-lg-3  hidden-xs" >所属部门</th>
+							            <th class="text-left col-lg-3 " >权限</th>
+							            <th class="text-left col-lg-3 " >操作</th>
+						            </tr>
+						        </thead>
+								<tbody>
+									<% if(this.user_share_list.code==200){ %>
+										<% this.user_share_list.data.forEach(function(user, index){  %>
+									    	<tr class="row">
+										        
+										        <td ><%=user.name_cn%></td>
+										        <td class=" hidden-xs"><%=user.depart_name%></td>
+										        <td >
+									        		<label class="control-label ">
+                                                        <input type="radio" name="is_write<%=user.id%>" value="0" <%if(user.is_write==0){%>checked<%}%> class="" > 仅查看
+                                                    </label>
+                                                    <label class="control-label">
+                                                        <input type="radio" name="is_write<%=user.id%>" value="1" <%if(user.is_write==1){%>checked<%}%> > 查看及修改
+                                                    </label>
+										        </td>
+										        <td class="head_td">
+										        	<a class="btn btn-success update" data-share_id="<%=user.share_id%>" data-is_write="<%=user.is_write%>" data-id="<%=user.id%>" data-depart_id="<%=user.depart_id%>">更新</a>
+										        	<a class="btn btn-warning delete" data-id="<%=user.id%>" >删除</a>
+										        </td>
+										         
+									    	</tr>
+									    <% })  %>	
+								    <% } %>
+								</tbody>	
+							</table>
+						</div>
+
+					</div>
+				</div>
+
+				<%#footer.html%>
+			</div>
+			
+			<!--END CONTENT CONTAINER-->
+			<%#mainnav_container_left.html%>
+			<!--%#aside.html%-->
+		</div>
+		<div class="modal fade" id="notice_time" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+			<div class="modal-dialog">
+			    <div class="modal-content">
+
+			        <div class="modal-header">
+			            <button type="button" class="close" data-dismiss="modal"
+			                    aria-hidden="true">&times;</button>
+			            <h4 class="modal-title">提示</h4>
+			        </div>
+
+			        <div class="modal-body">
+			            <p class="">嘿，亲，你的时间确定不想给Ta看了嘛？</p>
+
+			        </div>
+
+			        <div class="modal-footer">
+			            <button type="button" class="btn btn-default btn-primary delete_sure"  data-dismiss="modal" > 确定
+			            </button>
+			            <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+
+                        
+			        </div>
+			    </div>
+			    <!-- /.modal-content -->
+
+			</div>
+			<!-- /.modal-dialog -->
+		</div>
+		<!-- SCROLL TOP BUTTON -->
+		<!--===================================================-->
+		<button id="scroll-top" class="btn"><i class="fa fa-chevron-up"></i></button>
+		<!--===================================================-->
+
+	</div>
+<%! $_ENGINE_SELF.callFn("useModule")("<<<_use:
+		fml.use('speed/common/base');
+		fml.use('speed/time/share_time');
+_use:", this._JSstack , this._JSmods); %>
+<%#foot.html%>

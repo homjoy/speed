@@ -1,0 +1,70 @@
+<?php
+namespace Admin\Modules\Meeting;
+
+use Admin\Modules\Common\BaseModule;
+use Admin\Package\Common\Response;
+use Admin\Package\Meeting\Meeting;
+use Admin\Package\Company\Office;
+use Admin\Package\Meeting\RoomService;
+
+/**
+ * 会议室修改
+ * Class Home
+ *
+ * @package Admin\Modules\Meeting
+ */
+class MeetingEdit extends BaseModule {
+	
+	protected $errors = NULL;
+	private   $params = NULL;
+//    protected $checkUserPermission = TRUE;
+	public function run() {
+	    $this->_init();
+
+        if(empty($this->params['room_id']) ){
+            $return = Response::getInstance()->gen_success(array());
+            return $this->app->response->setBody($return);
+        }
+        $meeting_info =  Meeting::getInstance()->meetingRoomGet($this->params);
+		$return = Response::getInstance()->gen_success($meeting_info);
+		//会议室的地区
+        $office_list = Office::getInstance()->officeList( array('page_size' => 50));
+        $return['office_list'] = $office_list;
+		//会议室的所有服务
+		$service_all = RoomService::getInstance()->roomServiceAll();
+		$return['service_all'] = $service_all;
+		//获取该会议室有的服务
+		$room_params = array('room_id' => $this->params['room_id'] );
+		$service_rule = RoomService::getInstance()->roomServiceRuleGet($room_params);
+		$new_service_rule = array();
+		foreach($service_rule as $rule){
+			$config = json_decode( $rule['config'] , true);
+			if(!empty($config['user'])){
+
+			}
+
+			$new_service_rule[$rule['service_id']] = json_decode( $rule['config'] , true);
+		}
+		$return['select_rule'] = array_keys($new_service_rule);
+		$return['service_rule'] = $new_service_rule;
+
+        return $this->app->response->setBody($return);
+
+
+	}
+
+
+	private function _init() {
+		
+		$this->rules = array(
+			'room_id'  => array(
+				'type'    => 'integer',
+				'default' => 0, //0
+			),
+
+		);
+        $this->params = $this->query()->safe();
+        $this->errors = $this->query()->getErrors();
+	}
+	
+}

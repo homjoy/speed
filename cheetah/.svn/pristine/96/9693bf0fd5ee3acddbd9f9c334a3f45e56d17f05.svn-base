@@ -1,0 +1,123 @@
+fml.define('fms/common/notify', ['jquery','plugin/bootbox'], function (require, exports) {
+    var $ = require('jquery');
+    var bootbox = require('plugin/bootbox');
+
+    /**
+     * 右上角消息提醒
+     * @param type
+     * @param container
+     * @param msg
+     * @param timer
+     */
+    function notify(type, container, msg, timer) {
+        return $.niftyNoty({
+            type: type || 'info',
+            container: container || 'floating',
+            message: msg || '操作成功',
+            timer: timer || 5000
+        });
+    }
+
+    /**
+     * 成功提示
+     * @param msg
+     * @returns {*}
+     */
+    function success(msg) {
+        return notify('success', 'floating', msg, 5000);
+    }
+
+    /**
+     * 普通信息提示
+     * @param msg
+     * @returns {*}
+     */
+    function info(msg) {
+        return notify('info', 'floating', msg, 5000);
+    }
+
+    /**
+     * 警告提示
+     * @param msg
+     * @returns {*}
+     */
+    function warning(msg) {
+        return notify('warning', 'floating', msg, 5000);
+    }
+
+    /**
+     * 错误提示
+     * @param msg
+     * @returns {*}
+     */
+    function error(msg) {
+        return notify('danger', 'floating', msg, 5000);
+    }
+
+    /**
+     * 警告框
+     * @param message
+     * @param callback
+     */
+    function alert(message, callback) {
+        bootbox.alert(message, callback);
+    }
+
+    /**
+     * 确认框
+     * @param message
+     * @param callback
+     */
+    function confirm(message, callback) {
+        bootbox.alert(message, callback);
+    }
+
+    /**
+     * 输入框
+     * @param message
+     * @param callback
+     */
+    function prompt(message, callback) {
+        bootbox.alert(message, callback);
+    }
+
+    /**
+     * 表单对话框
+     * @param title
+     * @param message
+     * @param success
+     * @param cancel
+     */
+    function formDialog(title, message, success, cancel) {
+        cancel = cancel || function(){};
+        bootbox.dialog({
+            className: "smModal form-dialog",
+            title: title,
+            message: message,
+            buttons: {
+                success: {
+                    label: '确定',
+                    className: 'btn-success',
+                    callback: success
+                },
+                cancel: {
+                    label: '取消',
+                    className: 'btn-default btn-cancel',
+                    callback: cancel
+                }
+            }
+        })
+    }
+
+    return {
+        notice:notify,
+        success: success,
+        info: info,
+        warning: warning,
+        error: error,
+        alert: alert,
+        confirm: confirm,
+        prompt: prompt,
+        formDialog: formDialog
+    }
+});

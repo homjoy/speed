@@ -1,0 +1,6 @@
+<div class="mail-wrapper">
+    <div class="title">
+        <p>Hi! {{approveName}}：</p>
+        <h3>{{username}}撤销了{{orderName}}</h3>
+    </div>
+</div>

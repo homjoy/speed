@@ -1,0 +1,109 @@
+fml.define('fms/home/index', ['jquery', 'fms/common/common', 'plugin/cookie', 'component/notify', 'fms/common/contract', 'plugin/bootbox'], function (require, exports) {
+    var $ = require('jquery');
+    var notify = require('component/notify');
+    var common = require('fms/common/common');
+    var contract = require('fms/common/contract');
+    var Cookies = require('plugin/cookie');
+    var bootbox = require('plugin/bootbox');
+    //common.panelClick('index_panel_type', 'a[href="#myApproval', 'a[href="#myApply"]');
+
+    //var indexUrl = {
+    //    uchange: '/aj/index/userChange',//用户切换
+    //    del: '/aj/myapply/del', //删除功能
+    //    hurry: '/aj/myapply/hurry' //催审
+    //};
+    // 删除
+    //$('body').on('click', '.btn-del', function (e) {
+    //    e.stopPropagation();
+    //    // params.did = $(this).attr('data-id');
+    //    var did = $(this).getId(),
+    //        dtype = $(this).getType();
+    //
+    //    notify.formDialog("确认框", "您确定要删除这条记录吗？", function () {
+    //        $.post(indexUrl.del, {'billId': did, 'billType': dtype}, function (data) {
+    //            if (data.rcode != 200) {
+    //                return notify.error(data.rmessage);
+    //            }
+    //            notify.success(data.rmessage);
+    //            window.location.reload();
+    //        }, 'json');
+    //    });
+    //});
+
+
+    // 催审
+    //$('.btn-hurry').on('click', function () {
+    //    var aid = $(this).getId();
+    //    $.post(indexUrl.hurry, {'cabid': aid}, function (data) {
+    //        if (data.rcode != 200) {
+    //            return notify.error(data.rmessage);
+    //        }
+    //
+    //        notify.success('催审邮件已发出');
+    //    }, 'json');
+    //});
+
+
+    // 同意
+    //$('#myTabContent').on('click', '.btn-agree', function (e) {
+    //    e.stopPropagation();
+    //    var id = $(this).getId();
+    //    var taskid = $(this).parents('tr').attr('taskid');
+    //    var formkey = $(this).parents('tr').attr('formkey');
+    //    contract.approval(taskid, formkey);
+    //
+    //}).on('click', '.btn-reject', function (e) {
+    //    e.stopPropagation();
+    //    var id = $(this).getId();
+    //    var taskid = $(this).parents('tr').attr('taskid');
+    //    contract.reject(taskid);
+    //});
+    /**
+     * 用户切换
+     */
+    $('.user-change').on('click', function () {
+        bootbox.dialog({
+            title: "用户切换",
+            message: '<form class="form-horizontal" method="post"><div class="form-group"><label class="col-md-4 control-label" for="name">用户邮箱前缀</label><div class="col-md-4"><input id="usercode" name="usercode" type="text" class="form-control input-md usercode"></div></div></form>',
+            buttons: {
+                success: {
+                    label: "确定",
+                    className: "btn-success",
+                    callback: function () {
+                        var usercode = $('#usercode').val();
+                        $.post('/aj/index/userChange', {'usercode': usercode}, function (data) {
+                            if (data.rcode == 200) {
+                                window.location.reload();
+                            } else {
+                                notify.error(data.rmessage)
+                            }
+                        }, 'json');
+
+                        return false;
+                    }
+                },
+                cancel: {
+                    label: "取消",
+                    className: "btn-default"
+                }
+            }
+        });
+        return false;
+    });
+
+    /*
+     遮罩层
+     */
+    var everWrap = Cookies.get('wrap');
+    if (!everWrap) {
+        $('.director-wrap').removeClass('wrap-hide');
+        var isThin = $('.effect').hasClass('mainnav-sm');
+        if (isThin) {
+            $('.effect').removeClass('mainnav-sm').addClass('mainnav-lg');
+        }
+        $('.guanbi').on('click', function () {
+            Cookies.set('wrap', '1', {expires: 30});
+            $('.director-wrap').remove();
+        });
+    }
+});

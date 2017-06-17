@@ -1,0 +1,4 @@
+<div class="list-group" >
+    <a href="/hr/leave/leave_home" class="list-group-item">全部请假信息</a>
+    <a href="/hr/leave/personal_leave" class="list-group-item">可用假期查询</a>
+</div>

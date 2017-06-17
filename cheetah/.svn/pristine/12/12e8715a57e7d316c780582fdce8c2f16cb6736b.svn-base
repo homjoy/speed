@@ -1,0 +1,129 @@
+@import "nav.less";
+#page-content {
+  padding: 20px 62px;
+  min-width: 1030px;
+}
+#navbar{
+  z-index: 9999;
+}
+//半天
+.toggle-half{
+  height: 42px;
+  border-radius: 0 !important;
+  background: white;
+  border: 1px solid #eee;
+  &:hover{
+    border: 1px solid #eee;
+  }
+}
+//半天下拉菜单
+.dropdown-menu>li>a:hover {
+  background-color: #ff80a9;
+  color: #ffffff;
+}
+//时间input
+.form_datetime{
+  background: white !important;
+  cursor: pointer !important;
+}
+//领证日期
+.date{
+  background: white !important;
+  cursor: pointer !important;
+
+}
+.popover{
+  border-radius: 5px;
+  background-color: #f8f5d8;
+  max-width: 520px !important;
+  border-color:#f5e0a7 ;
+  .arrow{top:30% !important;}
+}
+.form-group .popover-content{
+  font-size: 12px;
+  padding:9px 14px;
+  p{
+    font-size: 14px;
+    color: #d68145;
+  }
+  li{
+    display: inline-block;
+    //width: 96px;
+    color:#6a6a6a;
+    margin-right: 8px;
+    span{color: #d68145;}
+  }
+  p.notice{
+    font-size: 12px;
+    span{color:#d68145}
+    color: #009dcc;
+  }
+}
+.popover.right>.arrow:after {
+  border-right-color: #f8f5d8;
+}
+.popover.right>.arrow {
+  border-right-color: #f5e0a7;
+}
+
+.mr-10{margin-right: 15px !important;}
+.length-lable{margin-left: 10px}
+
+.approval-process{
+  min-height: 104px;
+  padding: 30px 0 30px 53px;
+  background-color: #f6f8fa;
+  color: #6a6a6a;
+  span,.speedim{
+    color: #f98fb3;
+    span{
+      display: inline-block;
+      text-indent: 21px;
+      background: url("@{image-base}/speed/paopao.png") no-repeat;
+      &:hover{
+        background: url("@{image-base}/speed/paopaohover.png") no-repeat;
+      }
+    }
+  }
+  .point:last-of-type{
+    display: none;
+  }
+}
+.upload-div{
+  float: left;
+  margin-top: 4px;
+}
+.btn-queen-upload{
+  margin-top: 4px !important;
+}
+.queen-upload-tips{margin-top: 0 !important;}
+.queen-upload-tips{
+  color: #d68145 !important;
+  font-weight: 100;
+}
+
+.pad-no{
+  margin-left:-7px
+}
+.null-word{
+  text-align: center;
+}
+.time-modal{
+  z-index: 1060;
+  .modal-header{display: none}
+  .modal-body{text-align: center}
+  .leave-money{color: #ff80A9}
+  h5{
+    color: #a0a0a0;
+    margin-top: 20px;
+    text-indent: -10px;
+  }
+}
+.success .queen-upload-progress{display: none}
+.approval-badge {
+  color: orange;
+  margin-left: 4px;
+}
+.btn_line{margin-bottom: 34px}
+.speed{margin-top: 70px}
+

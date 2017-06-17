@@ -1,0 +1,325 @@
+/*==========================引导页*/
+.director-wrap {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 10;
+  background-color: rgba(0, 0, 0, 0.65);
+}
+
+.wrap-hide {
+  display: none;
+}
+
+.yingyong, .hetong, .daiban {
+  position: absolute;
+}
+
+.hetong {
+  top: 75px;
+  left: 285px;
+}
+
+.yingyong {
+  top: 137px;
+  left: 550px;
+}
+
+.daiban {
+  top: 320px;
+  width: 850px;
+  right: 200px;
+  img {
+    width: 100%;
+  }
+}
+
+.guanbi, .daohang {
+  position: fixed;
+}
+
+.daohang {
+  top: 51px;
+  left: 0;
+}
+
+.guanbi {
+  top: 70px;
+  right: 5%;
+}
+
+/*==========================登陆页*/
+.login-layout {
+  width: 300px;
+  margin: 0 auto;
+}
+
+/*==========================登陆页结束*/
+// 主页
+
+/*======================index样式*/
+.panel-layout {
+  padding: 25px 35px;
+  text-align: center;
+}
+
+.nav-item {
+  position: relative;
+  display: block;
+  float: left;
+  width: 20%;
+  min-width: 124px;
+  height: 110px;
+  color: #fff;
+  font-size: 12px;
+
+  &:hover {
+    cursor: pointer;
+    .nav-item-link > span {
+      border-radius: 5px 5px 0 0;
+    }
+    .icon{
+      background-position-x: -68px;
+    }
+    .icon-hetong{
+      background-position-x: -66px;
+    }
+
+    .nav-child {
+      top: 103px;
+      opacity: 1;
+      display: block;
+    }
+  }
+
+  .nav-item-link {
+    display: block;
+    margin: 0 0 0 30px;
+    width: 64px;
+    height: 110px;
+    .icon {
+      width: 100%;
+    }
+
+    > span {
+      display: block;
+      width: 100%;
+      height: 28px;
+      margin-top: 10px;
+      line-height: 28px;
+      text-align: center;
+      border-radius: 5px;
+      color: #fff;
+      font-size: 14px;
+      z-index: 10;
+      background: #f19149;
+    }
+  }
+
+  .nav-child {
+    position: absolute;
+    left: 30px;
+    top: 100px;
+    z-index: 3;
+    padding: 10px 0;
+
+    //display: none;
+    opacity: 0;
+    transition: all .5s ease .1s;
+
+    min-width: 110px;
+    margin: 0;
+    text-align: left;
+    color: #fff;
+    background-color: rgba(237, 184, 37, 0.76);
+
+    > li > a {
+      display: block;
+      font-size: 12px;
+      width: 100%;
+      padding: 2px 0 2px 16px;
+      color: #fff;
+      &:hover {
+        background-color: #edb825;
+      }
+    }
+  }
+
+  .tips {
+    position: absolute;
+    left: 0;
+    top: 110px;
+    width: 100%;
+    text-align: center;
+    color: #a0a0a0;
+  }
+
+  &.nav-hetong {
+    .nav-item-link > span, .nav-child {
+      background-color: #f19149;
+    }
+    .nav-child > li > a:hover {
+      background-color: darken(#f19149, 4%);
+    }
+  }
+  &.nav-fukuan {
+    .nav-item-link > span, .nav-child {
+      background-color: #eab53f;
+    }
+    .nav-child > li > a:hover {
+      background-color: darken(#eab53f, 4%);
+    }
+  }
+  &.nav-yusuan {
+    .nav-item-link > span, .nav-child {
+      background-color: #b99f3e;
+    }
+    .nav-child > li > a:hover {
+      background-color: darken(#b99f3e, 4%);
+    }
+  }
+  &.nav-baoxiao {
+    .nav-item-link > span, .nav-child {
+      background-color: #d3963c;
+    }
+    .nav-child > li > a:hover {
+      background-color: darken(#d3963c, 4%);
+    }
+  }
+  &.nav-jiekuan {
+    .nav-item-link > span, .nav-child {
+      background-color: #8e611b;
+    }
+    .nav-child > li > a:hover {
+      background-color: darken(#8e611b, 4%);
+    }
+  }
+}
+
+.myhead {
+  background-color: #f6f8fa;
+  border-bottom: 1px solid #eee;
+}
+
+.panel > .panel-heading:after, .panel.panel-colorful > .panel-heading:after {
+  border-bottom: 0;
+}
+
+/*首页--申请图标*/
+.icon {
+  display: inline-block;
+  width: 100%;
+  height: 60px;
+  background-position-x: -2px;
+  background: url(../../../img/fms/applydefs.png) no-repeat 0 0;
+}
+
+.icon-hetong {
+  background-position-y: 10px;
+}
+
+.icon-fukuan {
+  background-position: -2px -50px;
+}
+
+.icon-yusuan {
+  background-position: -2px -110px;
+}
+
+.icon-baoxiao {
+  background-position: -2px -170px;
+}
+
+.icon-jiekuan {
+  background-position: -2px -235px;
+}
+
+.btn-more-apply, .btn-more-approval {
+  width: 60px;
+  margin-right: 30px
+}
+
+/*=====================index样式结束*/
+
+.panel-title {
+  font-size: 16px;
+}
+
+//用户切换
+.user-change {
+  height: 20px;
+  line-height: 9px;
+  position: absolute;
+  bottom: 4px;
+  right: 100px;
+  z-index: 1000;
+}
+
+.help-manual {
+  .panel-body{
+    padding-bottom:19px;
+  }
+  .manual-links {
+    .text-link {
+      display: inline-block;
+      font-size: 14px;
+      //width: 65px;
+      width: 45px;
+      margin-bottom: 10px;
+      color: #edb825;
+      &:hover {
+        color: #edb825;
+      }
+    }
+  }
+
+  .help-users {
+    border-top: 1px dashed #e0e0e0;
+    margin-top: 10px;
+    padding-top: 15px;
+    font-size: 12px;
+
+    .problem-title {
+      display: inline-block;
+      width: 90px;
+      color: #a0a0a0;
+    }
+    .problem-contact {
+      padding: 4px 0 4px 25px;
+      line-height: 20px;
+      background: transparent url("../../../img/fms/navicon/im.png") no-repeat left center;
+      color: #626262;
+    }
+  }
+}
+
+#myTabContent {
+  .table {
+    > tbody tr {
+      cursor: pointer;
+    }
+
+    td {
+      width: 50px;
+    }
+  }
+
+}
+
+
+.empty-content{
+  //display: none;
+  //background: url("../../../img/queen/approval/kong.png") center 10% no-repeat;
+  //height: 130px;
+  //width: 175px;
+  text-align: center;
+  padding:50px 0;
+  background-color:#fff;
+
+  > p{
+    color:#a0a0a0;
+    margin:0;
+  }
+}

@@ -1,0 +1,26 @@
+fml.define('speed/common/base', ['jquery'], function (require, exports) {
+    var $ = require('jquery');
+
+    /**
+     * search contact搜索触发事件 icon/keydown
+     */
+    $('.search_pic').click(function () {
+        var q = $('.search_input').val();
+        if (!q) {
+            return false;
+        }
+
+        window.location.href = "/contacts?q=" + q;
+    });
+
+    //回车响应搜索通讯录.
+    $('.search_input').on('keydown', function (e) {
+        console.log('click me');
+        var e = e || event;
+        var currKey = e.keyCode || e.which || e.charCode;
+        if (currKey == 13) {
+            $('.search_pic').trigger('click');
+        }
+    });
+
+});

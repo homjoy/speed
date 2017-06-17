@@ -1,0 +1,30 @@
+/*付款申请单*/
+
+.panel-body .form-horizontal .col-xs-12 > .col-xs-2{
+    width: 16.10%;
+}
+.panel-body .form-horizontal .col-xs-12 > .col-xs-10{
+    width: 82.33333333%;
+}
+
+
+
+.file-zone {
+    cursor:pointer;
+}
+
+
+.leftBorder{
+    display: inline-block;
+    border-left: 2px solid #f6ad3e;
+    padding-left: 10px;
+    margin-left: -70px;
+    font-size: 16px;
+}
+
+
+
+#payDay{
+    background-color: #fff;
+    cursor: default;
+}

@@ -1,0 +1,20 @@
+fml.define('fms/reimburse/basicInfo',['jquery'],function(require,exports){
+    "use strict";
+    var $ = require('jquery');
+
+
+    var $form = $(".form-apply");
+
+    $form.on('input keydown keyup',".basic-info input:first",function(e){
+        //加载基本信息.
+
+        //AJAX加载用户信息
+
+
+        $form.find('.basic-info [name=departmentId]').val(Math.random());
+    });
+
+
+
+    return {};
+});

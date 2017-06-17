@@ -1,0 +1,160 @@
+<%#head.html %>
+<div id="container" class="effect mainnav-lg">
+    <%#navbar.html %>
+
+    <div class="boxed">
+        <!--CONTENT CONTAINER-->
+        <!--===================================================-->
+        <div id="content-container" >
+            <ol class="breadcrumb">
+                <li><a href="/home">主页</a></li>
+                <li><a href="/it"> 人力资源</a></li>
+                <li class="active">请假</li>
+            </ol>
+            <div id="page-content" class="no-padding panel">
+
+                <div class="panel-body" style="min-width:580px">
+                    <%#/document/navbarRow.html %>
+
+                    <div class="row" >
+                        <ul class="nav nav-tabs col-lg-12 col-sm-12 col-xs-12" style="margin-bottom: 30px">
+                            <li role="presentation" class="active"><a href="#wifi" aria-controls="wifi" role="tab" data-toggle="tab">请假</a></li>
+                            <li role="presentation" class=""><a href="/document/leaveApproval/" >请假审批</a></li>
+                            <li role="presentation" class=""><a href="/document/leaveNotice/" >请假须知</a></li>
+                        </ul>
+                    </div>
+                    <div class="tab-content">
+                        <div role="tabpanel" class="tab-pane row active" id="wifi">
+                            <div class="col-lg-1 col-sm-1 col-xs-1"></div>
+                            <div class="col-lg-11 col-sm-11 col-xs-11 user_right">
+                                <div class="password_fix tap">
+                                    <% if (this.LeaveRequest.code==200){ %>
+                                    <form class="form-horizontal speed" id="form_leave" >
+
+                                        <input type="hidden" class="iscustom" value="<%=this.LeaveRequest.data.custom%>"/>
+
+                                        <div class="form-group" >
+                                            <label class="col-lg-3 col-sm-3 col-xs-3 control-label">请假类型</label>
+                                            <div class="col-lg-5 col-sm-5 col-xs-5">
+                                                <input type="hidden" class="reference"/>
+                                                <!--<input type="text" data-bv-notempty class="form-control select-input" placeholder="请选择" readonly>-->
+                                                <select name="absence_type" class="form-control select">
+                                                    <option value="" <%= 'selected' %>>请选择</option>
+                                                    <% this.LeaveRequest.data.leave_type.forEach(function(type,index){ %>
+                                                    <option value="<%=index%>" ><%=type%></option>
+                                                    <% })%>
+                                                </select>
+                                                <!--<input type="hidden" name="absence_type" data-bv-notempty class="form-control select-input-hide" >-->
+                                            </div>
+                                            <label class="col-lg-1 col-sm-1 col-xs-1 popoverRight"></label>
+                                        </div>
+
+
+                                        <div class="form-group add-after">
+                                            <label class="col-lg-3 col-sm-3 col-xs-3 control-label">开始日期</label>
+                                            <div class="col-lg-5 col-sm-5 col-xs-5">
+                                                <div class="input-group">
+                                                    <input class="form-control form_datetime input_start" readonly name="start_date" id="input_start" value="">
+                                                    <input class="start" type="hidden" name="start_half" value="">
+                                                    <div class="input-group-btn">
+                                                        <button type="button" class="btn btn-default dropdown-toggle toggle-half start" time="" data-toggle="dropdown">全天 <span class="caret"></span></button>
+                                                        <ul class="dropdown-menu">
+                                                            <li><a class="select-half" time="" href="javascript:void(0);">全天</a></li>
+                                                            <li class="divider"></li>
+                                                            <li><a class="select-half" href="javascript:void(0);" time="am">上午</a></li>
+                                                            <li><a class="select-half" href="javascript:void(0);" time="pm">下午</a></li>
+                                                        </ul>
+                                                    </div><!-- /btn-group -->
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="" class="col-lg-3 col-sm-3 col-xs-3 control-label">结束日期</label>
+                                            <div class="col-lg-5 col-sm-5 col-xs-5">
+                                                <div class="input-group">
+                                                    <input class="form-control form_datetime input_end" name="end_date" readonly id="input_end" value="">
+                                                    <input type="hidden" class="end" name="end_half">
+                                                    <div class="input-group-btn">
+                                                        <button type="button" class="btn btn-default dropdown-toggle toggle-half end" disabled time="" data-toggle="dropdown">全天 <span class="caret"></span></button>
+                                                        <ul class="dropdown-menu">
+                                                            <li><a class="select-half" time="" href="#">全天</a></li>
+                                                            <li class="divider"></li>
+                                                            <li><a class="select-half" href="#" time="am">上午</a></li>
+                                                            <li><a class="select-half" href="#" time="pm">下午</a></li>
+                                                        </ul>
+                                                    </div><!-- /btn-group -->
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="" class="col-lg-3 col-sm-3 col-xs-3 control-label">请假天数</label>
+                                            <div class="col-lg-5 col-sm-5 col-xs-5">
+                                                <label class="control-label "><span class="length-lable"></span>天</label>
+                                                <input type="hidden" name="length" class="form-control length">
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="" class="col-lg-3 col-sm-3 col-xs-3 control-label">请假理由</label>
+                                            <div class="col-lg-5 col-sm-5 col-xs-5">
+                                                <textarea name="memo" data-bv-notempty id="" cols="30" rows="5" placeholder="" class="form-control"></textarea>
+                                            </div>
+                                        </div>
+                                        <div class="form-group btn_line">
+                                            <label class="col-lg-3 col-sm-3 col-xs-3 "></label>
+                                            <div class="col-lg-5 col-sm-5 col-xs-5">
+                                                <button type="submit" class="btn btn-beauty save_password ">提交申请</button>
+                                            </div>
+                                        </div>
+                                    </form>
+                                    <%}%>
+                                </div>
+                            </div>
+                        </div>
+                        <!--<div class="safe-notice">-->
+                        <!--<div class="notice">-->
+                        <!--<p>预计审批流程为：</p>-->
+                        <!--<p>若有<span>流程问题</span>,请联系<a href="" class="" target="_blank"><span>宋丽</span></a>修改员工关系</p>-->
+                        <!--</div>-->
+                        <!--</div>-->
+                    </div>
+                </div>
+
+            </div>
+            <%#footer.html%>
+        </div>
+
+        <%#mainnav.html%>
+    </div>
+
+</div>
+
+<script id="pagination" type="text/html">
+    <div class="form-group add">
+        <label for="" class="col-lg-3 col-sm-3 col-xs-3 control-label">领证日期</label>
+        <div class="col-lg-5 col-sm-5 col-xs-5">
+            <input type="text" name="licensing_date" class="date form-control" data-bv-notempty class="form-control" readonly value="">
+            <label >
+                <input type="checkbox" class="new" name="late_marry" value="1">
+                晚婚（限初婚）
+            </label>
+        </div>
+    </div>
+</script>
+<script id="user_own_leave" type="text/html">
+    <p class="now"></p>
+    <ul>
+        <li class="lastyear hide">去年剩余<span>0</span>天</li>
+        <li class="all hide">今年可用<span>0</span>天</li>
+        <li class="going hide">正在审批<span>0</span>天</li>
+        <li class="used hide">已使用<span>0</span>天</li>
+    </ul>
+    <p class="notice hide">
+        <!--what are you fucking doing?!!!!!-->
+    </p>
+</script>
+<%! $_ENGINE_SELF.callFn("useModule")("<<<_use:
+        fml.use('speed/common/base');
+fml.use('speed/document/leaverequest');
+_use:", this._JSstack , this._JSmods); %>
+
+<%#foot.html%>

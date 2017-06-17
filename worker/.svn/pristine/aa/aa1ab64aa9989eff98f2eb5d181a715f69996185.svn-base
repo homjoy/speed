@@ -1,0 +1,12 @@
+<div class="mail-wrapper">
+    <div class="title">
+        <p>Hi! {{approveName}}：</p>
+        <h3>{{username}}的{{orderName}}还没有批复，别让小伙伴等太久O(∩_∩)O！</h3>
+    </div>
+</div>
+
+<div class="mail-wrapper">
+    <div class="btn-group">
+        <a href="http://speed.meilishuo.com/document/leave_approval/" class="btn btn-view">查 看</a>
+    </div>
+</div>

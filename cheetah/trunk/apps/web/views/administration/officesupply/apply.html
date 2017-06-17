@@ -1,0 +1,127 @@
+<%#head.html %>
+<div id="container" class="effect mainnav-lg">
+    <%#navbar.html %>
+
+    <div class="boxed">
+        <!--CONTENT CONTAINER-->
+        <!--===================================================-->
+        <div id="content-container" >
+            <ol class="breadcrumb">
+                <li><a href="/home">主页</a></li>
+                <li><a href="/home/window/?f=executive&s=all"> 行政中心</a></li>
+                <li class="active">办公用品</li>
+            </ol>
+            <div id="page-content" class="no-padding panel">
+                <ul class="nav nav-tabs slope col-lg-12 col-sm-12 col-xs-12" style="margin-bottom: 30px">
+                    <li class="active"  role="presentation" ><a href="/administration/officesupply/">办公用品申请</a></li>
+                    <li role="presentation" ><a href="/administration/officesupply/my" class="application_num">我的申请<span class="approval-badge"><%if(this.apply_num_get.code==200){%><%=this.apply_num_get.data.application_num%><%}%></span></a></li>
+                    <li role="presentation" ><a href="/administration/officesupply/approval" class="approval_num">我的审批<span class="approval-badge"><%if(this.apply_num_get.code==200){%><%=this.apply_num_get.data.approval_num%><%}%></span></a></li>
+                    <%if(this.permission_control.code==200){%>
+                    <%if(!!this.permission_control.data.manager){%>
+                    <li role="presentation" class=""><a href="/administration/officesupply/manage" >我的管理</a></li>
+                    <%}%>
+                    <%}%>
+                </ul>
+                <div class="panel-body" style="min-width:946px;width: 946px;margin: 0 auto">
+
+                    <div class="panel gray left" style="position: relative;">
+                        <div class="panel-heading head-fix">
+                            <div class="form-group">
+                                <span class="menu-office-btn"></span>
+                                <div class="supplyname-div">
+                                    <input type="text" class="form-control supplyname" placeholder="输入关键字"/>
+                                    <span class="search-icon"></span>
+                                </div>
+                            </div>
+                            <div class="office-menu-detail hide">
+                                <a href=""><span class=""></span></a>
+                            </div>
+                        </div>
+                        <div class="panel-body" style="position: relative;">
+
+                            <div class="panel inside">
+
+                            </div>
+                        </div>
+                    </div>
+                    <div class="panel gray right" >
+                        <div class="panel-heading">
+                            已选择<span class="choosenum">0</span>件物品
+                        </div>
+                        <div class="panel-body over-scroll">
+                            <ul class="chooseul">
+
+                            </ul>
+                            <div class="kong">
+                                <img src="<%= this.PICTURE_URL  %>img/queen/approval/kong.png" alt=""/>
+                                <span>在左侧选择物品吧</span>
+                            </div>
+                        </div>
+                        <div class="panel-foot">
+                            <select class="floornum selectpicker hide" style="display: none">
+                                <option value="">领取楼层</option>
+                                <%if(this.supply_request_place.code==200){%>
+                                    <% this.supply_request_place.data.city.forEach(function(v,k){%>
+                                        <option value="<%=v.key%>"><%=v.value %></option>
+                                    <%})%>
+                                <%}%>
+                            </select>
+                            <a href="javascript:void(0)" class="btn btn-beauty btn-sm submit">提交</a>
+                        </div>
+                    </div>
+
+                    <!--<div class="tab-content">-->
+                        <!--<div class=" tap">-->
+
+                        <!--</div>-->
+                    <!--</div>-->
+
+                </div>
+
+            </div>
+            <%#footer.html%>
+        </div>
+        <%#mainnav.html%>
+    </div>
+</div>
+<script type="text/html" id="supply-request">
+    {{each data as info}}
+        <div class="panel-heading " style="position: relative">
+            <a id="pic{{info.pic}}" class="picturnto" href="javascript:void(0)"></a>
+            <span class="pic picbig pic{{info.pic}}"></span>
+            <span class="insidetittle">{{info.category_name}}</span>
+            <span class="place">{{info.get}}</span>
+        </div>
+        <div class="panel-body">
+            {{each info.supplyInfo as sth}}
+            <div class="officesupply" data-id="{{sth.id}}" data-is_floor="{{if info.is_floor}}true{{/if}}" data-detail="{{sth.detail}}" data-supply_name="{{sth.supply_name}}">
+                <h4>{{sth.supply_name}}</h4>
+                <div class="detail">{{sth.detail}}</div>
+            </div>
+            {{/each}}
+        </div>
+    {{/each}}
+</script>
+<script type="text/html" id="supply-sth">
+    <li class="pink active" data-id="{{id}}" data-isfloor="{{if is_floor==true}}y{{/if}}">
+        <div class="supplytittle"><span>{{supply_name}}</span><span class="right_detail {{if detail==''}}text-indent1000{{/if}}">{{if detail!=''}}{{detail}}{{else}}1{{/if}}</span> </div>
+        <div class="garbage numcontrol hide" data-id="{{id}}">1</div>
+        <div class="supplyconstrol">
+            <div class="minus numcontrol">-</div>
+            <input class="supplyinput numcontrol" type="text" value="1"/>
+            <div class="plus numcontrol">+</div>
+        </div>
+
+    </li>
+</script>
+<script type="text/html" id="office-menu-detail">
+    {{each data as info}}
+    <a href="#pic{{info.pic}}" class="turn"><span class="pic pic{{info.pic}}"></span>{{info.category_name}}</a>
+    {{/each}}
+</script>
+<%! $_ENGINE_SELF.callFn("useModule")("<<<_use:
+        fml.use('speed/common/base');
+fml.use('speed/administration/officesupply/apply');
+_use:", this._JSstack , this._JSmods); %>
+
+<%#foot.html%>

@@ -1,0 +1,22 @@
+function layouts_aside_bright_theme() {
+	return this;
+}
+var controlFns = {
+	'index' : function(){
+		this.layouts_aside_bright_theme()
+	},
+	'layouts_aside_bright_theme' : function(){
+		var php = {
+			
+		}
+        this.bindDefault(php);
+		this.bridgeMuch(php);
+		this.listenOver(function(data){
+			console.log(data)
+
+			data._CSSLinks = ['fontfamily','bootstrap','nifty.min','font-awesome.min','switchery.min','bootstrap-select.min','pace.min'];
+			this.render('layouts_aside_bright_theme.html' , data);
+		})
+	}
+};
+exports.__create = controller.__create(layouts_aside_bright_theme, controlFns);

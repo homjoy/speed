@@ -1,0 +1,126 @@
+<%#head.html%>
+<%#header.html%>
+    <div class="boxed">
+        <div id="content-container">
+            <div id="page-content">
+                <div class="col-lg-12">
+                    <div class="panel">
+                        <div class="panel-body">
+                            <ul id="myApplyTab" class="nav nav-tabs">
+                                <li class="active"><a href="#waiting" data-toggle="tab" aria-expanded="true">待归档</a></li>
+                                <li><a href="#over" data-toggle="tab" aria-expanded="false">已归档</a></li>
+                            </ul>
+                            <div id="myTabContent" class="tab-content">
+                                <div class="tab-pane fade active in" id="waiting">
+                                    <form id="form-filing">
+                                        <table id="tb-filing" class="table table-hover tr-point-table table-striped table-bordered">
+                                            <thead>
+                                                <tr>
+                                                    <th>单据编号</th>
+                                                    <th>合同名称</th>
+                                                    <th>申请时间</th>
+                                                    <th>签订日期</th>
+                                                    <th>文件状态</th>
+                                                    <th>附件</th>
+                                                    <th>操作</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <%this.waitList.forEach(function(info,index){%>
+                                                <tr data-id="<%=info.requestId%>" data-type="CA">
+                                                    <td><%=info.requestBillCode||''%>
+                                                        <input type="hidden" name="requestId" value="<%=info.requestId%>"/>
+                                                    </td>
+                                                    <td><%=info.contractName||''%></td>
+                                                    <td><%=info.requestDate||''%></td>
+                                                    <td>
+                                                        <div class="form-group">
+                                                            <input type="text"  class="form-control signDate" data-bv-notempty name="signDate" value="<%=info.signDate||''%>" disabled readonly>
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <div class="form-group">
+                                                            <input type="text" class="form-control" data-bv-notempty name="state" disabled>
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <div class="form-group">
+                                                            <span type="text" class="form-control click-input" name="upload" value="点击上传" readonly disabled>点击上传</span>
+                                                        </div>
+                                                        
+                                                        <input type="file" class="form-control input hide" name="upload" disabled>
+                                                        <input type="hidden" class="cabFilePath" name="cFilePath" value="" disabled>
+                                                    </td>
+                                                    <td>
+                                                        <!-- <a href="javascript:;" class="btn btn-success btn-filing">归档</a> -->
+                                                        <button class="btn btn-success btn-filing" type="submit" data-loading-text="处理中">归档</button>
+                                                        <!-- <a href="javascript:;" class="btn btn-default">归档信息修改</a> -->
+                                                    </td>
+                                                </tr>
+                                                <%})%>
+                                            </tbody>
+                                        </table>
+                                    </form>
+                                </div>
+                                <div class="tab-pane fade" id="over">
+                                    <form id="form-filing-edit">
+                                        <table id="tb-over-filing" class="table table-hover tr-point-table table-striped table-bordered">
+                                            <thead>
+                                                <tr>
+                                                    <th>单据编号</th>
+                                                    <th>合同名称</th>
+                                                    <th width="100">申请时间</th>
+                                                    <th>合同编号</th>
+                                                    <th>签订日期</th>
+                                                    <th>文件状态</th>
+                                                    <th>操作</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <%this.overList.forEach(function(info,index){%>
+                                                <tr data-id="<%=info.requestId%>" data-type="CA">
+                                                    <td><%=info.requestBillCode%>
+                                                        <input type="hidden" name="requestId" value="<%=info.requestId%>"/>
+                                                    </td>
+                                                    <td><%=info.contractName%></td>
+                                                    <td width="100"><%=info.requestDate%></td>
+                                                    <td>
+                                                        <div class="form-group">
+                                                            <input type="text"  class="form-control" value="<%=info.contractCode%>" disabled data-bv-notempty name="conId">
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <div class="form-group">
+                                                            <input type="text"  class="form-control overSignDate can-edit" value="<%=info.signDate%>" disabled readonly data-bv-notempty name="signDate">
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <div class="form-group">
+                                                            <input type="text" class="form-control can-edit" value="<%=info.fileState%>" disabled data-bv-notempty name="state">
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <button class="btn btn-success btn-filing-edit " data-loading-text="处理中" type="button">修改</button>
+                                                        <a href="/download/ContractFile/?cabid=<%=info.contractId%>" class="btn btn-success  glyphicon glyphicon-paperclip" title="<%=info.contractName%>" type="button"></a>
+                                                    </td>
+                                                </tr>
+                                                <%})%>
+                                                
+                                            </tbody>
+                                        </table>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <%#sidebar.html%>
+    </div>
+    <%#footer.html%>
+    <%! $_ENGINE_SELF.callFn( "useModule")( "<<<_use:
+        fml.use('fms/contract/contract-filing')
+        _use:", this._JSstack , this._JSmods); %>
+<%#foot.html%>
+                

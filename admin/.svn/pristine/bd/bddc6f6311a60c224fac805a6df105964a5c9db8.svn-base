@@ -1,0 +1,73 @@
+<?php
+namespace Admin\Modules\Structure\User;
+use Libs\Util\Format;
+use Admin\Modules\Common\BaseModule;
+use Admin\Package\Common\Response;
+use Admin\Package\Log\Log;
+use Admin\Package\Account\UserInfo;
+/**
+ * 修改邮箱密码
+ * @author hongzhou@meilishuo.com
+ * @since 2015-11-14 下午12:53:13
+ */
+class AjaxUpdateMailPwd extends BaseModule {
+
+    protected $errors = NULL;
+    private   $params = NULL;
+    public static $VIEW_SWITCH_JSON = TRUE;
+    const IT =8;
+    public function run() {
+        $this->_init();
+        if($this->post()->hasError()){
+            $return = Response::gen_error(10001, '', $this->post()->getErrors());
+            return $this->app->response->setBody($return);
+        }
+        $user_info = UserInfo::getInstance()->getUserInfo(array('name_en' => $this->params['name_en']));
+        if(empty($user_info)){
+             return $this->app->response->setBody(Response::gen_error(50001,'用户不存在'));
+        }
+        $user_info = current($user_info);
+        $update_user_info = array(
+            'user_id' => $user_info['user_id'],
+            'password' => strtoupper(md5($this->params['password'])),
+        );
+        $ret = UserInfo::getInstance()->updateUserInfo($update_user_info);
+        if(!$ret){
+           return $this->app->response->setBody(Response::gen_error(50001,'修改失败'));
+        }
+        $this->doLog($this->params);
+        $this->app->response->setBody(Response::gen_success('修改成功'));
+    }
+
+    protected function doLog($new_param=array(),$old_param='update'){
+        $ret = Log::getInstance()->createLogs(array(
+                'user_id'=>$this->user['id'],
+                'handle_id'=>100000,
+                'operation_type'=>$old_param,
+                'after_data'=>json_encode($new_param),
+                'handle_type'=>self::IT
+            )
+        );
+        return $ret;
+    }
+    private function _init() {
+
+        $this->rules  = array(
+            'password' => array(
+                'type'=>'string',
+                'required' => TRUE,
+                'allowEmpty' => FALSE,
+            ),
+            'name_en' => array(
+               'type'=>'string',
+                'required' => TRUE,
+                'allowEmpty' => FALSE,
+           )
+        );
+     
+        $this->params   = $this->post()->safe();
+        $this->errors   = $this->post()->getErrors();
+
+    }
+    
+}

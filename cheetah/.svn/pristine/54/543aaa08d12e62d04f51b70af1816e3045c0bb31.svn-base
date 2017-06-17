@@ -1,0 +1,221 @@
+@import "../base.less";
+
+@pageMainColor : #FC6E47;
+
+.col-lg-8>.row {
+  min-width: 576px;
+}
+
+//BBS论坛模块样式
+.BBS_list{
+  list-style: none;
+  padding-left: 20px;
+  padding-top: 20px;
+
+  li{
+    margin-bottom: 20px;
+  }
+  li > img{
+    display: inline-block;
+    width:50px;
+    height: 50px;
+    border-radius: 5px;
+  }
+
+  li > div{
+    display: inline-block;
+  }
+
+  .BBS_info{
+    margin-left: 10px;
+
+    a{
+      display: block;
+      color:#333333;
+      font-size:14px;
+      margin: 3px 0 8px 0 ;
+      cursor: pointer;
+
+      &:visited{
+        color:#a0a0a0;
+      }
+
+      &:hover{
+        text-decoration: none;
+        color: @pageMainColor;
+      }
+
+    }
+
+    span{
+      margin-right: 15px;
+      font-size:12px;
+      color:#8A8A8A;
+    }
+
+    span:nth-of-type(1){
+      color: @pageMainColor;
+    }
+
+  }
+}
+
+.BBS_more{
+  line-height: 50px;
+  margin: 10px 20px 0 20px;
+  text-align: center;
+  color: #fc6e48;
+  background-color: #F4F4F4;
+
+  a{
+    color: @pageMainColor;
+    cursor: pointer;
+
+    &:hover{
+      text-decoration: underline;
+    }
+  }
+
+  img{
+    margin-left: 5px;
+  }
+}
+
+//用户头像模块样式
+.userShow{
+  text-align: center;
+
+  img{
+    width: 80px;
+    height: 80px;
+    border-radius: 50px;
+    cursor: pointer;
+
+    &:hover{
+      box-shadow: 0 0 0 3px @pageMainColor;
+      opacity: 0.8;
+    }
+  }
+
+  p:nth-of-type(1){
+    margin-top: 10px;
+    font-size: 16px;
+  }
+
+  p:nth-of-type(2){
+    margin-top: 20px;
+  }
+}
+
+//天气预报插件样式
+#demo-weather-widget,#demo-weather-widget2 {
+  .weather-header {
+    h2, h4 {
+      padding-left: 30px;
+    }
+  }
+
+  hr{
+    margint-top:10px;
+    margin-bottom: 10px;
+  }
+
+  .col-xs-5{
+    margin-top: 12px;
+  }
+
+  ul{
+    margin-bottom: 0;
+  }
+}
+
+//友情链接模块样式
+.friendLinkLists{
+  color:#666666;
+
+  ul{
+    list-style: none;
+    font-size:15px;
+  }
+
+  li{
+    display: inline-block;
+  }
+
+  .frListTitle{
+    border-bottom: 1px solid #eee;
+
+    li{
+      width:22%;
+      text-align: center;
+      padding:0 10px 10px 10px;
+      cursor: pointer;
+    }
+  }
+
+  div[id$=Class]{
+    padding-top: 15px;
+    display: none;
+  }
+
+  .frlinklist{
+    margin-bottom:0;
+
+    li{
+      margin-right: 10px;
+      text-align: center;
+      width:120px;
+    }
+    a{
+      cursor: pointer;
+      font-size:12px;
+      text-decoration: none;
+
+      color:#333333;
+    }
+
+    p{
+      margin-top: 10px;
+    }
+  }
+
+  .active{
+    border-bottom: 1px solid @pageMainColor;
+    color:@pageMainColor;
+  }
+  .empty_link{
+    text-align: center;
+    color: #a0a0a0;
+  }
+}
+#page-content{
+  padding: 20px 40px 20px 40px;
+}
+.foot_panel {
+  height: 112px;
+  width: 100%;
+  background-color: #eeeeee;
+  color: #A0A0A0;
+  min-width: 680px;
+  left: 0;
+  .panel_head {
+    font-size: 14px;
+    padding-top: 12px;
+    padding-left: 72px;
+    margin-top:20px;
+  }
+  ul {
+    position: relative;
+    top: 10px;
+    left: 40px;
+  }
+  li {
+    list-style: none;
+    float: left;
+    display: block;
+    margin-left: 20px;
+    img{height: 30px}
+  }
+}
+
+

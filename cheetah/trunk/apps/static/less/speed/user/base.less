@@ -1,0 +1,129 @@
+// 页面公用
+#page-content {
+  min-width: 775px;
+
+  li, label, span {
+    font-size: 14px;
+  }
+  label{
+    font-weight: normal;
+  }
+
+  // 样式
+  h4 {
+    margin-bottom: 8px;
+  }
+
+  p {
+    margin: 0;
+    font-size: 14px;
+    padding-top: 0;
+  }
+
+  .panel {
+    box-shadow: none;
+  }
+
+
+
+  .user_left {
+    .head_img {
+      height: 86px;
+      width: 86px;
+      border-radius: 43px;
+      margin-top: 10px;
+      border: 1px solid #dddddd
+    }
+    li, img, span {
+      margin: 0 auto;
+      display: block;
+      width: 76px;
+      height: 26px;
+      text-align: center;
+      a {
+        line-height: 26px
+      }
+
+      &:hover {
+        background-color: #f3f3f3;
+      }
+      &.active {
+        background-color: #ff80A9;
+        a {
+          color: white;
+        }
+      }
+    }
+    span {
+      font-size: 16px !important;
+      margin-top: 20px;
+      margin-bottom: 34px;
+      &:hover {
+        background: white;
+      }
+    }
+
+  }
+
+
+  .user_right{
+    border-left: 1px solid #dddddd;
+    margin-bottom: 10px;
+    label{line-height: 30px;}
+    // 输入框样式、待提取
+    input{height: 42px !important;font-size: 14px !important;}
+  }
+}
+
+.user-wizard{
+  position: absolute;
+  top:0;
+  left:0;
+  width: 100%;
+  height:100%;
+  display: block;
+  z-index: 9999;
+  background-color: rgba(0,0,0,0.65);
+
+  .wizard{
+    opacity: 1;
+    display:block;
+    position: absolute;
+    top:0;
+    left:0;
+
+    &.wizard-nav{
+      // position: fixed;
+      width: 247px;
+      height: 70px;
+      top: 30px;
+      left: 245px;
+      background: transparent url('../../../img/speed/user/user_lead.png') no-repeat 13px 30px;
+    }
+
+    &.wizard-often{
+      // position: fixed;
+      left: 223px;
+      top: 74px;
+      width: 600px;
+      height: 158px;
+      background: transparent url('../../../img/speed/user/user_lead.png') no-repeat 0px -47px;
+    }
+
+    &.wizard-schedule{
+      width: 645px;
+      height: 100px;
+      top: 339px;
+      left: 223px;
+      background: transparent url('../../../img/speed/user/user_lead.png') no-repeat 0px -336px;
+    }
+
+    &.wizard-close{
+      position: fixed;
+      width: 161px;
+      height: 38px;
+      background: transparent url('../../../img/speed/user/guanbi.png') center 0 no-repeat;
+    }
+  }
+}
+.second-ul{position: relative;left: 14px;}

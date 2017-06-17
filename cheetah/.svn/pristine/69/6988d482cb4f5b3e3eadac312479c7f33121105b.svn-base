@@ -1,0 +1,90 @@
+fml.define('fms/reimburse/modules/ReceiptInfo', ['jquery', 'plugin/artTemplate', 'component/TreeSelect','fms/reimburse/modules/Base'], function (require, exports) {
+    "use strict";
+    var $ = require('jquery'), Template = require('plugin/artTemplate');
+    var BaseModule = require('fms/reimburse/modules/Base');
+    var $form = $(".form-apply");
+
+    /**
+     * @param options
+     * @constructor
+     */
+    function Module(options) {
+        options = options || {};
+        this.templateName = 'receipt-info-tpl';
+        this.detail = options.values || {};
+        this.options = options;
+        this.$block = null;
+        this.templateData = this.formatData();
+
+        this.render();
+        this.bindEvent();
+    }
+
+    /**
+     *
+     */
+    Module.prototype = {
+        render: function () {
+            var templateData = this.templateData;
+
+
+            templateData.constant = this.detail.constant;
+
+
+            $form.find('[data-module=ReceiptInfo]').replaceWith(Template(this.templateName, templateData));
+            this.$block = $form.find('.receipt-info');
+        },
+        formatData: function () {
+            //通用费用报销
+            if (this.detail['ExpenseCommon'] && this.detail['ExpenseCommon'].MlsExpenseCommon) {
+                return this.detail['ExpenseCommon'].MlsExpenseCommon;
+            }
+
+            return {};
+        },
+        bindEvent: function () {
+            var that = this;
+            //各种事件处理
+
+            /**
+             * 勾选是否冲借款.
+             */
+            //this.$block.on('change', ".offset-borrow", function (e) {
+            //    var input = $(this);
+            //    var $group = input.closest('.form-group');
+            //    $group.next().toggleClass('hide', !input.is(":checked"));
+            //});
+
+            this.$block.find('[name=budgetItem]').TreeSelect({
+                valueField: 'fullCode', //值为该字段的数据.
+                data: this.detail.constant.budgetProjects
+            }).on("change", function (event, node) {
+                that.$block.find('[name=budgetItem]').val(node.fullCode);
+            });
+
+
+            this.$block.find('.selectpicker').selectpicker();
+
+        },
+        validate: function () {
+
+            var paramArray = [[/*'budgetItem',*/ 'projectCode', 'billNum'],'singleLine'];
+            return BaseModule.bindCheckValidateResult.apply(this,paramArray);
+        },
+        //序列化为数组.
+        serializeArray: function (prefix) {
+            prefix = prefix || '';
+            var that = this;
+            var fields = ['loanFlag', 'payAmount', 'budgetItem', 'projectCode', 'billNum'];
+            return $.map(fields, function (name) {
+                var input = that.$block.find('[name=' + name + ']'), value = input.val();
+                if (input.is(':checkbox') && !input.is(":checked")) {
+                    value = '';
+                }
+                return {name: prefix + name, value: value};
+            });
+        }
+    };
+
+    return Module;
+});

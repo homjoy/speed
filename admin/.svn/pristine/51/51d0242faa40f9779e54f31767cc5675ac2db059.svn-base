@@ -1,0 +1,342 @@
+    "use strict";
+
+    //例子
+    //jQuery("#selector").pagination({
+    //    totalPage:200,
+    //    currentPage:1,
+    //    lastPagesCount:1
+    //}).on("switch",function(e,page){
+    //    console.log(page);
+    //});
+    /**
+     *
+     *
+     */
+    (function ($, window, document, undefined) {
+        /**
+         * @see http://kissygalleryteam.github.io/pagination/doc/demo/index.html
+         * @see http://esimakin.github.io/twbs-pagination/
+         *
+         *
+         */
+        var old = $.fn.pagination,
+            defaults = {
+                totalPage: 10, //总页数，默认值为10
+                startPage: 1, //起始页数，默认为1开始
+                currentPage: 1, //初始选中的页码，默认值为1
+                firstPagesCount: 2, //最前面的展现页数，默认值为2
+                preposePagesCount: 2,  //当前页的紧邻前置页数，默认值为2
+                postposePagesCount: 1, //当前页的紧邻后置页数，默认值为1
+                lastPagesCount: 0,//最后面的展现页数，默认值为0
+                href: false,    //是否生成链接
+                hrefVariable: '{{number}}',
+                first: '首页',
+                prev: '上一页',
+                next: '下一页',
+                last: '尾页',
+                breakText: '...',
+                go: 'Go',
+                loop: false,
+                paginationClass: 'pagination',
+                nextClass: 'next',
+                prevClass: 'prev',
+                lastClass: 'last',
+                firstClass: 'first',
+                pageClass: 'page',
+                goClass: 'go-page',
+                activeClass: 'active',
+                breakClass: 'break',
+                disabledClass: 'disabled'
+            };
+
+        /**
+         * 分页对象
+         * @param element
+         * @param options
+         * @constructor
+         */
+        function Pagination(element, options) {
+            this.element = element;
+            this.$element = $(element);
+            this.settings = $.extend({}, defaults, options);
+            this._defaults = defaults;
+            this._name = 'pagination';
+            this.init();
+        }
+
+        /**
+         *
+         */
+        $.extend(Pagination.prototype, {
+            /**
+             * 初始化
+             * @returns {Pagination}
+             */
+            init: function () {
+                var tagName = (typeof this.$element.prop === 'function') ?
+                    this.$element.prop('tagName') : this.$element.attr('tagName');
+
+                if (tagName === 'UL') {
+                    this.$listContainer = this.$element;
+                } else {
+                    this.$listContainer = $('<ul></ul>');
+                }
+
+                this.$listContainer.addClass(this.settings.paginationClass);
+                if (tagName !== 'UL') {
+                    this.$element.append(this.$listContainer);
+                }
+
+                this.render();
+                this.bindEvents();
+                return this;
+            },
+            /**
+             * 绑定事件处理
+             */
+            bindEvents: function () {
+                var base = this;
+                this.$listContainer.on("click", 'li', function (e) {
+                    var li = $(e.currentTarget);
+                    if (li.hasClass(base.settings.disabledClass)
+                        || li.hasClass(base.settings.activeClass)
+                        || li.hasClass(base.settings.goClass)) {
+                        e.preventDefault();
+                        return false;
+                    }
+                    //如果没有使用链接，则以JS 处理，阻止链接跳转
+                    !base.settings.href && e.preventDefault();
+                    //转到指定页
+                    base.switchTo(parseInt(li.data('page'), 10) || -1);
+                }).on("click", '.btn-go-page', function (e) {
+                    var btn = $(e.currentTarget);
+                    var form = btn.closest('.form-inline');
+                    base.switchTo(parseInt(form.find('input[name=page]').val(), 10) || -1);
+                });
+            },
+            /**
+             * 切换到指定页
+             * @param page
+             * @returns {boolean}
+             */
+            switchTo: function (page) {
+                if (page < this.settings.startPage || page > this.settings.totalPage) {
+                    return false;
+                }
+                this.settings.currentPage = page;
+                this.render();
+                this.$element.trigger('switch', page);
+            },
+            /**
+             * 生成分页
+             */
+            render: function () {
+                this.$listContainer.children().remove();
+                this.$listContainer.append(this._buildItemList());
+
+                var currentPage = this.settings.currentPage;
+                var children = this.$listContainer.children();
+
+                //激活当前页
+                children.filter(function () {
+                    return $(this).data('page') === currentPage && $(this).data('page-type') === 'page';
+                }).addClass(this.settings.activeClass);
+
+                //首页
+                children.filter(function () {
+                    return $(this).data('page-type') === 'first';
+                }).toggleClass(this.settings.disabledClass, currentPage === 1);
+
+                //尾页
+                children.filter(function () {
+                    return $(this).data('page-type') === 'last';
+                }).toggleClass(this.settings.disabledClass, currentPage === this.settings.totalPage);
+
+                //上一页
+                children.filter(function () {
+                    return $(this).data('page-type') === 'prev';
+                }).toggleClass(this.settings.disabledClass, !this.settings.loop && currentPage === 1);
+
+                //下一页
+                children.filter(function () {
+                    return $(this).data('page-type') === 'next';
+                }).toggleClass(this.settings.disabledClass, !this.settings.loop && currentPage === this.settings.totalPage);
+
+                //禁用隔断
+                children.filter(function () {
+                    return $(this).data('page-type') === 'break';
+                }).addClass(this.settings.disabledClass);
+
+            },
+            /**
+             * 生成每一项分页
+             * @returns {Array}
+             * @private
+             */
+            _buildItemList: function () {
+                var items = [],
+                    totalPage = this.settings.totalPage > 0 ? this.settings.totalPage : 1,
+                    currentPage = (this.settings.currentPage <= totalPage && this.settings.currentPage) > 0 ? this.settings.currentPage : 1,
+                    preposePagesCount = this.settings.preposePagesCount >= 0 ? this.settings.preposePagesCount : 2,
+                    postposePagesCount = this.settings.postposePagesCount >= 0 ? this.settings.postposePagesCount : 1,
+                    firstPagesCount = this.settings.firstPagesCount >= 0 ? this.settings.firstPagesCount : 2,
+                    lastPagesCount = this.settings.lastPagesCount >= 0 ? this.settings.lastPagesCount : 0,
+                    i;
+
+                if (this.settings.first) {
+                    items.push(this._buildItem('first', this.settings.startPage));
+                }
+
+                if (this.settings.prev) {
+                    var prev = currentPage > this.settings.startPage ? currentPage - 1 : this.settings.loop ? this.settings.totalPage : 1;
+                    items.push(this._buildItem('prev', prev));
+                }
+
+                /*
+                 * 是否插入隔断
+                 */
+                if (currentPage <= firstPagesCount + preposePagesCount + 1) {
+                    for (i = this.settings.startPage; i < currentPage; i++) {
+                        items.push(this._buildItem('page', i));
+                    }
+                } else {
+                    for (i = this.settings.startPage; i <= firstPagesCount; i++) {
+                        items.push(this._buildItem('page', i));
+                    }
+                    //生成隔断
+                    items.push(this._buildItem('break', -1));
+                    for (i = currentPage - preposePagesCount; i <= currentPage - 1; i++) {
+                        items.push(this._buildItem('page', i));
+                    }
+                }
+
+                //当前页
+                items.push(this._buildItem('page', currentPage));
+
+
+                /*
+                 * 是否插入隔断
+                 */
+                if (currentPage >= totalPage - lastPagesCount - postposePagesCount) {
+                    for (i = currentPage + 1; i <= totalPage; i++) {
+                        items.push(this._buildItem('page', i));
+                    }
+
+                } else {
+                    for (i = currentPage + 1; i <= currentPage + postposePagesCount; i++) {
+                        items.push(this._buildItem('page', i));
+                    }
+                    items.push(this._buildItem('break', -1));
+                    for (i = totalPage - lastPagesCount + 1; i <= totalPage; i++) {
+                        items.push(this._buildItem('page', i));
+                    }
+                }
+
+
+                if (this.settings.next) {
+                    var next = currentPage < this.settings.totalPage ? currentPage + 1 : this.settings.loop ? 1 : this.settings.totalPage;
+                    items.push(this._buildItem('next', next));
+                }
+
+                if (this.settings.last) {
+                    items.push(this._buildItem('last', this.settings.totalPage));
+                }
+
+                if (this.settings.go) {
+                    items.push(this._buildItem('go', this.settings.totalPage));
+                }
+
+                return items;
+            },
+            _buildItem: function (type, page) {
+                var itemContainer = $('<li></li>'),
+                    itemContent = $('<a></a>'),
+                    itemText = null;
+
+                switch (type) {
+                    case 'page':
+                        itemText = page;
+                        itemContainer.addClass(this.settings.pageClass);
+                        break;
+                    case 'first':
+                        itemText = this.settings.first;
+                        itemContainer.addClass(this.settings.firstClass);
+                        break;
+                    case 'prev':
+                        itemText = this.settings.prev;
+                        itemContainer.addClass(this.settings.prevClass);
+                        break;
+                    case 'next':
+                        itemText = this.settings.next;
+                        itemContainer.addClass(this.settings.nextClass);
+                        break;
+                    case 'last':
+                        itemText = this.settings.last;
+                        itemContainer.addClass(this.settings.lastClass);
+                        break;
+                    case 'break':
+                        itemText = this.settings.breakText;
+                        itemContainer.addClass(this.settings.breakClass);
+                        break;
+                    case 'go':
+                        itemText = this.settings.go;
+                        itemContainer.addClass(this.settings.goClass);
+                        break;
+                    default:
+                        break;
+                }
+
+
+                itemContainer.data('page', page);
+                itemContainer.data('page-type', type);
+                if (type == 'go') {
+                    itemContainer.append('<div class="form-inline"><input type="text" class="form-control" name="page"/><a href="javascript:void(0);" class="btn btn-go-page">' + itemText + '</a> </div>');
+                } else {
+                    itemContainer.append(itemContent.attr('href', this._makeHref(page)).html(itemText));
+                }
+                return itemContainer;
+            },
+            /**
+             * 构造href 链接
+             * @param p
+             * @returns {*}
+             * @private
+             */
+            _makeHref: function (p) {
+                return p < 1 || !this.settings.href ?
+                    "javascript:void(0);" :
+                    this.settings.href.replace(this.settings.hrefVariable, p);
+            },
+            /**
+             * 销毁
+             * @returns {Pagination}
+             */
+            destroy: function () {
+                this.$element.empty();
+                this.$element.removeData('pagination');
+                this.$element.off();
+                return this;
+            }
+        });
+
+        /**
+         *
+         * @param options
+         * @returns {*}
+         */
+        $.fn.pagination = function (options) {
+            return this.each(function () {
+                if (undefined == $(this).data('pagination')) {
+                    $(this).data('pagination', new Pagination(this, options));
+                }
+            });
+        };
+        /**
+         * 处理冲突.
+         * @returns {$.fn.pagination}
+         */
+        $.fn.pagination.noConflict = function () {
+            $.fn.pagination = old;
+            return this;
+        };
+    })(jQuery, window, document);

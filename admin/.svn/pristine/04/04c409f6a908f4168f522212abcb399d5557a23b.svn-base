@@ -1,0 +1,72 @@
+<?php
+namespace Admin\Modules\Assets;
+
+use Libs\Util\Format;
+use Admin\Modules\Common\BaseModule;
+use Admin\Package\Common\Response;
+use Admin\Package\Assets\AssetsSupply;
+/**
+ *  AjaxUpdateAdd
+ * hongzhou@meilishuo.com
+ * 2015-09-25
+ */
+class AjaxUpdateAddSupply extends BaseModule {
+
+
+    protected $params = array();
+    protected $errors = array();
+    public static $VIEW_SWITCH_JSON = TRUE;
+
+    public function run(){
+        $this->_init();
+        if(empty( $this->params['id'] )){
+            //添加
+            $result = AssetsSupply::getInstance()->createAssetsSupply($this->params );
+        }else{
+            if($this->params['status']===0 ){//逻辑删除
+                $child =array();
+                $child['pid'] = $this->params['id'];
+                $child = AssetsSupply::getInstance()->getAssetsSupply($child);
+                if(!empty($child)){
+                    return    $this->app->response->setBody(Response::gen_error(50001,'他还是个父亲，先去掉孩子试试','父爱如山，孩子怎么办'));
+                }
+            }
+            //更新
+            $result = AssetsSupply::getInstance()->updateAssetsSupply($this->params );
+        }
+
+        if ($result === FALSE) {
+            $return = Response::gen_error(50001);
+        }else{
+            $return = Response::gen_success('操作成功');
+        }
+
+        $this->app->response->setBody($return);
+    }
+
+    public function _init(){
+        $this->rules = array(
+            'pid' => array(
+                'type' => 'integer'
+            ),
+            'name' => array(
+                'type' => 'string',
+            ),
+            'type' => array(
+                'type' => 'integer',
+                'enum'=>array(1,2,3,4)
+            ),
+            'memo' => array(
+                'type' => 'string',
+            ),
+            'status' => array(      //1新建2待接收3处理中4完成5驳回6失效
+                'type'	=> 'integer',
+                 'default'=>1,
+            ),
+        );
+        $this->params = $this->post()->safe();
+        $this->errors = $this->post()->getErrors();
+    }
+
+
+}

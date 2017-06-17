@@ -1,0 +1,34 @@
+<div class="mail-wrapper">
+    <div class="title">
+        <p>Hi! {{receive_name}}：</p>
+        <h3>{{order_explains}}</h3>
+    </div>
+
+    <div class="section">
+        <ul class="introduce">
+            <li>
+                <span class="tt">申请类型</span>
+                <span class="ct">{{order_type}}</span>
+            </li>
+
+            {if !empty($leave_memo) }
+            <li>
+                <span class="tt">申请理由</span>
+                <span class="ct">{{leave_memo}}</span>
+            </li>
+            {/if}
+
+            <li>
+                <span class="tt">申请编号</span>
+                <span class="ct">{{order_id}}</span>
+            </li>
+
+            {if !empty($receive_place) }
+            <li>
+                <span class="tt">领取地点</span>
+                <span class="ct">{{receive_place}}</span>
+            </li>
+            {/if}
+        </ul>
+    </div>
+</div>

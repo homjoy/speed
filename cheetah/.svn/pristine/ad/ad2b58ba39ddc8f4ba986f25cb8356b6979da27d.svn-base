@@ -1,0 +1,108 @@
+<%#head.html%>
+<div id="container" class="effect mainnav-lg">
+    <%#navbar.html%>
+    <div class="boxed">
+        <div id="content-container">
+            <div id="page-content">
+                <div class="panel panel-nav">
+                    <div class="panel-heading">
+                        <ul class="nav nav-tabs slope ul-template-container" data-tpl="slope-tab-tpl" data-name="借款" data-json="<%==JSON.stringify(this.userInfo.label.my_manage)%>">
+                        </ul>
+                        <%#partial/slope_tab.html%>
+                    </div>
+                    <div class="panel-body">
+                        <div id="slope-home" class="loan-approval">
+                            <div class="row search-head"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <%#sidebar.html%>
+    </div>
+    <%#footer.html%>
+</div>
+
+<script type="text/html" id="left-table">
+    <table class="table">
+        <tr>
+            <th></th>
+            <th class="hidden-narrow">申请人</th>
+            <th class="hidden-narrow">单据编号</th>
+            <th>预算项目</th>
+            <th class="hidden-narrow">申请日期</th>
+            <th>借款金额(￥)</th>
+            <th class="hidden-narrow">申请部门</th>
+            <th class="hidden-narrow">审批状态</th>
+        </tr>
+        {{each data as info}}
+        <tr class="show-info tr-{{info.approveState}}"  data-id="{{info.billId}}" data-type="{{info.billType}}" dbl-open="/reimburse/loan/view?id={{info.billId}}">
+            <td>
+                {{if info.approveState == '3' }}
+                <input type="checkbox" data-task_id="{{info.taskid}}" data-id="{{info.billId}}" value="{{info.billId}}"/>
+                {{else}}
+                <i class="icon icon-{{info.approveState}}"></i>
+                {{/if}}
+            </td>
+            <td class="hidden-narrow">{{info.applyPersonName}}</td>
+            <td class="hidden-narrow">{{info.billNo}}</td>
+            <td>
+                <div class="name-limited">{{info.budgetItemName}}</div>
+                <div class="hidden-fat bottom-word">
+                    <span>{{info.applyDate}}</span>
+                    <span>{{info.applyPersonName}}</span>
+                </div>
+            </td>
+            <td class="hidden-narrow">{{info.applyDate}}</td>
+
+            <td>
+                <div>{{info.applyAmount | currencyFormat }}</div>
+                <div class="hidden-fat bottom-word">{{info.applyDeptName}}</div>
+            </td>
+            <td class="hidden-narrow">{{info.applyDeptName}}</td>
+            <td class="hidden-narrow">{{info.approveprogress}}</td>
+        </tr>
+        {{/each}}
+    </table>
+</script>
+
+<%#reimburse/loan/detail.tpl.html %>
+<%#partial/approval_history_timeline.html %>
+<%#reimburse/loan/reversehistory.html %>
+
+<script type="text/html" id="right-show">
+    <div class="panel-heading ">
+        <span>申请详情</span>
+        {{if LoanRequestBill.billApproveState == 3}}
+        <a href="javascript:void(0);" data-id="{{LoanRequestBill.billId}}" class="btn btn-xs btn-danger single list-reject">驳回</a>
+        <a href="javascript:void(0);" data-id="{{LoanRequestBill.billId}}" class="btn btn-xs btn-success single list-agree">付款确认</a>
+        {{else}}
+        <a href="javascript:void(0);" data-id="{{LoanRequestBill.billId}}" class="btn btn-xs btn-warning single list-reverse">还款</a>
+<!--
+        <a href="javascript:void(0);" data-id="{{LoanRequestBill.billId}}" class="btn btn-xs btn-danger single list-reminder">催还</a>
+-->
+        {{/if}}
+    </div>
+    <div class="panel-body">
+        <div class="info-head">
+            <form id="checkform">
+                {{ include 'loan-table-tpl'}}
+            </form>
+        </div>
+        <div class="info-body">
+            <hr class="line-horizontal"/>
+            <a href="javascript:void(0);" class="approval-history-fms history-icon active" data-cpb-id="{{listAppHis.cpbId}}">审批记录</a>
+            <a href="javascript:void(0);" class="application-history-fms history-icon reverse" data-cpb-id="{{listAppHis.cpbId}}">冲账记录</a>
+            {{include 'approval-history-timeline'}}
+            {{include 'reversehistory'}}
+
+        </div>
+    </div>
+</script>
+
+
+<%! $_ENGINE_SELF.callFn( "useModule")( "<<<_use:
+        fml.use('fms/my/manage/loan');
+_use:", this._JSstack , this._JSmods); %>
+
+<%#foot.html%>

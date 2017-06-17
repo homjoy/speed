@@ -1,0 +1,55 @@
+<%#head.html%>
+<img class="login-bg" src="<%= this.PICTURE_URL  %>img/family/login/bg.png">
+<div class="card-container login">
+
+	<!--<div class="container-bd">-->
+	<div class="card card-login animated flipInX active">
+				<span class="card-tittle">
+				FAMILY
+				</span>
+		<form class="form-horizontal">
+			<div class="form-group">
+				<div class="input-row"><div class="error-message"></div></div>
+			</div>
+			<div class="form-group">
+				<label  class="col-lg-2 col-sm-2 col-xs-2 control-label">用户名</label>
+				<div class="col-lg-4 col-sm-4 col-xs-4 pad-noright">
+					<input type="text" id="username" name="username" class="form-control" placeholder="公司邮箱前缀" autofocus>
+				</div>
+				<div class="col-lg-6 col-sm-6 col-xs-6 pad-noleft">
+					<select name="" id="company-email">
+						<option value="1">@meilishuo.com</option>
+						<option value="2">@mogujie.com</option>
+					</select>
+				</div>
+			</div>
+			<div class="form-group">
+				<label  class="col-lg-2 col-sm-2 col-xs-2 control-label">密码</label>
+				<div class="col-lg-10 col-sm-10 col-xs-10">
+					<input type="password" id="password" name="password" class="form-control" placeholder="公司邮箱密码" autocomplete="off">
+
+				</div>
+
+			</div>
+			<!--<div class="input-row addon-user hide">-->
+			<!--<lable>用户名</lable>-->
+			<!--<input type="text" id="username" name="username" class="form-control" placeholder="公司邮箱前缀" autofocus>-->
+			<!--</div>-->
+			<!--<div class="input-row addon-lock">-->
+			<!--<lable>密码</lable>-->
+			<!--<input type="password" id="password" name="password" class="form-control" placeholder="邮箱密码" autocomplete="off">-->
+			<!--</div>-->
+
+			<div class="text-center">
+				<a class="hide familypost" href="<%= this.FAMILYPOST %>"></a>
+				<button type="button" class="btn btn-sign-in">登录</button>
+			</div>
+		</form>
+	</div>
+	<!--</div>-->
+</div>
+</img>
+<%! $_ENGINE_SELF.callFn("useModule")("<<<_use:
+		fml.use('speed/user/login');
+_use:", this._JSstack , this._JSmods); %>
+<%#foot.html%>

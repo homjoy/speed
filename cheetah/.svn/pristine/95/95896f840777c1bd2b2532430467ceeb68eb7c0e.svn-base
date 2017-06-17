@@ -1,0 +1,547 @@
+fml.define('component/upload', ['jquery'], function (require, exports) {
+    "use strict";
+    var jQuery = require('jquery');
+
+
+    (function ($, window, document, undefined) {
+
+        /**
+         * XHR 对象
+         * @param options
+         * @constructor
+         */
+        function XHR(options) {
+            this.options = options;
+        }
+
+        XHR.prototype = {
+            send: function (data) {
+                var self = this,
+                    options = self.options,
+                    xhr = new XMLHttpRequest(),
+                    _timer,
+                    url = options.url;
+
+                //如果不加cache
+                if (!options.cache) {
+                    url += (~url.indexOf('?') ? '&' : '?') + (new Date().getTime()) + Math.random();
+                }
+
+                //处理事件
+                xhr.onreadystatechange = function () {
+                    //请求未完成
+                    if (xhr.readyState != 4) {
+                        return;
+                    }
+
+                    //清空事件处理及超时检测
+                    xhr.onreadystatechange = null;
+                    _timer && window.clearTimeout(_timer);
+
+                    //检测状态码
+                    if (xhr.status !== 200) {
+                        return options.error && options.error("上传错误.", options.identify, xhr);
+                    }
+
+                    //解析响应
+                    try {
+                        var json = $.parseJSON(xhr.response);
+                        return options.success && options.success(json, options.identify);
+                    } catch (err) {
+                        return options.error && options.error(err, options.identify, xhr);
+                    }
+                };
+
+                //处理上传进度
+                if (options.progress) {
+                    xhr.upload.addEventListener('progress', function (e) {
+                        //百分比保留两位小数
+                        options.progress((e.loaded / e.total * 100).toFixed(2), options.identify, xhr);
+                    }, false);
+                }
+
+                //异步发送请求
+                xhr.open('POST', url, true);
+                //处理额外的HTTP 头.
+                if (options.headers) {
+                    for (var name in options.headers) {
+                        xhr.setRequestHeader(name, options.headers[name]);
+                    }
+                }
+
+                if (options.timeout) {
+                    _timer = window.setTimeout(function () {
+                        //停止上传
+                        if (xhr) {
+                            xhr.abort();
+                            xhr.onreadystatechange = null;
+                        }
+
+                        _timer && window.clearTimeout(_timer);
+
+                        options.error && options.error("上传超时.", options.identify, xhr);
+                    }, options.timeout);
+                }
+
+                //发送数据
+                xhr.send(data);
+            }
+        };
+
+
+        // 默认配置
+        var defaults = {
+            name: "", //上传文件的字段名字
+            action: "", //上传路径
+            crossDomain: false, //是否是跨域请求
+            backUri: null, //配合crossDomain使用
+            multiple: false, //是否允许多文件上传
+            headers: {}, //需要添加的HTTP 头
+            data: {}, //需要额外提交的数据
+            timeout: 0,//超时时间
+            allowTypes: null, //允许的文件类型 TODO 实现文件类型检测
+            maxFileCount: 0, //允许同时上传的最大文件数
+            maxFileSize: 0, //允许上传的最大文件大小 0为不限制 TODO 增加文件大小检测
+            initFiles: [], //初始化的文件列表：必须是{"identify":"文件标识","name":"文件名","type":"文件类型jpg"}的对象数组
+            message: {
+                allowTypeTips: "仅支持JPG,PDF格式.",
+                statusText: {
+                    uploading: '上传中...',
+                    success: '上传成功!',
+                    error: '上传失败!',
+                    timeout: '上传超时'
+                }
+            },
+            onSuccess: $.noop,
+            onError: $.noop,
+            onProgress: $.noop,
+            onFileRemove: $.noop
+        };
+
+        /**
+         * 构造函数
+         * @param element
+         * @param options
+         * @constructor
+         */
+        function QueenUpload(element, options) {
+            this.element = element;
+            this.$element = $(element);
+            this.options = $.extend(true, {}, defaults, options);
+            //是否支持HTML5的 input 的 files 属性
+            var isSupportFiles = document.createElement("input").files === null || "files" in document.createElement("input");
+
+            // 是否支持HTML5的 FormData 对象
+            this.supportH5 = isSupportFiles && !!window.FormData && window.XMLHttpRequest !== undefined;
+
+            //如果是跨域的，不使用AJAX 的方式.
+            if (this.options.crossDomain) {
+                this.supportH5 = false;
+            }
+
+            this.files = {};
+            this._init();
+        }
+
+        /**
+         *
+         */
+        QueenUpload.prototype = {
+            version: '1.0',
+            uniqueId: function (prefix) {
+                var uid = ((new Date().getTime()) + '' + Math.random() ).replace('.', '');
+                return prefix ? prefix + uid : uid;
+            },
+            _init: function () {
+                var upload = this;
+                //生成控件指定的html 结构.
+                upload.render();
+
+                //伪装 Input输入框.
+                upload.wrapInput();
+
+                //绑定具体的实现
+                //优先使用H5的特性.
+                if (upload.supportH5) {
+                    upload.bindHTML5();
+                } else {
+                    //禁用多文件上传.
+                    upload.options.multiple = false;
+                    upload.bindIFrame();
+                }
+
+
+                /**
+                 * 处理删除附件.
+                 */
+                upload.$container.on('click', '.queen-remove-file', function (e) {
+                    e.preventDefault();
+                    var item = $(this).closest('.queen-file-item');
+                    var identify = item.attr('data-identify');
+                    if (!item.length || !identify) {
+                        return;
+                    }
+
+                    //从附件列表里面删除.
+                    item.remove();
+                    var file = upload.files[identify];
+
+                    if ($.isFunction(upload.options.onFileRemove)) {
+                        upload.options.onFileRemove.call(upload, file);
+                    }
+                    //删除对应的文件.
+                    delete upload.files[identify];
+                });
+            },
+            bindHTML5: function () {
+                var upload = this;
+                //绑定输入框的文件选择
+                upload.$container.on("change", 'input[type=file]', function (e) {
+                    var self = $(this),
+                        files = this.files,
+                        name = self.attr('name');
+
+                    if (!files.length) {
+                        return;
+                    }
+
+                    if (upload.options.maxFileCount && files.length > upload.options.maxFileCount) {
+                        return upload._error("每次最多上传" + upload.options.maxFileCount + "张图片,请重新选择");
+                    }
+
+                    //更新上传文件列表.
+                    var formData, xhr, file;
+                    for (var i = 0, len = files.length; i < len; i++) {
+                        formData = upload.getFormData();
+                        formData.append(name, files[i]);
+
+                        //显示到文件列表
+                        file = upload.getFileInfo(files[i]);
+                        upload.appendFile(file);
+
+                        //上传
+                        xhr = new XHR({
+                            identify: file.identify,
+                            url: upload.options.action,
+                            headers: upload.options.headers,
+                            timeout: upload.options.timeout,
+                            success: upload._success.bind(upload),
+                            error: upload._error.bind(upload),
+                            progress: upload._progress.bind(upload)
+                        });
+                        xhr.send(formData);
+                    }
+
+                    //清空内容
+                    self.val('');
+                });
+            },
+            bindIFrame: function () {
+                var upload = this;
+                this.$container.on("change", 'input[type=file]', function (e) {
+                    //生成 iframe 的唯一id
+                    var uniqueId = upload.uniqueId('queen-iframe-');
+                    var iframe = $('<iframe id="' + uniqueId + '" name="' + uniqueId + '"></iframe>').hide().appendTo('body'),
+                        form = null,
+                        _timer = null,
+                        _callbackName = 'callback_' + uniqueId,
+                        crossDomainData = '', /**/file;
+
+                    //获取选择的文件信息
+                    file = upload.getFileInfo($(this).val());
+                    //显示到文件列表
+                    upload.appendFile(file);
+
+
+                    var done = function () {
+                        if (_timer) {
+                            window.clearTimeout(_timer);
+                        }
+                        iframe.remove();
+                        form && form.remove();
+                    };
+
+                    if (upload.options.timeout) {
+                        _timer = window.setTimeout(function () {
+                            upload._error("上传超时.", file.identify);
+                        }, upload.options.timeout);
+                    }
+
+                    //如果是跨域上传.
+                    if (upload.options.crossDomain) {
+                        window[_callbackName] = function (ret) {
+                            try {
+                                var json = $.parseJSON(ret);
+                                upload._success(json, file.identify);
+                            } catch (error) {
+                                upload._error(error, file.identify);
+                            }
+                        };
+
+                        crossDomainData = "__callback=" + _callbackName + "&backuri=" + upload.options.backUri + "&backname=data"
+                        if (upload.options.url.indexOf('?') > 0) {
+                            crossDomainData = '&' + crossDomainData
+                        } else {
+                            crossDomainData = '?' + crossDomainData
+                        }
+                    } else {
+                        //处理返回值
+                        iframe.bind('load', function () {
+                            var content = this.contentWindow.window.document.body;
+                            var ret = content && (content.innerText || content.textContent || content.innerHTML);
+
+                            try {
+                                var json = $.parseJSON(ret);
+                                upload._success(json, file.identify);
+                                done();
+                            } catch (error) {
+                                upload._error(error, file.identify);
+                            }
+                        });
+                    }
+
+
+                    //处理额外的数据.
+                    var html = '';
+                    if (upload.options.data) {
+                        for (var name in upload.options.data) {
+                            html += '<input type="hidden" name="' + name + '" value="' + upload.options.data[name] + '" />'
+                        }
+                    }
+
+                    form = $('<form method="post" enctype="multipart/form-data"></form>')
+                        .attr("action", upload.options.action + crossDomainData)
+                        .attr("target", uniqueId)
+                        .append(html)
+                        .append(this) //包括文件输入框
+                        .css({position: 'relative'})
+                        .hide()
+                        .appendTo("body")
+                        .submit();
+
+                    //文件输入框没有了，需要再次模拟.
+                    upload.wrapInput();
+                });
+            },
+            getFormData: function () {
+                var upload = this;
+                var form = new FormData();
+
+                //整合额外的数据.
+                if (upload.options.data) {
+                    for (var name in upload.options.data) {
+                        form.append(name, upload.options.data[name]);
+                    }
+                }
+                return form;
+            },
+            //确保控件HTML 结构.
+            render: function () {
+                var upload = this;
+                //是否是文件输入框.
+                var isFileInput = upload.$element.prop('tagName') === 'INPUT' && upload.$element.attr('type') === 'file';
+                if (isFileInput) {
+                    //处理文件输入框.
+                    upload.originElement = upload.$element;
+                    upload.$element.hide();
+
+                    upload.$element = $('<a class="btn-queen-upload" href="javascript:void(0)">点击上传</a>')
+                        .insertAfter(upload.originElement);
+                }
+
+                //直接绑定的上传按钮
+                //
+                //如果已经提供了规范化的html格式.
+                if (!upload.$element.closest('.queen-upload-container').length) {
+                    upload.$container = upload.$element.wrap('<div class="queen-upload-container"><div class="queen-upload-control"></div><div class="queen-uploaded-files"></div></div>');
+                    upload.$element.css({
+                        position: 'relative',
+                        overflow: 'hidden'
+                    });
+
+                    if (upload.options.message.allowTypeTips) {
+                        upload.$element.after('<span class="queen-upload-tips">' + upload.options.message.allowTypeTips + '</span>');
+                    }
+                }
+
+                //那么容器直接获取.
+                upload.$container = upload.$element.closest('.queen-upload-container');
+
+
+                //初始化文件列表
+                if (upload.options.initFiles && upload.options.initFiles.length) {
+                    $.each(upload.options.initFiles, function (index, file) {
+                        //没有提供标识或者文件名
+                        if (!file.identify || !file.name) {
+                            return;
+                        }
+                        upload.appendFile(file, 'success');
+                    });
+                }
+            },
+
+            //处理模拟的文件输入框.
+            wrapInput: function () {
+                var self = this;
+                if (self.$element.find('input[type=file]').length > 0) {
+                    return;
+                }
+
+                var name = self.options.name || self.$element.attr('name') || 'file';
+                var mockInput = $('<input type="file" style="font-size:100px !important;" name="' + name + '" ' + (self.options.multiple ? 'multiple' : '') + ' />')
+                    .css({
+                        'position': 'absolute',
+                        'left': 0,
+                        'top': 0,
+                        'cursor': 'pointer',
+                        'opacity': 0,
+                        'width': self.$element.outerWidth()
+                    });
+
+                //放一个模拟输入框.
+                self.$element.append(mockInput);
+            },
+            _success: function (json, identify, xhr) {
+                var upload = this;
+                upload.files[identify].result = json;
+                var file = upload.files[identify];
+                //处理返回值
+                upload._updateStatus(identify, 'success');
+
+                //回调自定义的事件
+                if ($.isFunction(upload.options.onSuccess)) {
+                    upload.options.onSuccess.call(upload, json, file);
+                }
+            },
+            _error: function (message, identify) {
+                var upload = this,
+                    file = upload.files[identify] || null;
+
+                //更新状态
+                this._updateStatus(identify, 'error', message);
+
+                //处理自定义的progress方法
+                if ($.isFunction(upload.options.onError)) {
+                    upload.options.onError.call(upload, message, file);
+                }
+            },
+            //进度控制
+            _progress: function (percent, identify) {
+                var upload = this,
+                    file = upload.files[identify] || null;
+
+                //处理自定义的progress方法
+                if ($.isFunction(upload.options.onProgress)) {
+                    upload.options.onProgress.call(upload, percent, file);
+                }
+            },
+            //更新上传状态
+            _updateStatus: function (identify, status, message) {
+                var item = this.$container.find('[data-identify=' + identify + ']');
+                if (!identify || !item.length) {
+                    return;
+                }
+                if (!message) {
+                    message = this.options.message.statusText[status] || 'error.';
+                }
+                item.find('.queen-message')
+                    .text(message)
+                    .removeClass('uploading success error').addClass(status);
+            },
+
+            /**
+             * 依次调用test回调进行检查过滤.
+             * @param files
+             * @param testFn
+             * @returns {Array}
+             */
+            filter: function (files, testFn) {
+                var result = [], i = 0, len = files.length, value;
+
+                for (; i < len; i++) {
+                    value = files[i];
+                    if (testFn.call(value, value, i, files)) {
+                        result.push(value);
+                    }
+                }
+
+                return result;
+            },
+            //获取上传的文件列表
+            getFiles: function (input) {
+                var upload = this;
+                var files = [];
+
+                if (input.files) {
+                    $.each(input.files, function (index, value) {
+                        files.push(upload.getFileInfo(value));
+                    });
+                } else {
+                    files.push(this.getFileInfo(input));
+                }
+                return files;
+            },
+            getFileInfo: function (value) {
+                if (value instanceof window.File) {
+                    return {
+                        identify: this.uniqueId('queen-file-'),
+                        name: value.name,
+                        type: value.type,
+                        size: value.size
+                    }
+                } else if (typeof value == 'string') {
+                    //不支持this.files
+                    var file = {
+                        identify: this.uniqueId('queen-file-')
+                    };
+                    //转换文件类型
+                    file.name = (value + '').split(/\\|\//g).pop();
+                    file.type = file.name.split('.').pop();
+                    file.size = 0;
+                    return file;
+                }
+            },
+            appendFile: function (file, status) {
+                var upload = this,
+                    item;
+                //保存到文件列表
+                upload.files[file.identify] = file;
+                status = status || 'uploading';
+
+
+                item = $('<div class="queen-file-item">' +
+                    '<i class="queen-attachment"></i>' +
+                    '<span class="queen-filename"></span>' +
+                    '<a href="javascript:void(0)" class="queen-remove-file"><i></i></a>' +
+                    '<span class="queen-message"></span></div>')
+                    .attr('data-identify', file.identify);
+
+                //设置文件名.
+                item.find('.queen-filename').text(file.name);
+                //放入列表
+                upload.$container.find('.queen-uploaded-files').append(item);
+                //初始状态
+                upload._updateStatus(file.identify, status);
+            },
+            destroy: function () {
+                var upload = this;
+                //如果是文件上传框，还原
+                if (upload.originElement) {
+                    upload.originElement.show();
+                    upload.$container.remove();
+                }
+
+            }
+        };
+
+        $.fn.QueenUpload = function (options) {
+            return this.each(function () {
+                if (undefined === $(this).data("QueenUpload")) {
+                    $(this).data("QueenUpload", new QueenUpload(this, options));
+                }
+            })
+        };
+
+
+    })(jQuery, window, document);
+});

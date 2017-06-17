@@ -1,0 +1,17 @@
+/*=====================我的审批*/
+.btn-group button{
+    margin-right:20px;
+}
+.tab-content {
+    margin-top:20px;
+}
+.table>thead>tr>th{
+    text-align: center;
+}
+.table>tbody>tr>td{
+    vertical-align: middle !important;
+}
+
+#myApplyTab{
+    margin-top:15px;
+}

@@ -1,0 +1,33 @@
+function setcookie(name,value){  
+	var Days = 7;  
+	var exp  = new Date();  
+	exp.setTime(exp.getTime() + Days*24*60*60*1000);  
+	document.cookie = name + "="+ escape (value) + ";expires=" + exp.toGMTString();
+}
+$('.signIn').on('click',function(){
+	if($('.userName').val().replace(/(^\s*)|(\s*$)/g, "")!="" && $('.passWord').val().replace(/(^\s*)|(\s*$)/g, "")!=""){
+		$.post('/aj/login/users', {
+	 		"username" : $('.userName').val(),
+	 		"password" : $('.passWord').val()
+	 	}, function(res){
+	 		console.log(res);
+			if(res.code !=200){
+				alert(res.msg);
+			}else{
+			    setcookie("speed_token", res.speed_token);  
+				self.location = '/home';
+			}
+		}, 'json');
+	}else{
+		alert("用户名和密码不能为空");
+
+	}
+});
+$('.userName').on('blur',function(){
+	if ($(this).val().replace(/(^\s*)|(\s*$)/g, "")=="")
+		alert("username is blank");
+});
+$('.passWord').on('blur',function(){
+	if ($(this).val().replace(/(^\s*)|(\s*$)/g, "")=="")
+		alert("password is blank");
+});

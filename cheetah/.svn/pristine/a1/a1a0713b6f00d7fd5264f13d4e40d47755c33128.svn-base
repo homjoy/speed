@@ -1,0 +1,41 @@
+<header id="navbar">
+    <div id="navbar-container" class="boxed">
+        <div class="navbar-header-notrans">
+            <a href="/home" class="logo">
+                <div class="brand-title">
+                    <span class="brand-text">财务中心</span>
+                </div>
+            </a>
+        </div>
+        <div class="navbar-content clearfix">
+            <ul class="nav navbar-top-links pull-right">
+                <li id="dropdown-user" class="dropdown">
+                    <a href="#" data-toggle="dropdown" class="dropdown-toggle text-right">
+                        <% if(this.userInfo.rcode==200){%>
+                        <span class="pull-right">
+                            <img class="img-circle img-user media-object" src="<%= this.userInfo.data.avatar_small || (this.PICTURE_URL+'img/fms/avatar.png')%>" alt="头像">
+                        </span>
+                        <div class="username hidden-xs">
+                            <%= this.userInfo.data.nameCn%>
+                        </div>
+                        <%}%>
+                    </a>
+                    <div class="dropdown-menu dropdown-menu-xs dropdown-menu-right with-arrow panel-default">
+                        <ul class="head-list">
+                            <li>
+                                <a href="<%=this.domain.speed%>/user" target="speed">
+                                    <i class="fa fa-user fa-fw fa-lg"></i>个人资料
+                                </a>
+                            </li>
+                            <li>
+                                <a href="/user/logout/">
+                                    <i class="fa fa-sign-out fa-fw fa-lg"></i> 退出登录
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </li>
+            </ul>
+        </div>
+    </div>
+</header>

@@ -1,0 +1,16 @@
+<?php
+
+namespace WorkFlowAtom\Config\Web;
+
+//require_once '/home/work/conf/api/MySQLConfigApi.php';
+
+class MySQL extends \Frame\Config {
+
+    const MYSQL_KEY = 'speed';
+
+    public function config() {
+        return \MySQLConfigApi::GetCfgByServKey(self::MYSQL_KEY);
+    }
+
+}
+

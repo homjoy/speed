@@ -1,0 +1,87 @@
+<%#head.html%>
+<div id="container" class="effect mainnav-lg">
+    <%#navbar.html%>
+    <div class="boxed">
+        <div id="content-container">
+            <div id="page-content">
+                <div class="panel">
+                    <div class="panel-body">
+                        <ul class="nav nav-tabs slope" role="tablist">
+                            <li role="presentation"><a href="/my/apply/contract">合同</a></li>
+                            <li role="presentation" class="active"><a href="javascript:void(0);">付款</a></li>
+                            <!--<li role="presentation"><a href="javascript:void(0);">预算</a></li>-->
+                        </ul>
+                        <div class="tab-content">
+                            <div role="tabpanel" class="tab-pane active" id="slope-home">
+
+
+                                <div class="row search-head" style="text-align: center;">
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <%#sidebar.html%>
+    </div>
+    <%#footer.html%>
+</div>
+
+
+
+<script type="text/html" id="left-table">
+    <table class="table">
+        <tr>
+            <th></th>
+            <th class="hidden-narrow">单据编号</th>
+            <th>收款单位</th>
+            <th>金额</th>
+            <th class="hidden-narrow">状态</th>
+            <th class="hidden-narrow">日期</th>
+        </tr>
+        {{each data as info}}
+        <tr class="show-info tr-{{info.status_eng}}" data-cpb-id="{{info.cpbId}}" dbl-open="/pay/view/?cpbId={{info.cpbId}}">
+            <td>
+                {{if info.cpbApprovalState == '审批中' }}
+                <input type="checkbox" data-task_id="{{info.taskid}}" data-cpb-id="{{info.cpbId}}" value="{{info.cpbId}}"/>
+                {{/if}}
+            </td>
+            <td class="hidden-narrow">{{info.cpbPayRequestCode}}</td>
+            <td>
+                <div>{{info.cpbCustomerCompany}}</div>
+                <div class="hidden-fat text-muted"><span>{{info.cpbApplyTime}}</span></div>
+            </td>
+            <td>
+                <div>{{info.cpbMoney | currencyFormat}}</div>
+                <div class="hidden-fat text-muted approvalState"><span>{{info.cpbApprovalProcess}}</span></div>
+            </td>
+            <td class="hidden-narrow text-muted approvalState"><span>{{info.cpbApprovalProcess}}</span></td>
+            <td class="hidden-narrow text-muted">{{info.cpbApplyTime}}</td>
+        </tr>
+        {{/each}}
+    </table>
+</script>
+
+<%#my/apply/payDetail.tpl.html %>
+<script type="text/html" id="right-show">
+    <div class="panel-heading ">
+        <span>申请详情</span>
+        {{if contractPay.cpbApprovalState == 2 }}
+        <a href="javascript:void(0);" data-cpb-id="{{contractPay.cpbId}}" data-task_id="{{taskid}}" class="btn btn-danger single list-undo">撤销</a>
+        <a href="javascript:void(0);" data-cpb-id="{{contractPay.cpbId}}" data-task_id="{{taskid}}" class="btn btn-warning single list-pushon">催审</a>
+        {{else if canModifyFlag == 1}}
+        <a href="/pay/edit/?cpbId={{contractPay.cpbId}}" target="_blank" class="btn btn-success">修改</a>
+        {{/if}}
+    </div>
+    {{ include 'payDetail'}}
+</script>
+
+
+
+
+<%! $_ENGINE_SELF.callFn( "useModule")( "<<<_use:
+        fml.use('fms/my/apply/pay');
+_use:", this._JSstack , this._JSmods); %>
+<%#foot.html%>

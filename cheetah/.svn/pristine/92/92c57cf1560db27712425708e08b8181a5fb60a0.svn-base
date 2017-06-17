@@ -1,0 +1,46 @@
+.size(@width: 20px ,@height: 20px) {
+  width: @width;
+  height: @height;
+}
+
+.icon() {
+  display: inline-block;
+  background: transparent;
+  .size(16px, 16px);
+}
+
+.icon-nav() {
+  .size(32px, 27px);
+  color: #fff;
+}
+
+.icon-favorite() {
+  color: #ff6799;
+  .size(49px, 49px);
+}
+
+.icon-device() {
+  .size(28px, 20px);
+  background: transparent;
+  color: #c4c4c4;
+}
+
+.icon-16() {
+  .size(16px, 16px);
+}
+
+.icon-20() {
+  .size(20px, 20px);
+}
+
+.icon-21() {
+  .size(21px, 21px);
+}
+
+.icon-24() {
+  .size(24px, 24px);
+}
+
+.icon-28() {
+  .size(28px, 28px);
+}

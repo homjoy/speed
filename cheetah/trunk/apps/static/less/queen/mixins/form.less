@@ -1,0 +1,26 @@
+.form-control{
+  border-color: #e9e9e9;
+  box-shadow: none;
+
+  &:focus {
+    outline:0;
+    border: 1px solid  #e9e9e9;
+    box-shadow:none;
+    //box-shadow: inset 0 1px 1px pink, 0 0 8px pink;
+  }
+}
+
+.form-group{
+  &.has-error{
+    .form-control{
+      border-color: #f56245;
+    }
+  }
+
+
+  &.has-success{
+    .form-control{
+      border-color: #8abe2e;
+    }
+  }
+}

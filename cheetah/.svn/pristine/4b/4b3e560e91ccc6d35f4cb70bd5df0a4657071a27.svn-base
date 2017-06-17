@@ -1,0 +1,133 @@
+/*/*=====================合同申请单*/
+#startTime,#endTime {
+    height: 31px;
+    border: 1px solid #e9e9e9;
+}
+.ow1{
+    width:180px;
+    display: inline-block;
+}
+.supply-hide {
+    display: none;
+}
+
+.dis-ctrl label {
+    color:#DA8B8B;
+}
+
+#content-container select {
+    height: 30px;
+}
+
+.offset-label {
+    margin-left: -33px;
+    margin-right: 15px;
+    width: 90px;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+}
+//表格左对齐
+.finance tr>td {
+    text-align: left;
+}
+.finance-table {
+    width: 100%;
+    max-width: 100%;
+    margin-bottom: 20px;
+}
+
+.finance-table tr {
+    height: 40px;
+    min-height: 40px;
+}
+
+
+/*合同修改页文件上传显示控制*/
+.file-up {
+    display: none
+}
+/*自定义合同详情 -view 的table样式*/
+.finance {
+    h3{
+        text-align: center;
+    }
+    min-width: 480px;
+}
+.finance td {
+    width: 150px;
+}
+
+//附件下载
+.download{
+    background-color: #eee;
+    color: #000;
+    &:hover{
+        color:#000;
+    }
+}
+//合同归档
+.table tr>th,.table tr>td {
+    width: 100px;
+    box-sizing:border-box;
+}
+
+.table.text-left{
+    th, td{
+        text-align: left;
+    }
+    td{
+        border-top: 1px solid #dddddd;
+    }
+
+}
+
+
+//合同页脚
+.contract-foot {
+    margin-bottom: 100px;
+}
+
+#page-content{
+    min-width: 960px;
+}
+
+#form-con-apply{
+    .form-group > .col-lg-9{
+        width: 78%;
+    }
+    .control-label{
+        min-width:108px;
+        max-width: 160px;
+    }
+}
+
+.hetong-complete{
+    width:75%;
+}
+
+.text-down{
+    position: relative;
+    top: 8px;
+}
+
+.panel{
+    padding: 46px 0 0 0;
+    .panel-heading{
+        &:after{
+            border-bottom: none;
+        }
+        .panel-title{
+            text-align: center;
+            font-size: 24px;
+            line-height: 24px;
+        }
+    }
+    .panel-footer{
+        background-color: #fff;
+        border-color:#fff;
+    }
+}
+.panel.view{
+    padding:0;
+}
+

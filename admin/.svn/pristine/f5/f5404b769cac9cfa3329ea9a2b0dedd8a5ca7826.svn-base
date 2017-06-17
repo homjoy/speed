@@ -1,0 +1,218 @@
+@extends('layouts.master')
+
+@section('content')
+<link rel="stylesheet" href="/static/css/tokeninput.css">
+<script src="/static/js/tokeninputspeed.js"></script>
+<link rel="stylesheet" href="/static/css/easyTree.css">
+<script src="/static/js/easyTree.js"></script>
+<style type="text/css">
+    .token-input-token,.token-input-input-token{line-height: 23px !important;}
+</style>
+<div class="panel-heading" style="overflow: hidden; line-height: 32px">
+    <ol class="breadcrumb">
+        <li class="active">配置管理</li>
+    </ol>
+   @include('config/Navbar')
+    <div class="container">
+        <div class="from-container">
+            <form id="searchForm" class="form-inline  form-horizontal" role="form" action="/config/config_home"  method="get">
+                <div class="col-lg-6 col-md-6 col-sm-6">
+                    <input type="text" class="form-control" placeholder="路径搜索" id="search" name="father_id" value=""/>
+                </div>
+                <div class="col-lg-2  col-md-2 col-sm-2">
+                    <button  type="submit" class="btn btn-default search_btn"><span class="glyphicon glyphicon-search"></span>路径</button>
+                </div>
+                 <div class="col-lg-2  col-md-2  col-sm-2">
+                    <a type="button" class="btn btn-primary " id="addBtn">添加</a>
+                 </div>
+                 <div class="col-lg-2  col-md-2  col-sm-2">
+                     <a type="button" class="btn btn-primary " id="editBtn">修改</a>
+                </div>
+
+            </form>
+        </div>
+     </div>
+<!--    <div class="easy-tree">-->
+<!--        --><?php
+//        if(empty($data)) {
+//            echo  '<ul><li></li></ul>';
+//        }else{
+//            $dept = $data;
+//            function dept_ul_li($dept) {
+//                $dept_str = '<ul>';
+//                foreach ($dept as $key => $val) {
+//                    @$dept_str .= "<li  class='connectData'  data-id='". $val['id'] ."'data-name='". $val['name'] ."'>" ."<span>".$val['name'].'</span>';
+//                }
+//                $dept_str .= '</li></ul>';
+//                return $dept_str;
+//            }
+//            $ul_li = dept_ul_li($dept);
+//            echo $ul_li;
+//        }
+//        ?>
+<!--    </div>-->
+</div>
+<!-- 添加.编辑模版 -->
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="myModalLabel">添加</h4>
+            </div>
+            <div class="modal-body">
+                <form  id="addUpdateForm" class="form-horizontal">
+                    <div class="form-group">
+                        <label for="id" class="col-sm-2 control-label">ID</label>
+                        <div class="col-sm-10">
+                            <input readonly type="text" class="form-control" data-name="" name ='id' id="id" placeholder="id" >
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="key" class="col-sm-2 control-label">key</label>
+                        <div class="col-sm-10">
+                            <input  type="text" class="form-control" name ='key' id="key" placeholder="key" >
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="" class="col-sm-2 control-label">value</label>
+                        <div class="col-sm-10">
+                            <input  type="text" class="form-control" name ='value' id="value" placeholder="value" >
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="memo" class="col-sm-2 control-label">memo</label>
+                        <div class="col-sm-10">
+                            <input  type="text" class="form-control" name ='memo' id="memo" placeholder="memo" >
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="father_path" class="col-sm-2 control-label">father_path</label>
+                        <div class="col-sm-10">
+                            <input  type="text" class="form-control" name ='father_id' id="father_path" placeholder="father_path" >
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="path" class="col-sm-2 control-label">path</label>
+                        <div class="col-sm-10">
+                            <input  type="text" class="form-control" name ='path' id="path" placeholder="path" >
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                <button type="button" class="btn btn-primary sub_btn" id="subBtn">保存</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- 添加模版 -->
+
+<script type="text/javascript">
+//    (function ($) {
+//        function init() {
+//            $('.easy-tree').EasyTree({
+//                addable: true,
+//                editable: true,
+//                deletable: true,
+//                selectable: false,
+//                speed_show_btn: false,
+//                speed_edit_btn: true,
+//                speed_delete_btn: false
+//            });
+//        }
+//
+//        window.onload = init();
+//    })(jQuery);
+
+//
+//    $('.connectData').on('click',function(){
+//
+//        var _this = $(this)
+//        _this.attr('disabled',true);
+//        var id = _this.attr('data-id');
+//        $.ajax({
+//            url: "/config/ajax_search_config",
+//            method: "GET",
+//            data: {father_id:id},
+//            dataType: "json",
+//            success: function (msg) {
+//               var dept_str = '<ul>';
+//                $.each(msg.data, function(i,val) {
+//                    if( !val.name )val.name='';
+//                    if( !val.id )val.id='';
+//                    dept_str += '<li  class="connectData" data-id='+"'"+val.id+"'";
+//                    dept_str += 'data-name='+"'"+val.name+"'"+'>';
+//                    dept_str += '<span><span class="glyphicon glyphicon-user"></span>&nbsp;<a href="javascript: void(0);">'+val.name+'</a> &nbsp;&nbsp;<button type="submit" class="btn btn-default speed_add_model" data-toggle="modal">添加</button><button type="submit" class="btn btn-default speed_edit_model" data-toggle="modal">编辑</button></span>';
+//
+//                });
+//                dept_str += '</li></ul>';
+//            //把信息填入指定地方
+//                _this.append(dept_str);
+//            }
+//        });
+//    });
+var searchName;
+   $('#search').tokenInput("/config/ajax_search_config",{
+        queryParam:'path' ,tokenLimit: 1,onAdd:function(ret) {
+            $('#search').val(ret['id']);
+          searchName = ret['name'];
+        }
+    });
+   $('#father_path').tokenInput("/config/ajax_search_config",{
+    queryParam:'path' ,tokenLimit: 1,onAdd:function(ret) {
+        $('#father_path').val(ret['id']);
+    }
+});
+//    $('.speed_add_model').click(function(e) {
+//        e.stopPropagation();
+//
+//    });
+    //保存
+    $('#addBtn').click(function() {
+       $('#father_path').tokenInput("clear");
+       $('#father_path').tokenInput("add", {id: $('#search').val() , name:searchName});
+        $('#key').val('');
+        $('#id').val('');
+        $('#value').val('');
+        $('#memo').val('');
+        $('#path').val('');
+       $('#myModal').modal('show');
+    });
+    $('#editBtn').click(function() {
+        $.get('/config/ajax_get_config',{id:$('#search').val()}, function(ret) {
+            if(ret.code==200){
+
+                $.each(ret.data,function(k,v){
+                    $('#father_path').tokenInput("clear");
+                    $('#father_path').tokenInput("add", {id: v['father_id'] , name: v['father_path'] });
+                    $('#key').val(v['key']);
+                    $('#id').val(v['id']);
+                    $('#value').val(v['value']);
+                    $('#memo').val(v['memo']);
+                    $('#path').val(v['path']);
+                });
+            }
+        }, 'json');
+        $('#myModal').modal('show');
+    });
+    $('#subBtn').click(function() {
+        var myForm = $('#addUpdateForm').serializeArray();
+        $.post('/config/ajax_add_update_config',myForm, function(ret) {
+            if (ret.code == 200) {
+                show_message(ret.code,ret);
+            } else {
+                show_message(ret.code,ret);
+            }
+        }, 'json');
+    });
+    //编辑
+//  $('.speed_edit_model').click(function(e) {
+//        e.stopPropagation();
+//
+//    });
+
+
+</script>
+@endsection

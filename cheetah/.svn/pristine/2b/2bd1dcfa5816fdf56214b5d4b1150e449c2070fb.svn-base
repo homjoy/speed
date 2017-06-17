@@ -1,0 +1,12 @@
+.reimburse-approval .hide-td-fat{
+  overflow-x: auto;
+  table{width: 150%;max-width: 150%}
+}
+.loan-approval .hide-td-fat{
+  overflow-x: auto;
+  table{width: 130%;max-width: 150%}
+}
+.reimburse-apply .hide-td-fat{
+  overflow-x: auto;
+  table{width: 130%;max-width: 150%}
+}

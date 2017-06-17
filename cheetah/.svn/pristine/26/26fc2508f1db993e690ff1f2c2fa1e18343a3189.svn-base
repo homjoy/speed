@@ -1,0 +1,35 @@
+function user() {
+	return this;
+}
+var controlFns = {
+	'index' : function(){
+		this.user()
+	}
+	,'user' : function(){
+		var php = {
+			
+		}
+        this.bindDefault(php);
+		this.bridgeMuch(php);
+		this.listenOver(function(data){
+			console.log(this.req.headers.cookie);
+
+			data._CSSLinks = ['left_nav','bootstrap','nifty.min','user/user'];
+			this.render('user/user.html' , data);
+		})
+	}
+	,'user_head' : function(){
+		var php = {
+			
+		}
+        this.bindDefault(php);
+		this.bridgeMuch(php);
+		this.listenOver(function(data){
+			console.log(this.req.headers.cookie);
+
+			data._CSSLinks = ['left_nav','bootstrap','nifty.min','headphoto'];
+			this.render('user/user_head.html' , data);
+		})
+	}
+};
+exports.__create = controller.__create(user, controlFns);

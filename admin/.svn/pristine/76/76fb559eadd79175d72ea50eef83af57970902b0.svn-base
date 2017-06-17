@@ -1,0 +1,114 @@
+<?php
+namespace Admin\Modules\Mail;
+
+use Admin\Modules\Common\BaseModule;
+use Admin\Package\Common\Response;
+use Admin\Package\Mail\MailGroup;
+use Admin\Package\Mail\MailGroupDepartRelation;
+use Libs\Serviceclient\Api;
+use Admin\Package\Department\Department;
+use Admin\Package\Mail\MailGroupDepartRelation as MDRelation;
+
+/**
+ * 获取邮箱的列表直接读取胜男的接口
+ *
+ * @author guojiezhu@meilishuo.com
+ * @since  2016-03-08
+ */
+class MailGroupList extends BaseModule
+{
+
+    protected $errors = null;
+    private $params = null;
+
+
+    public function run()
+    {
+
+        $this->_init();
+
+        //获取当前邮件组关联的
+        if (!empty($this->params['email'])) {
+            $this->params['email'] = trim($this->params['email']);
+            $mail = explode('@', $this->params['email']);
+            $mail = current($mail);
+            $full_mail = $mail . '@meilishuo.com';
+            $query_params = array(
+                'act' => 'GetMemberByGroup',
+                'group_name' => $full_mail
+            );
+            $mail_info = MailGroup::getInstance()->getMailGroupMember($query_params);
+            if (!empty($mail_info) && isset($mail_info['data'])) {
+                $return = Response::gen_success($mail_info['data']);
+            } else {
+                $return = Response::gen_success(array());
+            }
+            //获取组id
+            $group_info = MailGroup::getInstance()->getMailGroupList(array('email' => $this->params['email']));
+            if(!empty($group_info)){
+                $group_info = current($group_info);
+                $group_id = $group_info['group_id'];
+            }
+        }
+        //获取部门树
+        $department_info = Department::getInstance()->getDepart(array('all' => 1, 'status' => array(1)));
+        $department_tree = $this->_filterDelDepart($department_info);
+//        echo "<pre>";
+//        var_dump($department_tree);
+//        exit;
+
+        //获取组对应的部门
+        $current_depart_info = array();
+        if(!empty($group_id)) {
+            $relation_info = MailGroupDepartRelation::getInstance()->getMailGroupDepartRelation(array('status' => 1, 'group_id' => $group_id));
+            if(!empty($relation_info)){
+                $relation_info = current($relation_info);
+                $current_depart_id = $relation_info['depart_id'];
+                $current_depart_info = array(
+                    'current_depart_id' => $current_depart_id,
+                    'current_depart_name' => $department_info[$current_depart_id]['depart_name']
+                );
+            }else{
+                $current_depart_info = array(
+                    'current_depart_id' => '',
+                    'current_depart_name' => ''
+                );
+            }
+        }
+        $return['group_name'] = $this->params['email'];
+        $return['group_id'] = $group_id;
+        $return['department_list'] = $department_tree;
+        $return['current_depart_info'] = $current_depart_info;
+        return $this->app->response->setBody($return);
+
+    }
+    /*
+     * 过滤废弃的
+     */
+    protected function _filterDelDepart($department_info)
+    {
+        foreach ($department_info as $key => $item) {
+            if ($item['memo'] == '废弃') {
+                unset($department_info[$key]);
+            }
+
+        }
+        return $department_info;
+    }
+
+    private function _init()
+    {
+
+        $this->rules = array(
+            'email' => array(
+                'type' => 'string',
+                'required' => true,
+                'allowEmpty' => false,
+            ),
+
+        );
+        $this->params = $this->request()->safe();
+        $this->errors = $this->request()->getErrors();
+    }
+
+}

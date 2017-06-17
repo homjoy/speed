@@ -1,0 +1,209 @@
+<%#head.html %>
+<div id="container" class="effect mainnav-lg">
+    <%#navbar.html %>
+
+    <div class="boxed">
+        <!--CONTENT CONTAINER-->
+        <!--===================================================-->
+        <div id="content-container" >
+            <ol class="breadcrumb">
+                <li><a href="/home">主页</a></li>
+                <li><a href="/it">IT服务</a></li>
+                <li class="active">访客wifi</li>
+            </ol>
+            <div id="page-content" class="no-padding panel">
+                <ul class="nav nav-tabs slope col-lg-12 col-sm-12 col-xs-12 hide" style="margin-bottom: 30px">
+                    <li role="presentation" class="active"><a href="#wifi" aria-controls="wifi" role="tab" data-toggle="tab">创建账号</a></li>
+                    <li role="presentation" class=""><a href="#visitor_wifi_list" aria-controls="visitor_wifi_list" role="tab" data-toggle="tab">帐号管理</a></li>
+                </ul>
+                <div class="panel-body" style="min-width:580px">
+                    <div class="row">
+                        <label for="" class="col-lg-1 col-sm-1 col-xs-1"></label>
+                        <div class="list-group hide list-group-nav col-lg-8 col-sm-8 col-xs-8">
+                            <a class="list-group-item " href="/it/wifipassword/">wifi密码</a>
+                            <a class="list-group-item " href="/it/vpnpassword/">VPN密码</a>
+                            <a class="list-group-item active" href="/it/wifi/">访客wifi</a>
+                            <a class="list-group-item " href="/home/window/?f=svn&s=Request">SVN权限</a>
+                        </div>
+                    </div>
+
+                    <div class="tab-content">
+                        <div role="tabpanel" class="tab-pane row hide" id="wifi">
+                            <div class="col-lg-2 col-sm-2 col-xs-2"></div>
+                            <div class="col-lg-7 col-sm-7 col-xs-7 user_right">
+                                <div class="password_fix tap">
+                                    <form class="form-horizontal speed" id="form_password_fix" >
+
+                                        <div class="form-group">
+                                            <label  class="col-lg-3 col-sm-3 col-xs-3 control-label">访客姓名</label>
+                                            <div class="col-lg-9 col-sm-9 col-xs-9col-lg-5 col-sm-5 col-xs-5">
+                                                <input type="text" name="visitor_name" data-bv-notempty class="form-control"  value="">
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="" class="col-lg-3 col-sm-3 col-xs-3 control-label">访客手机号</label>
+                                            <div class="col-lg-9 col-sm-9 col-xs-9">
+                                                <input type="text" name="visitor_mobile" data-bv-notempty class="form-control new_password" style="z-index: -1 !important;" value="">
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="" class="col-lg-3 col-sm-3 col-xs-3 control-label">访客单位</label>
+                                            <div class="col-lg-9 col-sm-9 col-xs-9">
+                                                <input type="text" name="company" data-bv-notempty class="form-control new_password_again" placeholder="公司名称或学校" value="">
+                                            </div>
+                                        </div>
+                                        <div class="form-group" >
+                                            <label  class="col-lg-3 col-sm-3 col-xs-3 control-label">WIFI时长</label>
+                                            <div class="col-lg-9 col-sm-9 col-xs-9 select-div ">
+                                                <input type="text" name="expire_time" data-bv-notempty class="form-control select-input" placeholder="请选择" readonly>
+                                                <ul class="select-ul hide">
+                                                    <li>1小时</li>
+                                                    <li>2小时</li>
+                                                    <li>3小时</li>
+                                                    <li>4小时</li>
+                                                    <li>5小时</li>
+                                                </ul>
+                                            </div>
+
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="" class="col-lg-3 col-sm-3 col-xs-3 control-label ">来访原因</label>
+                                            <div class="col-lg-9 col-sm-9 col-xs-9 ">
+                                                <textarea name="reason" data-bv-notempty id="asdf" cols="30" rows="5" class="form-control"></textarea>
+                                            </div>
+                                        </div>
+                                        <div class="form-group btn_line">
+                                            <label class="col-lg-3 col-sm-3 col-xs-3 "></label>
+                                            <div class="col-lg-5 col-sm-5 col-xs-5">
+                                                <button type="submit" class="btn btn-beauty save_password ">提交</button>
+                                            </div>
+                                        </div>
+                                    </form>
+
+
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row tab-pane active" role="tabpanel" id="visitor_wifi_list">
+                            <div class="col-lg-1 col-sm-1 col-xs-1"></div>
+                            <div class="col-lg-10 col-sm-10 col-xs-10 user_right">
+                                <div class="password_fix tap">
+                                    <div id="my-event">
+                                        <div class="event-list">
+                                            <% if (this.VisitorWifiInfo.data.length!=0){%>
+
+                                            <dl class="event-header">
+                                                <dt >
+                                                    <span class="column visiterName">访客姓名</span>
+                                                    <span class="column mob">手机</span>
+                                                    <span class="column creatTime">创建时间</span>
+                                                    <span class="column overTime">过期时间</span>
+                                                    <span class="column manage">操作</span>
+                                                </dt>
+                                            </dl>
+                                            <%}else{%>
+                                            <img class="nobody-img" src="<%= this.PICTURE_URL  %>img/queen/approval/kong.png" alt=""/>
+                                            <span class="nobody">暂时木有来访的小伙伴哦～</span>
+                                            <%}%>
+
+                                            <% if (this.VisitorWifiInfo.code==200){%>
+                                            <% this.VisitorWifiInfo.data.forEach(function(info,
+                                            index){ %>
+                                            <dl class="<%=index%> event noStart">
+                                                <dt>
+                                                    <span class="column visiterName"><%= info.visitor_name%></span>
+                                                    <span class="column mob"><%= info.visitor_mobile%></span>
+                                                    <span class="column creatTime"><%= info.create_time%></span>
+                                                    <span class="column overTime"><%= info.expire_time%></span>
+                                                        <span class="column manage">
+                                                            <% if (info.handle_status=='0'){%>
+                                                            <a href="javascript:void(0);" class="btn-agree btn agree" data-id="<%= info.id%>" data-handle_status="1" data-visitor_mobile="<%= info.visitor_mobile%>" data-interview="<%= info.interview %>">同意</a>
+                                                            <a href="javascript:void(0);" class="btn-danger btn reject" data-id="<%= info.id%>" data-handle_status="2" data-visitor_mobile="<%= info.visitor_mobile%>">驳回</a>
+                                                            <%}else if (info.handle_status=='1'){%>
+                                                                <% if (info.status==1){%>
+                                                                <a href="javascript:void(0);"  class="btn-warning btn btn-bear" data-id="<%= info.id%>" data-status="0" >禁用</a>
+                                                                <%}else{%>
+                                                                <a href="javascript:void(0);"  class="btn btn-default">已禁用</a>
+                                                                <%}%>
+                                                            <%}else if (info.handle_status=='2'){%>
+                                                            <a href="javascript:void(0);"  class="btn btn-default">已驳回</a>
+                                                            <%}%>
+                                                        </span>
+                                                </dt>
+                                            </dl>
+                                            <% }); %>
+
+                                            <%}%>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <%#footer.html%>
+        </div>
+
+        <%#mainnav.html%>
+    </div>
+
+</div>
+<div class="modal fade" id="notice_bear" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"
+                        aria-hidden="true">&times;</button>
+                <h4 class="modal-title">提示</h4>
+            </div>
+
+            <div class="modal-body">
+                <p class="">嘿，亲，确定要禁用嘛？</p>
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary bear" data-dismiss="modal" > 确定
+                </button>
+                <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="agree-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title">请选择wifi时长</h4>
+            </div>
+
+            <div class="modal-body">
+                <form class="form" style="position: relative;">
+                    <select name="" id="expire_time">
+                        <option value="1">1小时</option>
+                        <option value="2">2小时</option>
+                        <option value="3">3小时</option>
+                        <option value="4">4小时</option>
+                        <option value="5">5小时</option>
+                    </select>
+                </form>
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary agree-modal-btn"  data-dismiss="modal" > 确定</button>
+                <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+            </div>
+        </div>
+    </div>
+</div>
+<%! $_ENGINE_SELF.callFn("useModule")("<<<_use:
+        fml.use('speed/common/base');
+fml.use('speed/it/wifi');
+_use:", this._JSstack , this._JSmods); %>
+
+<%#foot.html%>

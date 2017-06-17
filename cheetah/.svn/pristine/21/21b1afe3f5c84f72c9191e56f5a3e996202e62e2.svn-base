@@ -1,0 +1,45 @@
+<script type="text/html" id="approval-history-offset">
+    <style>
+        #timeline-left{width:45%;}
+        #time{color: #a0a0a0;}
+        #timeline-right{width:55%;}
+        .floatLeft{float: left;}
+        .floatRight{float:right;}
+        .payType{padding: 2px;background-color: #ff85ac; border-radius: 5px;  font-size: 10px;  color: #fff; }
+        .addInfo{width: 80%; padding-left: 5px;}
+        .offsetMoney{min-width: 60px;text-align: center}
+        .currBalance{margin-left: 30px;}
+    </style>
+    <div class="timeline-wraper timeline-wraper-reverse hide">
+        <div class="timeline timeline-mini history-fms timelinepl" style="float: right;width: 100%">
+            {{each listOffset as info}}
+            <div class="timeline-entry {{if info.offsetFlag == '已冲账' && info.currBalance == 0}}active{{else}}{{/if}}">
+                <div class="timeline-stat">
+                    <div class="timeline-icon"></div>
+                </div>
+                <div class="timeline-label">
+                    <div class="timeline-left" id="timeline-left">
+                        <div class="uname">{{info.offsetDate}}</div>
+                        <div class="time" id="time">
+                            <span class="payType floatLeft">{{info.offsetWayName}}</span>
+                            {{if info.offsetWay == '02' }}
+                            <span class="addInfo">(单据编号:{{info.billNo}})</span>
+                            {{else}}
+                            <span class="addInfo floatLeft">{{info.remark}}</span>
+                            {{/if}}
+                        </div>
+                    </div>
+                    <div class="timeline-right" id="timeline-right">
+                        <span class="offsetMoney">{{info.offsetMoney | currencyFormat}}</span>
+                        {{if info.offsetFlag == '已冲账'}}
+                        <span class="currBalance">剩余欠款 {{info.currBalance | currencyFormat}}</span>
+                        {{/if}}
+                        <span class="curState floatRight">{{info.offsetFlag}}</span>
+                    </div>
+
+                </div>
+            </div>
+            {{/each}}
+        </div>
+    </div>
+</script>

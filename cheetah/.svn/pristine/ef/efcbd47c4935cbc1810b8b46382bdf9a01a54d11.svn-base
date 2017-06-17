@@ -1,0 +1,41 @@
+function user() {
+	return this;
+}
+var controlFns = {
+	'index' : function(){
+		this.user()
+	}
+	,'user' : function(){
+		var php = {
+			'userInfoGet':'/user/userInfoGet'
+		};
+        this.bindDefault(php);
+		this.bridgeMuch(php);
+		this.listenOver(function(data){
+			data._CSSLinks = ['lib/bootstrapValidator','user/index'];
+			this.render('user/index.html' , data);
+		})
+	}
+	,'avatar' : function(){
+		var php = {
+		};
+        this.bindDefault(php);
+		this.bridgeMuch(php);
+		this.listenOver(function(data){
+			data._CSSLinks = ['user/avatar'];
+			this.render('user/avatar.html' , data);
+		})
+	}
+	,'password' : function(){
+		var php = {
+			'userInfoGet':'/user/userInfoGet'
+		};
+        this.bindDefault(php);
+		this.bridgeMuch(php);
+		this.listenOver(function(data){
+			data._CSSLinks = ['lib/bootstrapValidator','user/password'];
+			this.render('user/password.html' , data);
+		})
+	}
+};
+exports.__create = controller.__create(user, controlFns);

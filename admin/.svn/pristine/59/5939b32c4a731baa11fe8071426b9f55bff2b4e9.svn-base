@@ -1,0 +1,223 @@
+<?php
+namespace Admin\Modules\Structure\User;
+
+use Admin\Modules\Common\BaseModule;
+use Admin\Package\Common\Response;
+use Admin\Package\Account\UserInfo;
+use Admin\Package\Account\WorkInfo;
+use Admin\Package\Account\PersonalInfo;
+use Admin\Package\Account\PrivacyInfo;
+use Admin\Package\Log\Log;
+/**
+ * 添加用户信息
+ * @author hongzhou@meilishuo.com
+ * @since 2015-9-14 下午12:53:13
+ */
+class AjaxAddUser extends BaseModule {
+
+    protected $errors = NULL;
+    private   $params = NULL;
+    public static $VIEW_SWITCH_JSON = TRUE;
+    const USER_TYPE = 4;
+    
+    public function run() {
+        $this->_init();
+        if($this->post()->hasError()){
+            $return = Response::gen_error(10001, '', $this->post()->getErrors());
+            return $this->app->response->setBody($return);
+        }
+        if(ord($this->params['name_cn']) <= 122){
+            return $this->app->response->setBody(Response::gen_error(30001,'请核对中文名字,必须使用中文'));
+        }
+        if(isset($this->params['mail'])&&( ord($this->params['mail']) <= 57 ||ord($this->params['mail']) > 122) ){
+            return $this->app->response->setBody(Response::gen_error(30001,'请核对邮箱,必须使用拼音'));
+        }
+
+//        if(strlen($this->params['id_number'])!=18 && strlen($this->params['id_number'])!=15 ){
+//            return $this->app->response->setBody(Response::gen_error(30001,'身份证格式错误'));
+//        }elseif(strlen($this->params['id_number'])==18 && !preg_match('/^[1-9]\d{5}[1-9]\d{3}((0\d)|(1[0-2]))(([0|1|2]\d)|3[0-1])\d{3}(\d|x|X)$/',$this->params['id_number'])){
+//            return $this->app->response->setBody(Response::gen_error(30001,'身份证格式错误'));
+//        }elseif(strlen($this->params['id_number'])==15 && !preg_match('/^[1-9]\d{7}((0\d)|(1[0-2]))(([0|1|2]\d)|3[0-1])\d{3}$/',$this->params['id_number'])){
+//            return $this->app->response->setBody(Response::gen_error(30001,'身份证格式错误'));
+//        }
+
+        $return_data = UserInfo::getInstance()->createUserInfo($this->params);
+
+        if(empty($return_data)){//返回user_id
+            return $this->app->response->setBody(Response::gen_error(50001,'添加失败'));
+        }
+        $this->params['user_id'] = isset($return_data['user_id'])?$return_data['user_id']:'';
+//        $this->params['birthday'] = $this->getIDCardInfo($this->params['id_number']);
+
+        if(!$this->createById(array(
+            'user_id'=>$this->params['user_id'],
+//            'id_number'=>$this->params['id_number'],
+            'mobile'=>$this->params['mobile'],
+            'birthday'=>'0000-00-00',
+            )
+        )
+        ){
+            return $this->app->response->setBody(Response::gen_error(50001,'创建失败'));
+        }
+        $this->doLog($this->params);
+        $this->app->response->setBody(Response::gen_success(array('user_id'=>$this->params['user_id'])));
+
+    }
+//    public function getIDCardInfo($IDCard){
+//        $result['error']=0;//0：未知错误，1：身份证格式错误，2：无错误
+//        $result['flag']='';//0标示成年，1标示未成年
+//        $result['tdate']='';//生日，格式如：2012-11-15
+//
+//         if(strlen($IDCard)==18){
+//                $tyear=intval(substr($IDCard,6,4));
+//                $tmonth=intval(substr($IDCard,10,2));
+//                $tday=intval(substr($IDCard,12,2));
+//                if($tyear>date("Y")||$tyear<(date("Y")-100)){
+//                    $flag=0;
+//                }elseif($tmonth<0||$tmonth>12){
+//                    $flag=0;
+//                }elseif($tday<0||$tday>31){
+//                    $flag=0;
+//                }else{
+//                    $tdate=$tyear."-".$tmonth."-".$tday." 00:00:00";
+//                    if((time()-mktime(0,0,0,$tmonth,$tday,$tyear))>18*365*24*60*60){
+//                        $flag=0;
+//                    }else{
+//                        $flag=1;
+//                    }
+//                }
+//         }elseif(strlen($IDCard)==15){
+//                $tyear=intval("19".substr($IDCard,6,2));
+//                $tmonth=intval(substr($IDCard,8,2));
+//                $tday=intval(substr($IDCard,10,2));
+//                if($tyear>date("Y")||$tyear<(date("Y")-100)){
+//                    $flag=0;
+//                }elseif($tmonth<0||$tmonth>12){
+//                    $flag=0;
+//                }elseif($tday<0||$tday>31){
+//                    $flag=0;
+//                }else{
+//                    $tdate=$tyear."-".$tmonth."-".$tday." 00:00:00";
+//                    if((time()-mktime(0,0,0,$tmonth,$tday,$tyear))>18*365*24*60*60){
+//                        $flag=0;
+//                    }else{
+//                        $flag=1;
+//                    }
+//                }
+//         }
+//
+////        $result['error']=2;//0：未知错误，1：身份证格式错误，2：无错误
+////        $result['isAdult']=$flag;//0标示成年，1标示未成年
+//        $result=$tdate;//生日日期
+//        return $result;
+//    }
+    protected function createById($params){
+        $ret =NULL;
+        $return_data_privacy =PrivacyInfo::getInstance()->createPrivacyInfo($params);
+        $return_data_personal =PersonalInfo::getInstance()->createPersonalInfo($params);
+        $return_data_work = WorkInfo::getInstance()->createWorkInfo($params);
+
+        if($return_data_privacy&&$return_data_personal&&$return_data_work){
+            $ret =TRUE;
+        }
+        return $ret;
+    }
+    protected function doLog($new_param=array(),$old_param='add'){
+
+        $ret = Log::getInstance()->createLogs(array(
+                'user_id'=>$this->user['id'],
+                'handle_id'=>isset($new_param['user_id'])?$new_param['user_id']:'',
+                'operation_type'=>$old_param,
+                'after_data'=>json_encode($new_param),
+                'handle_type'=>self::USER_TYPE
+            )
+        );
+        return $ret;
+    }
+
+
+    private function _init() {
+
+        $this->rules  = array(
+//user_info
+           'depart_id' => array(
+                  'required' => TRUE,
+                'allowEmpty' => FALSE,
+                'type'=>'integer',
+            ),
+            'job_role_id' => array(
+                'type'=>'integer',
+
+            ),
+            'name_cn' => array(
+                'type'=>'string',
+                'required' => TRUE,
+                'allowEmpty' => FALSE,
+                'maxLength'=> 30,
+            ),
+            'name_en' => array( //可不填
+                'type'=>'string',
+                'maxLength'=> 30,
+            ),
+            'mail' => array(
+                'required' => TRUE,
+                'allowEmpty' => FALSE,
+                'type'=>'string',
+                'maxLength'=> 30,
+            ),
+            'hire_time' => array(
+                'type'=>'datetime',
+            ),
+            'positive_time' => array(
+                'type'=>'datetime',
+            ),
+            'staff_id' => array(
+                'type'=>'string',
+                'required' => TRUE,
+                'allowEmpty' => FALSE,
+                'maxLength'=> 10,
+            ),
+            'gender' => array(
+                'type'=>'integer',
+                'enum'=> array(0,1)//性别0女1男
+            ),
+            'flag' => array(
+                'required' => TRUE,
+                'allowEmpty' => FALSE,
+                'type'=>'integer',
+                'enum'=> array(1,2,3,4)//标记:1实习2试用3正式4申请离职
+            ),
+            'status' => array(
+                'type'=>'integer',
+                 'required' => TRUE,
+                'allowEmpty' => FALSE,
+                'enum'=> array(1,2,3)
+            ),
+            'graduation_time' => array(
+                'type'=>'datetime',
+                'required' => TRUE,
+                'allowEmpty' => FALSE,
+            ),
+            'direct_leader' => array(
+               'type'=>'string',
+                'required' => TRUE,
+                'allowEmpty' => FALSE,
+           ),
+//           'id_number' => array(
+//                'type'=>'integer',
+//                'required' => TRUE,
+//                'allowEmpty' => FALSE,
+//           ),
+            'mobile' => array(
+                'type'=>'integer',
+                'required' => TRUE,
+                'allowEmpty' => FALSE,
+            )
+        );
+
+        $this->params   = $this->post()->safe();
+        $this->errors   = $this->post()->getErrors();
+
+    }
+    
+}

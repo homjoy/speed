@@ -1,0 +1,126 @@
+<script type="text/html" id="detail-row-tpl">
+    <tr>
+        <td class="column-project">
+            <div class="column-wrap">
+                <input type="hidden" name="budgetDetailIdStr" value="{{budgetDetailIdStr}}"/>
+                <input type="text" name="budgetItemFullCode" value="{{budgetItemFullCode}}"/>
+                <a href="javascript:void(0)" class="project-remove"><i class="fa fa-minus"></i></a>
+            </div>
+        </td>
+        <td><div class="column-wrap"></div></td>
+        <td class="column-q1 {{if !inArray('q1',quarters) }}hide{{/if}}">
+            <div class="column-wrap">
+                <span class="money before">{{budgetFirQuaBefore | currencyFormat }}</span>
+                <input type="text" placeholder="0.00" name="budgetFirQua" value="{{budgetFirQua || ''}}" class="money limit"/>
+                <span class="money after">{{budgetFirQuaAfter | currencyFormat }}</span>
+            </div>
+        </td>
+        <td class="column-q2 {{if !inArray('q2',quarters) }}hide{{/if}}">
+            <div class="column-wrap">
+                <span class="money before">{{budgetSecQuaBefore | currencyFormat }}</span>
+                <input type="text" placeholder="0.00" name="budgetSecQua" value="{{budgetSecQua || ''}}" class="money limit"/>
+                <span class="money after">{{budgetSecQuaAfter | currencyFormat }}</span>
+            </div>
+        </td>
+        <td class="column-q3 {{if !inArray('q3',quarters) }}hide{{/if}}">
+            <div class="column-wrap">
+                <span class="money before">{{budgetThiQuaBefore | currencyFormat }}</span>
+                <input type="text" placeholder="0.00" name="budgetThiQua" value="{{budgetThiQua || ''}}" class="money limit"/>
+                <span class="money after">{{budgetThiQuaAfter | currencyFormat }}</span>
+            </div>
+        </td>
+        <td class="column-q4 {{if !inArray('q4',quarters) }}hide{{/if}}">
+            <div class="column-wrap">
+                <span class="money before">{{budgetFourQuaBefore | currencyFormat }}</span>
+                <input type="text" placeholder="0.00" name="budgetFourQua" value="{{budgetFourQua || ''}}" class="money limit"/>
+                <span class="money after">{{budgetFourQuaAfter | currencyFormat }}</span>
+            </div>
+        </td>
+        <td class="column-total">
+            <div class="column-wrap">
+                <span class="money before">{{budgetAmmountBefore | currencyFormat }}</span>
+                <span class="money limit">{{budgetAmmount | currencyFormat }}</span>
+                <span class="money after">{{budgetAmmountAfter | currencyFormat }}</span>
+            </div>
+        </td>
+        <td class="column-remark">
+            <div class="column-wrap">
+                <input type="text" name="budgetRemark" placeholder="备注说明" value="{{budgetRemark}}" class="">
+            </div>
+        </td>
+    </tr>
+</script>
+
+<script type="text/html" id="project-coupon-more">
+    {{each extras as extra index }}
+    <tr class="extra {{classMap[extra.extraCode] }}">
+        <td class="column-project">
+            <input type="hidden" name="budgetDetailIdStr" value="{{extra.budgetDetailIdStr}}"/>
+            <input type="hidden" name="budgetExtraIdStr" value="{{extra.budgetExtraIdStr}}"/>
+            <input type="hidden" name="budgetItemFullCode" value="{{budgetItemFullCode}}"/>
+            <input type="hidden" name="extraCode" value="{{extra.extraCode}}"/>
+
+            <div class="column-wrap">{{extra.extraName}}</div>
+        </td>
+        <td>
+            <div class="column-wrap"></div>
+        </td>
+        <td class="column-q1 {{if !inArray('q1',quarters) }}hide{{/if}}">
+            <div class="column-wrap">
+                <span class="money before">{{extra.budgetFirQuaBefore | currencyFormat }}</span>
+                {{if (extra.extraCode != '003' ) }}
+                <input type="text" placeholder="0.00" name="budgetFirQua" value="{{extra.budgetFirQua || ''}}" class="money limit"/>
+                {{else}}
+                <span class="money limit">{{extra.budgetFirQua | currencyFormat}}</span>
+                {{/if}}
+                <span class="money after">{{extra.budgetFirQuaAfter | currencyFormat }}</span>
+            </div>
+        </td>
+        <td class="column-q2 {{if !inArray('q2',quarters) }}hide{{/if}}">
+            <div class="column-wrap">
+                <span class="money before">{{extra.budgetSecQuaBefore | currencyFormat }}</span>
+                {{if (extra.extraCode != '003' ) }}
+                <input type="text" placeholder="0.00" name="budgetSecQua" value="{{extra.budgetSecQua || ''}}" class="money limit"/>
+                {{else}}
+                <span class="money limit">{{extra.budgetSecQua | currencyFormat}}</span>
+                {{/if}}
+                <span class="money after">{{extra.budgetSecQuaAfter | currencyFormat }}</span>
+            </div>
+        </td>
+        <td class="column-q3 {{if !inArray('q3',quarters) }}hide{{/if}}">
+            <div class="column-wrap">
+                <span class="money before">{{extra.budgetThiQuaBefore | currencyFormat }}</span>
+                {{if (extra.extraCode != '003' ) }}
+                <input type="text" placeholder="0.00" name="budgetThiQua" value="{{extra.budgetThiQua || ''}}" class="money limit"/>
+                {{else}}
+                <span class="money limit">{{extra.budgetThiQua | currencyFormat}}</span>
+                {{/if}}
+                <span class="money after">{{extra.budgetThiQuaAfter | currencyFormat }}</span>
+            </div>
+        </td>
+        <td class="column-q4 {{if !inArray('q4',quarters) }}hide{{/if}}">
+            <div class="column-wrap">
+                <span class="money before">{{extra.budgetFourQuaBefore | currencyFormat }}</span>
+                {{if (extra.extraCode != '003' ) }}
+                <input type="text" placeholder="0.00" name="budgetFourQua" value="{{extra.budgetFourQua || ''}}" class="money limit"/>
+                {{else}}
+                <span class="money limit">{{extra.budgetFourQua | currencyFormat}}</span>
+                {{/if}}
+                <span class="money after">{{extra.budgetFourQuaAfter | currencyFormat }}</span>
+            </div>
+        </td>
+        <td class="column-total">
+            <div class="column-wrap">
+                <span class="money before">{{extra.budgetAmmountBefore | currencyFormat }}</span>
+                <span class="money limit">{{extra.budgetAmmount | currencyFormat }}</span>
+                <span class="money after">{{extra.budgetAmmountAfter | currencyFormat }}</span>
+            </div>
+        </td>
+        <td class="column-remark">
+            <div class="column-wrap">
+                <input type="text" name="budgetRemark" placeholder="备注说明" value="{{extra.budgetRemark}}" class="">
+            </div>
+        </td>
+    </tr>
+    {{/each}}
+</script>

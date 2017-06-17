@@ -1,0 +1,22 @@
+function myapply() {
+    return this;
+}
+var controlFns = {
+	'index':function(){
+		var php = {
+            'showAllBillApproval':'/userbillrequest/showAllBillApprovalSuccessRequestJson',
+            'showAllBillRequest':'/userbillrequest/showAllBillRequestNotApprovalJson'
+        };
+		this.bindDefault(php);
+        this.bridgeMuch(php);
+        this.listenOver(function (data) {
+        	// data.UserInfo = {
+        		
+        	// }
+            data._CSSLinks = ['plugin/dataTables.bootstrap','plugin/jquery.dataTables','fms/myapproval/myapproval'];
+            this.render('myapply/myApply.html', data);
+        });
+	}
+	
+};
+exports.__create = controller.__create(myapply, controlFns);

@@ -1,0 +1,365 @@
+<%#head.html%>
+
+
+
+<header class="feature">
+    <div class="container wide">
+        <h1 class="title">时间轴样式</h1>
+        <p class="subtitle">时间轴，扩展自nifty</p>
+    </div>
+</header>
+
+<div class="block main" role="main">
+
+    <section>
+        <h2>完整版</h2>
+        <p><a href="http://www.themeon.net/nifty/v2.2/pages-timeline.html" rel="noreferrer" target="_blank" class="btn btn-sm btn-danger">查看完整版</a> </p>
+    </section>
+    <section>
+        <h2>依赖：</h2>
+        <p>less 模块: <span class="label label-dark">queen/timeline</span></p>
+        <p>文件路径: <span class="label label-dark">apps/static/less/queen/timeline.less</span></p>
+    </section>
+
+
+    <section>
+    <h2>审批进度</h2>
+        <!--===================================================-->
+        <div class="timeline timeline-mini approval-progress">
+            <div class="timeline-entry">
+                <div class="timeline-stat">
+                    <div class="timeline-icon"><i class="icon icon-pass"></i></div>
+                </div>
+                <div class="timeline-label">
+                    <strong class="uname">花小美</strong>
+                    <span class="time">2015-08-19 18:40:17</span>
+                </div>
+            </div>
+            <div class="timeline-entry important">
+                <div class="timeline-stat">
+                    <div class="timeline-icon"><i class="icon icon-pass-o"></i></div>
+                </div>
+                <div class="timeline-label">
+                    <strong class="uname">花小美</strong>
+                    <span class="time">2015-08-19 18:40:17</span>
+                    <span class="remark"></span>
+                </div>
+            </div>
+            <div class="timeline-entry">
+                <div class="timeline-stat">
+                    <div class="timeline-icon"><i class="icon icon-reject"></i></div>
+                </div>
+                <div class="timeline-label">
+                    <strong class="uname">花小美</strong>
+                    <span class="time">2015-08-19 18:40:17</span>
+                </div>
+            </div>
+
+            <div class="timeline-entry">
+                <div class="timeline-stat">
+                    <div class="timeline-icon"><i class="icon icon-repeal"></i></div>
+                </div>
+                <div class="timeline-label">
+                    <strong class="uname">花小美</strong>
+                    <span class="time">2015-08-19 18:40:17</span>
+                    <span class="remark">此处有可能是备注...</span>
+                </div>
+            </div>
+
+            <div class="timeline-entry">
+                <div class="timeline-stat">
+                    <div class="timeline-icon"><i class="icon icon-wait"></i></div>
+                </div>
+                <div class="timeline-label">
+                    <strong class="uname">花小美</strong>
+                    <span class="time">2015-08-19 18:40:17</span>
+
+                </div>
+            </div>
+            <div class="timeline-entry">
+                <div class="timeline-stat">
+                    <div class="timeline-icon"><i class="icon icon-submit"></i></div>
+                </div>
+                <div class="timeline-label">
+                    <strong class="uname">花小美</strong>
+                    <span class="time">2015-08-19 18:40:17</span>
+                    <span class="remark">此处有可能是备注...</span>
+                </div>
+            </div>
+        </div>
+
+
+
+<pre class="language-markup"><code>
+&lt;!--===================================================--&gt;
+&lt;div class="timeline timeline-mini approval-progress"&gt;
+&lt;div class="timeline-entry"&gt;
+&lt;div class="timeline-stat"&gt;
+&lt;div class="timeline-icon"&gt;&lt;i class="icon icon-pass"&gt;&lt;/i&gt;&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class="timeline-label"&gt;
+&lt;strong class="uname"&gt;花小美&lt;/strong&gt;
+&lt;span class="time"&gt;2015-08-19 18:40:17&lt;/span&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class="timeline-entry important"&gt;
+&lt;div class="timeline-stat"&gt;
+&lt;div class="timeline-icon"&gt;&lt;i class="icon icon-pass-o"&gt;&lt;/i&gt;&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class="timeline-label"&gt;
+&lt;strong class="uname"&gt;花小美&lt;/strong&gt;
+&lt;span class="time"&gt;2015-08-19 18:40:17&lt;/span&gt;
+&lt;span class="remark"&gt;&lt;/span&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class="timeline-entry"&gt;
+&lt;div class="timeline-stat"&gt;
+&lt;div class="timeline-icon"&gt;&lt;i class="icon icon-reject"&gt;&lt;/i&gt;&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class="timeline-label"&gt;
+&lt;strong class="uname"&gt;花小美&lt;/strong&gt;
+&lt;span class="time"&gt;2015-08-19 18:40:17&lt;/span&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+
+&lt;div class="timeline-entry"&gt;
+&lt;div class="timeline-stat"&gt;
+&lt;div class="timeline-icon"&gt;&lt;i class="icon icon-repeal"&gt;&lt;/i&gt;&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class="timeline-label"&gt;
+&lt;strong class="uname"&gt;花小美&lt;/strong&gt;
+&lt;span class="time"&gt;2015-08-19 18:40:17&lt;/span&gt;
+&lt;span class="remark"&gt;此处有可能是备注...&lt;/span&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+
+&lt;div class="timeline-entry"&gt;
+&lt;div class="timeline-stat"&gt;
+&lt;div class="timeline-icon"&gt;&lt;i class="icon icon-wait"&gt;&lt;/i&gt;&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class="timeline-label"&gt;
+&lt;strong class="uname"&gt;花小美&lt;/strong&gt;
+&lt;span class="time"&gt;2015-08-19 18:40:17&lt;/span&gt;
+
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class="timeline-entry"&gt;
+&lt;div class="timeline-stat"&gt;
+&lt;div class="timeline-icon"&gt;&lt;i class="icon icon-submit"&gt;&lt;/i&gt;&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class="timeline-label"&gt;
+&lt;strong class="uname"&gt;花小美&lt;/strong&gt;
+&lt;span class="time"&gt;2015-08-19 18:40:17&lt;/span&gt;
+&lt;span class="remark"&gt;此处有可能是备注...&lt;/span&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+</code></pre>
+    </section>
+
+
+
+    <section>
+    <h2>审批历史</h2>
+        <!--===================================================-->
+        <div class="timeline timeline-mini history">
+            <div class="timeline-entry active">
+                <div class="timeline-stat">
+                    <div class="timeline-icon"></div>
+                </div>
+                <div class="timeline-label">
+                    <div class="time">
+                        <span>2015-08-19至</span>
+                        <span>2015-08-19</span>
+                    </div>
+                    <p>
+                        <span class="type">年假</span>
+                        <span class="day">7天</span>
+                        <span class="reason">家中有事，此处省略几万字。。。</span>
+                    </p>
+                </div>
+            </div>
+            <div class="timeline-entry">
+                <div class="timeline-stat">
+                    <div class="timeline-icon"></div>
+                </div>
+                <div class="timeline-label">
+                    <div class="time">
+                        <span>2015-08-19至</span>
+                        <span>2015-08-19</span>
+                    </div>
+                    <p>
+                        <span class="type">年假</span>
+                        <span class="day">7天</span>
+                        <span class="reason">家中有事的沙发的说法安徽的手机发卡到死见发货单可撒谎发快递是啊 </span></p>
+                </div>
+            </div>
+            <div class="timeline-entry">
+                <div class="timeline-stat">
+                    <div class="timeline-icon"></div>
+                </div>
+                <div class="timeline-label">
+                    <div class="time">
+                        <span>2015-08-19至</span>
+                        <span>2015-08-19</span>
+                    </div>
+                    <p>
+                        <span class="type">年假</span>
+                        <span class="day">7天</span>
+                        <span class="reason">家中有事卡收费的会计师发快递是规范化家阿哥的就好撒啊</span>
+                    </p>
+                </div>
+            </div>
+            <div class="timeline-entry">
+                <div class="timeline-stat">
+                    <div class="timeline-icon"></div>
+                </div>
+                <div class="timeline-label">
+                    <div class="time">
+                        <span>2015-08-19至</span>
+                        <span>2015-08-19</span>
+                    </div>
+                    <p>
+                        <span class="type">年假</span>
+                        <span class="day">7天</span>
+                        <span class="reason">家中有事阿哥色东方卡电话事件发给导航技术刚发记得上个犯贱啊高度是否噶机会都是官方家阿哥荒岛惊魂发噶觉得还是干发巾回报父母那是的办法看到市发改局HD声卡高就</span></p>
+                </div>
+            </div>
+            <div class="timeline-entry">
+                <div class="timeline-stat">
+                    <div class="timeline-icon"></div>
+                </div>
+                <div class="timeline-label">
+                    <div class="time">
+                        <span>2015-08-19至</span>
+                        <span>2015-08-19</span>
+                    </div>
+                    <p>
+                        <span class="type">年假</span>
+                        <span class="day">7天</span>
+                        <span class="reason">家中有事</span>
+                    </p>
+                </div>
+            </div>
+            <div class="timeline-entry">
+                <div class="timeline-stat">
+                    <div class="timeline-icon"></div>
+                </div>
+                <div class="timeline-label">
+                    <div class="time">
+                        <span>2015-08-19至</span>
+                        <span>2015-08-19</span>
+                    </div>
+                    <p>
+                        <span class="type">年假</span>
+                        <span class="day">7天</span>
+                        <span class="reason">家中有事</span>
+                    </p>
+                </div>
+            </div>
+        </div>
+<pre class="language-markup"><code>
+&lt;!--===================================================--&gt;
+&lt;div class="timeline timeline-mini history"&gt;
+&lt;div class="timeline-entry active"&gt;
+&lt;div class="timeline-stat"&gt;
+&lt;div class="timeline-icon"&gt;&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class="timeline-label"&gt;
+&lt;div class="time"&gt;
+&lt;span&gt;2015-08-19至&lt;/span&gt;
+&lt;span&gt;2015-08-19&lt;/span&gt;
+&lt;/div&gt;
+&lt;p&gt;
+&lt;span class="type"&gt;年假&lt;/span&gt;
+&lt;span class="day"&gt;7天&lt;/span&gt;
+&lt;span class="reason"&gt;家中有事，此处省略几万字。。。&lt;/span&gt;
+&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class="timeline-entry"&gt;
+&lt;div class="timeline-stat"&gt;
+&lt;div class="timeline-icon"&gt;&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class="timeline-label"&gt;
+&lt;div class="time"&gt;
+&lt;span&gt;2015-08-19至&lt;/span&gt;
+&lt;span&gt;2015-08-19&lt;/span&gt;
+&lt;/div&gt;
+&lt;p&gt;
+&lt;span class="type"&gt;年假&lt;/span&gt;
+&lt;span class="day"&gt;7天&lt;/span&gt;
+&lt;span class="reason"&gt;家中有事的沙发的说法安徽的手机发卡到死见发货单可撒谎发快递是啊 &lt;/span&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class="timeline-entry"&gt;
+&lt;div class="timeline-stat"&gt;
+&lt;div class="timeline-icon"&gt;&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class="timeline-label"&gt;
+&lt;div class="time"&gt;
+&lt;span&gt;2015-08-19至&lt;/span&gt;
+&lt;span&gt;2015-08-19&lt;/span&gt;
+&lt;/div&gt;
+&lt;p&gt;
+&lt;span class="type"&gt;年假&lt;/span&gt;
+&lt;span class="day"&gt;7天&lt;/span&gt;
+&lt;span class="reason"&gt;家中有事卡收费的会计师发快递是规范化家阿哥的就好撒啊&lt;/span&gt;
+&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class="timeline-entry"&gt;
+&lt;div class="timeline-stat"&gt;
+&lt;div class="timeline-icon"&gt;&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class="timeline-label"&gt;
+&lt;div class="time"&gt;
+&lt;span&gt;2015-08-19至&lt;/span&gt;
+&lt;span&gt;2015-08-19&lt;/span&gt;
+&lt;/div&gt;
+&lt;p&gt;
+&lt;span class="type"&gt;年假&lt;/span&gt;
+&lt;span class="day"&gt;7天&lt;/span&gt;
+&lt;span class="reason"&gt;家中有事阿哥色东方卡电话事件发给导航技术刚发记得上个犯贱啊高度是否噶机会都是官方家阿哥荒岛惊魂发噶觉得还是干发巾回报父母那是的办法看到市发改局HD声卡高就&lt;/span&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class="timeline-entry"&gt;
+&lt;div class="timeline-stat"&gt;
+&lt;div class="timeline-icon"&gt;&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class="timeline-label"&gt;
+&lt;div class="time"&gt;
+&lt;span&gt;2015-08-19至&lt;/span&gt;
+&lt;span&gt;2015-08-19&lt;/span&gt;
+&lt;/div&gt;
+&lt;p&gt;
+&lt;span class="type"&gt;年假&lt;/span&gt;
+&lt;span class="day"&gt;7天&lt;/span&gt;
+&lt;span class="reason"&gt;家中有事&lt;/span&gt;
+&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class="timeline-entry"&gt;
+&lt;div class="timeline-stat"&gt;
+&lt;div class="timeline-icon"&gt;&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class="timeline-label"&gt;
+&lt;div class="time"&gt;
+&lt;span&gt;2015-08-19至&lt;/span&gt;
+&lt;span&gt;2015-08-19&lt;/span&gt;
+&lt;/div&gt;
+&lt;p&gt;
+&lt;span class="type"&gt;年假&lt;/span&gt;
+&lt;span class="day"&gt;7天&lt;/span&gt;
+&lt;span class="reason"&gt;家中有事&lt;/span&gt;
+&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+</code></pre>
+    </section>
+
+
+
+
+<%#foot.html%>

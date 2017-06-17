@@ -1,0 +1,77 @@
+<script type="text/html" id="loan-table-tpl">
+    <table class="table table-bordered {{extClass}}">
+        <thead>
+        <tr>
+            <th colspan="7">
+                <h3 class="text-center">
+                    借款单
+                    <span class="billStatus">{{LoanRequestBill.billApproveStateName || 'null'}}</span>
+                </h3>
+            </th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+            <td colspan="6">基本信息<input type="hidden" id="billid" name="expenseCommon" value="{{LoanRequestBill.billId}}"/></td>
+        </tr>
+        <tr>
+            <td>申请人</td>
+            <td colspan="2">{{LoanRequestBill.billApplyUserName}}</td>
+            <td>申请部门</td>
+            <td colspan="2">{{LoanRequestBill.billDeptName}}</td>
+        </tr>
+        <tr>
+            <td>银行账号</td>
+            <td colspan="2">{{LoanRequestBill.bankAccount}}</td>
+            <td>申请日期</td>
+            <td colspan="2">{{LoanRequestBill.billApplyDate}}</td>
+        </tr>
+        <tr>
+            <td>单据编号</td>
+            <td colspan="2">{{LoanRequestBill.billNo}}</td>
+            <td></td>
+            <td colspan="2"></td>
+        </tr>
+        <tr>
+            <td colspan="6">单据信息</td>
+        </tr>
+        <tr>
+            <td>预算项目</td>
+            <td>{{LoanRequestBill.budgetItemCodeName}}</td>
+            <td>所属项目</td>
+            <td>{{LoanRequestBill.forProjectName}}</td>
+            <td>核算公司</td>
+            <td class="needfill">
+                <span>{{LoanRequestBill.attribution}}</span>
+                <select name="expenseTrafficDining" class="attribution hide">
+                    <% if(this.addresses && this.addresses.data){%>
+                    <% this.addresses.data.forEach(function(v,k){ %>
+                    <option value="<%=v.itemValue%>"><%=v.itemName%></option>
+                    <% })%>
+                    <%}%>
+                </select>
+            </td>
+        </tr>
+        <tr>
+            <td>借款金额</td>
+            <td>{{LoanRequestBill.loanMoneyNum | currencyFormat}}</td>
+            <td>预计还款日期</td>
+            <td>{{LoanRequestBill.expectedRepayDate}}</td>
+            <td>未还金额</td>
+            <td>{{LoanRequestBill.currBalance | currencyFormat}}</td>
+        </tr>
+        <tr>
+            <td>借款理由</td>
+            <td colspan="5">{{LoanRequestBill.loanReason}}</td>
+        </tr>
+        <tr>
+            <td>借款附件</td>
+            <td colspan="5">
+                {{each listAttach as attach}}
+                <a href="/download/file/?cabid={{attach.id}}" class="btn btn-defalut btn-download"
+                   target="_blank" download="{{attach.fileName||''}}">{{attach.fileName}}</a>
+                {{/each}}
+            </td>
+        </tr>
+    </table>
+</script>

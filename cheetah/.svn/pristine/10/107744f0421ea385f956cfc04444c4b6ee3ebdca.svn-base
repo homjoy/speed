@@ -1,0 +1,129 @@
+<%#head.html%>
+<div id="container" class="effect mainnav-lg">
+    <%#navbar.html%>
+    <div class="boxed">
+        <div id="content-container">
+            <div id="page-content">
+                <div class="panel panel-nav">
+                    <div class="panel-heading">
+                        <ul class="nav nav-tabs slope">
+                            <li><a href="/query/reimburse/">报销</a></li>
+                            <li><a href="/query/loan/">借款</a></li>
+                            <li><a href="/query/pay/">付款</a></li>
+                            <li><a href="/query/contract/">合同</a></li>
+                            <li class="active"><a href="javascript:void(0);">IDC机房</a></li>
+                        </ul>
+                    </div>
+                    <div class="panel-body">
+                        <form class="form-horizontal query-form IDCinfo-form">
+                            <table class="table owntable">
+                                <tbody>
+                                <tr>
+                                    <td class="text-right">机房</td>
+                                    <td class="text-left">
+                                        <div class="form-inline">
+                                            <select name="areaName" class="form-control selectpicker">
+                                                <option value="">请选择</option>
+                                                <% if(this.areaEngineRooms && this.areaEngineRooms.rcode == 200) { %>
+                                                <% this.areaEngineRooms.data.forEach(function(engineRoom,index){%>
+                                                <option value="<%=engineRoom.itemValue %>"><%=engineRoom.itemName %></option>
+                                                <% }); %>
+                                                <% } %>
+                                            </select>
+                                            <span>-</span>
+                                            <select name="roomName" class="form-control selectpicker">
+                                                <option value="">请选择（关联机房）</option>
+                                            </select>
+                                        </div>
+                                    </td>
+                                    <td class="text-right">对方单位</td>
+                                    <td class="text-left">
+                                        <div class="form-inline">
+                                            <input type="text" class="form-control ow4" name="customerCompany">
+                                        </div>
+                                    </td>
+                                    <td class="text-right">打击申请日期</td>
+                                    <td class="text-left">
+                                        <div class="form-inline">
+                                            <input type="text" class="form-control IDCinfoInput" name="sTime">
+                                            &nbsp;至&nbsp;
+                                            <input type="text" class="form-control IDCinfoInput" name="eTime">
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="text-right">合同签订公司</td>
+                                    <td class="text-left width-adjust">
+                                        <input type="text" class="form-control IDCinfoInput" name="contractCompany">
+                                    </td>
+                                    <td class="text-right">合同编号</td>
+                                    <td class="text-left">
+                                        <div class="form-inline">
+                                            <input type="text" class="form-control ow4" name="contractCode">
+                                        </div>
+                                    </td>
+                                    <td class="text-right">合同申请日期</td>
+                                    <td class="text-left">
+                                        <div class="form-inline data-range">
+                                            <input type="text" class="form-control IDCinfoInput" name="contractStartDate">
+                                             &nbsp;至&nbsp;
+                                            <input type="text" class="form-control IDCinfoInput" name="contractEndTime">
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="text-right">单据状态</td>
+                                    <td class="text-left">
+                                        <div class="form-inline">
+                                            <select name="status" class="form-control selectpicker">
+                                                <option value="">全部</option>
+                                                <option value="0">草稿</option>
+                                                <option value="2">审批中</option>
+                                                <option value="3">已审批</option>
+                                                <option value="4">驳回</option>
+                                            </select>
+                                        </div>
+                                    </td>
+                                    <td class="text-right">合同金额</td>
+                                    <td class="text-left">
+                                        <div class="form-inline">
+                                            <input type="text" class="form-control IDCinfoInput" name="minAmount">
+                                            &nbsp;至&nbsp;
+                                            <input type="text" class="form-control IDCinfoInput" name="maxAmount">
+                                        </div>
+                                    </td>
+                                    <td class="text-right">月付金额</td>
+                                    <td class="text-left">
+                                        <div class="form-inline">
+                                            <input type="text" class="form-control IDCinfoInput" name="minMonth">
+                                            &nbsp;至&nbsp;
+                                            <input type="text" class="form-control IDCinfoInput" name="maxMonth">
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="6">
+                                        <button type="submit" class="btn btn-success ow2 btn-query"
+                                                data-loading-text="查询中">查询</button>
+                                        <a href="javascript:;" class="btn btn-default ow2 btn-export">导出</a>
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </form>
+                        <div class="table-container"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <%#sidebar.html%>
+    </div>
+    <%#footer.html%>
+</div>
+
+
+<%! $_ENGINE_SELF.callFn( "useModule")( "<<<_use:
+        fml.use('fms/query/IDCinfo');
+_use:", this._JSstack , this._JSmods); %>
+
+<%#foot.html%>

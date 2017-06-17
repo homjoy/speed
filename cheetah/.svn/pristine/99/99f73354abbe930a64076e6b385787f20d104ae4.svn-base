@@ -1,0 +1,29 @@
+fml.define("fex/doc/pagination", ['jquery', 'component/upload'], function (require, exports) {
+    "use strict";
+    var $ = require('jquery');
+
+    $("#upload-btn").QueenUpload({
+        action: "/upload/file",
+        multiple: true,
+        maxFileCount: 1,
+        //初始化文件列表（用于增加已经上传的文件列表，数据修改的时候会用得到）
+        initFiles: [
+            {"identify": "123", "name": "医院证明.jpg", "type": "jpg"},
+            {"identify": "1235", "name": "医院证明1234.jpg", "type": "jpg"}
+        ],
+        onSuccess: function (response, file) {
+            //response 是上传接口的返回数据
+            //file是文件对象.
+            console.log(response, file);
+        },
+        onError: function (message, file) {
+            console.log(message, file);
+        },
+        onProgress: function (percent, file) {
+            console.log(percent, file);
+        },
+        onFileRemove: function (file) {
+            console.log(file);
+        }
+    });
+});

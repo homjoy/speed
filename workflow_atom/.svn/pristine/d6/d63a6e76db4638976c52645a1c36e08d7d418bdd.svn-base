@@ -1,0 +1,126 @@
+<?php 
+namespace WorkFlowAtom\Modules\Process;
+
+use WorkFlowAtom\Modules\Common\BaseModule;
+use WorkFlowAtom\Package\Common\Response;
+use WorkFlowAtom\Package\Process\Task;
+use WorkFlowAtom\Package\Process\Progress;
+use Libs\Util\Format;
+
+/**
+ * 工作流创建
+ * @author jingjingzhang@meilishuo.com
+ * @date 2015-7-20 
+ */
+
+class TaskCreate extends BaseModule {
+
+	protected $task = array();
+	protected $errors = array();
+	private $sample;
+
+	public function run() {
+
+		$this->_init();
+
+		$this->sample = Task::getInstance()->getFields();
+		
+		//参数校验
+		if ($this->post()->hasError()) {
+			$return = Response::gen_error(10001, '', $this->errors);
+        	return $this->app->response->setBody($return);
+		}
+
+		if (empty($this->task['tasktype_id']) || empty($this->task['user_id'])) {
+			$return = Response::gen_error(10001);
+        	return $this->app->response->setBody($return);
+		}
+
+		// 新建任务和新建工作流日志操作必须全部完成或都不完成
+		$this->task['task_content'] = htmlspecialchars_decode( htmlspecialchars_decode($this->task['task_content']) );
+		try {
+
+			Task::getInstance()->beginTran();
+
+			$result_task = Task::getInstance()->insert($this->task);
+			if (empty($result_task)) {
+				throw new \Exception('task 信息插入失败');
+			} 
+
+			$progressQueryParams = array(
+				'task_id' 	       => $result_task,
+				'process_id'       => $this->task['current_node_id'],
+				'action_type'      => 0,
+				'current_user_id'  => $this->task['user_id'],
+				'status'           => 1,
+				'progress_content' => '创建任务',
+			);
+			$result_progress = Progress::getInstance()->insert($progressQueryParams);
+			if (empty($result_progress)) {
+				throw new \Exception('progress 信息插入失败');
+			} 
+
+			Task::getInstance()->commit();
+		} catch (\Exception $e) {
+
+			Task::getInstance()->rollback();
+			
+			$return =  Response::gen_error(50001, $e->getMessage());
+			return $this->app->response->setBody($return);
+		}
+
+		if ($result_task === FALSE) {
+			$return = Response::gen_error(50001);
+		} else if (empty($result_task)) {
+			$return = Response::gen_error(50012);
+		} else {
+			$this->task['task_id'] = $result_task;
+			$return = Response::gen_success(Format::outputData($this->task, $this->sample));
+		}
+
+		$this->app->response->setBody($return);
+	}
+
+	private function _init() {
+
+		$this->rules = array(
+			'tasktype_id' => array(
+				'required'   => TRUE,
+				'type'       => 'integer',
+				'maxLength'  => 5,
+			),
+			'user_id' => array(
+				'required'   => TRUE,
+				'type'       => 'integer',
+				'maxLength'  => 11,
+			),
+			'task_name' => array(
+				'required'   => TRUE,
+				'allowEmpty' => FALSE,
+				'type'       => 'string',
+				'maxLength'  => 100,
+			),
+			'task_content' => array(
+				'required'   => TRUE,
+				'allowEmpty' => FALSE,
+				'type'       => 'string',
+			),
+			'current_user_id' => array(
+				'type'       => 'integer',
+				'default'    => 0,
+				'maxLength'  => 11,
+			),
+			'status' => array(
+				'type'    => 'integer',
+				'default' => 1,
+			),
+			'current_node_id' => array(
+				'type'    => 'integer',
+				'default' => 0,
+			),
+		);
+
+		$this->task = $this->post()->safe();
+		$this->errors = $this->post()->getErrors();
+	}
+}

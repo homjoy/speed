@@ -1,0 +1,44 @@
+/*--/Users/MLS/speed/cheetah/trunk/apps/web/views/administration/officesupply/apply.html--*/ 
+     var est = require(config.path.lib + 'est/est.js'); 
+     var _extFn = require('/Users/MLS/speed/cheetah/trunk/nest/server/lib/est/extFn.js'); 
+     function requireFn(tpl) { return est.renderFile('/Users/MLS/speed/cheetah/trunk/apps/web/views/' ,tpl , null , null ,'web' ,true); } ; 
+     function __getHtml (_data) { 
+       function jsRender(tpl , id) { return est.jsRender(requireFn(tpl)(_data), id  ); } ; 
+       var __htm ='';
+__htm += '';
+__htm += est.renderFile("/Users/MLS/speed/cheetah/trunk/apps/web/views/" ,"head.html",_data,null,"web" )||"";
+__htm += '\n<div id="container" class="effect mainnav-lg">\n    ';
+__htm += est.renderFile("/Users/MLS/speed/cheetah/trunk/apps/web/views/" ,"navbar.html",_data,null,"web" )||"";
+__htm += '\n    <div class="boxed">\n        <!--CONTENT CONTAINER-->\n        <!--===================================================-->\n        <div id="content-container" >\n            <ol class="breadcrumb">\n                <li><a href="/home">主页</a></li>\n                <li><a href="/home/window/?f=executive&s=all"> 行政中心</a></li>\n                <li class="active">办公用品</li>\n            </ol>\n            <div id="page-content" class="no-padding panel">\n                <ul class="nav nav-tabs slope col-lg-12 col-sm-12 col-xs-12" style="margin-bottom: 30px">\n                    <li class="active"  role="presentation" ><a href="/administration/officesupply/">办公用品申请</a></li>\n                    <li role="presentation" ><a href="/administration/officesupply/my" class="application_num">我的申请<span class="approval-badge">';
+if(_data.apply_num_get.code==200){;__htm += '';
+__htm +=_data.apply_num_get.data.application_num;
+__htm += '';
+};__htm += '</span></a></li>\n                    <li role="presentation" ><a href="/administration/officesupply/approval" class="approval_num">我的审批<span class="approval-badge">';
+if(_data.apply_num_get.code==200){;__htm += '';
+__htm +=_data.apply_num_get.data.approval_num;
+__htm += '';
+};__htm += '</span></a></li>\n                    ';
+if(_data.permission_control.code==200){;__htm += '\n                    ';
+if(!!_data.permission_control.data.manager){;__htm += '\n                    <li role="presentation" class=""><a href="/administration/officesupply/manage" >我的管理</a></li>\n                    ';
+};__htm += '\n                    ';
+};__htm += '\n                </ul>\n                <div class="panel-body" style="min-width:946px;width: 946px;margin: 0 auto">\n                    <div class="panel gray left" style="position: relative;">\n                        <div class="panel-heading head-fix">\n                            <div class="form-group">\n                                <span class="menu-office-btn"></span>\n                                <div class="supplyname-div">\n                                    <input type="text" class="form-control supplyname" placeholder="输入关键字"/>\n                                    <span class="search-icon"></span>\n                                </div>\n                            </div>\n                            <div class="office-menu-detail hide">\n                                <a href=""><span class=""></span></a>\n                            </div>\n                        </div>\n                        <div class="panel-body" style="position: relative;">\n                            <div class="panel inside">\n                            </div>\n                        </div>\n                    </div>\n                    <div class="panel gray right" >\n                        <div class="panel-heading">\n                            已选择<span class="choosenum">0</span>件物品\n                        </div>\n                        <div class="panel-body over-scroll">\n                            <ul class="chooseul">\n                            </ul>\n                            <div class="kong">\n                                <img src="';
+__htm += _data.PICTURE_URL  ;
+__htm += 'img/queen/approval/kong.png" alt=""/>\n                                <span>在左侧选择物品吧</span>\n                            </div>\n                        </div>\n                        <div class="panel-foot">\n                            <select class="floornum selectpicker hide" style="display: none">\n                                <option value="">领取楼层</option>\n                                ';
+if(_data.supply_request_place.code==200){;__htm += '\n                                    ';
+ _data.supply_request_place.data.city.forEach(function(v,k){;__htm += '\n                                        <option value="';
+__htm +=v.key;
+__htm += '">';
+__htm +=v.value ;
+__htm += '</option>\n                                    ';
+});__htm += '\n                                ';
+};__htm += '\n                            </select>\n                            <a href="javascript:void(0)" class="btn btn-beauty btn-sm submit">提交</a>\n                        </div>\n                    </div>\n                    <!--<div class="tab-content">-->\n                        <!--<div class=" tap">-->\n                        <!--</div>-->\n                    <!--</div>-->\n                </div>\n            </div>\n            ';
+__htm += est.renderFile("/Users/MLS/speed/cheetah/trunk/apps/web/views/" ,"footer.html",_data,null,"web" )||"";
+__htm += '\n        </div>\n        ';
+__htm += est.renderFile("/Users/MLS/speed/cheetah/trunk/apps/web/views/" ,"mainnav.html",_data,null,"web" )||"";
+__htm += '\n    </div>\n</div>\n<script type="text/html" id="supply-request">\n    {{each data as info}}\n        <div class="panel-heading " style="position: relative">\n            <a id="pic{{info.pic}}" class="picturnto" href="javascript:void(0)"></a>\n            <span class="pic picbig pic{{info.pic}}"></span>\n            <span class="insidetittle">{{info.category_name}}</span>\n            <span class="place">{{info.get}}</span>\n        </div>\n        <div class="panel-body">\n            {{each info.supplyInfo as sth}}\n            <div class="officesupply" data-id="{{sth.id}}" data-is_floor="{{if info.is_floor}}true{{/if}}" data-detail="{{sth.detail}}" data-supply_name="{{sth.supply_name}}">\n                <h4>{{sth.supply_name}}</h4>\n                <div class="detail">{{sth.detail}}</div>\n            </div>\n            {{/each}}\n        </div>\n    {{/each}}\n</script>\n<script type="text/html" id="supply-sth">\n    <li class="pink active" data-id="{{id}}" data-isfloor="{{if is_floor==true}}y{{/if}}">\n        <div class="supplytittle"><span>{{supply_name}}</span><span class="right_detail {{if detail==\'\'}}text-indent1000{{/if}}">{{if detail!=\'\'}}{{detail}}{{else}}1{{/if}}</span> </div>\n        <div class="garbage numcontrol hide" data-id="{{id}}">1</div>\n        <div class="supplyconstrol">\n            <div class="minus numcontrol">-</div>\n            <input class="supplyinput numcontrol" type="text" value="1"/>\n            <div class="plus numcontrol">+</div>\n        </div>\n    </li>\n</script>\n<script type="text/html" id="office-menu-detail">\n    {{each data as info}}\n    <a href="#pic{{info.pic}}" class="turn"><span class="pic pic{{info.pic}}"></span>{{info.category_name}}</a>\n    {{/each}}\n</script>\n';
+__htm += est.callFn("useModule")("fml.use('speed/common/base');\nfml.use('speed/administration/officesupply/apply');", _data._JSstack , _data._JSmods) || '';
+ ;__htm += '\n';
+__htm += est.renderFile("/Users/MLS/speed/cheetah/trunk/apps/web/views/" ,"foot.html",_data,null,"web" )||"";
+__htm += '';
+return __htm;} 
+ exports.html = __getHtml; 

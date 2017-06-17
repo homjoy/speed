@@ -1,0 +1,26 @@
+<%#head.html%> <div id="container" class="effect mainnav-lg">
+<div class="fr"></div>
+<div class="login-layout">
+	<form class="form-signin">
+		<div class="form-group">
+			<label>用户名</label>
+			<input type="text" id="inputName" name="name" class="form-control" placeholder="用户名" autofocus="" data-bv-notempty>
+		</div>
+		<div class="form-group">
+			<label>密码</label>
+			<input type="password" id="inputPassword" name="password" class="form-control" placeholder="密码">
+		</div>
+		<div class="checkbox">
+			<label>
+				<input type="checkbox"> 记住我
+			</label>
+		</div>
+		<button class="btn btn-lg btn-primary btn-block" type="submit" data-loading-text="登陆中">登陆</button>
+	</form>
+</div>
+<%#footer.html%></div>
+<%! $_ENGINE_SELF.callFn("useModule")("<<<_use:
+		fml.use('fms/user/login');
+_use:", this._JSstack , this._JSmods); %>
+
+<%#foot.html%>

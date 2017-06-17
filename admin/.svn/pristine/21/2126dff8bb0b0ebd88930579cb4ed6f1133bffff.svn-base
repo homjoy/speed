@@ -1,0 +1,6 @@
+<div class="list-group" >
+    <a href="/structure/depart/depart_home" class="list-group-item">部门列表</a>
+    <a href="/structure/depart/application_edit" class="list-group-item">申请操作部门</a>
+    <a  href="/structure/depart/add_title" class="list-group-item">添加职位</a>
+    <a  href="/structure/depart/depart_leader_home" class="list-group-item">操作部门领导</a>
+</div>

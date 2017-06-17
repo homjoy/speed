@@ -1,0 +1,204 @@
+<?php
+namespace Admin\Modules\Hr\Leave;
+
+use Admin\Modules\Common\BaseModule;
+use Admin\Package\Hr_leave\LeaveList;
+use Admin\Modules\Common\ExportExcel;
+use Admin\Package\Core\Config;
+use Admin\Package\Workflow\OptionWorkflow;
+use Admin\Package\Account\UserInfo;
+use Admin\Package\Department\Department;
+use  Libs\Util\ArrayUtilities;
+/**
+ * Created by guojiezhu@meilishuo.com  hongzhou@meilishuo.com
+ * User: MLS  ExportLeaveList
+ * Date: 15/11/13
+ * Time: 下午12:18
+ */
+class ExportLeaveList extends BaseModule{
+
+    protected $errors = null;
+    private $params = null;
+    private static  $LEAVE_STATUS = 4;
+
+    protected $config = array (
+        'filename' => '请假报表',
+        'config'   => array (
+            'A' => array ('width' => 15, 'title' => '员工编号', 'field' => 'staff_id'),
+            'B' => array ('width' => 15, 'title' => '姓名', 'field' => 'name_cn'),
+            'C' => array ('width' => 30, 'title' => '部门', 'field' => 'depart_name'),
+            'D' => array ('width' => 30, 'title' => '请假时段', 'field' => 'work_rule'),
+            'E' => array ('width' => 15, 'title' => '请假类型', 'field' => 'absence_name', ),
+            'F' => array ('width' => 15, 'title' => '扣除餐补天数', 'field' => 'meal_day'),
+            'G' => array ('width' => 80, 'title' => '请假原因', 'field' => 'reason'),
+
+        )
+    );
+    
+    public function run()
+    {
+        $this->_init();
+
+        //参数校验
+        $leave_list = array();
+        if (empty($this->params['create_time']) && empty($this->params['end_time'])) {
+            echo "请选择开始和结束时间";
+            exit;
+        }
+        //时间控制就算了吧 哥已经做了多次请求了
+        if( abs((strtotime($this->params['end_time']) - strtotime($this->params['create_time']))) >365*86400 ){
+            echo "导出天数超过365天";
+            exit;
+        }
+
+        //获取 ,查询需要考勤的用户的信息
+        $query_params = array();
+        //查询请假的时间
+        $query_params['start_time'] = $this->params['create_time'];
+        $query_params['end_time'] = $this->params['end_time'];
+        $query_params['status'] = self::$LEAVE_STATUS;
+        $query_params['speed_user_id'] = $this->user['id'];
+        $query_params['tasktype_id'] =  Config::getInstance()->getValue(array('path'=>'/hr/leave/sub_type_id'));
+        $task_array = OptionWorkflow::getInstance()->getTaskIdByDate($query_params);
+
+        if(!empty($task_array)){
+            $leave_params = array(
+                'task_id' => implode(',', $task_array),
+                'all' =>1,
+                'sort' => 'DESC',
+                'type' => 1
+            );
+            $leave_list = LeaveList::getInstance()->getLeaveList($leave_params);
+
+            $leave_list =array_values($leave_list);
+            $sum      =  count($leave_list);
+
+            //总数 分批拿数据  一次拿100条 最后合并数组
+            if(!empty($leave_list)){
+                //获取请假人信息
+                $leave_list = $this->multiRequestResult($leave_list,$sum,50);
+            }
+            $temp = $leave_list;
+            if(!empty($this->params['depart_id'])){
+                $temp =array();
+                foreach($leave_list as $k=>$v ){
+                  if(isset($v['depart_id'])&& $v['depart_id']==$this->params['depart_id']){
+                      $temp[$k] =$v;
+                  }
+                }
+            }
+            //员工编号、姓名、部门、请假时段（与员工请假界面相符，包含上下午）、请假类型、扣除餐补天数
+            $leave_list =array();
+            foreach($temp as $k=>$v ){
+                $leave_list[$k]['staff_id']=isset($v['staff_id'])?$v['staff_id']:'';
+                $leave_list[$k]['name_cn']=isset($v['name_cn'])?$v['name_cn']:'';
+                $leave_list[$k]['depart_name']=isset($v['depart_name'])?$v['depart_name']:'';
+                $leave_list[$k]['absence_name']=isset($v['absence_name'])?$v['absence_name']:'';
+                if(isset($v['start_date'])&&isset($v['start_half'])&&isset($v['end_date'])&&isset($v['end_half'])){
+                    $leave_list[$k]['work_rule'] = '从'.$v['start_date'].$v['start_half'].'到'.$v['end_date'].$v['end_half'];
+                }
+                $leave_list[$k]['meal_day'] =isset($v['length'])?$v['length']:'';
+                $leave_list[$k]['reason'] =isset($v['memo'])?$v['memo']:'';
+            }
+        }
+        set_time_limit (0);
+        $this->config['filename'] = '请假报表'. $query_params['start_time'].'-'.
+            $query_params['end_time'];
+        $excelObject =  new ExportExcel($this->config,$leave_list);
+        $excelObject -> output();
+
+        exit;
+        
+    }
+
+
+    private function getName($result){
+        $user_id =  ArrayUtilities::my_array_column($$result,'user_id');
+        $user_id['user_id'] = array_unique($user_id);
+        $user_id['status'] = array(1,2,3);
+
+        $user_info = UserInfo::getInstance()->getUserInfo($user_id);  //获取用户姓名
+
+
+        $user_info  = $this->valueToKey($user_info,'user_id');
+
+        $depart_id = ArrayUtilities::my_array_column($user_info,'depart_id');
+        $depart_id['depart_id'] = array_unique($depart_id);
+        $depart_id['status'] = array(0,1);
+        $depart_info = Department::getInstance()->getDepart($depart_id);  //获取所在部门
+        $depart_info  = $this->valueToKey($depart_info,'depart_id');
+
+
+        foreach($result as &$value){
+
+                if(isset($user_info[$value['user_id']]['user_id']) && $value['user_id'] ==$user_info[$value['user_id']]['user_id']){
+                    $value['name_cn'] = isset($user_info[$value['user_id']]['name_cn'])?$user_info[$value['user_id']]['name_cn']:'';
+                    $value['depart_name'] = isset($depart_info[$user_info[$value['user_id']]['depart_id']]['depart_name']) ? $depart_info[$user_info[$value['user_id']]['depart_id']]['depart_name']:'';
+                    $value['depart_id']   = isset($user_info[$value['user_id']]['depart_id'])?$user_info[$value['user_id']]['depart_id']:'';
+                    $value['staff_id']   = isset($user_info[$value['user_id']]['staff_id'])?$user_info[$value['user_id']]['staff_id']:'';
+                    $temp[] =$value;
+                }
+
+        }
+
+        return $result;
+    }
+
+    /**
+     * 返回数组中指定的一列值为索引的数组
+     */
+    public  function  valueToKey($array=array(),$col){
+
+        $results=array();
+        if(!is_array($array)) return $results;
+
+        foreach($array as &$value){
+            if(isset($value[$col])){
+                $results[$value[$col]] =$value;
+            }
+        }
+        return $results;
+    }
+    /**
+     * 防止数据丢失 多次请求
+     */
+    public  function  multiRequestResult($array=array(),$sum,$limit){
+
+        $results=array();
+        if(!is_array($array)) return $results;
+
+        $count =ceil($sum/$limit);
+        for( $i =0;$i<=$count;$i++){
+           //数组的截取
+           $temp =  array_slice($array,$i*$limit,$limit);
+           $temp = $this->getName($temp);
+           //数组的合并
+           $results = array_merge($results,$temp);
+        }
+        return $results;
+    }
+    private function _init()
+    {
+
+        $this->rules = array(
+           
+            'create_time' => array(
+                'type' => 'string',
+                'required'	=> true,
+            ),
+            'end_time' => array(
+                'type' => 'string',
+                'required'	=> true,
+            ),
+            'depart_id' => array(
+                'type' => 'integer',
+            ),
+        );
+
+        $this->params = $this->query()->safe();
+        $this->errors = $this->query()->getErrors();
+    }
+
+
+
+}

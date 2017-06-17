@@ -1,0 +1,216 @@
+fml.define('fms/mymanage/contract-filing', ['jquery',
+    'plugin/bootstrap/datepicker',
+    'plugin/bootstrap/dataTables',
+    'plugin/bootstrap/validator',
+    'plugin/dropzone',
+    'plugin/artTemplate',
+    'fms/common/common',
+    'fms/common/utils',
+    'fms/query/selectTree',
+    'fms/common/notify'
+], function (require, exports) {
+
+    var $ = require('jquery');
+    var treeSelect = require('fms/query/selectTree');
+    var notify = require('fms/common/notify');
+    var dropzone = require('plugin/dropzone');
+    var template = require('plugin/artTemplate');
+    var common = require('fms/common/common');
+    var utils = require('fms/common/utils');
+
+    var archiveList = $('#tb-filing');
+    var archiveBtn = $('.toolbar .btn-filing');
+
+
+    /**
+     * 绑定点击归档操作.
+     */
+    archiveList.on('click', 'tbody tr', function (e) {
+        var tr = $(e.target).closest('tr');
+        archiveList.find('tr.selected').removeClass('selected');
+        tr.addClass('selected');
+    });
+
+
+    /**
+     * 归档按钮点击
+     */
+    archiveBtn.on("click", function (e) {
+        e.preventDefault();
+        var self = $(this);
+
+
+        var isToggled = self.hasClass('toggled');
+        var selectedRow = archiveList.find('tr.selected');
+        if (!selectedRow.length) {
+            notify.warning('未选中任何行.');
+            return;
+        }
+
+        if (!isToggled) {
+            self.html('保存').addClass('toggled');
+            editableRow(selectedRow);
+        } else {
+            //// 防止二次点击
+            self.prop('disabled',true);
+            //self.attr('type', 'submit');
+            //如果是已归档，则是修改
+            if (selectedRow.hasClass('archive')) {
+                var requestId = selectedRow.find('[name=requestId]').val(),
+                    conId = selectedRow.find('[name=conId]').val(),
+                    signDate = selectedRow.find('[name=signDate]').val(),
+                    state = selectedRow.find('[name=remark]').val();
+
+                var info = {'requestId': requestId, 'signDate': signDate, 'conId': conId, 'state': state};
+                $.post('/aj/filing/overSave', info, function (data) {
+                    if (data.rcode == 200) {
+
+                        self.text('归档').removeClass('toggled').prop('disabled',false);
+                        notify.success("保存成功.");
+                        //刷新归档列表
+                        loadArchives();
+                    } else {
+                        notify.error(data.rmessage || '保存出错.');
+                    }
+                }, "json");
+            } else {
+                var data = {
+                    "requestId": selectedRow.find('[name=requestId]').val() || '',
+                    "signDate": selectedRow.find('[name=signDate]').val() || '',
+                    "cFilePath": selectedRow.find('[name=cFilePath]').val() || '',
+                    "remark": selectedRow.find('[name=remark]').val() || ''
+                };
+                $.post('/aj/filing/waitSave', data, function (data) {
+                    if (data.rcode == 200) {
+                        self.text('归档').removeClass('toggled').prop('disabled',false);
+                        notify.info('归档成功');
+                        loadArchives();
+                    } else {
+                        notify.info(data.rmessage);
+                    }
+                }, 'json');
+            }
+
+
+        }
+    });
+
+
+    /**
+     * 让指定行切换为可编辑状态
+     * @param selectedRow
+     */
+    function editableRow(selectedRow) {
+        selectedRow.addClass('editable').find('[disabled]').removeAttr('disabled');
+        var dropzone = selectedRow.find('.dropzone');
+        if (dropzone.hasClass('using')) {
+            return;
+        }
+        dropzone.addClass('using');
+        utils.multiUpload(selectedRow.find('.dropzone').get(0), {
+            previewTemplate: template('preview-template', {}),
+            dictRemoveFile: 'x',
+            finish: function (files, data, file) {
+                if (data.rcode == 200) {
+                    notify.success(data.rmessage || '上传成功.');
+                } else {
+                    notify.error(data.rmessage || '上传失败.');
+                }
+                selectedRow.find('[name=cFilePath]').val(files.join(','));
+            },
+            remove: function (files, data, file) {
+                notify.success("已删除");
+                selectedRow.find('[name=cFilePath]').val(files.join(','));
+            }
+        });
+    }
+
+
+    /**
+     * 加载归档列表.
+     */
+    function loadArchives() {
+        $.getJSON('/aj/filing/archives', {}, function (resp) {
+            if (resp && resp.length > 0) {
+                var tBody = template('fillingList', {archives: resp});
+                archiveList.find('tbody').html(tBody);
+                bindHandle();
+            } else {
+                archiveList.find('tbody').html('');
+            }
+        });
+    }
+
+    /**
+     * 加载归档列表
+     */
+    loadArchives();
+
+    //common.panelClick('filling_cookie', 'a[href="#over"]', 'a[href="#waiting"]');
+
+
+    /**
+     * 绑定事件处理
+     */
+    function bindHandle() {
+        /* 待归档*/
+        // 单击上传文件转移点击
+        $('.click-input').click(function () {
+            $(this).parent().next().click();
+        });
+
+        // 解决验证事件的bug
+        $('.signDate,.overSignDate').datepicker({
+            'format': 'yyyy-mm-dd',
+            'autoclose': true,
+            'todayHighlight': true
+        }).on('changeDate', function () {
+            $(this).trigger('input')
+        });
+    }
+
+
+    /**
+     * 通知领取
+     */
+    $('body').on('click', '.btn-mail', function () {
+        var ids = getCheckedIds();
+        var params = [];
+        for(var i = 0,len = ids.length; i< len;i++){
+            params.push({
+                name:"requestId",
+                value:ids[i]
+            });
+        }
+        if (ids.length > 0) {
+            $.post('/aj/mymanage/mail', $.param(params), function (data) {
+                if (data.rcode == 200) {
+                    notify.success(data.rmessage);
+                } else {
+                    notify.warning(data.rmessage);
+                }
+            }, 'json');
+        } else {
+            notify.notice('danger', '.panel', '您没有选中任何记录', null);
+        }
+    });
+
+    /**
+     *
+     */
+    $(".check-all,.getall").on("change",function(){
+        var checked = $(this).prop('checked');
+        var checkbox = $("#tb-filing tbody input[type=checkbox]");
+        checkbox.prop("checked",checked);
+    });
+
+    /**
+     * 批量获取选中的id
+     * @returns {*|jQuery}
+     */
+    function getCheckedIds() {
+        return $('#tb-filing').find('tbody input[type=checkbox]:checked').map(function () {
+            return $(this).val();
+        }).get();
+    }
+});

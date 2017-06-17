@@ -1,0 +1,185 @@
+<?php
+
+namespace Admin\Modules\Structure\Depart;
+use Libs\Util\Format;
+use Admin\Modules\Common\BaseModule;
+use Admin\Package\Common\Response;
+use Admin\Package\Department\Department;
+use Admin\Package\Account\UserInfo;
+use Admin\Package\Department\DepartSub;
+use Admin\Package\Department\DepartRelation;
+/**
+ *  GetDepartTemp 获取一个部门相关信息
+ * hongzhou@meilishuo.com
+ * 2015-09-25
+ */
+class AjaxGetDepartBackup extends BaseModule {
+
+   protected $errors = NULL;
+   private $params = NULL;
+   public static $VIEW_SWITCH_JSON = TRUE;
+
+   public function run() {
+       //部门信息 领导信息 部门下面人员信息
+       $this->_init();
+       if($this->query()->hasError()){
+           $return = Response::gen_error(10001, '', $this->post()->getErrors());
+           return $this->app->response->setBody($return);
+       }
+
+       $depart_info =  $leader_info= $parent = $user_info =array();
+       $depart_info =Department::getInstance()->getDepartTemp($this->params);
+       $depart_info = is_array($depart_info)?array_pop($depart_info):'';
+       if($depart_info===FALSE){
+           return $this->app->response->setBody(Response::gen_error(50001,'获取部门信息失败'));
+       }
+       //parent
+       if(isset($depart_info['parent_id'])&& $depart_info['parent_id']!=0){//为了CEO逻辑处理
+           $parent =Department::getInstance()->getDepartTemp(array('depart_id'=>
+               $depart_info['parent_id']));
+           if(is_array($parent)){
+               $parent =array_pop($parent);
+           }
+
+       }
+       $depart_info['parent_id'] = isset($depart_info['parent_id'])?$depart_info['parent_id']:'';
+       $depart_info['parent_name'] =isset($parent['depart_name'])?$parent['depart_name']:'';
+      //leader  role sub leader vir
+       $leader_info =  $this->getDepartLeaderInfo(array('is_virtual' =>0,'depart_id'=>
+           $this->params['depart_id']));
+
+       if($leader_info===FALSE){
+           return $this->app->response->setBody(Response::gen_error(50001,'获取领导信息失败'));
+       }
+
+
+       //构造前端数据
+       $ret =array();
+       $ret['role_id']=isset($leader_info['role_id'])?$leader_info['role_id']:'';
+
+       $ret['parent_id']['parent_id'] =$depart_info['parent_id'];
+       if($ret['parent_id']['parent_id']==0){
+           $ret['parent_id']['parent_name'] ='顶级部门';
+       }else{
+           $ret['parent_id']['parent_name'] =$depart_info['parent_name'];
+       }
+
+
+       $ret['leader_id']['leader_name'] = isset($leader_info['leader_name'])?$leader_info['leader_name']:'';
+       $ret['leader_id']['leader_id'] = isset($leader_info['leader_id'])?$leader_info['leader_id']:'';
+       //sub
+       $ret['sub_leader_id']['sub_name'] = isset($leader_info['sub_name'])?$leader_info['sub_name']:'';
+       $ret['sub_leader_id']['sub_leader_id'] = isset($leader_info['sub_leader_id'])?$leader_info['sub_leader_id']:'';
+       //relation
+       $ret['virtual_leader_id']['virtual_name'] = isset($leader_info['virtual_name'])?$leader_info['virtual_name']:'';
+       $ret['virtual_leader_id']['virtual_leader_id'] = isset($leader_info['virtual_leader_id'])?$leader_info['virtual_leader_id']:'';
+
+       $user_info = $this->getUser($this->params);
+       $ret['user_id']=$user_info;
+       $ret['depart_id']['depart_name'] =isset($depart_info['depart_name'])?$depart_info['depart_name']:'';
+       $ret['depart_info'] =isset($depart_info['depart_info'])?$depart_info['depart_info']:'';
+       $ret['depart_level'] =isset($depart_info['depart_level'])?$depart_info['depart_level']:'';
+       $ret['depart_id']['depart_id']  =isset($depart_info['depart_id'])?$depart_info['depart_id']:'';
+
+       return $this->app->response->setBody(Response::gen_success($ret));
+
+
+   }
+
+    private function getUser($params){//成员 传depart_id
+        $user_info = UserInfo::getInstance()->getUserInfo( $params);
+
+        //name_cn 邮箱 id
+        $result = array();
+        if(is_array($user_info)){
+            foreach($user_info as $key =>$value){
+                $result[$key]['name_cn'] = isset($value['name_cn'])?$value['name_cn']:'';
+                $result[$key]['user_id'] = isset($value['user_id'])?$value['user_id']:'';
+            }
+        }
+        return $result;
+    }
+
+
+
+    private function getDepartLeaderInfo($params){//获取领导名字 信息
+       $depart_leader_info = self::getClient()->call('atom', 'department/depart_relation_temp_list', $params);
+       $depart_leader_info = $this->parseApiData($depart_leader_info);
+       $role=array();
+       if(is_array($depart_leader_info)){
+           $depart_leader_info =array_pop($depart_leader_info);
+           $role  = isset($depart_leader_info['role_id'])?$depart_leader_info['role_id']:'';
+           //关系
+           $v_relation_info =$p_r= array();
+           $p_r = isset($depart_leader_info['parent_relation_id'])?$depart_leader_info['parent_relation_id']:'';
+           if(!empty($p_r)){//存在父亲关系且父亲关系是虚拟
+               $v_relation_info = self::getClient()->call('atom', 'department/depart_relation_temp_list', array('relation_id'=> $p_r,'is_virtual'=>1));
+               $v_relation_info = $this->parseApiData($v_relation_info);
+
+               if(!empty($v_relation_info )){
+                   $v_relation_info = array_pop($v_relation_info);
+
+                   $v_relation_info = isset($v_relation_info['user_id'])?$v_relation_info['user_id']:'';
+                   $v_relation_info = self::getClient()->call('atom', 'account/get_user_info',array('user_id'=>$v_relation_info));
+                   $v_relation_info = $this->parseApiData($v_relation_info);
+                   $v_relation_info =is_array($v_relation_info)?array_pop($v_relation_info):'';
+
+                   $depart_leader_info['virtual_name'] = isset($v_relation_info['name_cn'])?$v_relation_info['name_cn']:'';
+                   $depart_leader_info['virtual_leader_id'] = isset($v_relation_info['user_id'])?$v_relation_info['user_id']:'';
+
+               }
+           }
+           //代理领导
+           $depart_leader_sub = self::getClient()->call('atom', 'department/depart_sub_temp_list',array('relation_id'=>$depart_leader_info['relation_id'],
+           ));
+           $depart_leader_sub = $this->parseApiData($depart_leader_sub);
+           if(is_array($depart_leader_sub)){
+               $depart_leader_sub =array_pop($depart_leader_sub);
+           }
+
+           $depart_leader_info['sub_leader_id'] = isset($depart_leader_sub['user_id'])?$depart_leader_sub['user_id']:'';
+           if($depart_leader_info['sub_leader_id'] !=''){
+
+
+               $leader_sub_name = self::getClient()->call('atom', 'account/get_user_info',array('user_id'=>$depart_leader_info['sub_leader_id']));
+               $leader_sub_name = $this->parseApiData($leader_sub_name);
+               if(is_array($leader_sub_name)){
+                   $leader_sub_name =array_pop($leader_sub_name);
+               }
+               $depart_leader_info['sub_name'] = isset($leader_sub_name['name_cn'])?$leader_sub_name['name_cn']:'';
+           }
+           //领导
+           if(isset($depart_leader_info['user_id'])){
+               $leader_name = self::getClient()->call('atom', 'account/get_user_info',array('user_id'=>$depart_leader_info['user_id']));
+               $leader_name = $this->parseApiData($leader_name);
+               if(is_array($leader_name)){
+                   $leader_name =array_pop($leader_name);
+               }
+               $depart_leader_info['leader_id'] = $depart_leader_info['user_id'];
+               $depart_leader_info['leader_name'] = isset($leader_name['name_cn'])?$leader_name['name_cn']:'';
+           }
+
+           $depart_leader_info['role_id'] = $role;
+           return $depart_leader_info;
+       }
+   }
+   private function _init() {
+
+       $this->rules = array(
+           'depart_id' => array(
+               'required' => TRUE,
+               'allowEmpty' => FALSE,
+               'type'=>'integer',
+           ),
+           'status' => array(
+               'type'=>'multiId',
+               'default'=>1,
+           ),
+       );
+
+       $this->params = $this->query()->safe();
+       $this->errors = $this->query()->getErrors();
+
+   }
+
+}

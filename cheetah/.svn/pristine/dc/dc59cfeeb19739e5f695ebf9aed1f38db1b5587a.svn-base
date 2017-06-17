@@ -1,0 +1,313 @@
+<%#head.html %>
+<div id="container" class="effect mainnav-lg">
+	<%#navbar.html %>
+	<div class="boxed">
+		<!--CONTENT CONTAINER-->
+		<!--===================================================-->
+		<div id="content-container">
+
+			<div id="page-content">
+				<div class="row">
+					<div class="col-lg-8" style="padding-left:20px;padding-right:30px">
+						<!-- 通讯录 -->
+						<div class="row">
+							<div class="panel" style="height:120px;min-width:560px">
+								<img src="<%= this.userInfo.data.user.avatar.avatar_middle%>" class="head_pic left">
+
+								<div class="head_word left hidden-xs col-lg-3 col-md-4 col-sm-3" style="text-align: center">
+									<span class="up ">hello <%= this.userInfo.data.user.name_cn%></span>
+									<span class="down">活动一下？</span>
+								</div>
+
+								<div class="right select_div ">
+									<span class="button_select left"><span class="button_select_word"
+																		   name="name">通讯录</span></span>
+									<input type="text" class="input_select left" placeholder="姓名/拼音/邮箱/手机号/QQ号"
+										   autofocus="autofocus"/>
+									<a href="#" class="select_pic">
+										<img src="<%= this.PICTURE_URL  %>img/speed/home/search icon.png">
+									</a>
+								</div>
+
+							</div>
+						</div>
+						<!-- 常用功能 -->
+						<div class="row">
+							<div class="panel antenna" style="min-width:560px">
+								<div class="panel_head">
+									<img src="<%= this.PICTURE_URL  %>img/speed/home/shezhi.png">常用功能
+								</div>
+								<div class="panel_body ">
+									<ul>
+										<li><a href="/meeting"><img
+												src="<%= this.PICTURE_URL  %>img/speed/home/u_huiyi.png"><span>预定会议室</span></a>
+										</li>
+										<li><a href="/home/window/?f=document&s=requestAbsence"><img
+												src="<%= this.PICTURE_URL  %>img/speed/home/u_qingjia.png"><span>请假申请</span></a>
+										</li>
+										<li><a href="/home/window/?f=executive&s=requestStationery"><img
+												src="<%= this.PICTURE_URL  %>img/speed/home/u_bangong.png"><span>办公用品申请</span></a>
+										</li>
+										<li><a href="/home/window/?f=executive&s=requestTravel"><img
+												src="<%= this.PICTURE_URL  %>img/speed/home/u_chuchai.png"><span>出差申请</span></a>
+										</li>
+										<li><a href="/home/window/?f=executive&s=assets_request"><img
+												src="<%= this.PICTURE_URL  %>img/speed/home/u_guding.png"><span>固定资产申请</span></a>
+										</li>
+										<li>
+											<a  href="http://speed.meilishuo.com/survey/index.php?r=survey/index&sid=728539&lang=zh-Hans"  target="_blank">
+												<div class="bling"></div>
+												<span style="text-indent: -9999px">吐槽有奖</span>
+											</a>
+										</li>
+									</ul>
+								</div>
+							</div>
+						</div>
+
+						<div class="row">
+							<div class="panel panel_time">
+								<div class="panel-top"></div>
+								<div id="demo-dp-range">
+								</div>
+								<div class="todo_today panel_right">
+									<div class="panel_head">当日待办事项</div>
+									<div class="panel_body">
+										<div></div>
+									</div>
+									<a class="mytime_rili" href="/time/">我的时间</a>
+								</div>
+							</div>
+						</div>
+						<% if(this.user_share_list.code==200){ %>
+						<div class="row">
+							<div class="panel share_time_div">
+
+								<div class="panel_body" style="">
+									<span class="">查看共享人</br>的时间</span>
+								</div>
+								<div style="float:left;height:100%;">
+									<ul>
+										<% this.user_share_list.data.forEach(function(bannar, index){ %>
+										<li>
+											<a href="/time/?user_id=<%= bannar.user_id%>&iw=<%= bannar.is_write%>">
+												<img src="<%= bannar.avatar%>">
+												<span style=""><%= bannar.name_cn %></span>
+											</a>
+										</li>
+										<% }); %>
+									</ul>
+								</div>
+							</div>
+						</div>
+						<% } %>
+						<div class="row">
+							<div class="panel panel_right" id="bus-time-table">
+								<div class="panel_head">班车时刻表</div>
+								<div class="panel_body">
+									<ul class="line-toggle">
+										<li class="active " data-target="line1"><span>线路一</span></li>
+										<div class="line-split"></div>
+										<li  data-target="line2"><span>线路二</span></li>
+										<div class="line-split"></div>
+										<li class="" data-target="line3"><span>线路三</span></li>
+									</ul>
+									<div class="line-pics">
+										<div id="line1" class="pic active">
+											<img src="<%= this.PICTURE_URL  %>img/speed/home/line1.png" />
+											<p class="car">班车停靠点：太阳宫站B口出，往东80米，夏家园车站处</p>
+											<p class="red">* 红色为乘坐高峰期，请自行安排出行时间</p>
+										</div>
+										<div id="line2" class="pic">
+											<img src="<%= this.PICTURE_URL  %>img/speed/home/line2.png" />
+											<dl>
+												<dt>
+													<p class="car">班车停靠点:</p>
+												</dt>
+												<dd style="height: 25px;"></dd>
+												<dt>望京西站</dt>
+												<dd>
+													<p> 13号线B口出，往东北步行80米</p>
+													<p>15号线C口出，过马路往西步行60米</p>
+												</dd>
+												<dt>望京站</dt>
+												<dd><p>15号线A口出，公交站往东50米</p></dd>
+											</dl>
+										</div>
+										<div id="line3" class="pic">
+											<img src="<%= this.PICTURE_URL  %>img/speed/home/line3.png" />
+											<p class="car">班车停靠点：15号线望京站C口出,过马路步行20米，望京西园四区A门处</p>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="row friendly-link">
+							<div class="panel antenna" style="min-width:560px">
+								<div class="panel_head">
+									<img src="<%= this.PICTURE_URL  %>img/speed/home/lianjie.png">友情链接
+								</div>
+								<div class="panel_body ">
+									<ul>
+										<li><a href="http://redmine.meilishuo.com/welcome" target="_blank"><img src="<%= this.PICTURE_URL  %>img/speed/home/wikiicon.png"><span>wiki</span></a></li>
+										<li><a href="http://home.meilishuo.com/index.php?app=homeapi&mod=AutoLogin" target="_blank"><img src="<%= this.PICTURE_URL  %>img/speed/home/homeicon.png"><span>home</span></a></li>
+										<li><a href="http://open.speed.meilishuo.com/" target="_blank"><img src="<%= this.PICTURE_URL  %>img/speed/home/kaifang.png" ><span>SPEED开放平台</span></a></li>
+										<li><a href="http://developer.meiliworks.com/apply/index" target="_blank"><img src="<%= this.PICTURE_URL  %>img/speed/home/kaifangfuwu.png" ><span>权限管理平台</span></a></li>
+										<li><a href="http://interfaces.meiliworks.com/" target="_blank"><img src="<%= this.PICTURE_URL  %>img/speed/home/jiekouguanli.png" ><span>接口管理平台</span></a></li>
+									</ul>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="col-lg-4" style="padding:0px">
+						<% if(this.weather.code == 200){%>
+						<div class="panel panel_right">
+							<div id="demo-weather-widget" class="panel panel-mint text-center">
+								<div class="panel-body">
+
+									<!--Weather widget body-->
+									<div class="row pad-top">
+
+										<div class="col-xs-7">
+											<h1 style="color:#6a6a6a;"><%= this.weather.data.today.main.temp %> ℃</h1>
+											<h4 class="text-semibold"><%= this.weather.data.city.city_name %></h4>
+										</div>
+										<div class="col-xs-5">
+											<input type="hidden" id="demo-weather-skycon-today"
+												   value="<%= this.weather.data.today.weather.skycon %>"/>
+											<canvas id="demo-weather-icon-today" width="64" height="64"></canvas>
+										</div>
+									</div>
+									<hr/>
+									<!--Weather widget footer-->
+									<ul class="list-unstyled text-center clearfix">
+
+										<% this.weather.data.forecast.forEach(function(weather, index){ %>
+										<li class="col-xs-4">
+											<input type="hidden" id="demo-weather-skycon-<%= index%>"
+												   value="<%= weather.weather.skycon %>"/>
+											<canvas id="demo-weather-icon-<%= index%>" width="32" height="32"></canvas>
+											<p class="text-sm mar-no"><%= weather.date_cn %></p>
+
+											<p><%= weather.temp.min%>-<%= weather.temp.max%> ℃</p>
+										</li>
+										<% }) %>
+
+									</ul>
+								</div>
+							</div>
+						</div>
+						<%}%>
+						<div class="panel panel_right" id="new-home-guide">
+							<div class="panel_head">新家攻略</div>
+							<div class="panel_body">
+								<p><a target="guide-time-table" href="http://speed.meilishuo.com/uploads/words/15/09/14_20150902155724.pdf?_from_14"><i class="bus"></i>班车时刻表</a>
+								<a target="guide-lbs-service" href="http://speed.meilishuo.com/uploads/words/15/09/14_20150902155747.pdf?_from_14"><i class="service"></i>浦项服务指引</a>
+								</p>
+								<p><a target="guide-room-map" href="/meeting/map/"><i class="location"></i>办公室平面图</a></p>
+							</div>
+						</div>
+						<div class="panel panel_right">
+							<div class="panel_head">
+								美丽说新闻
+							</div>
+							<div class="panel_body">
+								<ul>
+									<% if(this.top_news.code == 200){%>
+									<% this.top_news.data.forEach(function(bannar, index){ %>
+									<li>
+
+										<a href="<%=bannar.url%>" class="news_home" target="<%= index %>"
+										<% if(index==0){ %>
+										style="color:green;max-width: 86%;"
+										<% } %>
+										><%=bannar.title %></a>
+										<% if(index==0){ %>
+										<img src="<%= this.PICTURE_URL  %>img/speed/home/newicon.png" class="new">
+										<% } %>
+									</li>
+									<% }); %>
+									<%}%>
+								</ul>
+								<a class="more" href="http://home.meilishuo.com/news?t=3" target="_Blank1">查看更多</a>
+							</div>
+						</div>
+
+						<div class="panel panel_right">
+							<div class="panel_head">
+								最近更新
+							</div>
+							<div class="panel_body">
+								<ul>
+									<% if(this.update_news.code == 200){%>
+									<% this.update_news.data.forEach(function(bannar, index){ %>
+									<li><%=bannar.friendly %><%=bannar.subject %></li>
+									<% }); %>
+									<%}%>
+								</ul>
+
+							</div>
+						</div>
+						<div class="panel panel_right">
+							<div class="panel_head">
+								出差攻略
+							</div>
+							<div class="panel_body office-city-div">
+								<a  target="1" href="http://speed.meilishuo.com/uploads/words/14/12/14_20141210113541.pdf?_from_14&up=1440149755">北京</a>
+								<a  target="2" href="http://speed.meilishuo.com/uploads/words/14/12/14_20141210113647.pdf?_from_14&up=1440149037">上海</a>
+								<a  target="3" href="http://speed.meilishuo.com/uploads/words/14/12/14_20141210113612.pdf?_from_14&up=1440149037">杭州</a>
+								<a  target="4" href="http://speed.meilishuo.com/uploads/words/14/12/14_20141210114002.pdf?_from_14&up=1440149037">广州</a>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<!--===================================================-->
+			<!--End page content-->
+
+				<div class="foot_panel">
+					<div class="panel_head">
+						联系方式
+					</div>
+					<div class="panel_body">
+						<ul>
+							<li>
+								<span >北京</span>
+								<p>总部：北京市朝阳区大望京科技商务园区浦项中心B座21-28层</p>
+								<p> 总机：010-82486129   &nbsp;&nbsp;传真：010-60190662(7层)</p>
+								<p>客服：北京市海淀区海淀中街15号远中悦莱大厦B区3层305C</p>
+							</li>
+
+							<li>
+								<span >广州</span>
+								<p> 广州市天河区冼村路11号保利威座北塔32层全层（珠江新城W酒店对面）</p>
+								<p>仓库：广州市黄埔区护林路1199号 C库</p>
+							</li>
+
+							<li>
+								<span >杭州</span>
+								<p>杭州市西湖区古墩路83号浙商财富中心4号楼406室</p>
+							</li>
+
+							<li><span >上海</span>
+								<p>上海市长宁区娄山关路523号金虹桥国际中心I座706室</p></li>
+
+
+						</ul>
+					</div>
+				</div>
+			</div>
+			<%#footer.html%>
+		</div>
+		<%#mainnav.html%>
+	</div>
+</div>
+	<!--===================================================-->
+	<!-- END OF CONTAINER -->
+<%! $_ENGINE_SELF.callFn("useModule")("<<<_use:
+		fml.use('speed/common/base');
+		fml.use('nifty/skycons.min');
+		fml.use('speed/home/wizard');
+		fml.use('speed/home/index');
+_use:", this._JSstack , this._JSmods); %>
+<%#foot.html%>

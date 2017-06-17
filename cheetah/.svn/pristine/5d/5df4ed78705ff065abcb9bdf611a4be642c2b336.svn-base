@@ -1,0 +1,240 @@
+#page-content{
+  padding:0;
+
+  > .panel{
+    box-shadow: none;
+    border-radius: 5px;
+  }
+}
+.select_div {
+  width: 540px;
+  height: 48px;
+  position: relative;
+  margin: 0 auto;
+  margin-bottom: 40px;
+}
+
+.button_select {
+  width: 70px;
+  background-color: #ff6e9d;
+  display: inline-block;
+  height: 48px;
+  font-size: 18px;
+  color: white;
+  text-align: center;
+  padding-top: 11px;
+  border-radius: 0 6px 6px 0
+}
+
+.input_select {
+  height: 48px;
+  border: 1px solid #ff6e9d;
+  box-shadow: none;
+  width: 450px;
+  text-indent: 10px;
+//  outline-color: pink;
+//  outline-width: 3px;
+  outline: 0;
+  text-indent: 5px;
+  font-size: 14px;
+  border-radius: 6px 0 0 6px;
+  &:focus{
+    box-shadow: inset 0 1px 1px pink, 0 0 8px pink;
+  }
+}
+
+.select_pic {
+  height: 40px;
+  width: 40px;
+  display: block;
+  position: absolute;
+  right: 24px;
+}
+
+.select_pic img {
+  width: 20px;
+  margin-top: 13px;
+}
+
+.title {
+  text-align: center;
+  padding-top: 50px;
+  padding-bottom: 22px;
+  color: #7D7D7D;
+  font-size: 24px;
+  line-height: 1.0;
+  display: block;
+}
+
+.floor_pic {
+  img {
+    margin-left: 5px
+  }
+  position: absolute;
+  right: 34px;
+  top: 30px;
+  color:#5bbefa;
+  &:hover{
+    color:#1e80c4;
+  }
+}
+
+#container {
+  min-height: 1px;
+  position: static;
+}
+
+table {
+  font-size: 14px;
+  text-align: left !important;
+}
+
+thead {
+  font-size: 16px;
+  color: #535353;
+  background-color: #d6d6d6
+}
+
+td {
+  vertical-align: middle !important;
+  max-width: 250px
+}
+
+.phone {
+  padding: 0 35px 35px;
+  margin-top:-3px;
+}
+
+.min-height {
+  position: relative;
+  min-height: 350px;
+}
+
+.avatar, .head_img {
+  height: 200px;
+  width: 200px
+}
+
+.people_num {
+  color: #FE6898;
+  text-align: right;
+  margin:0;
+  padding-bottom: 5px;
+  .people{
+    display: inline-block;
+    width: 19px;
+    height: 20px;
+    margin: 0 5px -5px 0;
+    background: transparent url('../../img/speed/yemianrenshu.png') center 0 no-repeat;
+  }
+}
+
+.contact_head, .hover-big {
+  width: 30px;
+  height: 30px;
+  cursor: pointer;
+}
+
+// .hover-big:hover{height: 200px;width: 200px;position: absolute;right: 5px;bottom: 5px}
+// .contact_head:hover{height: 200px;width: 200px;position: absolute;left: 5px;bottom: 5px}
+#content-container {
+  padding-bottom: 0;
+  position: absolute;
+  width: 100%;
+  height: 100%;
+}
+
+.head_td, .mail_td {
+  text-align: center;
+}
+
+.mail_td {
+  cursor: pointer;
+}
+
+#page-content {
+  min-height: 80%
+}
+
+.cuowutishi {
+  height: 163px;
+  width: 488px;
+  margin: 0 auto;
+  margin-top: 104px;
+  text-align: left;
+  img {
+    float: left;
+    margin-left: 30px
+  }
+  span {
+    float: left;
+    font-size: 14px;
+    margin-top: 20px;
+    margin-left: 10px
+  }
+}
+
+#footer {
+  position: static;
+  padding-left: 0 !important
+}
+
+.telephone {
+  cursor: pointer;
+  width: 120px;
+  // display: inline-block;
+}
+
+.popover-content img {
+  display: block;
+}
+
+.mail_contact {
+  max-width: 20%;
+  a {
+    max-width: 250px;
+    color: #54a1dc !important;
+    display: block;
+    text-align: left;
+  }
+}
+
+.mail_contact a:hover, .speedim:hover {
+  color: #2a6496 !important;
+}
+
+.QQ_weixin {
+  display: block;
+  text-align: center;
+}
+
+.speedim {
+  display: inline-block;
+  /*width: 80px;*/
+  height: 20px;
+  background: url("../../../img/speed/paopao.png") 0px no-repeat !important;
+  text-indent: 22px;
+  &:hover {
+    background: url("../../../img/speed/paopaohover.png") 0px no-repeat !important;
+  }
+}
+
+.dibiao {
+  background: url("../../../img/speed/dibiao icon.png") no-repeat !important;
+  width: 15px;
+  display: inline-block;
+  height: 17px;
+  margin: 0 6px -3px 0;
+}
+
+.popover {
+  position: absolute;
+}
+
+#userlist{
+
+  tbody{
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+  }
+}
+

@@ -1,0 +1,84 @@
+<%#head.html %>
+<div id="container" class="effect mainnav-lg">
+    <%#navbar.html %>
+
+    <div class="boxed">
+        <!--CONTENT CONTAINER-->
+        <!--===================================================-->
+        <div id="content-container" >
+            <ol class="breadcrumb">
+                <li><a href="/home">主页</a></li>
+                <li><a href="/it"> 人力资源</a></li>
+                <li class="active">请假</li>
+            </ol>
+            <div id="page-content" class="no-padding panel">
+
+                <div class="panel-body" style="min-width:580px">
+                    <%#/document/navbarRow.html %>
+
+                    <div class="row" >
+                        <label for="" class="col-lg-1 col-sm-1 col-xs-1"></label>
+                        <ul class="nav nav-tabs col-lg-10 col-sm-10 col-xs-10" style="margin-bottom: 30px">
+                            <li role="presentation" class=""><a href="/document/leaveRequest/">请假</a></li>
+                            <li role="presentation" class=""><a href="/document/leaveApproval/" >请假审批</a></li>
+                            <li role="presentation" class="active"><a href="#visitor_wifi_list">请假须知</a></li>
+                        </ul>
+                    </div>
+                    <div class="tab-content">
+                        <div role="tabpanel" class="tab-pane row active" id="">
+                            <div class="col-lg-1 col-sm-1 col-xs-1"></div>
+                            <div class="col-lg-10 col-sm-10 col-xs-10 ">
+                                <div class="phone">
+                                    <table class="table table-striped table-hover" id="userlist">
+                                        <thead>
+                                        <tr>
+                                            <th class="text-center col-lg-1">类型</th>
+                                            <th class="text-left col-lg-3" style="min-width:120px">转正限制</th>
+                                            <th class="text-left col-lg-4">休假天数</th>
+                                            <th class="text-left col-lg-2" style="min-width:120px;">薪资计算</th>
+                                            <th class="text-left hidden-sm hidden-xs col-lg-2 ">今年可用</th>
+                                            <th class="text-left col-lg-2" style="text-align: center;">当前已用</th>
+                                            <th class="text-left col-lg-2" style="text-align: center;">正在审批</th>
+                                            <th class="text-left col-lg-2" style="text-align: center;">当前可用</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+
+                                        <% if(this.leave_instruction.code==200){%>
+                                            <% this.leave_instruction.data.forEach(function(info, index){ %>
+                                                <tr>
+                                                    <td class="head_td"><%=info.value%></td>
+                                                    <td class=""><%=info.limit%></td>
+                                                    <td class=""><%=info.leave_instruction%></td>
+                                                    <td class=""><%=info.salary_instruction%></td>
+                                                    <td class=""><%=info.all%></td>
+                                                    <td class=""><%=info.used%></td>
+                                                    <td class=""><%=info.going%></td>
+                                                    <td class=""><%=info.all%></td>
+                                                </tr>
+                                            <% }); %>
+                                        <%}%>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            <%#footer.html%>
+        </div>
+
+        <%#mainnav.html%>
+    </div>
+
+</div>
+
+
+<%! $_ENGINE_SELF.callFn("useModule")("<<<_use:
+        fml.use('speed/common/base');
+fml.use('speed/document/leaverequest');
+_use:", this._JSstack , this._JSmods); %>
+
+<%#foot.html%>

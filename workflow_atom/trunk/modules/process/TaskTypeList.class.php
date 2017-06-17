@@ -1,0 +1,29 @@
+<?php
+namespace WorkFlowAtom\Modules\Process;
+
+use Libs\Util\Format;
+use \WorkFlowAtom\Package\Process\TaskType;
+use \WorkFlowAtom\Package\Common\Response;
+
+class TaskTypeList extends \WorkFlowAtom\Modules\Common\BaseModule{
+	
+	private $sample;
+
+    public function run() {
+        
+		$this->sample = TaskType::getInstance()->getFields();
+		
+        $result = TaskType::getInstance()->getDataList();
+		
+		if ($result === FALSE) {
+        	$return = Response::gen_error(50001);
+        }elseif (empty($result) && !is_array($result)) {
+        	$return = Response::gen_error(30001);
+        }else{
+        	$return = Response::gen_success(Format::outputData($result, $this->sample, true));
+        }
+
+    	$this->app->response->setBody($return);
+        
+    }
+}

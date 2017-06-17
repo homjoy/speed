@@ -1,0 +1,140 @@
+fml.define('fms/query/selectTree', ['jquery', 'plugin/zTree'], function (require, exports) {
+    var $ = require('jquery');
+    var zTree = null, searchBox,dropdown,blurTimer;
+    var nodeList = [];
+
+    /**
+     * 搜索
+     * @param e
+     */
+    function searchNode(e) {
+        resetNodeList();
+        var value = $.trim(searchBox.val() || '');
+        if (value === "") {
+            return;
+        }
+        zTree.hideNodes(zTree.transformToArray(zTree.getNodes()));
+        nodeList = zTree.getNodesByParamFuzzy("name", value);
+        for (var i = 0, l = nodeList.length; i < l; i++) {
+            nodeList[i].highlight = true;
+            zTree.updateNode(nodeList[i]);
+            expandPath(nodeList[i], true);
+        }
+
+        //取消隐藏.
+        //if(blurTimer){
+        //    clearTimeout(blurTimer);
+        //}
+        //防止被隐藏.
+        dropdown.show();
+        searchBox.focus();
+    }
+
+
+    /**
+     * 重置所有节点.
+     */
+    function resetNodeList() {
+        zTree.showNodes(zTree.transformToArray(zTree.getNodes()));
+        zTree.expandAll(false);
+        for (var i = 0, l = nodeList.length; i < l; i++) {
+            nodeList[i].highlight = false;
+            zTree.updateNode(nodeList[i]);
+        }
+    }
+
+
+    /**
+     * 展开指定节点及父节点.
+     * @param node
+     * @param expand
+     */
+    function expandPath(node, expand) {
+        var pathNodes = [node];
+        var parent, current = node;
+        while (parent = current.getParentNode()) {
+            pathNodes.unshift(parent);
+            current = parent;
+        }
+
+        zTree.showNodes(pathNodes);
+        pathNodes.forEach(function (node, i) {
+            zTree.expandNode(node, expand, null, null, false);
+        });
+    }
+
+
+    function getFontCss(treeId, treeNode) {
+        return (!!treeNode.highlight) ? {
+            color: "#A60000",
+            "font-weight": "bold"
+        } : {
+            color: "#333",
+            "font-weight": "normal"
+        };
+    }
+
+
+    return function (selector, data) {
+        var input = $(selector);
+        if (!selector || input.size() == 0) {
+            return;
+        }
+
+        input.hide();
+        input.after('<div class="select-tree-container"><input type="text" class="form-control select-tree"/><div class="ztree-wrap"><ul id="ztree-select" class="ztree"></ul></div></div>');
+        //setup before functions
+        searchBox = $(".select-tree");
+        dropdown = $('.ztree-wrap');
+
+
+        var typingTimer;                //timer identifier
+        /**
+         * 处理文本变更:http://stackoverflow.com/questions/4220126/run-javascript-function-when-user-finishes-typing-instead-of-on-key-up
+         */
+        var doneTypingInterval = 50;  //time in ms, 5 second for example
+        var lastValue = "";
+        searchBox.on('textChange', searchNode);
+        searchBox.on('keyup', function () {
+            clearTimeout(typingTimer);
+            var value = $.trim(searchBox.val() || '');
+            if (lastValue === value) return;
+            lastValue = value;
+            typingTimer = setTimeout(function () {
+                //触发文字变更事件.
+                searchBox.trigger('textChange');
+            }, doneTypingInterval);
+        });
+        searchBox.on('keydown', function () {
+            clearTimeout(typingTimer);
+        });
+        searchBox.on("focus", function () {
+            dropdown.show();
+        });
+        $("body").on('click',function(e){
+            var target = $(e.target);
+            //阻止
+            if(target.parents('.select-tree-container').size() > 0){
+                return false;
+            }else{
+                dropdown.hide();
+            }
+        });
+
+        var settings = {
+            view: {
+                fontCss: getFontCss
+            },
+            callback: {
+                onClick: function (event, treeId, treeNode, clickFlag) {
+                    input.val(treeNode.id);
+                    searchBox.val(treeNode.name);
+                    dropdown.hide();
+                }
+            }
+        };
+
+        $.fn.zTree.init($('#ztree-select'), settings, data);
+        zTree = $.fn.zTree.getZTreeObj('ztree-select');
+    }
+});

@@ -1,0 +1,40 @@
+function home() {
+    return this;
+}
+var controlFns = {
+    'index': function () {
+        var php = {
+            'top_news': '/sns/top_news',
+            'user_share_list': '/routine/user_share_list',
+            'update_news': '/box/update_news?num=6'
+        };
+
+        this.bindDefault(php);
+        this.bridgeMuch(php);
+        this.listenOver(function (data) {
+            data._CSSLinks = ['lib/bootstrap-datepicker','home'];
+            this.render('home/index.html', data);
+        });
+    }
+    , 'window': function () {
+        var module = this.req.__get.f,
+            action = this.req.__get.s,
+            query = this.req.__get.q || '';
+        var url = this.siteInfo.OLD_SPEED_URL + module + "/" + action;
+        if(query){
+            url += "?"+decodeURIComponent(query);
+        }
+        url = this.xssFilter.uriInDoubleQuotedAttr(url);
+        var php = {};
+        this.bindDefault(php);
+        this.bridgeMuch(php);
+        this.listenOver(function (data) {
+            data.f = module;
+            data.s = action;
+            data.query = query;
+            data.url = url;
+            this.render('home/window.html', data);
+        })
+    }
+};
+exports.__create = controller.__create(home, controlFns);

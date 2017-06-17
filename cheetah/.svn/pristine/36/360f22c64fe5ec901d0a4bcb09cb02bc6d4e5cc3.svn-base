@@ -1,0 +1,9 @@
+fml.define('fms/reimburse/general/form', ['jquery','fms/reimburse/base','fms/reimburse/basicInfo'], function (require, exports) {
+    var $ = require('jquery');
+
+    var basicInfo = require('fms/reimburse/basicInfo');
+
+
+
+
+});

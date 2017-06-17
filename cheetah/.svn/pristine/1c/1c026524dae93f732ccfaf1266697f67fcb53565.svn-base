@@ -1,0 +1,39 @@
+function myapproval() {
+    return this;
+}
+var controlFns = {
+	'index':function(){
+		return this.redirectTo('/myapproval/contractApproval/');
+	},
+	'contractApproval':function(){
+		var php = {
+            'tasklistJson':'/contract/tasklistJson',
+            'overlistJson':'/contract/overlistJson'
+        };
+		this.bindDefault(php);
+		this.bridgeMuch(php);
+		this.listenOver(function (data) {
+			data._CSSLinks = ['plugin/dataTables.bootstrap','plugin/jquery.dataTables','fms/myapproval/contractApproval'];
+			this.render('myapproval/contractApproval.html',data)
+		});
+	},
+	'payApproval':function(){
+		var php = {};
+		this.bindDefault(php);
+		this.bridgeMuch(php);
+		this.listenOver(function (data) {
+			data._CSSLinks = ['plugin/bootstrap/daterangepicker','queen/approval','queen/navs','queen/timeline','fms/myapproval/payApproval'];
+			this.render('myapproval/payApproval.html',data)
+		});
+	},
+	'budgetApproval':function(){
+		var php = {};
+		this.bindDefault(php);
+		this.bridgeMuch(php);
+		this.listenOver(function (data) {
+			data._CSSLinks = ['plugin/bootstrap/daterangepicker','queen/approval','queen/navs','queen/timeline','fms/myapproval/payApproval'];
+			this.render('myapproval/budgetApproval.html',data)
+		});
+	}
+};
+exports.__create = controller.__create(myapproval, controlFns);

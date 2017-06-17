@@ -1,0 +1,60 @@
+fml.define('fms/my/manage/reimburse', ['jquery','component/notify','component/approval'], function (require, exports) {
+
+    var $ = require('jquery');
+    var notify = require('component/notify');
+    var approval = require('component/approval');
+
+    var option={
+        btns:[
+            {
+                title:'付款',
+                class:'btn btn-agree list-agree btn-xs'
+            },
+            {
+                title:'驳回',
+                class:'btn btn-danger list-reject btn-xs'
+            }
+        ],
+        showLoading:false, //不显示loading
+        isStruss2:true,
+        timeSearch:true,
+        departSearch:false,
+        usernameSearch:true,
+        approveStatusSearch:true,
+        identifierSearch:true,
+        headercheckOthers:'',
+        leftwidth:'366px',
+        urlLeft: '/aj/my_manage/reimburse',
+        urlRight :'/aj/reimburse/detail',
+        url1:'/aj/reimburse/confirmexpense',
+        url2:'/aj/reimburse/confirmexpense',
+        tokeninputurl:'/aj/user/search',
+        "contractdealTaskneedapprove":'<form class="form-horizontal form-agree">'
+        +'<textarea placeholder="不超过200字" class="form-control approval-info" style="min-height:80px" name="reason">同意</textarea>'
+        + '<div class="checkbox"><label><input type="checkbox" id="isChecked" name="is_check" value="1"/>需要进一步审批</label>' +
+        '</form>',
+
+        nav:[{title:'未付款',val:'3'},{title:'已付款',val:'5'}],
+        searchbtn:true,
+        clearbtn:true
+    };
+
+    if(userTabs && userTabs.length) {
+        approval.approval(option);
+
+        $(document).on('keyup', '[name=identifier]', function (e) {
+            var input = $(this);
+            if (e.which === 13 /*&& input.val()*/) {
+                input.next('.search-component').click();
+            }
+        });
+    }else{
+        $('.panel-body-empty').removeClass('hide')
+            .css({
+                "padding-top":"20px",
+                "text-align": "center",
+                "font-size": "18px",
+                "color": "#a0a0a0"
+            });
+    }
+});

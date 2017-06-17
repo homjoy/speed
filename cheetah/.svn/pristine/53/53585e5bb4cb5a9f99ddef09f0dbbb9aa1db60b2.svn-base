@@ -1,0 +1,177 @@
+fml.define('fms/common/contract', ['jquery', 'plugin/bootbox', 'fms/common/utils', 'component/notify'], function (require, exports) {
+
+    var $ = require('jquery');
+    var bootbox = require('plugin/bootbox');
+    var utils = require('fms/common/utils');
+    var notify = require('component/notify');
+
+
+    /**
+     * 完成任务
+     * @param taskId
+     * @param variables
+     * @param success
+     */
+    function taskComplete(taskId, variables, success) {
+        var params = utils.buildTaskParams(taskId, variables);
+        //批量还是单个.
+        var url = $.isArray(taskId) ? '/aj/myApproval/batch' : '/aj/myApproval/operate';
+        $.post(url, params, function (data) {
+            if (data.rcode != 200) {
+                return notify.error(data.rmessage);
+            } else {
+                notify.success(data.rmessage)
+                window.location.reload();
+            }
+            //if (success && typeof success === 'function') {
+            //    success(data);
+            //}
+        }, 'json');
+    }
+
+    exports.taskComplete = taskComplete;
+
+
+    var formTemplate = {
+        '/contract/dealTask/defaultapprove': '<form><textarea placeholder="不超过200字" class="form-control approval-info" style="min-height:80px"></textarea></form>',
+        '/contract/dealTask/needapprove': '<form><textarea placeholder="不超过200字" class="form-control approval-info" style="min-height:80px"></textarea>'
+        + '<div class="checkbox"><label><input type="checkbox" id="isChecked" name="" value="1"/>是否需要进一步审批</label></form>',
+        '/contract/dealTask/branchapprove': '<form class="approval-form">'
+        + '<div class="form-group"><textarea placeholder="不超过200字" class="form-control approval-info" style="min-height:80px"></textarea></div>'
+        + '<div class="from-group"><label class="control-label">合同签订公司</label>'
+        + '<select id="cabContractCode" name="cabContractCode" class="form-control">'
+        + '<option value="">请选择</option>'
+        + '<option value="MLBJ">美丽说（北京）网络科技有限公司</option>'
+        + '<option value="SHYL">上海优璃服饰有限公司</option>'
+        + '<option value="GZHD">广州花钿时装有限公司</option>'
+        + '<option value="GDSM">广东速美信息技术有限公司</option>'
+        + '</select>'
+        + '</div>'
+        + '</form>'
+    };
+
+    /**
+     * 合同审批
+     * @param taskId
+     * @param formKey
+     */
+    exports.approval = function (taskId, formKey) {
+        var form = formTemplate[formKey || '/contract/dealTask/defaultapprove'];
+        if (!form) {
+            return notify.error('不存在的审批模板!');
+        }
+
+        //select有变化删除提示信息
+        $('body').on('change', '#cabContractCode', function () {
+            $('.company-warn').html('');
+        });
+        notify.formDialog('审批意见', form, function () {
+            var form = $(".approval-form");
+            var cabContractCode = $('#cabContractCode');
+            var info = $('.approval-info').val(),
+                company = cabContractCode.val(),
+                cbox = $('#isChecked');
+
+            var param = [
+                {
+                    key: 'approvedState',
+                    value: true,
+                    type: 'B'
+                }, {
+                    key: 'approveMessage',
+                    value: info,
+                    type: 'S'
+                }
+            ];
+
+            //如果有对应的选项框.
+            if (cabContractCode.length) {
+                if(!company){
+                    form.after('<p class="company-warn" style="margin-top:10px;color:red;">请选择合同签订公司</p>');
+                    return false;
+                }else{
+                    param.push({
+                        key: 'cabContractCode',
+                        value: company,
+                        type: 'S'
+                    });
+                }
+            }
+
+            if (cbox.length > 0) {
+                param.push({
+                    key: 'isChecked',
+                    value: cbox.prop('checked'),
+                    type: 'B'
+                });
+            }
+            taskComplete(taskId, param);
+        });
+        $('.approval-info').val('同意');
+    };
+
+
+    /**
+     *
+     * @param taskId
+     */
+    exports.reject = function (taskId) {
+        bootbox.dialog({
+            className: 'smModal',
+            title: '审批意见',
+            message: '<textarea placeholder="不超过200字" class="form-control approval-info" style="min-height:80px"></textarea>',
+            buttons: {
+                success: {
+                    label: '确定',
+                    className: 'btn-success btn-sure-reject',
+                    callback: function () {
+                        var info = $('.approval-info').val();
+                        var param = [{
+                            key: 'approvedState',
+                            value: false,
+                            type: 'B'
+                        }, {
+                            key: 'approveMessage',
+                            value: info,
+                            type: 'S'
+                        }];
+                        taskComplete(taskId, param);
+                    }
+                },
+                cancel: {
+                    label: '取消',
+                    className: 'btn-default btn-cancel',
+                    callback: function () {
+
+                    }
+                }
+            }
+        });
+        $('.approval-info').val('驳回');
+    };
+
+
+    /**
+     * 查询合同编号对应的签订公司
+     * @param contractNumber
+     * @param callback
+     * @returns {*}
+     */
+    exports.matchSignCompany = function(contractNumber,callback){
+        if(!$.isFunction(callback)){
+            callback = function(){};
+        }
+
+        if(!contractNumber){
+            return callback('');
+        }
+
+        $.post('/aj/contract/machSignCompany',{contractNo:contractNumber},function(resp){
+            //if(resp.rcode != 200){
+            //    notify.error(resp.rmessage || '获取合同签订公司出错..');
+            //    return ;
+            //}
+            return callback(resp.codename || '');
+        },'json');
+    }
+});

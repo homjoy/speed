@@ -1,0 +1,94 @@
+<?php
+namespace Admin\Modules\Mail;
+
+use Admin\Modules\Common\BaseModule;
+use Admin\Package\Common\Response;
+
+/**
+ * 获取所属组下的人员
+ *
+ * @author guojiezhu@meilishuo.com
+ * @since  2015-11-04
+ */
+class MailUserList extends BaseModule
+{
+
+    protected $errors = null;
+    private $params = null;
+    private $page_size = 20;
+
+    public function run()
+    {
+        $this->_init();
+        //分页控制
+        if (isset($this->params['page'])) {
+            if ($this->params['page'] <= 0) {
+                $this->params['page'] = 1;
+            }
+            $this->params['limit'] = $this->page_size;
+        }
+        if(!$this->params['user_mail']){
+            $mail = explode('@',$this->params['user_mail']);
+            $this->params['user_mail'] = trim($mail[0]);
+        }
+        //查询总的页数
+        $count_params = $this->params;
+        $count_params['count'] = 1;
+        $temp_count = $this->getMailUserList($count_params);
+
+        if(empty($this->params['user_mail'])) {
+            $this->params['all'] = 1;
+        }
+        //获取邮箱的列表
+        $email_user_list = array();
+        if($temp_count >0){
+            //获取数据
+            $email_user_list = $this->getMailUserList($this->params);
+            $return['data'] = $email_user_list;
+        }
+
+        $return['search_params'] = $this->params;
+        $return['count'] = ceil($temp_count / $this->page_size);
+        $return['page'] = $this->params['page'];
+
+        return $this->app->response->setBody($return);
+
+    }
+
+    /**
+     * 获取 邮箱的列表
+     * @param array $params
+     *
+     * @return bool
+     */
+    public  function getMailUserList($params = array()){
+        $ret = self::getClient()->call('atom', 'mail/mail_group_user_search', $params);
+        $ret = $this->parseApiData($ret);
+        return $ret;
+    }
+
+    private function _init()
+    {
+
+        $this->rules = array(
+                'status' => array(
+                    'type' => 'integer',
+                    'default' => 1
+                ),
+                'page'   => array(
+                    'type' => 'integer',
+                    'default' => 1
+                ),
+                'group_id'=>array(
+                    'required' => TRUE,
+                    'type'=>'string',
+                ),
+                'user_mail' => array(
+                    'type'=>'string',
+                ),
+        );
+        $this->params = $this->request()->safe();
+        $this->errors = $this->request()->getErrors();
+    }
+
+}

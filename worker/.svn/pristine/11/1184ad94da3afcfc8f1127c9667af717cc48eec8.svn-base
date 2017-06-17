@@ -1,0 +1,119 @@
+<?php
+namespace Worker\Modules\Notification;
+
+use Worker\Package\Notification\Notification;
+use Worker\Package\Notification\Pusher;
+use Frame\Speed\Exception\ParameterException;
+use Frame\Speed\Http\ParameterFilter;
+use Worker\Package\Notification\TemplateEngine;
+
+/**
+ * 批量通知推送
+ *
+ * Class PushAll
+ * @package Worker\Modules\Notification
+ */
+class PushAll extends \Worker\Modules\Common\BaseModule
+{
+    protected $pusher = array();
+    protected $notifies = array();
+
+
+    public function run()
+    {
+
+        $this->init();
+
+        $ret = Notification::model()->pushAll($this->notifies);
+
+        return $this->app->response->setBody($ret);
+    }
+
+    /**
+     *
+     */
+    protected function init()
+    {
+        $token = $this->post()->string('token');
+        if (empty($token)) {
+            throw new ParameterException('token 不能为空.');
+        }
+        $this->pusher = Pusher::model()->getByToken($token);
+        if (empty($this->pusher)) {
+            throw new ParameterException('token 无效');
+        }
+        $msgList = $this->post()->getArray('msg');
+        if (empty($msgList)) {
+            throw new ParameterException('推送内容为空!');
+        }
+
+        $weights = 10;
+        switch($this->pusher){
+            case 5:
+                $weights = 1;
+                break;
+            case 1:
+                $weights = 2;
+                break;
+            default:
+                $weights = 20;
+                break;
+        }
+        foreach ($msgList as $msg) {
+            if (!isset($msg['title']) || empty($msg['title'])) {
+                throw new ParameterException('标题不能为空.');
+            }
+
+            if (!isset($msg['to_id']) || empty($msg['to_id'])) {
+                throw new ParameterException('接收人ID 不能为空.');
+            }
+
+            if (empty($msg['mail']) && empty($msg['phone'])) {
+                throw new ParameterException('邮箱和手机号必须提供一个.');
+            }
+            if (!isset($msg['content']) || empty($msg['content'])) {
+                throw new ParameterException('通知的content不能为空.');
+            }
+            $content = $msg['content'];
+
+            $msg['channel'] = explode('|', $msg['channel']);
+            if (count($msg['channel']) == 0) {
+                throw new ParameterException('未指定通知方式.');
+            }
+            foreach ($msg['channel'] as $channel) {
+                if (!isset($content[$channel])) {
+                    throw new ParameterException("{$channel}的推送内容不能为空.");
+                }
+            }
+            if (empty($msg['template_id'])) {
+                throw new ParameterException("请指定模板.");
+            }
+
+            if(!array_key_exists($msg['template_id'],TemplateEngine::$templateMap)){
+                throw new ParameterException("指定的模板不存在.");
+            }
+            
+            $sendAt = strtotime($msg['send_at']);
+            $min = time() - 3600; //一小时以内
+            if ($sendAt < $min) {
+                throw new ParameterException("发送时间不能在一个小时以前.");
+            }
+
+            $this->notifies[] = array(
+                'pusher_id' => $this->pusher['pusher_id'],
+                'custom_id' => intval($msg['custom_id']),
+                'custom_version' => intval($msg['custom_version']),
+                'title' => $msg['title'],
+                'content' => $content,
+                'template_id' => $msg['template_id'],
+                'channel' => $msg['channel'],
+                'from_id' => intval($msg['from_id']),
+                'to_id' => intval($msg['to_id']),
+                'mail' => $msg['mail'],
+                'phone' => $msg['phone'],
+                'send_at' => date('Y-m-d H:i:s', $sendAt),
+                'weights' => $weights
+            );
+        }
+    }
+}

@@ -1,0 +1,63 @@
+function query() {
+    return this;
+}
+var controlFns = {
+	'index':function(){
+        return this.redirectTo('/query/reimburse/');
+	}
+    ,'contract':function(){
+        var php = {};
+        this.bindDefault(php);
+        this.bridgeMuch(php);
+        this.listenOver(function (data) {
+            data._CSSLinks = ['plugin/zTree','queen/tree-select','fms/query/base'];
+            this.render('query/contract.html', data);
+        });
+	}
+    ,'pay':function(){
+		var php = {};
+		this.bindDefault(php);
+        this.bridgeMuch(php);
+        this.listenOver(function (data) {
+            data._CSSLinks = ['plugin/zTree','queen/tree-select','fms/query/base'];
+            this.render('query/pay.html', data);
+        });
+	}
+    ,'budget':function(){
+		var php = {};
+		this.bindDefault(php);
+        this.bridgeMuch(php);
+        this.listenOver(function (data) {
+            var thisYear = new Date().getFullYear();
+            data.currentYear = thisYear;
+            data.budgetYears = [thisYear-1,thisYear,thisYear+1];
+            data._CSSLinks = ['plugin/zTree','queen/tree-select','fms/query/base'];
+            this.render('query/budget.html', data);
+        });
+	}
+
+    ,'reimburse':function(){
+		var php = {
+            'items':'fms::/dictionary/getexpenseitemjson'
+        };
+		this.bindDefault(php);
+        this.bridgeMuch(php);
+        this.listenOver(function (data) {
+            data._CSSLinks = ['plugin/zTree','queen/tree-select','fms/query/base'];
+            this.render('query/reimburse.html', data);
+        });
+	}
+
+    ,'loan':function(){
+		var php = {
+            'items':'fms::/dictionary/getexpenseitemjson'
+        };
+		this.bindDefault(php);
+        this.bridgeMuch(php);
+        this.listenOver(function (data) {
+            data._CSSLinks = ['plugin/zTree','queen/tree-select','fms/query/base'];
+            this.render('query/loan.html', data);
+        });
+	}
+};
+exports.__create = controller.__create(query, controlFns);

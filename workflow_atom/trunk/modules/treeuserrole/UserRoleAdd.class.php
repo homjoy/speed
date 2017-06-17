@@ -1,0 +1,95 @@
+<?php
+namespace WorkFlowAtom\Modules\Treeuserrole;
+
+use WorkFlowAtom\Package\Treeuserrole\UserRole ;
+use WorkFlowAtom\Package\Common\Response;
+use Libs\Util\ArrayUtilities;
+use Libs\Util\Format;
+
+class UserRoleAdd extends \WorkFlowAtom\Modules\Common\BaseModule {
+
+    protected $params = array();
+
+    public function run() {
+        $this->_init();
+
+        $this->sample = UserRole::getInstance()->getFields();
+
+        //参数校验
+        if ($this->post()->hasError()) {
+            $return = Response::gen_error(10001, '', $this->post()->getErrors());
+            return $this->app->response->setBody($return);
+        }
+
+        if (empty($this->params['role_id']) || empty($this->params['user_id'])) {
+            $return = Response::gen_error(10001);
+            return $this->app->response->setBody($return);
+        }
+
+        $roleInfo = UserRole::getInstance()->getDataList(array(
+            'role_id' => $this->params['role_id'],
+            'user_id' => $this->params['user_id'],
+            'status'  => $this->params['status'],
+        ));
+
+        if (empty($this->params['id'])) {
+            unset($this->params['id']);
+            
+            if (!empty($roleInfo)) {
+                $return = Response::gen_error(10002, '', '该用户角色映射已存在！');
+                return $this->app->response->setBody($return);
+            }
+            
+            $result = UserRole::getInstance()->insert($this->params);
+        } else {
+            if (!empty($roleInfo)) {
+                $return = Response::gen_error(10002, '', '该用户角色映射已存在！');
+                return $this->app->response->setBody($return);
+            }
+            
+            $result = UserRole::getInstance()->update($this->params);
+        }
+
+        if ($result === FALSE) {
+            $return = Response::gen_error(50001);
+        } else if (empty($result)) {
+            $return = Response::gen_error(50012);
+        } else {
+            if (!isset($this->params['role_id'])) {
+                $this->params['role_id'] = $result;
+            }            
+            $return = Response::gen_success(Format::outputData($this->params, $this->sample));
+        }
+
+        $this->app->response->setBody($return);     
+    }
+
+
+    private function _init() {
+
+        $this->rules = array(
+            'id'   => array(
+                'required'  => false,
+                'type'      => 'integer',
+                'default'   => 0,
+            ),
+            'role_id'   => array(
+                'required'  => true,
+                'type'      => 'integer',
+                'default'   => 0,
+            ),
+            'user_id' => array(
+                'required'      => true,
+                'type'          => 'integer',
+                'allowEmpty'    => false
+            ),
+            'status'    => array(
+                'type'      => 'integer',
+                'default'   => 0,
+            ),
+        );
+        
+        $this->params = $this->post()->safe();
+        $this->errors = $this->post()->getErrors();
+    }
+}

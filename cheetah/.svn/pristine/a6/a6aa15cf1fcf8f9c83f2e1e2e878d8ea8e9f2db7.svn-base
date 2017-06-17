@@ -1,0 +1,31 @@
+<nav id="mainnav-container">
+    <div id="mainnav">
+        <!-- 占位 不能删除 -->
+        <div id="mainnav-shortcut">
+            <ul class="nav navbar-top-links pull-left">
+                <li class="tgl-menu-btn">
+                    <a class="mainnav-toggle" href="#" >
+                         <!--<img src="<%= this.PICTURE_URL %>img/fms/navicon/menu.png" width="20" height="20">-->
+                        <svg class="icon-sidebar icon-menu"><use xlink:href="/page/icon/#icon-menu"></use></svg>
+                   </a>
+                </li>
+            </ul> 
+        </div>
+        <div id="mainnav-menu-wrap">
+            <div class="nano">
+                <div class="nano-content">
+                    <ul id="mainnav-menu" class="list-group">
+                        <%this.permissionMenu.forEach(function(menu,index){%>
+                        <li data-id="<%=menu.id || 0 %>">
+                            <a href="<%=menu.url || 'javascript:void(0);'%>">
+                                <svg class="icon-sidebar <%=menu.icon%>"><use xlink:href="/page/icon/#<%=menu.icon%>"></use></svg>
+                                <span class="menu-title"><%=menu.name || ''%></span>
+                            </a>
+                        </li>
+                        <%})%>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</nav>

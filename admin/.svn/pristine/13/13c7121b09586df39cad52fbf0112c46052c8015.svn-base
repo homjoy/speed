@@ -1,0 +1,339 @@
+@extends('layouts.master')
+
+@section('content')
+<link type="text/css" rel="stylesheet" href="/static/css/pagination.css">
+<link rel="stylesheet" href="/static/css/tokeninput.css">
+<script src="/static/js/tokeninputspeed.js"></script>
+<script src="/static/js/pagination.js"></script>
+<link type="text/css" rel="stylesheet" href="/static/bootstrap/css/bootstrap-datetimepicker.min.css">
+<script src="/static/bootstrap/js/bootstrap-datetimepicker.min.js"></script>
+<style type="text/css">
+    .button-groups{
+        text-align:center;
+    }
+    .token-input-token,.token-input-input-token{line-height: 23px !important;}
+</style>
+<div class="panel-heading" style="overflow: hidden; line-height: 32px">
+    <ol class="breadcrumb">
+        <li class="active">请假管理</li>
+    </ol>
+    <div id="page-content" class="panel">
+        <ul class="nav nav-tabs slope col-lg-12 col-sm-12 col-xs-12" style="margin-bottom: 30px">
+            <li class="active" role="presentation"><a href="/hr/leave/leave_home" class="application_num">请假首页</a></li>
+            <li role="presentation" ><a href="/hr/leave/personal_leave">个人请假</a></li>
+        </ul>
+    </div>
+    <div class="panel">
+    <form id="searchForm" class="form-horizontal" role="">
+        <div class="row form-group ">
+            <div class=" col-lg-4 col-xs-4 col-sm-4">
+                <input type="text" class="form-control  form_datetime" placeholder="开始日期（含）" id="createTime" name="create_time">
+            </div>
+            <div class="  col-lg-4 col-xs-4 col-sm-4">
+                <input type="text" class="form-control form_datetime" placeholder="结束日期（含）" id="endTime"  name="end_time">
+            </div>
+
+            <div class=" col-lg-4 col-xs-4 col-sm-4">
+                <select class="form-control" name="absence_type" id="absenceType" >
+                    <option value="" selected>请假类型</option>
+                    <option value="1" >事假</option>
+                    <option value="2" >年假</option>
+                    <option value="3" >病假</option>
+                    <option value="4" >带薪病假</option>
+                    <option value="5" >婚假</option>
+                    <option value="6" >丧假</option>
+                    <option value="7" >产假</option>
+                    <option value="8" >陪产假</option>
+                    <option value="9" >产检假</option>
+                    <option value="10" >流产假</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="row form-group ">
+            <label class="col-lg-1 col-xs-1 col-sm-1">员工:</label>
+            <div class=" col-lg-3 col-xs-3 col-sm-3 ">
+                <input type="text" class="form-control " placeholder="中文和拼音搜索" id="userId" name="user_id">
+            </div>
+            <label class="col-lg-1 col-xs-1 col-sm-1">部门:</label>
+            <div class=" col-lg-3 col-xs-3 col-sm-3">
+                <input type="text" class="form-control " placeholder="部门导出" id="departId" name="depart_id">
+            </div>
+
+            <div class="col-lg-4 col-xs-4 col-sm-4">
+                <select class="form-control" name="user_status" id="userStatus" >
+                    <option value="" selected>在职状态</option>
+                    <option value='1,3'>在职</option>
+                    <option value='2'>离职</option>
+                </select>
+            </div>
+        </div>
+        <div class="row form-group">
+            <label class="col-lg-4 col-xs-4 col-sm-4"></label>
+            <div class="col-lg-4 col-xs-4 col-sm-4 button-groups">
+                <button class="btn btn-primary " id='queryBtn' type="button">查询</button>
+                <button class="btn btn-primary" type="button" id="retBtn">重置</button>
+                <button type="button" class="btn btn-primary" id="exportBtn" >导出</button>
+            </div>
+        </div>
+    </form>
+    <table class="table-hover table table-striped table-bordered">
+        <thead>
+        <tr>
+            <th>姓名</th>
+            <th>
+                类型
+            </th>
+            <th>
+                申请时间
+            </th>
+            <th>
+                部门
+            </th>
+            <th>
+                天数
+            </th>
+            <th>
+                状态
+            </th>
+            <th>
+                详情
+            </th>
+        </tr>
+        </thead>
+        <tbody>
+        <?php
+        $editBtn = '';
+        $len ='';
+        if(empty($data)){
+            echo '<tr><td class="text-center" colspan=7>未找到相匹配的数据</td></tr>';
+        }else{
+           foreach($data as $key =>$v){
+               if(isset($v['status'])){
+                   switch($v['status']){
+                       case 1:
+                       case 2:
+                       case 3:
+                       default:
+                       $strClass='warning';
+                       $status ='提交申请';
+                       $editBtn = '';
+                        break;
+                       case 4:
+                           $strClass='success';
+                           $status ='审批完成';
+                           $editBtn = '<button type="button"  data-id="'.$v['order_id'].'" class="btn btn-primary editBtn">修改</button>';
+                        break;
+                       case 5:
+                           $strClass='danger';
+                           $status ='驳回';
+                           $editBtn = '';
+                           break;
+                       case 6:
+                           $strClass='warning';
+                           $status ='已撤销';
+                           $editBtn = '';
+                           break;
+
+                   }
+               }else{
+                   $strClass='warning';
+                   $status ='已失效';
+               }
+
+               if(isset($v['memo'])){
+                   $len = strlen($v['memo']);
+                   if($len >=70){
+                       $v['memo'] = substr($v['memo'],0,70);
+                       $v['memo'] .='...';
+                   }
+
+                }
+
+        echo <<<DOC
+        <tr class=" toggle-detail" order_id="{$v['order_id']}">
+            <td>{$v['name_cn']}</td>
+            <td>{$v['absence_name']}</td>
+            <td>{$v['create_time']}</td>
+            <td>{$v['depart_name']}</td>
+            <td>{$v['length']}</td>
+            <td class={$strClass} >{$status}</td>
+            <td>
+                <button data-task_id="{$v['task_id']}" data-date="从{$v['start_date']}{$v['start_half']}到 {$v['end_date']}{$v['end_half']}" data-memo="{$v['memo']}" id="{$v['order_id']}" class="btn btn-default toggle-detail"><span class="glyphicon glyphicon-zoom-in"></span></button>
+                {$editBtn}
+            </td>
+        </tr>
+DOC;
+           }
+        }
+
+        ?>
+        </tbody>
+    </table>
+       <div class="pagination-left">
+       </div>
+<!--       <p></p>-->
+    </div>
+</div>
+<!--model-->
+<div class="modal fade detailModal" id="docDetail" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 >申请详情 <span id="history-head"></span></h4>
+            </div>
+            <div class="modal-body">
+                <div class="panel panel-default">
+                    <table class="table table-striped" id="showTable">
+                    </table>
+
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal"> 关 闭 </button>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    //model
+    $('.toggle-detail').css('cursor','pointer').click(function(ev){
+        var _this = this;
+        ev.stopPropagation();
+        var str;
+        str ='<tr><td colspan=4>请假申请</td></tr>'+'<tr >'+
+            '<th >请假原因:</th><td  colspan="3">'+
+            $(this).attr('data-memo')+
+            '</tr><th >请假时间:</th ><td colspan="3">'+
+            $(this).attr('data-date')+'</td>'+
+            '</tr>';
+
+        var url = '/hr/leave/ajax_approve_leave_info',
+            taskId= $(this).attr('data-task_id');
+            $.get(url, {task_id:taskId}, function(ret) {
+                if (ret.code == 200) {
+                    str+='<tr><td colspan=4>审批历史</td></tr>'+
+                        +'<tr>'+
+                        '<th>操作人</th><th>时间</th><th>操作后状态</th><th>备注</th>'+
+                        '</tr>';
+                    $.each(ret.data, function (i, val) {
+                        str += '<tr>'+'<td class="col-sm-2" >' +val.user_name+'('+ val.name+')'+ '</td>';
+                         if(!val.create_time){
+                             str += '<td class="col-sm-2" >wait</td>';
+                         } else if(val.create_time){
+                            str += '<td class="col-sm-2" >' +val.create_time + '</td>';
+                         }
+
+                         if(val.timeline_status=='submit'){str += '<td class="col-sm-2" >' +'<i class="glyphicon glyphicon-edit" style="color:#04489D"></i>' +val.progress_content+ '</td>' ;}
+                         if(val.timeline_status=='pass-o'||val.timeline_status=='pass'){str += '<td class="col-sm-2" >' +'<i class="glyphicon glyphicon-check" style="color:green"></i>'  +val.progress_content+ '</td>' ;}
+                         if(val.timeline_status=='reject'){str += '<td class="col-sm-2" >' +'<i class="glyphicon glyphicon-remove-circle" style="color:red"></i>'+ val.progress_content + '</td>' ;}
+                         if(!val.timeline_status||val.timeline_status=='inwait'||val.timeline_status=='wait'){str += '<td class="col-sm-2" >' +'<i class="glyphicon glyphicon-time" style="color:#FF74A1"></i>' +'等待'+'</td>' ;}
+                         if(val.timeline_status=='repeal'){str += '<td class="col-sm-2" >' +'<i class="glyphicon glyphicon-trash" style="color:#b725ff"></i>' + val.progress_content+'</td>' ;}
+                         str +='<td class="col-sm-2" ></td></tr>';
+                    });
+                    $('#showTable').html(str);
+                    $('#docDetail').modal('show');
+                }else{
+                    show_message(ret.code,ret);
+                }
+            }, 'json');
+
+    });
+    //修改
+    $('.editBtn').click(function () {
+
+        var data = $(this).data();
+        var order_id = data.id;
+        if(order_id){
+            window.location.href = '/hr/leave/leave_update?order_id='+order_id;
+        }
+
+    });
+
+    //时间处理
+    $(".form_datetime").datetimepicker({format: 'yyyy-mm-dd',minView: 'month',autoclose:true});
+    //用户
+    $('#userId').tokenInput("/structure/depart/ajax_search_name",{
+        queryParam:'search',tokenValue:'user_id',tokenLimit: 1,onAdd:function(ret) {
+            $('#userId').val(ret['user_id']);
+
+        }
+    });
+    //部门
+    $('#departId').tokenInput("/structure/depart/ajax_search_depart",{
+        queryParam:'depart_name',tokenLimit: 1, tokenValue:'depart_id',onAdd:function(ret) {
+        }
+    });
+    //分页
+    var count = '{!! @json_encode($count) !!}';
+    try{
+        count = $.parseJSON(count);
+    }catch(e){
+        count = [];
+    }
+    var page = '{!! @json_encode($page) !!}';
+    try{
+        page = $.parseJSON(page);
+    }catch(e){
+        page = [];
+    }
+    $(".pagination-left").pagination({
+        //总页数
+        totalPage:count,
+        //初始选中页
+        currentPage:page,
+        //最前面的展现页数
+        firstPagesCount: 0, //最前面的展现页数，默认值为2
+        preposePagesCount: 2,  //当前页的紧邻前置页数，默认值为2
+        postposePagesCount: 0, //当前页的紧邻后置页数，默认值为1
+        lastPagesCount: 2,//最后面的展现页数，默认值为0
+        href: false,    //不生成链接
+        first: '', //取消首页
+        prev: '<',
+        next: '>',
+        last: '', //取消尾页
+        go: 'Go' //取消页面跳转
+    }).on("switch",function(e,page){
+
+        location.href="/hr/leave/leave_home?page="+page+'&create_time='+$('#createTime').val()+'&end_time='+$('#endTime').val()
+            +'&absence_type='+$('#absenceType').val()+'&user_status='+$('#userStatus').val()+'&user_id='+$('#userId').val()+'&depart_id='+$('#departId').val();
+
+    });
+    //查找
+    $('#queryBtn').click(function() {
+        location.href="/hr/leave/leave_home?page=1"+'&create_time='+$('#createTime').val()+'&end_time='+$('#endTime').val()
+            +'&absence_type='+$('#absenceType').val()+'&user_status='+$('#userStatus').val()+'&user_id='+$('#userId').val()+'&depart_id='+$('#departId').val();
+    });
+     //重置
+    $('#retBtn').click(function() {
+        window.location.href = '/hr/leave/leave_home';
+    });
+    //导出
+    $('#exportBtn').click(function() {
+        show_message(200,'');
+        window.location.href= '/hr/leave/export_leave_list?' +'end_time=' +$("#endTime").val()+ '&create_time='+$("#createTime").val()+'&depart_id='+$("#departId").val();
+
+    });
+    //属性添加
+    var str = location.href,
+        strname = window.location.pathname;
+
+    $.each($('.list-group-item'),function(){
+        if($(this).attr('href')==strname){
+            $(this).addClass('active');
+        }
+    });
+    String.prototype.GetValue= function(para) {
+        var reg = new RegExp("(^|&)"+ para +"=([^&]*)(&|$)");
+        var r = this.substr(this.indexOf("\?")+1).match(reg);
+        if (r!=null) return unescape(r[2]); return null;
+    }
+    $('#createTime').val(str.GetValue("create_time"));
+    $('#endTime').val(str.GetValue("end_time"));
+    $('#absenceType').val(str.GetValue("absence_type"));
+    $('#userStatus').val(str.GetValue("user_status"));
+    $('#userId').val(str.GetValue("user_id"));
+    $('#departId').val(str.GetValue("depart_id"));
+</script>
+@endsection

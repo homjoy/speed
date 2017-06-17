@@ -1,0 +1,195 @@
+/*
+ ajax请求转发
+ */
+function aj() {
+    return this;
+}
+var controlFns = {
+    time: function (params) {
+        "use strict";
+        var php = {
+            'my': '/meeting/get_my_meeting_list',
+            'add': '/routine/user_time_add',
+            'get': '/routine/user_time_get',
+            'update': '/routine/user_time_update',
+            'decline': '/routine/user_time_reject',
+            'delete': '/routine/user_time_delete',
+            'search': '/routine/user_time_batch_get',
+            'change_time': '/routine/user_time_update_time'
+        };
+        this.ajaxTo(php[params]);
+    }
+    , meeting: function (params) {
+        // 会议室 我的时间相关ajax接口
+        var php = {
+            'rooms': '/meeting/get_room',
+            'search_rooms': '/meeting/search_available_room',
+            'add': '/book/meeting_book_add',
+            'update': '/book/meeting_book_update',
+            'change_time': '/book/meeting_update_time',
+            'decline': '/book/invite_reply',
+            'delete': '/book/meeting_book_delete',
+            'overview': '/book/book_overview',
+            'get_book_list': '/book/get_room_books',
+            'get_book': '/book/get_book',
+            'get_check_in': '/book/get_meeting_sign_list',
+            'check_in': '/book/meeting_sign_confirm'
+        };
+        this.ajaxTo(php[params]);
+    }
+    , share_time: function (params) {
+        // 审批选项接口，审批全部
+        var php = {
+            'user_share_add': '/routine/user_share_add',
+            'user_share_delete': '/routine/user_share_delete',
+            'user_share_update': '/routine/user_share_update'
+        };
+        this.ajaxTo(php[params]);
+    }
+    , check: function (params) {
+        // 审批选项接口，审批全部
+        var php = {
+            'check_all': '/box/ajax_box'
+        };
+        this.ajaxTo(php[params]);
+    }
+    , address: function (params) {
+        // 搜人名接口
+        var php = {
+            'ajax_search_name': '/contacts/ajax_search',
+            'ajax_search_mobile': '/contacts/ajax_search_mobile'
+        };
+        this.ajaxTo(php[params]);
+    }
+    , user: function (params) {
+        // 个人中心接口
+        var php = {
+            'login': '/auth/login',
+            'disguise': '/auth/login_disguise',
+            'send_sms_captcha': '/user/ajax_send_sms_captcha',
+            'save_password': '/user/ajax_edit_pwd',
+            'user_avatar_upload': '/user/user_avatar_upload',
+            'user_avatar_save': '/user/user_avatar_save',
+            'save_info': '/user/self_info_update',
+            'mls_user_info': '/account/get_meilishuo_user_info',
+            //消息提示接口
+            'get_user_notice':'/account/get_user_notice ',
+            'notice_mark':'/account/notice_mark',
+            //验证码提交
+            'verify_captcha':'/auth/verify_captcha',
+            //新手机验证码提交
+            'update_user_private_info':'/account/update_user_private_info',
+            //验证动态密钥
+            'verify_mfa_code':'/auth/verify_mfa_code',
+            //二维码手机验证
+            'save_mfa_status':'/auth/save_mfa_status'
+        };
+        this.ajaxTo(php[params]);
+    }
+    , it: function (params) {
+        // IT服务接口
+        var php = {
+            //wifi修改密码接口
+            'save_wifi_password': '/itserver/wifi_edit_pwd',
+            //访客WiFi创建接口
+            'create_visitor_wifi': '/itserver/visitor_wifi_create',
+            //访客wifi禁用
+            'disable_visitor_wifi': '/itserver/visitor_wifi_disable',
+            //修改vpn密码
+            'save_vpn_password': '/itserver/vpn_edit_pwd',
+            //访客wifi审批接口
+            'visitor_wifi_approve':'/itserver/visitor_wifi_approve'
+        };
+        this.ajaxTo(php[params]);
+    }
+    , hr: function (params) {
+        // 人力资源
+        var php = {
+            //请假接口
+            //获取请假可用天数
+            'user_own_leave': '/hr_leave/user_own_leave ',
+            //计算请假天数
+            'leave_days_calculation': '/hr_leave/leave_days_calculation',
+            //提交
+            'leave_submit': '/hr_leave/leave_submit',
+            //已申请接口获取数据
+            'leave_list_get': '/hr_leave/leave_list_get',
+            //审批数据列表接口
+            'approve_list_get': '/hr_leave/approve_list_get',
+            //获取请假详细信息
+            'get_approve_request': '/hr_leave/get_approve_request',
+            //催审请假
+            'leave_reminder':'/hr_leave/leave_reminder',
+            //获取某个请假的审批流程-申请人
+            'approve_leave_info': '/hr_leave/approve_leave_info',
+            //获取历史请假记录-审批人
+            'history_leave_list': '/hr_leave/history_leave_list',
+            //附件下载
+            'leave_download':'/hr_leave/leave_download',
+
+
+            //公共部分
+            //同意驳回
+            'order_process': '/approval/order_process',
+            //撤销请假-申请人
+            'order_revoke': '/approval/order_revoke'
+        };
+        this.ajaxTo(php[params]);
+    }
+    , administration: function (params) {
+    // 行政
+    var php = {
+        //名片
+        //名片申请提交
+        'card_submit': '/executive_card/card_submit',
+        //获取审批详细信息
+        'get_approve_request': '/executive_card/get_approve_request',
+        //获取某个请假的审批记录-申请人
+        'card_approve_list': '/executive_card/card_approve_list',
+        //发放通知接口
+        'card_output': '/executive_card/card_output',
+        //状态改变
+        'card_status_change':'/executive_card/card_status_change',
+
+        //快递
+        //快递寄出地获取快递公司
+        'express_request':'/executive_express/express_request',
+        //提交
+        'express_submit':'/executive_express/express_submit',
+        //详情页面
+        'express_approve_request':'/executive_express/express_approve_request',
+        //审批记录
+        'express_approve_list':'/executive_express/express_approve_list',
+        //管理驳回
+        'express_status_change':'/executive_express/express_status_change',
+        //填重
+        'express_mail_weight':'/executive_express/express_mail_weight',
+
+        //办公用品
+        //查询办公用品
+        'supply_request':'/executive_supply/supply_request',
+        //办公用品提交
+        'supply_submit':'/executive_supply/supply_submit',
+        //详情页面
+        'supply_approve_request':'/executive_supply/supply_approve_request',
+        //审批记录
+        'supply_approve_list':'/executive_supply/supply_approve_list',
+
+        //公共
+        //我的申请列表
+        'order_apply_get':'/approval/order_apply_get',
+        //我的审批列表
+        'order_approve_get':'/approval/order_approve_get',
+        //撤销
+        'order_revoke':'/approval/order_revoke',
+        //催审
+        'order_reminder':'/approval/order_reminder',
+        //审批
+        'order_process':'/approval/order_process'
+
+
+    };
+    this.ajaxTo(php[params]);
+}
+};
+exports.__create = controller.__create(aj, controlFns);

@@ -1,0 +1,43 @@
+<%#head.html%>
+<div id="container" class="effect mainnav-lg">
+    <%#navbar.html%>
+    <div class="boxed">
+        <div id="content-container">
+            <div id="page-content">
+                <%if(!this.detail || this.detail.rcode != 200){%>
+                <div class="alert alert-danger fade in"><%= this.detail ? (this.detail.rmessage || '获取预算信息出错.') : ''%></div>
+                <%}else{%>
+                <div class="panel">
+                        <% var budgetInfo = this.detail.budgetApplication.budgetAdjustFormEntity;%>
+                        <% var budgetId = this.detail.budgetApplication.budgetAdjustFormEntity.id;%>
+                    <div class="panel-body">
+                        <div class="panel-footer text-right">
+                            <% if(this.detail.canApproveFlag == 1){ %>
+                            <a href="javascript:;" class="btn btn-agree" data-id="<%= budgetInfo.id %>" data-taskId="<%=this.detail.taskid%>" data-formkey="<%=this.detail.formkey%>" data-budget-type="BA">审核</a>
+                            <a href="javascript:;" class="btn btn-reject"  data-id="<%= budgetInfo.id %>" data-taskId="<%=this.detail.taskid%>" data-formkey="<%=this.detail.formkey%>" data-budget-type="BA">驳回</a>
+                            <% } %>
+                            <% if(this.detail.canModifyFlag == 1){ %>
+                            <a class="btn btn-primary btn-edit"
+                               href="/budget/adjust/edit?budgetId=<%=budgetInfo.id %>">修改</a>
+                            <% } %>
+                            <a href="/budget/adjust/print?budgetId=<%=budgetInfo.id %>" target="_blank" class="btn btn-default">打印</a>
+                        </div>
+
+                        <div class="table-template-container" data-tpl="adjust-table-tpl" data-json="<%== JSON.stringify(this.detail)%>"></div>
+                        <%#budget/adjust/detail.tpl.html %>
+                        <%#partial/approval_history.html%>
+                    </div>
+                </div>
+                <%}%>
+            </div>
+        </div>
+        <%#sidebar.html%>
+    </div>
+    <%#footer.html%>
+</div>
+
+
+<%! $_ENGINE_SELF.callFn("useModule")("<<<_use:
+        fml.use('fms/budget/view');
+_use:", this._JSstack , this._JSmods); %>
+<%#foot.html%>

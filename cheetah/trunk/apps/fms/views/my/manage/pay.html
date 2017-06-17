@@ -1,0 +1,133 @@
+<%#head.html%> <div id="container" class="effect mainnav-lg">
+    <%#navbar.html%>
+    <div class="boxed">
+        <div id="content-container">
+            <div id="page-content">
+                <div class="panel panel-nav">
+                    <div class="panel-heading">
+                        <ul class="nav nav-tabs slope ul-template-container" data-tpl="slope-tab-tpl" data-name="付款" data-json="<%==JSON.stringify(this.userInfo.label.my_manage)%>">
+                        </ul>
+                        <%#partial/slope_tab.html%>
+                    </div>
+                    <div class="panel-body">
+                        <form class="form-horizontal query-form">
+                            <table class="table owntable">
+                                <tbody>
+                                <tr>
+                                    <td class="text-right">部门</td>
+                                    <td id="department" class="text-left">
+                                        <input type="text" name="departmentId" class="form-control"/>
+                                    </td>
+                                    <td class="text-right">单据编号</td>
+                                    <td class="text-left">
+                                        <div class="form-inline">
+                                            <input type="text" class="form-control ow4" name="payRequestCode">
+                                        </div>
+                                    </td>
+                                    <td class="text-right">起止日期</td>
+                                    <td class="text-left">
+                                        <div class="form-inline">
+                                            <input type="text" class="form-control" id="sTime" name="sTime">
+                                            &nbsp;&nbsp;至&nbsp;&nbsp;
+                                            <input type="text" id="eTime" class="form-control" name="eTime">
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="text-right">申请人</td>
+                                    <td class="text-left">
+                                        <input type="text" class="form-control ow4" name="approId">
+                                    </td>
+                                    <td class="text-right">收款单位</td>
+                                    <td class="text-left">
+                                        <div class="form-inline">
+                                            <input type="text" class="form-control" name="customerCompany">
+                                        </div>
+                                    </td>
+                                    <td class="text-right">付款状态</td>
+                                    <td class="text-left">
+                                        <select name="state" id="" class="form-control">
+                                            <option value="">查询全部</option>
+                                            <option value="3">未付款</option>
+                                            <option value="5">已付款</option>
+                                        </select>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="6">
+                                        <button type="submit" class="btn btn-success ow2 btn-query"
+                                                data-loading-text="查询中">查询</button>
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </form>
+
+                        <div id="tab-pay">
+                            <div class="toolbar">
+                                <div class="left">
+                                    <input type="checkbox" class="check-all">
+                                    <a href="javascript:void(0);" class="btn btn-success btn-pay">付款</a>
+                                    <a href="javascript:void(0);" class="btn btn-success btn-rej">驳回</a>
+                                </div>
+                            </div>
+                            <div class="table-container">
+                                <table id="tb-pay" class="table tr-point-table table-bordered">
+                                    <thead>
+                                    <tr>
+                                        <th></th>
+                                        <th>单据编号</th>
+                                        <th>申请时间</th>
+                                        <th>申请人</th>
+                                        <th>申请部门</th>
+                                        <th>收款单位</th>
+                                        <th>付款金额</th>
+                                        <th>预计付款时间</th>
+                                        <th>付款状态</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+
+                                    </tbody>
+                                </table>
+                            </div>
+                            <ul class="pagination" id="pagination"></ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <%#sidebar.html%>
+    </div>
+
+    <!--我的管理-付款-->
+
+    <script id="payList" type="text/html">
+        {{each pays as pay}}
+        <tr dbl-open="/pay/view/?cpbId={{pay.cpbId || 0}}">
+            <td><input type="checkbox" name="cpbId" value="{{pay.cpbId || 0}}"></td>
+            <td>{{pay.cpbPayRequestCode || '' }}</td>
+            <td>{{pay.cpbApplyTime || ''}}</td>
+            <td>{{pay.cpbPersonName || ''}}</td>
+            <td>{{pay.cpbDepartmentName || ''}}</td>
+            <td><div class="min-wd">{{pay.cpbCustomerCompany || ''}}</div></td>
+            <td>{{pay.cpbMoney | currencyFormat }}</td>
+            <td>{{pay.cpbPayTime || ''}}</td>
+            <td>{{pay.cpbStateName || ''}}</td>
+        </tr>
+        {{/each}}
+    </script>
+
+
+    <script id="rejectFormTpl" type="text/html">
+        <form id="rejectForm" method="post" action="">
+            <input type="hidden" name="cpbId" value="{{cpbId}}"/>
+            <textarea name="remark" placeholder="不超过200字" class="form-control" style="min-height:80px"></textarea>
+        </form>
+    </script>
+
+    <%#footer.html%></div>
+<%! $_ENGINE_SELF.callFn( "useModule")( "<<<_use:
+        fml.use('fms/my/manage/pay');
+_use:", this._JSstack , this._JSmods); %>
+<%#foot.html%>

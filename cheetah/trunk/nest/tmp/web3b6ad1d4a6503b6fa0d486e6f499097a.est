@@ -1,0 +1,50 @@
+/*--/Users/MLS/speed/cheetah/trunk/apps/web/views/time/index.html--*/ 
+     var est = require(config.path.lib + 'est/est.js'); 
+     var _extFn = require('/Users/MLS/speed/cheetah/trunk/nest/server/lib/est/extFn.js'); 
+     function requireFn(tpl) { return est.renderFile('/Users/MLS/speed/cheetah/trunk/apps/web/views/' ,tpl , null , null ,'web' ,true); } ; 
+     function __getHtml (_data) { 
+       function jsRender(tpl , id) { return est.jsRender(requireFn(tpl)(_data), id  ); } ; 
+       var __htm ='';
+__htm += '';
+__htm += est.renderFile("/Users/MLS/speed/cheetah/trunk/apps/web/views/" ,"head.html",_data,null,"web" )||"";
+__htm += '\n<div id="container" class="effect mainnav-lg">\n    ';
+__htm += est.renderFile("/Users/MLS/speed/cheetah/trunk/apps/web/views/" ,"navbar.html",_data,null,"web" )||"";
+__htm += '\n    <div class="boxed">\n        <!--CONTENT style=""CONTAINER-->\n        <!--===================================================-->\n        <div id="content-container">\n            <div id="message-container" style=" ">\n                <div class="text-center container" style="">\n                    <div class="alert alert-danger" id="message-alert"></div>\n                </div>\n            </div>\n            <ol class="breadcrumb">\n                <li><a href="/home">首页</a></li>\n                <li class="active"><a href="javascript:void(0);">我的时间</a></li>\n            </ol>\n            <div id="page-content">\n                <div class="panel">\n                    ';
+__htm += est.renderFile("/Users/MLS/speed/cheetah/trunk/apps/web/views/" ,"time/shares.html",_data,null,"web" )||"";
+__htm += '\n                    <input type="hidden" id="room_id" value="';
+__htm += _data.room_id;
+__htm += '">\n                    <div id=\'calendar\' style=""></div>\n                    <input type="hidden" id="book_time">\n                    <input type="hidden" id="iw" value="';
+__htm += _data.iw;
+__htm += '">\n                    <!-- /.modal -->\n                    <div class="panel panel-default">\n                        <div class="panel-heading">\n                            ';
+ if(_data.user_time_manage.code==200){ ;__htm += '\n                            <blockquote>\n                                <a href=\'/time/share_time/\'><img src="';
+__htm += _data.PICTURE_URL  ;
+__htm += 'img/speed/gongxiang.png"> 共享我的时间</a>\n                                <a href=\'webcal://';
+__htm += _data.host ;
+__htm += '/time/subscribe/?token=';
+__htm +=_data.user_time_manage.data.token ;
+__htm += '\'><img\n                                        src="';
+__htm += _data.PICTURE_URL  ;
+__htm += 'img/speed/xiazai.png">订阅日历\n                                </a>\n                                <br/>或者通过下面的地址手动订阅 <abbr style="">http://';
+__htm += _data.host
+                                ;
+__htm += '/time/subscribe/?token=';
+__htm +=_data.user_time_manage.data.token
+                                ;
+__htm += '</abbr>\n                            </blockquote>\n                            ';
+};__htm += '\n                        </div>\n                    </div>\n                </div>\n            </div>\n            ';
+__htm += est.renderFile("/Users/MLS/speed/cheetah/trunk/apps/web/views/" ,"footer.html",_data,null,"web" )||"";
+__htm += '\n        </div>\n        ';
+__htm += est.renderFile("/Users/MLS/speed/cheetah/trunk/apps/web/views/" ,"mainnav.html",_data,null,"web" )||"";
+__htm += '\n    </div>\n</div>\n';
+__htm += est.renderFile("/Users/MLS/speed/cheetah/trunk/apps/web/views/" ,"time/modal.html",_data,null,"web" )||"";
+__htm += '\n<script id="switch-view" type="text/html">\n    <a class="fc-button btn-calendar active" href="javascript:void(0);">日历</a>\n    <span class="line"></span>\n    <a class="fc-button btn-list" href="/time/my/?user_id=';
+__htm +=_data.params.userId || '' ;
+__htm += '&iw=';
+__htm +=_data.params.iw || 0;
+__htm += '">列表</a>\n</script>\n';
+__htm += est.callFn("useModule")("fml.use('speed/common/base');\n        fml.use('speed/time/index');", _data._JSstack , _data._JSmods) || '';
+ ;__htm += '\n';
+__htm += est.renderFile("/Users/MLS/speed/cheetah/trunk/apps/web/views/" ,"foot.html",_data,null,"web" )||"";
+__htm += '\n';
+return __htm;} 
+ exports.html = __getHtml; 

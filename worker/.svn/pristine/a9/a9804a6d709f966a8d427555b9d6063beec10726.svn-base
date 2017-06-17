@@ -1,0 +1,120 @@
+<?php
+
+namespace Worker\Scripts\Weather;
+
+use Worker\Package\Weather\City;
+use Worker\Package\Weather\WeatherHourly;
+
+/*
+ * 获取每3个小时的天气情况
+ *  author haibinzhou@meilishuo.com
+ *  date 2016-02-17
+ *  1天跑一次脚本
+ */
+class GetWeatherHourly extends \Frame\Script {
+    const CLEAR = 800;   //晴天
+    const SLEET = 350;   //雨夹雪
+    const RAIN  = 550;   //雨
+    const SNOW  = 650;   //雪
+    const FOG   = 750;   //雾
+    const WIND  = 900;   //风
+
+    public function run() {
+        //获取城市
+        $citys = City::model()->getAllData();
+        if (empty($citys)) {
+            return FALSE;
+        }
+
+        $weatherInfo = array();
+        foreach($citys as $key=>$val){
+            $city = explode(',',$val['pinyin']);
+            $weather = $this->getWeatherInfos($city[0]);
+            if(empty($weather)){
+                continue;
+            }
+
+            $weatherInfo['city_id'] = $val['city_id'];
+            foreach($weather['hourly_forecast'] as $value){
+                $weatherInfo['timestamp'] = $value['date'].":00";
+                $weather_temp['main']['temp'] = isset($value['tmp']) ? $value['tmp'] : 7;
+                $weather_temp['dt'] = time();
+                $weather_temp['weather']['id'] = $this->weatherId($weather['now']);
+                $weather_temp['wind'] = $value['wind'];
+                $weatherInfo['data'] = json_encode($weather_temp);
+                $check = $this->check($val['city_id'],$weatherInfo['timestamp']);
+
+                if($check){  //用来检测是否抽入过
+                    WeatherHourly::model()->create($weatherInfo);
+                }
+            }
+        }
+
+        global $start;
+        $end = microtime(true);
+        $total = $end-$start;
+        $this->app->response->setBody("开始：{$start}，结束：{$end}，总用时：{$total}秒。\n");
+    }
+
+    //调用天气接口
+    public function getWeatherInfos($city){
+        $city = strtolower($city);
+        $ch = curl_init();
+        $url = 'http://apis.baidu.com/heweather/weather/free?city='.$city;
+        $header = array(
+            'apikey: fab2ff5cf6b03bbc683e735488443e2f',
+        );
+        // 添加apikey到header
+        curl_setopt($ch, CURLOPT_HTTPHEADER  , $header);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+        // 执行HTTP请求
+        curl_setopt($ch , CURLOPT_URL , $url);
+        $res = curl_exec($ch);
+        $res = json_decode($res,true);
+        if(!empty($res)){
+            $res = array_pop($res);
+            $res = !empty($res) ? array_shift($res) : array();
+        }
+
+        return $res;
+    }
+
+    //整理成需要的数据格式
+    public function weatherId($weather){
+        $weather_id = self::CLEAR;
+        if(empty($weather)){
+            return $weather_id;
+        }
+
+        if(isset($weather['cond']) && !empty($weather['cond'])){
+            if(strpos($weather['cond']['txt'],'晴') !== false){
+                $weather_id = self::CLEAR;
+            }elseif(strpos($weather['cond']['txt'],'雨') !== false){
+                $weather_id = self::RAIN;
+            }elseif(strpos($weather['cond']['txt'],'雪') !== false){
+                $weather_id = self::SNOW;
+            }elseif(strpos($weather['cond']['txt'],'雾') !== false){
+                $weather_id = self::FOG;
+            }elseif(strpos($weather['cond']['txt'],'风') !== false){
+                $weather_id = self::WIND;
+            }elseif(strpos($weather['cond']['txt'],'雨') !== false && strpos($weather['cond']['txt'],'雪') !==false){
+                $weather_id = self::SLEET;
+            }else{
+                $weather_id = self::CLEAR;
+            }
+        }
+
+        return $weather_id;
+    }
+
+    public function check($city_id,$timestamp){
+        $check = true;
+        $weatherFirst = WeatherHourly::model()->getData($city_id,$timestamp);
+
+        if(!empty($weatherFirst)){
+            $check = false;
+        }
+
+        return $check;
+    }
+}

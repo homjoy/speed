@@ -1,0 +1,132 @@
+<?php
+
+namespace Joint\Package\Order;
+
+use Libs\Util\ArrayUtilities;
+use Joint\Package\Common\BaseMemcache;
+use \Joint\Package\Common\VirusCurlTool;
+use Frame\Speed\Exception\ParameterException;
+
+defined('VIP_URL') || define("VIP_URL", 'http://vip.mlservice.meilishuo.com/');
+defined('PAY_MEMBER_URl') || define("PAY_MEMBER_URl", 'http://paymemberprivate.meilishuo.com/');
+//defined('PAY_MEMBER_URl') || define("PAY_MEMBER_URl", 'http://paymember.qingyunli.rdlab.meilishuo.com/');
+
+class UserInfo extends \Joint\Package\Common\BasePackage {
+
+    private static $instance = null;
+    private static $expireTime = 259200;
+
+    private function __construct() {}
+
+    public static function getInstance() {
+        if (is_null(self::$instance)) {
+            self::$instance = new self();
+        }
+        return self::$instance;
+    }
+
+    /**
+     * @param array $params
+     * @return bool
+     */
+    public function getInfo($params = array()){
+        if (empty($params['user_id']) || empty($params['type'])) {
+            return FALSE;
+        }
+
+        $url_pay = VIP_URL . 'vip/getInfo';
+
+        $orderInfo = VirusCurlTool::getInstance()->get($url_pay,$params);
+        $orderInfo = json_decode($orderInfo,true);
+        //从接口时时的去读 ，如果读取不到，取混存数据
+        $cacheKey = 'Joint:UserInfo:getInfo:';
+        $cacheKey .= ArrayUtilities::genParamsCacheKey($params);
+        //查询缓存
+        if(empty($orderInfo)) {
+            $orderInfo = BaseMemcache::instance()->get($cacheKey);
+            if (!empty($orderInfo)) {
+                $orderInfo = json_decode($orderInfo, true);
+                return $orderInfo['data'];
+            }
+        }else{
+            //生成缓存
+            BaseMemcache::instance()->set($cacheKey, json_encode($orderInfo), self::$expireTime);
+            return $orderInfo['data'];
+        }
+
+        return FALSE;
+    }
+
+    /**
+     * @param array $params
+     * @return bool
+     * @throws \Frame\Speed\Exception\ParameterException
+     */
+    public static function getWalletBalance($params = array()){
+        if(empty($params['userId']) && empty($params['mobile'])){
+            throw new ParameterException("用户id或手机号必填其一",10004);
+        }
+
+        $url = PAY_MEMBER_URl . 'csc/wallet/getBalance';
+
+        $memberInfo = VirusCurlTool::getInstance()->get($url,$params);
+        $memberInfo = json_decode($memberInfo,true);
+        //从接口时时的去读 ，如果读取不到，取混存数据
+        $cacheKey = 'Joint:UserInfo:getWalletBalance:';
+        $cacheKey .= ArrayUtilities::genParamsCacheKey($params);
+        //查询缓存
+        if(empty($memberInfo)) {
+            $memberInfo = BaseMemcache::instance()->get($cacheKey);
+            if (!empty($memberInfo)) {
+                $memberInfo = json_decode($memberInfo, true);
+                return $memberInfo['datas'];
+            }
+        }else{
+            if($memberInfo['code'] != "000000"){
+                throw new ParameterException($memberInfo['message'],10004);
+            }
+            //生成缓存
+            BaseMemcache::instance()->set($cacheKey, json_encode($memberInfo), self::$expireTime);
+            return $memberInfo['datas'];
+        }
+
+        return FALSE;
+    }
+
+    /**
+     * 资金明细
+     * @param array $params
+     * @return bool
+     * @throws \Frame\Speed\Exception\ParameterException
+     */
+    public static function getWalletTrans($params = array()){
+        if(empty($params['userId']) && empty($params['mobile'])){
+            throw new ParameterException("用户id或手机号必填其一",10004);
+        }
+
+        $url = PAY_MEMBER_URl . 'csc/wallet/getWalletTrans';
+
+        $memberInfo = VirusCurlTool::getInstance()->get($url,$params);
+        $memberInfo = json_decode($memberInfo,true);
+        //从接口时时的去读 ，如果读取不到，取混存数据
+        $cacheKey = 'Joint:UserInfo:getWalletTrans:';
+        $cacheKey .= ArrayUtilities::genParamsCacheKey($params);
+        //查询缓存
+        if(empty($memberInfo)) {
+            $memberInfo = BaseMemcache::instance()->get($cacheKey);
+            if (!empty($memberInfo)) {
+                $memberInfo = json_decode($memberInfo, true);
+                return $memberInfo['datas'];
+            }
+        }else{
+            if($memberInfo['code'] != "000000"){
+                throw new ParameterException($memberInfo['message'],10004);
+            }
+            //生成缓存
+            BaseMemcache::instance()->set($cacheKey, json_encode($memberInfo), self::$expireTime);
+            return $memberInfo['datas'];
+        }
+
+        return FALSE;
+    }
+}

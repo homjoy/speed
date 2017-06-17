@@ -1,0 +1,345 @@
+<?php
+namespace Admin\Modules\Hr\Attendance;
+
+use Libs\Util\ArrayUtilities;
+use Admin\Modules\Common\BaseModule;
+use Admin\Package\Common\Response;
+use Admin\Package\Attendance\Attendance;
+use Admin\Package\Attendance\WorkingHours;
+use Admin\Modules\Common\ExportExcel;
+use Admin\Package\Account\UserInfo;
+use Admin\Package\Department\Department;
+/**
+ * 按照一个月导出考勤
+ * 格式为
+ *      11.1AM  2 3 4  5 6 .... 31
+ * 张三
+ * Created by guojiezhu@meilishuo.com
+ * User: MLS  PersonalLeave
+ * Date: 15/11/25
+ * Time: 下午12:18
+ */
+class ExportMonthAttendance extends BaseModule
+{
+    protected $errors = null;
+    private $params = null;
+//    protected $checkUserPermission = true;
+    protected $config = array (
+        'filename' => '考勤数据报表',
+        'config'   => array (
+            'A' => array ('width' => 15, 'title' => '员工编号', 'field' => 'staff_id'),
+            'B' => array ('width' => 15, 'title' => '姓名', 'field' => 'name_cn'),
+            'C' => array ('width' => 20, 'title' => '部门', 'field' => 'depart_name'),
+            'D' => array ('width' => 20, 'title' => '考勤规则', 'field' => 'work_rule'),
+        )
+    );
+    protected $approval_half = array(
+        0=>'正常上班',1=>'上午请假',2=>'下午请假',3=>'全天请假', 8 => '节假日','9' =>'周六日'
+    );
+    //请假类型
+    protected $approval_type = array(
+       0=>'-' ,1=>'事假',2=>'年假',3=>'病假',4=>'带薪病假',5=>'婚假',6=>'丧假',7=>'产假',8=>'陪产假',9=>'产检假',10=>'流产假'
+    );
+    //请假状态
+    protected $approval_status =  array(1=>'新建',2=>'待接收',3=>'处理中',4=>'完成',5=>'驳回',6=>'失效');
+    //备注状态
+    protected $abnormal_state =  array(0=>'无异常',1=>'上午请假下午未打卡',2=>'下午请假但上午未打卡',3=>'全天未打卡');
+    public function run()
+    {
+        $this->_init();
+
+        //参数校验
+        if (empty($this->params['attendance_start_date']) && empty($this->params['attendance_end_date'])) {
+            echo "请选择开始和结束时间";
+            exit;
+        }
+        if( (strtotime($this->params['attendance_end_date']) - strtotime($this->params['attendance_start_date'])) >40*86400 ){
+            echo "导出天数超过40天";
+            exit;
+        }
+        //考勤的时间差
+        $diff_day = $this->daysbetweendates($this->params['attendance_start_date'],$this->params['attendance_end_date']);
+        for($s_diff=0;$s_diff< ($diff_day*2);$s_diff++){
+            $new_s_diff = floor($s_diff/2);
+            $current_time = strtotime( $new_s_diff.' days',strtotime($this->params['attendance_start_date']));
+            if($s_diff%2==0) {
+               //上下午表示符号
+                $glyph ='AM';
+            }else{
+                $glyph='PM';
+            }
+            $current_date = date('Y-m-d',$current_time).$glyph; //当前日子，做下坠
+            $current_day = date('m-d', $current_time).$glyph;
+            $num = 4+$s_diff; //从E开始
+            $title_name = $this->getCellLocation($num);
+            $this->config['config'][$title_name] = array ('width' => 20, 'title' => $current_day, 'field' => $current_date);
+        }
+
+
+        //获取 ,查询需要考勤的用户的信息
+        $query_params = array();
+        //查询考勤时间的信息
+
+        if (!empty($this->params['search'])) {
+            $query_params['name_cn'] = $this->params['search'];
+        }
+        if (!empty($this->params['attendance_start_date'])) {
+            $attendance_params['attendance_start_date'] = date('Y-m-d',
+                strtotime($this->params['attendance_start_date']));
+        }
+        if (!empty($this->params['attendance_end_date'])) {
+            $attendance_params['attendance_end_date'] = date('Y-m-d', strtotime($this->params['attendance_end_date']));
+        }
+        if (!empty($this->params['staff_id'])) {
+            $query_params['staff_id'] = $this->params['staff_id'];
+        }
+        $query_params['all'] = 1;
+
+
+        //获取所有的考勤规则
+        $all_working_rule =$this -> getAllWorking();
+        //获取获取所有需要考勤的人员的信息
+        $query_params['status']= 1;
+        $work_staff_list = WorkingHours::getInstance()->getStaffWorkingHours($query_params);
+        $all_work_info = array();
+        if (!empty($work_staff_list)) {
+            $work_user_info = ArrayUtilities::my_array_column($work_staff_list, 'user_id');
+            $params = array('user_id' => $work_user_info, 'status' => array(1, 2, 3), 'all' => 1);
+
+            $sign_user_info = UserInfo::getInstance()->getUserInfo($params);
+            if (!empty($sign_user_info)) {
+                $depart_info_array = ArrayUtilities::my_array_column($sign_user_info, 'depart_id');
+                $depart_info_array = array_unique($depart_info_array);
+            }
+            if (!empty($depart_info_array)) {
+                foreach ($depart_info_array as $depart_id) {
+                    $depart_info = Department::getInstance()->getDepartInfo(array('depart_id' => $depart_id));
+                    $current_depart_info = current($depart_info);
+                    $attendance_depart_info[$current_depart_info['depart_id']]  = $current_depart_info;
+                }
+
+            }
+            //给用户赋值 部门信息
+            foreach($sign_user_info as &$sign_user_info_value){
+                $sign_user_info_value['depart_name'] = isset($attendance_depart_info[$sign_user_info_value['depart_id']]) ?
+                    $attendance_depart_info[$sign_user_info_value['depart_id']]['depart_name'] : '';
+            }
+            foreach ($work_staff_list as $key => $work_staff_value) {
+                //获取当前人的考勤记录
+                $attendance_params['user_id'] = $work_staff_value['user_id'];
+                $attendance_params['all'] = 1;
+                $tmp_work_info =   Attendance::getInstance()->getAttendanceList($attendance_params);
+
+                //获取当前人的信息，抓取部门数据
+                $depart_name =!empty(  $sign_user_info[ $work_staff_value['user_id'] ]['depart_name'] ) ? $sign_user_info[ $work_staff_value['user_id'] ]['depart_name'] : '';
+                $new_work_info = array();
+                foreach($tmp_work_info as $value){
+                    $new_work_info['name_cn'] = $value['name_cn'];
+                    $new_work_info['staff_id'] = $value['staff_id'];
+                    $new_work_info['depart_name'] = $depart_name;
+                    $new_work_info['name_cn'] = $value['name_cn'];
+                    $new_work_info[$value['attendance_date'].'AM'] = $this->getDayStatus($value,'AM');
+                    $new_work_info[$value['attendance_date'].'PM'] = $this->getDayStatus($value,'PM');
+                }
+                $new_work_info['work_rule'] = $this->filterValue($work_staff_value['work_id'] ,$all_working_rule);
+
+
+                $all_work_info[] = $new_work_info;
+                
+
+            }
+//            echo "<pre>";
+//            var_dump($all_work_info);
+//            echo "</pre>";
+        }
+
+        set_time_limit (0);
+        $this->config['filename'] = '考勤数据月报表'. $attendance_params['attendance_start_date'].'-'.
+            $attendance_params['attendance_end_date'];
+        $excelObject =  new ExportExcel($this->config,$all_work_info);
+        $excelObject -> output();
+
+        exit;
+        
+    }
+
+    private function _init()
+    {
+
+        $this->rules = array('search' => array(
+                                    'type' => 'string',
+                             ) ,
+                             'attendance_start_date' => array(
+                                    'type' => 'string',
+                             ),
+                             'attendance_end_date' => array(
+                                 'type' => 'string',
+                             ),
+
+                             'staff_id'  => array(
+                                 'type' => 'string',
+                             ),
+
+
+        );
+
+        $this->params = $this->request()->safe();
+        $this->errors = $this->request()->getErrors();
+    }
+
+    /**
+     * 根据key 获取值
+     * @param       $key
+     * @param array $data
+     *
+     * @return string
+     */
+    public function filterValue($key,$data = array()){
+        if(empty($key)  || empty($data)) return '';
+        if(isset($data[$key])) return $data[$key];
+        return '';
+
+    }
+
+    /**
+     * 获取迟到早退的数据
+     * @param $value 迟到早退的秒数
+     * @param $abnormal_state 备注状态 1=>'上午请假下午未打卡',2=>'下午请假但上午未打卡',3=>'全天未打卡'
+     * @param $type 1 迟到 2 早退
+     *
+     * @return int/string
+     */
+    public function sortOut($value,$abnormal_state,$type){
+        if($type ==1){ //迟到的判断
+            if($value ==0 ){
+               if(in_array($abnormal_state,array(2,3)) ) {
+                   return '未打卡';
+               }else{
+                   return 0;
+               }
+            }else{
+                return number_format($value/60,2);
+            }
+
+        }else if($type==2){
+            if($value ==0 ){
+                if(in_array($abnormal_state,array(1,3)) ) {
+                    return '未打卡';
+                }else{
+                    return 0;
+                }
+            }else{
+                return number_format($value/60,2);
+            }
+        }
+        return 0;
+    }
+
+    /**
+     * 获取对应的时间
+     * @param        $value
+     * @param string $type
+     *
+     * @return string
+     */
+    public function getDayStatus($value , $type ='AM'){
+        //获取一天的状态的集合
+        $return_array = array();
+
+        if($value['approval_half'] !=0){
+            $return_array []=$this->filterValue($value['approval_half'],$this->approval_half) ;
+        }
+        if($type =='AM') {
+            if (!empty($value['approval_am_type'])) {
+                $return_array [] = $this->filterValue($value['approval_am_type'], $this->approval_type);
+            }
+
+            if (!empty($value['approval_am_status'])) {
+                $return_array [] = $this->filterValue($value['approval_am_status'], $this->approval_status);
+            }
+            //迟到状态
+            $late_status =  $this->sortOut($value['late_time'],$value['abnormal_state'],1);
+            if(!empty($late_status)){
+                $return_array [] = '迟到：'. $late_status;
+            }
+        }else if($type =='PM') {
+            if (!empty($value['approval_pm_type'])) {
+                $return_array [] = $this->filterValue($value['approval_pm_type'], $this->approval_type);
+            }
+
+            if (!empty($value['approval_pm_status'])) {
+                $return_array [] = $this->filterValue($value['approval_pm_status'], $this->approval_status);
+            }
+            $early_state = $this->sortOut($value['early_time'],$value['abnormal_state'],2);
+            if(!empty($early_state) ){
+                $return_array [] ='早退：'. $early_state;
+            }
+        }
+
+        if(empty($return_array)) {
+            return  '正常';
+        }else{
+            return implode(';',$return_array);
+        }
+
+    }
+    /**
+     * 获取所有的考勤规则
+     */
+    public function getAllWorking(){
+        $params = array('all' => 1,'status' => 1);
+        $all_working = WorkingHours::getInstance()->getWorkingHours($params);
+        $news_working = array();
+        foreach($all_working as $key => $value){
+            $news_working[$key] = $value['morning_start'].'-'. $value['afternoon_end'];
+        }
+        return $news_working;
+    }
+
+    /**
+     * 获取两个时间之间的间隔
+     * @param $date1
+     * @param $date2
+     *
+     * @return float
+     */
+    public function daysbetweendates($date1, $date2) {
+        if($date1 > $date2){
+            return false;
+        }
+        $date1 = strtotime(date('Y-m-d 00:00:00', strtotime($date1)));
+        $date2 = strtotime(date('Y-m-d 23:59:59', strtotime($date2)));
+        $days = ceil(abs($date1 - $date2) / 86400);
+        return $days;
+    }
+
+
+    /**
+     * 获取列的名字
+     * @param int $num
+     *
+     * @return string
+     */
+    private function getCellLocation($num = 0) {
+        if($num < 0 || $num > 103) {
+            exit('数据列数据超出范围，支持1-104列数据');
+        }
+        $abc = array('A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z');
+        if($num >= 77) {
+            $str = 'C';
+        }else if($num >= 52) {
+            $str = 'B';
+        }else if($num >= 26) {
+            $str = 'A';
+        }else {
+            $str = '';
+        }
+
+        while($num >= 26) {
+            $num = $num - 26;
+        }
+        $str .= $abc[$num] ;
+
+        return $str;
+    }
+}

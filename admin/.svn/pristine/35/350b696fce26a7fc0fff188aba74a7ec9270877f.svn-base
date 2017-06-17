@@ -1,0 +1,212 @@
+<?php
+
+namespace Admin\Package\Itserver;
+
+use Admin\Modules\Common\BaseModule;
+use Admin\Package\Common\Response;
+/**
+ * 获取用户信息
+ * @package Admin\Package\UserInfo
+ * @author hongzhou@meilishuo.com
+ * @since 2015-12-25
+ */
+
+class Itserver extends \Admin\Package\Common\BasePackage {
+
+    private static $instance = null;
+    private function __construct() {}
+
+    public static function getInstance()
+    {
+        if(is_null(self::$instance)){
+            self::$instance = new self();
+
+        }
+        return self::$instance;
+    }
+
+    public  function checkRedmine($params = array()){
+
+        $ret = self::getClient()->call('joint', 'itserver/check_redmine', $params);
+        $ret = self::parseRemoteData($ret);
+        return $ret;
+    }
+
+    public  function checkMail($params = array()){
+
+        $ret = self::getClient()->call('joint', 'itserver/check_mail', $params);
+        $ret = self::parseRemoteData($ret);
+        return $ret;
+    }
+    public  function createMail($params = array()){
+
+        $ret = self::getClient()->call('joint', 'itserver/email_create', $params);
+        $ret = self::parseRemoteData($ret);
+        return $ret;
+    }
+    public  function updateMailPwd($params = array()){
+
+        $ret = self::getClient()->call('joint', 'itserver/email_update', $params);
+        $ret = self::parseRemoteData($ret);
+        return $ret;
+    }
+    public  function createVpn($params = array()){
+
+        $ret = self::getClient()->call('joint', 'itserver/grant_vpn_auth', $params);
+        $ret = self::parseRemoteData($ret);
+        return $ret;
+    }
+    public  function createWifi($params = array()){
+
+        $ret = self::getClient()->call('joint', 'itserver/grant_wifi_auth', $params);
+        $ret = self::parseRemoteData($ret);
+        return $ret;
+    }
+    public  function createRedmine($params = array()){
+
+        $ret = self::getClient()->call('joint', 'itserver/grant_redmine_auth', $params);
+        $ret = self::parseRemoteData($ret);
+        return $ret;
+    }
+    public  function getUserAccount($params = array()){
+
+        $ret = self::getClient()->call('atom', 'core/get_user_account', $params);
+        $ret = self::parseRemoteData($ret);
+        return $ret;
+    }
+    public function deleteMail($params = array()) {
+        $ret = self::getClient()->call('joint', 'releaseauth/mail_auth_recover', $params);
+        $ret = $this->parseRemoteData($ret);
+        return $ret;
+    }
+    public  function createOfficialMail($params = array()){
+
+        $ret = self::getClient()->call('atom', 'itserver/create_official_mail', $params);
+        $ret = self::parseRemoteData($ret);
+        return $ret;
+    }
+    public  function getOfficialMail($params = array()){
+
+        $ret = self::getClient()->call('atom', 'itserver/get_official_mail', $params);
+        $ret = self::parseRemoteData($ret);
+        return $ret;
+    }
+    public  function updateOfficialMail($params = array()){
+
+        $ret = self::getClient()->call('atom', 'itserver/update_official_mail', $params);
+        $ret = self::parseRemoteData($ret);
+        return $ret;
+    }
+    public  function updateItAccount($params = array()){
+
+        $ret = self::getClient()->call('atom', 'itserver/create_it_account', $params);
+        $ret = self::parseRemoteData($ret);
+        return $ret;
+    }
+    public  function createItAccount($params = array()){
+
+        $ret = self::getClient()->call('atom', 'itserver/update_it_account', $params);
+        $ret = self::parseRemoteData($ret);
+        return $ret;
+    }
+    public  function getItAccount($params = array()){
+
+        $ret = self::getClient()->call('atom', 'itserver/get_it_account', $params);
+        $ret = self::parseRemoteData($ret);
+        return $ret;
+    }
+    public  function updateVpnPwd($params = array()){
+
+        $ret = self::getClient()->call('joint', 'itserver/vpn_edit_pwd', $params);
+        $ret = self::parseRemoteData($ret);
+        return $ret;
+    }
+    public  function updateWifiPwd($params = array()){
+
+        $ret = self::getClient()->call('joint', 'itserver/wifi_edit_pwd', $params);
+        $ret = self::parseRemoteData($ret);
+        return $ret;
+    }
+    public  function  make_password( $length = 2 )
+    {
+        // 密码字符集，可任意添加你需要的字符
+
+
+        $password = '';
+        for($i = 0; $i < $length; $i++)
+        {
+            // 将 $length 个数组元素连接成字符串
+            $password .= chr(mt_rand(65, 90));
+        }
+        for($i = 0; $i < $length; $i++)
+        {
+            // 将 $length 个数组元素连接成字符串
+            $password .= chr(mt_rand(97, 122));
+        }
+        for($i = 0; $i < $length; $i++)
+        {
+            // 将 $length 个数组元素连接成字符串
+            $password .= chr(mt_rand(48, 57));
+        }
+        $chars =array('@','~'
+           );
+        $keys = array_rand($chars, $length);
+        for($i = 0; $i < $length; $i++)
+        {
+            // 将 $length 个数组元素连接成字符串
+            $password .= $chars[$keys[$i]];
+        }
+        //打乱字符串
+        $password = str_shuffle($password);
+        return $password;
+    }
+
+    public  function  complexMatch( $newPassword = '',$mail = '') {
+        if(empty($newPassword)) {
+            return array('code'=>400,'error_msg'=>'没有密码');
+        }
+
+        //检测新密码合法
+        if(trim($newPassword) !== $newPassword) {
+
+            return  array('code'=>400,'error_msg'=>'密码格式不对');
+        }
+
+        if(strlen($newPassword) < 6) {
+            return array('code'=>400,'error_msg'=>'密码少于六位');
+        }
+
+        if(!preg_match('/[0-9]/', $newPassword)) {
+            return array('code'=>400,'error_msg'=>'没有数字');
+        }
+
+        if(!preg_match('/[a-z]/', $newPassword) && !preg_match('/[A-Z]/', $newPassword)) {
+            return array('code'=>400,'error_msg'=>'没有字母');
+        }
+        //不兼容加号和空格
+//        if(!preg_match('/[\[\]\(\)\~\!\@\#\$\%\^\*\+\=\,\.\_\-]/', $newPassword)) {
+//            return array('code'=>400,'error_msg'=>'没有特殊字符，不允许这样的啦');
+//        }
+        if(preg_match('/[^0-9a-zA-Z\[\]\(\)\~\!\@\#\$\%\^\*\+\=\,\.\_\-]/', $newPassword, $match)) {
+            $match = array_pop($match);
+            if(trim($match) !== $match) {
+                return array('code'=>400,'error_msg'=>'是不是密码总有空格和加号啊！这个不行的');
+            }
+
+        }
+        //检测密码邮箱关联性
+        $lowerMail = strtolower($mail);
+        if(strcasecmp($lowerMail, $newPassword) === 0) {
+            return array('code'=>400,'error_msg'=>'不能与用户名相同(不区分大小写)');
+        }
+
+        if(preg_match('/(' . preg_quote(strtolower($newPassword)) . ')+/', $lowerMail) || preg_match('/(' . preg_quote($lowerMail) . ')+/', strtolower($newPassword))) {
+
+            return array('code'=>400,'error_msg'=>'不能是用户名的子集、用户名也不能是密码的子集(不区分大小写)');
+        }
+
+        return array('code'=>200);
+    }
+
+
+}

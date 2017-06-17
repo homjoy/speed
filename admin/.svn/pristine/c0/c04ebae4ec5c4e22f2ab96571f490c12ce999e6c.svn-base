@@ -1,0 +1,224 @@
+<?php
+namespace Admin\Modules\Structure\User;
+use Libs\Util\Format;
+use Admin\Modules\Common\BaseModule;
+use Admin\Package\Common\Response;
+use Admin\Package\Account\UserInfo;
+use Admin\Package\Account\PersonalInfo;
+use Admin\Package\Log\Log;
+/**
+ * 修改邮箱密码
+ * @author hongzhou@meilishuo.com
+ * @since 2015-11-14 下午12:53:13
+ */
+class AjaxUpdateMailPwd extends BaseModule {
+
+    protected $errors = NULL;
+    private   $params = NULL;
+    public static $VIEW_SWITCH_JSON = TRUE;
+    const mail_string = '@meilishuo.com';
+    public $length =2;
+    const IT =8;
+
+    public function run() {
+        $this->_init();
+        //校验参数
+        if($this->post()->hasError()){
+            $return = Response::gen_error(10001, '', $this->post()->getErrors());
+            return $this->app->response->setBody($return);
+        }
+       //生成密码
+        if(empty($this->params['mail_pwd'])){
+            $this->params['mail_pwd'] = $this->make_password($this->length);
+        }
+
+        $msg = '用户名:'.$this->params['mail_name'].'密码:'.$this->params['mail_pwd'];
+        $check =  $this->complexMatch( $this->params['mail_pwd'] ,$this->params['mail_name'] );
+        //密码校验
+        if(isset($check['code'])&&$check['code']!=200){
+            return $this->app->response->setBody($check);
+        }
+        //获取用户信息
+
+        $user = $this->getUser(
+            array(
+                'mail'=>$this->params['mail_name']
+            )
+        );
+        //创建成功后短信通知
+        $sms['content']=array('mail'=>$user['mail'],'msg'=>$msg);
+        $sms['mobile'] =isset($user['mobile'])?$user['mobile']:'';
+        $sms['mail'] =isset($user['mail'])?$user['mail']:'';
+
+        //构造参数
+        $is_mail = preg_match('/@/', $this->params['mail_name']);
+        if (!$is_mail) { // 邮箱
+            $this->params['mail_name'] .=self::mail_string;
+        }
+        $ret = $this->updateMailPwd($this->params);
+
+        if(!$ret){
+            return $this->app->response->setBody(Response::gen_error(50001,'修改失败'));
+        }
+      ;
+        $this->sendSms($sms);
+        //日志
+        $this->doLog($this->params);
+        $this->app->response->setBody(Response::gen_success('修改成功'));
+    }
+    private function getUser($param=array()) {//user_id
+        $ret =array();
+        $ret_mail = UserInfo::getInstance()->getUserInfo( $param);;
+        $ret_mail = is_array($ret_mail)?array_pop($ret_mail):'';
+        $ret['mail'] = isset($ret_mail['mail'])?$ret_mail['mail']:'';
+        $ret['user_id'] = isset($ret_mail['user_id'])?$ret_mail['user_id']:'';
+        $ret_mobile = PersonalInfo::getInstance()->getPersonalInfo(
+            array(
+                'user_id'=>  $ret['user_id']
+            )
+        );
+        $ret_mobile = is_array($ret_mobile)?array_pop($ret_mobile):'';
+        $ret['mobile'] = isset($ret_mobile['mobile'])?$ret_mobile['mobile']:'';
+
+        return $ret;
+    }
+    public  function  make_password( $length = 2 )
+    {
+        // 密码字符集，可任意添加你需要的字符
+
+
+        $password = '';
+        for($i = 0; $i < $length; $i++)
+        {
+            // 将 $length 个数组元素连接成字符串
+            $password .= chr(mt_rand(65, 90));
+        }
+        for($i = 0; $i < $length; $i++)
+        {
+            // 将 $length 个数组元素连接成字符串
+            $password .= chr(mt_rand(97, 122));
+        }
+        for($i = 0; $i < $length; $i++)
+        {
+            // 将 $length 个数组元素连接成字符串
+            $password .= chr(mt_rand(48, 57));
+        }
+        $chars =array('!',
+            '@','#', '$', '%', '^', '&', '*', '(', ')', '-', '_',
+            '[', ']', '{', '}', '<', '>', '~', '`', '=', ',',
+            '.', ';', ':', '/', '?', '|');
+        $keys = array_rand($chars, $length);
+        for($i = 0; $i < $length; $i++)
+        {
+            // 将 $length 个数组元素连接成字符串
+            $password .= $chars[$keys[$i]];
+        }
+        //打乱字符串
+        $password = str_shuffle($password);
+        return $password;
+    }
+
+    public  function  complexMatch( $newPassword = '',$mail = '') {
+        if(empty($newPassword)) {
+            return array('code'=>400,'error_msg'=>'没有密码');
+        }
+
+        //检测新密码合法
+        if(trim($newPassword) !== $newPassword) {
+
+            return  array('code'=>400,'error_msg'=>'密码格式不对');
+        }
+
+        if(strlen($newPassword) < 6) {
+            return array('code'=>400,'error_msg'=>'密码少于六位');
+        }
+
+        if(!preg_match('/[0-9]/', $newPassword)) {
+            return array('code'=>400,'error_msg'=>'没有数字');
+        }
+
+        if(!preg_match('/[a-z]/', $newPassword) && !preg_match('/[A-Z]/', $newPassword)) {
+            return array('code'=>400,'error_msg'=>'没有字母');
+        }
+        //不兼容加号和空格
+//        if(!preg_match('/[\[\]\(\)\~\!\@\#\$\%\^\*\+\=\,\.\_\-]/', $newPassword)) {
+//            return array('code'=>400,'error_msg'=>'没有特殊字符，不允许这样的啦');
+//        }
+        if(preg_match('/[^0-9a-zA-Z\[\]\(\)\~\!\@\#\$\%\^\*\+\=\,\.\_\-]/', $newPassword, $match)) {
+            $match = array_pop($match);
+            if(trim($match) !== $match) {
+                return array('code'=>400,'error_msg'=>'是不是密码总有空格和加号啊！这个不行的');
+            }
+
+        }
+        //检测密码邮箱关联性
+        $lowerMail = strtolower($mail);
+        if(strcasecmp($lowerMail, $newPassword) === 0) {
+            return array('code'=>400,'error_msg'=>'不能与用户名相同(不区分大小写)');
+        }
+
+        if(preg_match('/(' . preg_quote(strtolower($newPassword)) . ')+/', $lowerMail) || preg_match('/(' . preg_quote($lowerMail) . ')+/', strtolower($newPassword))) {
+
+            return array('code'=>400,'error_msg'=>'不能是用户名的子集、用户名也不能是密码的子集(不区分大小写)');
+        }
+
+        return array('code'=>200);
+    }
+    //发短信
+    private function sendSms($param = array()) {
+        if(!isset($param['content'])||empty($param['mobile'])|| !isset($param['mail'])) {
+            return FALSE;
+        }
+        $date = date('Y-m-d H:i:s',time());
+        $message['sms'] =$param['content'];
+        $array_data= array(
+            'token' => $this->token,
+            'custom_id' => '1',
+            'content' => $message,
+            'to_id' => $this->user['id'], 'send_at' => $date, 'title' => '修改账号密码', 'template_id' => 124, 'channel' => 'sms', 'phone' =>$param['mobile'],'mail'=>$param['mail']);
+        $return = $this->getClient()->call('worker','notification/push',$array_data);
+        $return = $this->parseApiData($return);
+        //记录日志TODO
+        $array_data['return'] =$return;
+        $this->app->log->log('admin/structure/user/ajax_get_all_auth', json_encode($array_data));
+
+    }
+
+    protected function updateMailPwd($mail){
+        $return_data=NULL;
+        $return_data = $this->getClient()->call('joint', 'itserver/email_update', $mail);
+
+        $return_data = $this->parseApiData($return_data);
+        return $return_data;
+
+    }
+    protected function doLog($new_param=array(),$old_param='update'){
+        $ret = Log::getInstance()->createLogs(array(
+                'user_id'=>$this->user['id'],
+                'handle_id'=>100000,
+                'operation_type'=>$old_param,
+                'after_data'=>json_encode($new_param),
+                'handle_type'=>self::IT
+            )
+        );
+        return $ret;
+    }
+    private function _init() {
+
+        $this->rules  = array(
+            'mail_pwd' => array(
+                'type'=>'string',
+            ),
+            'mail_name' => array(
+               'type'=>'string',
+                'required' => TRUE,
+                'allowEmpty' => FALSE,
+           )
+        );
+
+        $this->params   = $this->post()->safe();
+        $this->errors   = $this->post()->getErrors();
+
+    }
+    
+}

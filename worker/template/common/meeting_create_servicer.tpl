@@ -1,0 +1,1 @@
+Hi！亲：{{initiator}}发起了{{meeting_time}} 的{{meeting_type}}“{{meeting_topic}}”，会议地点：{{place}}，需要{{meeting_service}}支持，请提前准备，辛苦啦！查看详情请登陆speed。

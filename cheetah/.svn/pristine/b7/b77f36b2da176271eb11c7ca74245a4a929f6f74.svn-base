@@ -1,0 +1,46 @@
+fml.define('speed/hr/leave/wizard', ['jquery', 'plugin/store'], function (require, exports) {
+    "use strict";
+    var $ = require('jquery');
+    var store = require('plugin/store');
+    var WIZARD_CACHE_KEY = 'pass-leave-my-wizard';
+
+    ////无需进行引导
+    if (store.get(WIZARD_CACHE_KEY)) {
+        return;
+    }
+    $('.effect').addClass('mainnav-sm');
+    var wizardHTML = '<div class="wizard-container">' +
+        '</div>' +
+
+    '<div class="wizard wizard-leave-list"></div>' +
+    '<div class="wizard wizard-leave-history hide"></div>';
+
+    var wizard = $(wizardHTML);
+
+    //function relocateTips() {
+    //    wizard.css({
+    //        height: $(document).height()
+    //    });
+    //    wizard.find('.wizard-time-my').css({
+    //        top: $('.switch-group').offset().top - 50
+    //    });
+    //}
+    var a = 0;
+    wizard.appendTo("body");
+    wizard.on('click', function (e) {
+        e.preventDefault();
+        if(a==0){
+            $('.wizard-leave-list').addClass('hide');
+            $('.wizard-leave-history').removeClass('hide');
+            a++;
+        }else{
+            $('.wizard-leave-history').addClass('hide');
+            wizard.fadeOut(function () {
+                $(this).remove();
+            });
+            store.set(WIZARD_CACHE_KEY, true);
+            return false;
+        }
+
+    });
+});

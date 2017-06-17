@@ -1,0 +1,64 @@
+<?php 
+namespace WorkFlowAtom\Modules\User;
+
+use WorkFlowAtom\Modules\Common\BaseModule;
+use WorkFlowAtom\Package\Common\Response;
+use WorkFlowAtom\Package\User\RoleInfo;
+use Libs\Util\Format;
+
+/**
+ * 通过角色ID获取角色信息
+ * @author jingjingzhang@meilishuo.com
+ * @date 2015-7-15 
+ */
+
+class RoleInfoGet extends BaseModule {
+
+	protected $role = array();
+	protected $errors = array();
+	private $sample;
+
+	public function run() {
+
+		$this->_init();
+
+		$this->sample = RoleInfo::getInstance()->getFields();
+		
+		//参数校验
+		if ($this->query()->hasError()) {
+			$return = Response::gen_error(10001, '', $this->errors);
+        	return $this->app->response->setBody($return);
+        }
+
+        if (empty($this->role['role_id'])) {
+        	$return = Response::gen_error(10001);
+        	return $this->app->response->setBody($return);
+        }
+	
+		$result = RoleInfo::getInstance()->getDataById($this->role['role_id']);
+
+		if ($result === FALSE) {
+        	$return = Response::gen_error(50001);
+        }elseif (empty($result)) {
+        	$return = Response::gen_error(50002);
+        }else{
+        	$return = Response::gen_success(Format::outputData($result, $this->sample));
+        }
+
+    	$this->app->response->setBody($return);
+	}
+
+	private function _init() {
+
+		$this->rules = array(
+			'role_id' => array(
+				'required'   => TRUE,
+				'type'       => 'integer',
+				'maxLength'  => 5,
+			),
+		);
+
+		$this->role = $this->query()->safe();
+		$this->errors = $this->query()->getErrors();
+	}
+}

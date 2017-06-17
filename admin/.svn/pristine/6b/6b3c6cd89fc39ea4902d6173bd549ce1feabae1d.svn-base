@@ -1,0 +1,47 @@
+<?php
+
+namespace Admin\Modules\Message_send;
+
+use Admin\Modules\Common\BaseModule;
+use Admin\Package\Common\Response;
+
+/**
+ * MessageSend 消息推送列表
+ * guojiezhu@meilishuo.com
+ * 2016-02-25
+ */
+class MessageList extends BaseModule {
+    protected $errors = NULL;
+    private   $params = NULL;
+    private   $page_size = 20;
+    //public static $VIEW_SWITCH_JSON = TRUE;
+    protected $checkUserPermission = TRUE;
+    public function run() {
+        $this->_init();
+        //分页控制
+        if(isset($this->params['page'])){
+            if($this->params['page']<=0){
+                $this->params['page'] =1;
+            }
+            $this->params['page_size'] = $this->page_size;
+        }
+        //获取所有的 会议室
+        $query_count = $this->params;
+        $query_count['count'] = 1;
+
+        $return = array();
+        return $this->app->response->setBody($return);
+
+
+    }
+
+
+    private function _init() {
+
+        $this->params = $this->query()->safe();
+        $this->errors = $this->query()->getErrors();
+    }
+
+
+
+}

@@ -1,0 +1,65 @@
+function report() {
+    return this;
+}
+var controlFns = {
+    'index': function () {
+        return this.redirectTo('/report/reimburse/');
+    }
+    , 'budget': {
+        "quarter": function () {
+            var php = {};
+            this.bindDefault(php);
+            this.bridgeMuch(php);
+            this.listenOver(function (data) {
+                data._CSSLinks = ['plugin/zTree', 'queen/tree-select', 'queen/trees', 'fms/report/base'];
+                this.render('report/budget/quarter.html', data);
+            });
+        },
+
+        "department": function () {
+            var php = {};
+            this.bindDefault(php);
+            this.bridgeMuch(php);
+            this.listenOver(function (data) {
+                data._CSSLinks = ['plugin/zTree', 'nifty/bootstrap-select.min', 'queen/trees', 'queen/tree-select', 'fms/report/base'];
+                data._JSLinks = ['nifty/bootstrap-select.min'];
+                this.render('report/budget/department.html', data);
+            });
+        },
+
+        "project": function () {
+            var php = {};
+            this.bindDefault(php);
+            this.bridgeMuch(php);
+            this.listenOver(function (data) {
+                data._CSSLinks = ['plugin/zTree', 'queen/trees', 'queen/tree-select', 'fms/report/base'];
+                this.render('report/budget/project.html', data);
+            });
+        }
+    },
+
+    'reimburse': {
+        "index": function () {
+            var php = {
+                'items':'fms::/dictionary/getexpenseitemjson'
+            };
+            this.bindDefault(php);
+            this.bridgeMuch(php);
+            this.listenOver(function (data) {
+                data._CSSLinks = ['plugin/zTree', 'queen/trees', 'queen/tree-select', 'fms/report/base'];
+                this.render('report/reimburse/index.html', data);
+            });
+        },
+
+        "loan": function () {
+            var php = {};
+            this.bindDefault(php);
+            this.bridgeMuch(php);
+            this.listenOver(function (data) {
+                data._CSSLinks = ['plugin/zTree', 'queen/trees', 'queen/tree-select', 'fms/report/base'];
+                this.render('report/reimburse/loan.html', data);
+            });
+        }
+    }
+};
+exports.__create = controller.__create(report, controlFns);

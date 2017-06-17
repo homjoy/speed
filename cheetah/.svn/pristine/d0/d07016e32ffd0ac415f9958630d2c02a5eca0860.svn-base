@@ -1,0 +1,31 @@
+/*--/Users/danni/whornbill/apps/web/views/foot.html--*/ 
+     var est = require(config.path.lib + 'est/est.js'); 
+     var _extFn = require('/Users/danni/whornbill/nest/server/lib/est/extFn.js'); 
+     function requireFn(tpl) { return est.renderFile('/Users/danni/whornbill/apps/web/views/' ,tpl , null , null ,'web' ,true); } ; 
+     function __getHtml (_data) { 
+       function jsRender(tpl , id) { return est.jsRender(requireFn(tpl)(_data), id  ); } ; 
+       var __htm ='';
+__htm += '';
+__htm += (function(link , jsmods){
+	var str = '';
+	var SVERSION = _data.SVERSION;
+	var base = _data.JCSTATIC_BASE;
+	link && link.map(function(src){
+		str += '<script src="' + src + '?'+SVERSION+'"></script>';
+	 });
+	if (jsmods.length) {
+		jsmods = '~'  +  jsmods.join('+');
+		str += '<script  src="' + base + jsmods + '?'+SVERSION+'"></script>';
+	}
+	return str;
+})(_data._JSLinks ,_data._JSmods) ;
+__htm += '\n<script>\n';
+ if (_data._JSstack && _data._JSstack.length) { ;__htm += '\n';
+__htm += _data._JSstack.join(";\n"); ;
+__htm += '\n';
+ }
+if (_data.JS_Defer) {
+;__htm += '    \n;fex.iLoad();\n';
+};__htm += '\n</script>\n</body>\n</html>\n';
+return __htm;} 
+ exports.html = __getHtml; 

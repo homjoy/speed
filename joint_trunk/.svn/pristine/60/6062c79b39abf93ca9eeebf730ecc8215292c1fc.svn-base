@@ -1,0 +1,92 @@
+<?php
+namespace Joint\Modules\Releaseauth;
+use Joint\Modules\Common\BaseModule;
+use Joint\Package\Common\Response;
+/**
+ * Redmine权限回收
+ * @author hongzhou@meilishuo.com
+ * @since 2015-8-13 下午3:53:13
+ */
+defined('REDMINE_HOST') || define("REDMINE_HOST", 'http://redmine.meilishuo.com/');
+class RedmineAuthRecover extends BaseModule {
+
+    protected $errors = NULL;
+    private   $params = NULL;
+    private   $url    = 'extend_api/user/update_status.json';
+
+    public function run() {
+        $this->_init();
+        //参数处理
+        $return = array();
+        if ($this->post()->hasError()) {
+            $return = Response::gen_error(10001, '', $this->errors);
+            return $this->app->response->setBody($return);
+        }
+        $is_mail = preg_match('/@/', $this->params['mail']);
+        if ($is_mail) { // 邮箱
+            $is_mail = explode("@",$this->params['mail']);
+            $is_mail = $is_mail[0];
+        }else{
+            $is_mail =  $this->params['mail'];
+        }//得到前缀 拼接curl 准备参数
+        $url = REDMINE_HOST;
+        $url .=$this->url;
+        $postfields['login'] = $is_mail;
+        $postfields['status'] = 'locked';//active
+        $headers[] = "X-Redmine-API-Key:4a6aaffedda1d5d2a4a5bdf28f30362de1bff4f7";
+        $method = 'POST';
+
+        $ret = $this->http($url,$method,$postfields, $headers);
+
+        $ret = json_decode($ret, TRUE);
+
+        if ($ret['code']=== 0 || $ret['code']=== '0') {
+            $return = Response::gen_success(array('message' =>$ret['msg']));
+        }elseif ($ret['code']== -1 ) {//实际上不是空是0 
+            $return = Response::gen_success(array('message' =>$ret['msg']));
+        }elseif(isset($ret['response_code'])){
+            if($ret['response_code']!=200){
+                $return = Response::gen_error(10001,'','参数未传过去');
+            }
+        }else{
+            $return = Response::gen_error(50005,'','其它错误');
+        }
+        $this->app->response->setBody($return);
+
+    }
+
+    private function http($url=array(), $method=array(), $postfields = array(), $headers = array()) {
+        $ci = curl_init();
+        curl_setopt($ci, CURLOPT_HTTP_VERSION, CURL_HTTP_VERSION_1_0);
+        curl_setopt($ci, CURLOPT_URL, $url );
+        curl_setopt($ci, CURLOPT_POST, TRUE);
+        curl_setopt($ci, CURLOPT_RETURNTRANSFER, TRUE);
+        curl_setopt($ci, CURLOPT_HEADER, FALSE);
+        if (!empty($postfields)) {
+            curl_setopt($ci, CURLOPT_POSTFIELDS, $postfields);
+        }
+        curl_setopt($ci, CURLOPT_HTTPHEADER, $headers );
+        curl_setopt($ci, CURLINFO_HEADER_OUT, TRUE );
+        curl_setopt($ci, CURLOPT_CONNECTTIMEOUT, 500);
+        curl_setopt($ci, CURLOPT_TIMEOUT, 500);
+        $response = curl_exec($ci);
+        curl_close ($ci);
+        return $response;
+    }
+    private function _init() {
+
+        $this->rules = array(
+            'mail' => array(
+                'required' => TRUE,
+                'allowEmpty' => FALSE,
+                'type'=>'string',
+                'maxLength'=> 30
+            )
+        );
+
+        $this->params = $this->post()->safe();
+        $this->errors = $this->post()->getErrors();
+        return TRUE;
+    }
+
+}

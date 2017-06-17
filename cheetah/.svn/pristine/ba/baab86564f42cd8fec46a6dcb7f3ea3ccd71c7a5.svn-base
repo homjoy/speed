@@ -1,0 +1,229 @@
+<%#head.html%>
+<div id="container" class="effect mainnav-lg">
+    <%#navbar.html%>
+    <div class="boxed">
+        <div id="content-container">
+            <div id="page-content">
+                <div class="panel">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">预算调整单</h3>
+                    </div>
+                    <div class="panel-body">
+                        <form class="form-horizontal" method="POST">
+                            <fieldset>
+                                <legend>基本信息</legend>
+                                <div class="row">
+                                    <div class="form-group col-xs-6">
+                                        <label class="control-label col-xs-4">申请人</label>
+                                        <div class="col-xs-8">
+                                            <input type="text" class="form-control" name="nameCn" value="<%=this.userInfo.data.nameCn%>" readonly>
+                                        </div>
+                                    </div>
+                                    <div class="form-group col-xs-6">
+                                        <label class="control-label col-xs-4">申请部门</label>
+                                        <div class="col-xs-8">
+                                            <input type="text" class="form-control" name="applyDeptid" value="<%=this.userInfo.data.department.departName%>" readonly>
+                                        </div>
+                                    </div>
+                                </div>
+
+
+                                <div class="row">
+                                    <div class="form-group col-xs-6">
+                                        <label class="control-label col-xs-4">单据编号</label>
+                                        <div class="col-xs-8">
+                                            <input type="text" class="form-control" readonly>
+                                        </div>
+                                    </div>
+                                    <div class="form-group col-xs-6">
+                                        <label class="control-label col-xs-4">申请日期</label>
+                                        <div class="col-xs-8">
+                                            <input type="text" class="form-control current-date" readonly>
+                                        </div>
+                                    </div>
+                                </div>
+                            </fieldset>
+                            <fieldset>
+                                <legend>单据内容</legend>
+                                <div class="row">
+                                    <div class="form-group col-xs-8">
+                                        <label class="control-label col-xs-2">编制期间</label>
+                                        <div class="col-xs-3">
+                                            <select name="budgetYear" class="form-control selectpicker" data-required>
+                                                <% this.budgetYears.forEach(function(year,index){ %>
+                                                <option value="<%=year %>" <%= this.currentYear == year ? 'selected' : '';%>><%== year%></option>
+                                                <% }); %>
+                                            </select>
+                                        </div>
+                                        <div class="col-xs-6">
+                                            <div class="checkbox">
+                                                <% this.quarters.forEach(function(quarter,index){ %>
+                                                <label class="form-checkbox form-normal form-primary active">
+                                                    <input type="checkbox" name="draftTerm[]" value="<%==quarter %>"/><%== quarter%>
+                                                </label>
+                                                <% }); %>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="form-group col-xs-12">
+                                        <div class="col-xs-4">
+                                            <span class="summary-amount">年度调整总额<em class="money"><%= this.balance && this.balance.rcode == 200 ? this.balance.data.amount_adjust || '0.00' : '0.00' %></em></span>
+                                        </div>
+                                        <div class="col-xs-4">
+                                            <span class="summary-amount">原年度预算总额<em class="money"><%= this.balance && this.balance.rcode == 200 ? this.balance.data.balance_init || '0.00': '0.00' %></em></span>
+                                        </div>
+                                        <div class="col-xs-4">
+                                            <span class="summary-amount">调整后年度预算总额<em class="money"><%= this.balance && this.balance.rcode == 200 ? this.balance.data.balance_end || '0.00' : '0.00' %></em></span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!--预算项目-->
+                                <div class="row">
+                                    <div class="form-group col-xs-12">
+                                        <div class="adjust-container" data-projects="<%== (this.projects && this.projects.rcode == '200') ? JSON.stringify(this.projects.budgetItemTree) : '[]' %>">
+
+                                            <table class="table table-hover" id="adjust-table">
+                                                <thead>
+                                                <tr>
+                                                    <th class="column-project">
+                                                        <div class="column-wrap">预算项目</div>
+                                                    </th>
+                                                    <th><div class="column-wrap"></div></th>
+                                                    <th class="column-q1 hide">
+                                                        <div class="column-wrap">
+                                                        <div class="hd">Q1</div>
+                                                        <div class="bd"><span class="before">调整前</span><span class="limit">调整额</span><span class="after">调整后</span></div>
+                                                        </div>
+                                                    </th>
+                                                    <th class="column-q2 hide">
+                                                        <div class="column-wrap">
+                                                        <div class="hd">Q2</div>
+                                                        <div class="bd"><span class="before">调整前</span><span class="limit">调整额</span><span class="after">调整后</span></div>
+                                                        </div>
+                                                    </th>
+                                                    <th class="column-q3 hide">
+                                                        <div class="column-wrap">
+                                                        <div class="hd">Q3</div>
+                                                        <div class="bd"><span class="before">调整前</span><span class="limit">调整额</span><span class="after">调整后</span></div>
+                                                        </div>
+                                                    </th>
+                                                    <th class="column-q4 hide">
+                                                        <div class="column-wrap">
+                                                        <div class="hd">Q4</div>
+                                                        <div class="bd"><span class="before">调整前</span><span class="limit">调整额</span><span class="after">调整后</span></div>
+                                                        </div>
+                                                    </th>
+                                                    <th class="column-total">
+                                                        <div class="column-wrap">
+                                                        <div class="hd">总计</div>
+                                                        <div class="bd"><span class="before">调整前</span><span class="limit">调整额</span><span class="after">调整后</span></div>
+                                                        </div>
+                                                    </th>
+                                                    <th class="column-remark"><div class="column-wrap">备注</div></th>
+                                                </tr>
+                                                </thead>
+                                                <tbody>
+                                                <tr class="empty-column">
+                                                   <td colspan="1000">请选择编制期间</td>
+                                                </tr>
+                                                </tbody>
+                                                <tfoot class="hide">
+                                                <tr>
+                                                    <td class="column-project"><div class="column-wrap">总计</div></td>
+                                                    <td><div class="column-wrap"></div></td>
+                                                    <td class="column-q1 hide">
+                                                        <div class="column-wrap">
+                                                        <span class="money before">0.00</span>
+                                                        <span class="money limit">0.00</span>
+                                                        <span class="money after">0.00</span>
+                                                        </div>
+                                                    </td>
+                                                    <td class="column-q2 hide">
+                                                        <div class="column-wrap">
+                                                        <span class="money before">0.00</span>
+                                                        <span class="money limit">0.00</span>
+                                                        <span class="money after">0.00</span>
+                                                            </div>
+                                                    </td>
+                                                    <td class="column-q3 hide">
+                                                        <div class="column-wrap">
+                                                        <span class="money before">0.00</span>
+                                                        <span class="money limit">0.00</span>
+                                                        <span class="money after">0.00</span>
+                                                        </div>
+                                                    </td>
+                                                    <td class="column-q4 hide">
+                                                        <div class="column-wrap">
+                                                        <span class="money before">0.00</span>
+                                                        <span class="money limit">0.00</span>
+                                                        <span class="money after">0.00</span>
+                                                        </div>
+                                                    </td>
+                                                    <td class="column-total">
+                                                        <div class="column-wrap">
+                                                        <span class="money before">0.00</span>
+                                                        <span class="money limit">0.00</span>
+                                                        <span class="money after">0.00</span>
+                                                        </div>
+                                                    </td>
+                                                    <td class="column-remark"><div class="column-wrap"></div></td>
+                                                </tr>
+                                                </tfoot>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="form-group col-xs-12">
+                                        <label class="control-label col-xs-2"></label>
+                                        <div class="col-xs-10">
+                                            <a href="javascript:void(0)" class="project-add"><i class="fa fa-plus"></i>增加项目</a>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="form-group col-xs-12">
+                                        <label class="control-label col-xs-2">说明</label>
+                                        <div class="col-xs-10">
+                                            <textarea name="remark" id="remark"></textarea>
+                                        </div>
+                                    </div>
+                                </div>
+                                <input type="hidden" name="budgetFilePath" value="" data-required/>
+                                <input type="hidden" name="delAttachId" value=""/>
+                                <input type="hidden" name="delBudgetItem" value=""/>
+                            </fieldset>
+                        </form>
+
+                        <div class="row">
+                            <div class="form-group">
+                                <label class="col-xs-2 control-label text-right">上传附件</label>
+                                <div class="col-xs-7">
+                                    <a href="javascript:void(0);" class="upload-btn" data-exists="[]">上传附件</a>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="panel-footer text-right">
+                            <a class="btn btn-info btn-submit" href="javascript:void(0);">提交</a>
+                            <a class="btn btn-info btn-save-drafts" href="javascript:void(0);">保存草稿</a>
+                        </div>
+                </div>
+            </div>
+        </div>
+        <%#sidebar.html%>
+    </div>
+    <%#footer.html%>
+</div>
+
+<%#budget/adjust/tpl.html %>
+
+<%! $_ENGINE_SELF.callFn( "useModule")( "<<<_use:
+    fml.use('fms/budget/adjust');
+_use:", this._JSstack , this._JSmods); %>
+<%#foot.html%>

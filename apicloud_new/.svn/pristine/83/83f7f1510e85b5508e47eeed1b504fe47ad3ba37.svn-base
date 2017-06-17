@@ -1,0 +1,131 @@
+<?php
+/**
+ * 蘑菇街的登陆.
+ * User: guojiezhu
+ * Date: 16/3/28下午12:13
+ */
+namespace Apicloud\Package\Auth;
+
+use Frame\Speed\Exception\ParameterException;
+
+use Apicloud\Package\Passport\Mycrypt3DES;
+
+use \Libs\Sphinx\curl;
+
+class MgjLogin extends \Apicloud\Package\Common\BasePackage
+{
+    private static $instance = null;
+    protected $params = array();
+    protected $user = array();
+
+    private function __construct()
+    {
+    }
+
+    public static function getInstance()
+    {
+        if (is_null(self::$instance)) {
+            self::$instance = new self();
+        }
+        return self::$instance;
+    }
+
+    public function login($params = array())
+    {
+        $this->params = $params;
+        $this->_getUser();
+        //对账号密码加密
+        $checkPass = array(
+            'username' => $this->_encry($this->params['username']),
+            'password' => $this->_encry($this->params['password'])
+        );
+
+        $curl_obj = new curl();
+        //TODO 蘑菇街没有给链接,所以暂时先约定一个
+        $mgj_user_data = $curl_obj->post(MOGUJIE_URL, $checkPass);
+
+        if (empty($mgj_user_data) || empty($mgj_user_data['body'])) {
+            throw new ParameterException('用户信息获取失败！');
+        }
+        $mgj_user_info = $mgj_user_data['body'];
+        $decry_user_data = $this->_decry($mgj_user_info);
+        if (empty($decry_user_data)) {
+            throw new ParameterException('解密失败！');
+        }
+        $decry_user_array = json_decode($decry_user_data, true);
+        if (!empty($decry_user_array) && !empty($decry_user_array['code']) && $decry_user_array['code'] == 1) {
+            $user_info = array_pop($decry_user_array['data']);
+            $user_info = $this->formate_userinfo($user_info);
+        }
+        $this->user = $user_info;
+        $this->user['password'] = md5($this->params['password']);
+        $this->user['expire'] = 0;
+        return $this->user;
+    }
+
+
+    //检查线上用户
+    private function _getUser()
+    {
+
+        if (empty($this->params['username']) || empty($this->params['password'])) {
+            throw new ParameterException('请输入用户名密码！');
+        }
+
+
+    }
+
+
+    /**
+     * 格式化需要返回的数据
+     *
+     * @param array $user
+     *
+     * @return array
+     * @throws \Frame\Speed\Exception\ParameterException
+     */
+    private function formate_userinfo($user = array())
+    {
+        if (empty($user)) {
+            throw new ParameterException('用户不存在');
+        }
+
+        return array(
+            'user_id' => isset($user['user_id']) ? $user['user_id'] : '',
+            'depart_name' => isset($user['depart_name']) ? $user['depart_name'] : '',
+            'name_cn' => isset($user['name_cn']) ? $user['name_cn'] : '',
+            'name_nick' => isset($user['name_nick']) ? $user['name_nick'] : '',
+            'mail' => isset($user['mail']) ? $user['mail'] : '',
+            'mobile' => isset($user['mobile']) ? $user['mobile'] : '',
+            'work_city' => isset($user['work_city']) ? $user['work_city'] : '',
+            'avatar' => isset($user['avatar']) ? $user['avatar'] : '',
+        );
+
+    }
+
+    /**
+     * 加密
+     *
+     * @param $str
+     *
+     * @return mixed
+     */
+    private function _encry($str)
+    {
+        return Mycrypt3DES::getInstance()->encrypt($str);
+    }
+
+    /**
+     * 解密
+     *
+     * @param $str
+     *
+     * @return mixed
+     */
+    private function _decry($str)
+    {
+        return Mycrypt3DES::getInstance()->decrypt($str);
+    }
+
+
+}

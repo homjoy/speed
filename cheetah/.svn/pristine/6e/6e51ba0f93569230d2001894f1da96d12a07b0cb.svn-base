@@ -1,0 +1,54 @@
+function meeting() {
+    return this;
+}
+var controlFns = {
+    'index': function () {
+        // 所有会议室展示
+        var php = {
+            // 获得所有room信息，根据room_id筛选
+            'get_room': '/meeting/get_room',
+            'city': '/company/office_info',
+            'services': '/meeting/get_services?type=0'
+        };
+        //获取今天的日期格式.
+        var date = new Date();
+        var month = date.getMonth() + 1;
+        month = month < 10 ? '0' + month : month;
+        var day = date.getDate();
+        day = day < 10 ? '0' + day : day;
+        var today = date.getFullYear() + '-' + month + '-' + day;
+
+        this.bindDefault(php);
+        this.bridgeMuch(php);
+        this.listenOver(function (data) {
+            data.today = today;
+            data._CSSLinks = ['lib/bootstrap-datetimepicker','meeting/index'];
+            this.render('meeting/index.html', data);
+        });
+    }
+    , 'room': function () {
+        // 预定，查看某会议室，携带会议室id，ifram的url
+        var room_id = this.req.__get.room_id;
+        var url = '/meeting/get_meeting_show/?room_id=' + room_id;
+        var php = {
+            'get_room': '/meeting/get_room?room_id=' + room_id,
+            'get_room_inform': '/meeting/get_room_service?room_id=' + room_id,
+            'part_div': '/meeting/get_room?service_id=1',
+            'part_div_telephone': '/meeting/get_room?service_id=5'
+        };
+
+        this.bindDefault(php);
+        this.bridgeMuch(php);
+        this.listenOver(function (data) {
+            data.room_id = room_id;
+            data.url = url;
+            data.url_address = '会议室预定';
+            data.noBasecss = true;
+            data._CSSLinks = ['lib/fullcalendar', 'lib/tokeninput', 'nifty/bootstrap', 'lib/bootstrap-datetimepicker', 'nifty/font-awesome', 'nifty.meeting_time', 'common'];
+            data._JSLinks = ['plugin/jquery-ui.custom.min'];
+            this.render('meeting/room.html', data);
+        })
+    }
+
+};
+exports.__create = controller.__create(meeting, controlFns);

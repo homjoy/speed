@@ -1,0 +1,3 @@
+@import "./base.less";
+body{background-color:#D03A6A }
+.brand-title-flower,.brand-title-word{width: 100px;height: 100px}

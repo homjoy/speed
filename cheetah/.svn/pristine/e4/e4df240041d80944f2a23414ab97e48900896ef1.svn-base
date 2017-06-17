@@ -1,0 +1,39 @@
+fml.define("fms/myapply/payApply",['jquery','component/approval'],function(require,exports){
+    var $ = require('jquery');
+    var approval = require('component/approval');
+
+    var option={
+        btns:[
+            {
+                title:'催审',
+                class:'btn btn-warning list-pushon btn-xs'
+            }
+        ],
+        isStruss2:true,
+        timeSearch:true,
+        departSearch:false,
+        usernameSearch:false,
+        approveStatusSearch:true,
+        identifierSearch:true,
+        headercheckOthers:'',
+        leftwidth:'366px',
+        urlLeft: '/aj/myapply/payList',
+        urlRight :'/aj/myapply/payInfo',
+        url1:'/aj/myapply/payRemind',
+        url2:'/aj/myapply/payRevoke',
+        urlApproval:'/aj/myapply/approvalRecord',
+        urlApplicationHistory:'/aj/myapply/payHistory',
+
+        statusOption:[
+            {title:"草稿",v:"0"},
+            {title:"审批中",v:"2"},
+            {title:"审批通过",v:"3"},
+            {title:"审批驳回",v:"4"},
+            {title:"已付款",v:"5"},
+            {title:"已撤销",v:"6"}
+        ]
+    };
+    approval.approval(option);
+});
+
+

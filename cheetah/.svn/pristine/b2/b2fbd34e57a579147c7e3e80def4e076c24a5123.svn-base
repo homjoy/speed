@@ -1,0 +1,24 @@
+.form-control{
+  border-color: #e9e9e9;
+  box-shadow: none;
+
+  &:focus {
+    border-color: #83cdf8;
+    box-shadow: none;
+  }
+}
+
+.form-group{
+  &.has-error{
+    .form-control{
+      border-color: #f56245;
+    }
+  }
+
+
+  &.has-success{
+    .form-control{
+      border-color: #8abe2e;
+    }
+  }
+}

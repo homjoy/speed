@@ -1,0 +1,522 @@
+@import "../base.less";
+
+// @import "../bootstrap.less";
+* {
+  margin: 0;
+  padding: 0;
+}
+
+.form-control {
+  display: inline;
+  max-width: 140px;
+}
+
+.table-condensed {
+  font-size: 14px;
+}
+
+.viewBtn {
+  color: #fff;
+  background-color: #7ec228;
+  border-color: #7ab500;
+}
+
+.viewBtn:hover, .viewBtn:focus, .viewBtn:active {
+  color: #fff;
+  background-color: #7cb900;
+  border-color: #74a500;
+}
+
+.globe_btn {
+  width: 45px;
+  height: 32px;
+}
+
+.table {
+  table-layout: fixed;
+}
+
+ul {
+  margin-bottom: 0;
+}
+
+.meeting_list li {
+  list-style-type: none;
+  float: left;
+  text-align: left;
+}
+
+.time {
+  word-wrap: break-word;
+  overflow: hidden;
+  font-size: 12px;
+}
+
+.meeting_position {
+  text-decoration: underline !important;
+  font-size: 16px;
+  display: inline !important;
+  top: 6px;
+}
+
+.bg {
+  background: #ffb973;
+}
+
+.book_bg {
+  background: #4088d1;
+  color: #fff;
+}
+
+.booked_bg {
+  background: #ffb973;
+  color: #fff;
+}
+
+.time_0 .li_0 {
+  border-left: 1px solid transparent !important;
+  border-top: 1px solid transparent !important;
+  border-bottom: 1px solid transparent !important;
+}
+
+.time_13 .li_1 {
+  border-top: 1px solid transparent !important;
+  border-bottom: 1px solid transparent !important;
+}
+
+#tab_head {
+  margin-bottom: 0;
+}
+
+#tab_head thead > tr > th {
+  border-bottom: 1px solid #ddd !important;
+  font-size: 16px;
+}
+
+.col-width-1 {
+  width: 4.1880342%;
+}
+
+.col-width-2 {
+  width: 8.3760684%;
+}
+
+.col-width-3 {
+  width: 12.564103%;
+}
+
+.word_wrap {
+  word-wrap: break-word;
+}
+
+
+.container-fluid {
+  padding: 0 15px;
+  margin: 0 auto;
+}
+
+
+.meeting_position {
+  font-size: 14px;
+}
+
+// 新加css
+table {
+  .meeting_list, thead {
+    tr {
+      .pad-no, td {
+        .c();
+        .pl(0);
+        .pr(0);
+        .time_li {
+          width: 50%;
+          height: 30px;
+          border-left: 1px solid #C0BEBE;
+          border-top: 1px solid #C0BEBE;
+          border-bottom: 1px solid #C0BEBE;
+        }
+      }
+    }
+  }
+}
+
+
+.day-choose{
+  > li{
+    padding:0;
+    display: inline-block;
+    &:last-child{
+      margin: 0 0 -2px 12px;
+    }
+  }
+
+  @btn-bg-color: #ff95b7;
+  .jumpday {
+    //background-color: @btn-bg-color;
+    //background-image: none;
+    //color: #333;
+    color:#fff;
+    font-weight: bold;
+    border:none;
+    box-shadow:none;
+    display: inline-block;
+    height: 36px;
+    line-height: 36px;
+    text-align: center;
+    cursor: pointer;
+
+    &.to-prev-day{
+      width: 84px;
+      background: #FF96B7;
+      border-radius: 5px 0 0 5px;
+      //background: url("../../img/meeting/leftbotton.png") center center no-repeat;
+    }
+
+    &.today{
+      //background-color: #fe5c90;
+      width: 46px;
+      background: #FF96B7;
+    }
+
+    &.to-next-day{
+      width: 84px;
+      //background: url("../../img/meeting/rightbotton.png") center center no-repeat;
+      background: #FF96B7;
+      border-radius: 0 5px 5px 0;
+    }
+
+    &.to-prev-day:hover,&.to-next-day:hover{
+      background: darken(#FF95B7,4%);
+    }
+
+    &.current{
+      background: #FC6295;
+      &:hover{
+        background: darken(#FC6295,5%);
+      }
+    }
+  }
+
+  #to-some-day{
+    height: 36px;
+    text-align: center;
+    cursor: pointer;
+    padding:0;
+    background: url("../../img/meeting/rilikuang.png") center center no-repeat !important;
+    color:#ff95b7;
+    border:none;
+    &:focus{
+      outline: none;
+      //border-color: #c7c6cb;
+    }
+  }
+}
+
+.choose-city{
+  > span{
+    //float: left;
+    margin-top: 8px;
+  }
+  .dropdown{
+    display: inline-block;
+  }
+  .dropdown.open>.btn{
+    box-shadow:none;
+  }
+
+  .dropdown-menu {
+    min-width: 60px;
+  }
+
+  .city {
+    display: block;
+    cursor: pointer;
+    text-align: left;
+    font-weight: bold;
+    &:hover {
+      background: #e6e6e6;
+    }
+  }
+}
+
+/** 服务支持查询按钮 **/
+.service-list{
+  margin: 18px 0 4px 0;
+  .service-btn{
+    font-size: 14px;
+    -webkit-border-radius: 5px;
+    -moz-border-radius: 5px;
+    border-radius: 5px;
+    span{
+      margin-bottom: -5px;
+    }
+    &:hover{background-color: #F3F3F3}
+    &.selected{
+      background-color: #00a0ea;
+      color:#fff;
+      //
+      .m-icon-video{
+        background: url("../../img/icon/shipindianji.png") center center no-repeat;
+      }
+      .m-icon-projector{
+        background: url("../../img/icon/touyingdianji.png") center center no-repeat;
+      }
+      .m-icon-phone{
+        background: url("../../img/icon/dianhuadianjia.png") center center no-repeat;
+      }
+    }
+  }
+  
+}
+
+//.affix,.affix-top{
+//  thead {
+//    tr {
+//      display: block;
+//      position: relative;
+//    }
+//  }
+//  tbody {
+//    display: block;
+//    overflow: auto;
+//    width: 100%;
+//  }
+//}
+
+#container{
+  #table_head{
+    margin-bottom: 0;
+    thead{
+      background: #d6d6d6;
+      > tr > th{
+        font-size: 16px;
+      }
+    }
+    &.affix{
+      top:50px;
+      z-index: 9;
+    }
+
+    th{
+      color:#535353;
+      border-bottom: none;
+      padding:0;
+      height: 44px;
+      line-height: 44px;
+      text-align: center;
+    }
+
+    .table{
+      margin-bottom: 8px;
+    }
+  }
+
+  #time_list{
+    th{
+      font-size: 12px !important;
+      font-weight: normal;
+      border-bottom: none;
+    }
+  }
+}
+/*清理样式*/
+#container .table td{border-top:none;}
+#meeting-list{
+  > tr{
+    border: none;
+    background: #f5f5f5;
+    font-size: 14px;
+    //margin-bottom: 2px; /*这招不奏效！*/
+    border-bottom: 2px solid #fff;
+
+    td{
+      vertical-align: middle;
+      text-align: center;
+
+      .fa{margin-right:4px;}
+    }
+  }
+
+
+  .popover{
+    .arrow{
+      left:60%;
+    }
+
+    .popover-content{
+      font-family: 'Microsoft YaHei','微软雅黑';
+      font-size: 12px;
+      width: 222px;
+      //min-height: 88px;
+      overflow: hidden;
+      padding: 14px 4px 10px 13px;
+
+      div{
+        color: #626262;
+        font-size: 14px;
+        //margin:0 0 14px;
+        span{
+          float:left;
+          display: inline-block;
+          &:first-child{
+            width:70px;
+          }
+          &:last-child{
+            width: 134px;
+            margin:0 0 14px;
+          }
+        }
+      }
+      p{
+        clear: both;
+        color: #7d7d7d;
+        margin:0 0 4px;
+      }
+      //p:last-child{
+      //  margin-bottom: 14px;
+      //}
+    }
+  }
+}
+
+
+/*** 服务是否支持的按钮  ***/
+.fa{
+  &.support{
+    color:#00a1e9;
+  }
+  &.error{
+    color: #de1841;
+  }
+  &.not-support{
+    color: #c4c4c4;
+  }
+}
+
+
+
+/** 预定情况预览条 **/
+td.overview{
+  padding-left: 0;
+  padding-right: 0;
+}
+.overview-bar{
+  height: 28px;
+  margin-bottom: 4px;
+  border-radius: 0;
+  box-shadow: none;
+  background-color: #fff;
+  overflow: hidden;
+
+  .bar{
+    float: left;
+    width: 0;
+    height: 100%;
+    font-size: 12px;
+    line-height: 28px;
+    color: #fff;
+    background-color: #fff;
+    text-align: center;
+    -webkit-box-shadow: none;
+    box-shadow: none;
+    -webkit-transition: width .6s ease;
+    -o-transition: width .6s ease;
+    transition: width 0.6s ease;
+    &:first-child{
+      //margin-left:-2%; //校准对齐时间线.
+    }
+  }
+
+  .bar-success{
+    background-color:#84ca84;
+  }
+  .bar-info{
+    background-color:#71A7D6;
+  }
+  .bar-warning{
+    background-color:#f3c17A;
+  }
+  .bar-danger{
+    background-color:#e37d79;
+  }
+  .bar-purple{
+    background-color:#74648b;
+  }
+}
+// #container{min-height: 1px;position: static;}
+#container{min-height: 100%;position: absolute;}
+
+
+.m-icon-video{
+  display: inline-block;
+  width: 27px;
+  height:19px;
+  margin-right:5px;
+  &,&.gray,&.not-support{
+    background: url("../../img/icon/huishipin.png") center center no-repeat;
+  }
+  &.support{background: url("../../img/icon/lanshipin.png") center center no-repeat;}
+  &.filter{
+    background: url("../../img/icon/shipin.png") center center no-repeat;
+  }
+}
+.m-icon-projector{
+  display: inline-block;
+  width: 27px;
+  height:19px;
+  margin-right:5px;
+  &,&.gray,&.not-support{
+    background: url("../../img/icon/huitouying.png") center center no-repeat;
+  }
+  &.support{
+    background: url("../../img/icon/lantouying.png") center center no-repeat;
+  }
+  &.filter{
+    background: url("../../img/icon/touying.png") center center no-repeat;
+  }
+}
+.m-icon-phone{
+  display: inline-block;
+  width: 27px;
+  height:19px;
+  &,&.gray,&.not-support{background: url("../../img/icon/huidianhua.png") center center no-repeat;}
+  &.support{
+    background: url("../../img/icon/landianhua.png") center center no-repeat;
+  }
+  &.filter{
+    background: url("../../img/icon/dianhua.png") center center no-repeat;
+  }
+}
+
+
+.current-city-name{
+  .caret{
+    border:none;
+    margin: 0 -5px 0 5px;
+    width: 10px;height: 6px;
+    background: url("../../img/meeting/arrow-down.png") center center no-repeat;
+  }
+}
+
+.meeting-room-map{
+  margin: 18px 0 4px 0;
+  text-align: right;
+  > a{
+    color:darken(#82D1F8,10%);
+    &:hover{
+      color:darken(#82D1F8,35%);
+    }
+
+    > span{
+      margin: 0 6px -3px 0;
+      display: inline-block;width: 12px;height: 16px;
+      background: url("../../img/meeting/huiyishifenbu.png") center center no-repeat;
+    }
+  }
+}
+
+//#page-content{
+//  position:relative;
+//  padding-top:60px;
+//  @import "switchview";
+//}

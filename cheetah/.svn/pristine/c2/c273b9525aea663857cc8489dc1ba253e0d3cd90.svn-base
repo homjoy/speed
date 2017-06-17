@@ -1,0 +1,53 @@
+function contacts() {
+	return this;
+}
+var controlFns = {
+	'index' : function(){
+		this.default_search()
+	}
+	,'default_search' : function(){
+
+		var php = {
+			'contacts' : '/contacts/ajax_default_search'
+		};
+
+        this.bindDefault(php);
+		this.bridgeMuch(php);
+		this.listenOver(function(data){
+			//data.noBasecss = true;
+			data._CSSLinks = ['contacts'];
+			this.render('contacts/index.html' , data);
+		})
+	}
+	,'mulity_search' : function(){
+		var q = this.req.__get.q;
+		// var key = this.req.__get.key;
+		var php = {
+			'contacts' : '/contacts/mulity_search'
+		};
+
+        this.bindDefault(php);
+		this.bridgeMuch(php);
+		this.listenOver(function(data){
+			data.q = q;
+			data._CSSLinks = ['contacts'];
+			this.render('contacts/index.html' , data);
+		})
+	}
+	,'speedim' : function(){
+		var u = this.req.__get.u;
+		// var key = this.req.__get.key;
+		var php = {
+			'contacts' : '/user/user_info_get?userid_decode='+u
+		};
+
+        this.bindDefault(php);
+		this.bridgeMuch(php);
+		this.listenOver(function(data){
+			// data.q = q;
+			data._CSSLinks = ['font-awesome.min','left_nav','bootstrap','nifty.min','login'];
+			this.render('contacts/speedim.html' , data);
+		})
+	}
+};
+exports.__create = controller.__create(contacts, controlFns);

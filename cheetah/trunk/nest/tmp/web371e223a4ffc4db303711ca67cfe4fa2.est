@@ -1,0 +1,10 @@
+/*--/Users/MLS/speed/cheetah/trunk/apps/web/views/footer.html--*/ 
+     var est = require(config.path.lib + 'est/est.js'); 
+     var _extFn = require('/Users/MLS/speed/cheetah/trunk/nest/server/lib/est/extFn.js'); 
+     function requireFn(tpl) { return est.renderFile('/Users/MLS/speed/cheetah/trunk/apps/web/views/' ,tpl , null , null ,'web' ,true); } ; 
+     function __getHtml (_data) { 
+       function jsRender(tpl , id) { return est.jsRender(requireFn(tpl)(_data), id  ); } ; 
+       var __htm ='';
+__htm += '<footer id="footer">\n    <div class="hide-fixed pull-right pad-rgt">v2.0</div>\n    <div class=" pull-right">\n        <ul class="footer-list list-inline">\n            <li>\n                <a class="fmenu_list fmenu_list_help" href="/home/window/?f=help&s=feed_back" title="">意见反馈</a>\n            </li>\n        </ul>\n    </div>\n    <p class="pad-lft"> © MEILISHUO 2013-2016</p>\n</footer>\n<button id="scroll-top" class="btn">\n    <i class="fa fa-chevron-up"></i>\n</button>\n<div id="floating-top-right" class="floating-container"></div>';
+return __htm;} 
+ exports.html = __getHtml; 

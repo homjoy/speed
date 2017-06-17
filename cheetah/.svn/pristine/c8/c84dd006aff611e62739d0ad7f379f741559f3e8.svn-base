@@ -1,0 +1,37 @@
+/*付款申请单*/
+
+.panel-body .form-horizontal .col-xs-12 > .col-xs-2{
+    width: 16.10%;
+}
+.panel-body .form-horizontal .col-xs-12 > .col-xs-10{
+    width: 82.33333333%;
+}
+
+
+
+.file-zone {
+    cursor:pointer;
+}
+
+
+.panel{
+    padding: 46px 0 0 0;
+
+    .panel-heading{
+        &:after{
+            border-bottom: none;
+        }
+        .panel-title{
+            padding: 0;
+            text-align: center;
+            font-size: 24px;
+            line-height: 24px;
+        }
+    }
+
+}
+
+#payDay{
+    background-color: #fff;
+    cursor: default;
+}

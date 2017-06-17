@@ -1,0 +1,105 @@
+function budget() {
+    return this;
+}
+var controlFns = {
+    'index': function () {
+        return this.redirectTo('/budget/apply/');
+    },
+    'apply': function () {
+        var php = {
+            'projects': '/budgetrequest/showbudgetitembydepartjson'
+        };
+        this.bindDefault(php);
+        this.bridgeMuch(php);
+        this.listenOver(function (data) {
+            var thisYear = new Date().getFullYear();
+            data.currentYear = thisYear;
+            data.budgetYears = [thisYear - 1, thisYear, thisYear + 1];
+            data.quarters = ['Q1', 'Q2', 'Q3', 'Q4']; //
+            data._CSSLinks = ['s/ueditor/themes/default/css/ueditor.min', 'plugin/zTree', 'queen/upload', 'queen/select', 'queen/tree-select', 'fms/budget/apply'];
+            data._JSLinks = ['s/ueditor/ueditor.config', 's/ueditor/ueditor.all'];
+            this.render('budget/apply.html', data);
+        });
+    },
+    'edit': function () {
+        var php = {
+            'projects': '/budgetrequest/showbudgetitembydepartjson',
+            "detail": "fms::/budgetrequest/showbudgetapplicationalljson?budgetType=CB"
+        };
+        this.bindDefault(php);
+        this.bridgeMuch(php);
+        this.listenOver(function (data) {
+            var thisYear = new Date().getFullYear();
+            data.currentYear = thisYear;
+            data.budgetYears = [thisYear - 1, thisYear, thisYear + 1];
+            data.quarters = ['Q1', 'Q2', 'Q3', 'Q4']; //
+            data._CSSLinks = ['s/ueditor/themes/default/css/ueditor.min', 'plugin/zTree', 'queen/upload', 'queen/select', 'queen/tree-select', 'fms/budget/apply'];
+            data._JSLinks = ['s/ueditor/ueditor.config', 's/ueditor/ueditor.all'];
+            this.render('budget/edit.html', data);
+        });
+    },
+    'view': function () {
+        var php = {
+            "detail": "fms::/budgetrequest/showbudgetapplicationalljson?budgetType=CB"
+        };
+        this.bindDefault(php);
+        this.bridgeMuch(php);
+        this.listenOver(function (data) {
+            data._CSSLinks = ['fms/budget/view'];
+            data._JSLinks = ['s/ueditor/ueditor.parse.min'];
+            this.render('budget/view.html', data);
+        });
+    },
+    'adjust': {
+        'index':function(){
+            return this.redirectTo('/budget/adjust/apply');
+        },
+        'apply':function(){
+            var thisYear = new Date().getFullYear();
+            var php = {
+                'projects': 'fms::/budgetrequest/showbudgetitembydepartjson',
+                'balance':'fms::/budgetadjust/querybudgetbalancejson?budgetYear='+thisYear
+            };
+            this.bindDefault(php);
+            this.bridgeMuch(php);
+            this.listenOver(function (data) {
+                data.currentYear = thisYear;
+                data.budgetYears = [thisYear, thisYear + 1];
+                data.quarters = ['Q1', 'Q2', 'Q3', 'Q4']; //
+                data._CSSLinks = ['s/ueditor/themes/default/css/ueditor.min', 'plugin/zTree','nifty/bootstrap-select.min', 'queen/upload', 'queen/select', 'queen/tree-select', 'fms/budget/adjust'];
+                data._JSLinks = ['s/ueditor/ueditor.config', 's/ueditor/ueditor.all','nifty/bootstrap-select.min'];
+                this.render('budget/adjust/apply.html', data);
+            });
+        },
+        'edit': function(){
+            var php = {
+                'projects': '/budgetrequest/showbudgetitembydepartjson',
+                "detail": "fms::/budgetrequest/showbudgetapplicationalljson?budgetType=BA"
+            };
+            this.bindDefault(php);
+            this.bridgeMuch(php);
+            this.listenOver(function (data) {
+                var thisYear = new Date().getFullYear();
+                data.currentYear = thisYear;
+                data.budgetYears = [thisYear, thisYear + 1];
+                data.quarters = ['Q1', 'Q2', 'Q3', 'Q4']; //
+                data._CSSLinks = ['s/ueditor/themes/default/css/ueditor.min', 'plugin/zTree','nifty/bootstrap-select.min', 'queen/upload', 'queen/select', 'queen/tree-select','fms/budget/adjust'];
+                data._JSLinks = ['s/ueditor/ueditor.config', 's/ueditor/ueditor.all','nifty/bootstrap-select.min'];
+                this.render('budget/adjust/edit.html', data);
+            });
+        },
+        'view': function(){
+            var php = {
+                "detail": "fms::/budgetrequest/showbudgetapplicationalljson?budgetType=BA"
+            };
+            this.bindDefault(php);
+            this.bridgeMuch(php);
+            this.listenOver(function (data) {
+                data._CSSLinks = ['fms/budget/view'];
+                data._JSLinks = ['s/ueditor/ueditor.parse.min'];
+                this.render('budget/adjust/view.html', data);
+            });
+        }
+    }
+};
+exports.__create = controller.__create(budget, controlFns);

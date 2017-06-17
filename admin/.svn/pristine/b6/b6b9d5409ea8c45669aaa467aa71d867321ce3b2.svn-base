@@ -1,0 +1,121 @@
+
+@extends('layouts.master')
+@section('content')
+<link type="text/css" rel="stylesheet" href="/static/css/pagination.css">
+<link rel="stylesheet" href="/static/css/validator.css">
+<script type="text/javascript" src="/static/js/Validform_v5.3.2_min.js"></script>
+<script src="/static/js/pagination.js"></script>
+<style type="text/css">
+
+    .ul_input{
+        overflow: auto;
+        height: 200px;
+        border:1px solid #ddd;
+    }
+    .ul_input li{
+        padding: 3px 20px;
+    }
+    .password_notice{
+        margin:0 auto;text-align: center ;
+    }
+</style>
+<div class="panel-heading" style="overflow: hidden; line-height: 32px">
+    <ol class="breadcrumb">
+        <li class="active">vpn展示</li>
+    </ol>
+    <form id="searchForm" class="form-inline  form-horizontal" method="POST" role="form" action="/itserver/vpn">
+        <div class="row">
+            <div class="col-lg-4">
+                <input type="text" id="login_name" class="form-control" placeholder="按照用户名进行搜索" value="@if(!empty($search_params['login_name'])){{$search_params['login_name']}} @endif" name="login_name"/>
+            </div>
+            <div class="col-lg-1">
+                <input type="submit" value="搜索" class="btn btn-default">
+            </div>
+        </div>
+        <p></p>
+
+        <div class="table-container">
+            <table class="table-hover table table-striped table-bordered">
+                <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>
+                        vpn账号
+                    </th>
+                    <th>
+                        状态
+                    </th>
+                </tr>
+                </thead>
+                <tbody>
+                <?php
+                if(empty($data)){
+                    echo '<tr><td class="text-center" colspan=3>未找到相匹配的数据</td></tr>';
+                }else{
+                    foreach($data as $key =>$v){
+
+                        if(isset($v['status'])&&$v['status']==1){
+                            $v['status'] = '有效';
+                        }else{
+                            $v['status'] = '无效';
+                        }
+
+                        echo <<<DOC
+            <tr>
+                <td>{$v['id']}</td>
+                <td>{$v['login_name']}</td>
+                <td>{$v['status']}</td>
+            </tr>
+DOC;
+                    }
+                }
+
+                ?>
+                </tbody>
+            </table>
+        </div>
+        <div class="pagination-left">
+        </div>
+    </form>
+</div>
+<!-- 添加模版 -->
+<
+<script src="/static/js/bootbox.min.js"></script>
+<script>
+    //分页
+    var count = '{!! json_encode($count) !!}';
+    try{
+        count = $.parseJSON(count);
+    }catch(e){
+        count = [];
+    }
+    var page = '{!! json_encode($page) !!}';
+    try{
+        page = $.parseJSON(page);
+    }catch(e){
+        page = [];
+    }
+    $(".pagination-left").pagination({
+        //总页数
+        totalPage:count,
+        //初始选中页
+        currentPage:page,
+        //最前面的展现页数
+        firstPagesCount: 0, //最前面的展现页数，默认值为2
+        preposePagesCount: 2,  //当前页的紧邻前置页数，默认值为2
+        postposePagesCount: 0, //当前页的紧邻后置页数，默认值为1
+        lastPagesCount: 2,//最后面的展现页数，默认值为0
+        href: false,    //不生成链接
+        first: '', //取消首页
+        prev: '<',
+        next: '>',
+        last: '', //取消尾页
+        go: false //取消页面跳转
+    }).on("switch",function(e,page){
+        var email = $('#login_name').val()
+        location.href="/itserver/vpn?page="+page+'&login_name='+email;
+
+    });
+
+</script>
+@endsection

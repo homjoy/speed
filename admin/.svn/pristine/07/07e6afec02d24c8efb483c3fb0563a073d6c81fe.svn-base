@@ -1,0 +1,49 @@
+<?php
+namespace Admin\Modules\Stationery;
+use Admin\Package\Core\Config;
+use Admin\Modules\Common\BaseModule;
+use Admin\Package\Common\Response;
+use Admin\Package\Stationery\Stationery;
+
+
+
+/**
+ * 主页信息
+ * @author hongzhou@meilishuo.com
+ * @since 2015-8-10 下午12:53:13
+ */
+class Apply extends BaseModule {
+
+    protected $errors = NULL;
+    private   $params = NULL;
+    protected $checkUserPermission = TRUE;
+
+    public function run() {
+
+        $this->_init();
+
+        $this->app->response->setBody(array());
+
+    }
+
+    private function _init() {
+
+        $this->rules = array(
+            'create_time' => array(
+                'type' => 'string',
+               
+//                'required'	=> true,
+            ),
+            'end_time' => array(
+                'type' => 'string',
+//                'required'	=> true,
+            ),
+            'user_id' => array(
+                'type' => 'integer',
+            )
+        );
+        $this->params = $this->query()->safe();
+        $this->errors = $this->query()->getErrors();
+    }
+
+}

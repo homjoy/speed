@@ -1,0 +1,118 @@
+<script type="text/html" id="budget-detail-tpl">
+    <table class="table table-bordered {{extClass}}">
+        <tr>
+            <th colspan="7">
+                <h3 class="text-center">预算申请单</h3>
+            </th>
+        </tr>
+        <tr class="title">
+            <th colspan="7">单据内容</th>
+        </tr>
+        <tr>
+            <td>
+                <label>申请人</label>
+            </td>
+            <td colspan="3">{{budgetApplication.BudgetApplicationFormEntity.applyPersonName || ''}}</td>
+            <td>
+                <label>申请部门</label>
+            </td>
+            <td colspan="2">{{ budgetApplication.BudgetApplicationFormEntity.applyDeptName || ''}}</td>
+        </tr>
+        <tr>
+            <td>
+                <label>单据编号</label>
+            </td>
+            <td colspan="3">{{budgetApplication.BudgetApplicationFormEntity.billNo || ''}}</td>
+            <td>
+                <label>申请日期</label>
+            </td>
+            <td colspan="2">{{ budgetApplication.BudgetApplicationFormEntity.applyDateStr || ''}}</td>
+        </tr>
+        <tr>
+            <td>
+                <label>预算年度</label>
+            </td>
+            <td colspan="3">{{budgetApplication.BudgetApplicationFormEntity.budgetYear || ''}}</td>
+            <td>
+                <label>编制期间</label>
+            </td>
+            <td colspan="2">{{ budgetApplication.BudgetApplicationFormEntity.draftTerm || ''}}</td>
+        </tr>
+        <tr class="title">
+            <th colspan="7">单据内容</th>
+        </tr>
+        <tr class="head">
+            <th width="120">预算项目</th>
+            <th width="104">Q1</th>
+            <th width="104">Q2</th>
+            <th width="104">Q3</th>
+            <th width="104">Q4</th>
+            <th width="104">全年合计</th>
+            <th width="104">备注</th>
+        </tr>
+
+
+        {{ each budgetApplication.BudgetDetailFormEntity as detail }}
+        <tr>
+            <td>
+                <div>{{detail.budgetItemFullCode}}</div>
+                <div>{{ detail.budgetItemFullName || '' }}</div>
+            </td>
+            <td class="money">{{ detail.budgetFirQua | currencyFormat }}</td>
+            <td class="money">{{ detail.budgetSecQua | currencyFormat }}</td>
+            <td class="money">{{ detail.budgetThiQua | currencyFormat }}</td>
+            <td class="money">{{ detail.budgetFourQua | currencyFormat }}</td>
+            <td class="money">{{ detail.budgetAmmount | currencyFormat }}</td>
+            <td>{{ detail.budgetRemark }}</td>
+        </tr>
+        {{ each detail.listBudgetExtraFormEntity as extra index }}
+        <tr class="extra {{ (index+1) == detail.listBudgetExtraFormEntity.length ? 'last':'' }}">
+            <td>{{ extra.extraName}}</td>
+            {{if extra.extraCode == '003'}}
+            <td class="money">{{ extra.budgetFirQua | percent }}%</td>
+            <td class="money">{{ extra.budgetSecQua | percent }}%</td>
+            <td class="money">{{ extra.budgetThiQua | percent }}%</td>
+            <td class="money">{{ extra.budgetFourQua | percent }}%</td>
+            <td class="money">{{ extra.budgetAmmount | percent }}%</td>
+            {{else}}
+            <td class="money">{{ extra.budgetFirQua | currencyFormat }}</td>
+            <td class="money">{{ extra.budgetSecQua | currencyFormat }}</td>
+            <td class="money">{{ extra.budgetThiQua | currencyFormat }}</td>
+            <td class="money">{{ extra.budgetFourQua | currencyFormat }}</td>
+            <td class="money">{{ extra.budgetAmmount | currencyFormat }}</td>
+            {{/if}}
+            <td>{{ extra.budgetRemark }}</td>
+        </tr>
+        {{/each}}
+        {{/each}}
+
+        <tr class="foot">
+            <th>{{budgetApplication.SumBudgetDetailFormEntity.budgetItemFullName }}</th>
+            <td class="money">{{budgetApplication.SumBudgetDetailFormEntity.budgetFirQua | currencyFormat }}</td>
+            <td class="money">{{budgetApplication.SumBudgetDetailFormEntity.budgetSecQua | currencyFormat }}</td>
+            <td class="money">{{budgetApplication.SumBudgetDetailFormEntity.budgetThiQua | currencyFormat }}</td>
+            <td class="money">{{budgetApplication.SumBudgetDetailFormEntity.budgetFourQua | currencyFormat }}</td>
+            <td class="money">{{budgetApplication.SumBudgetDetailFormEntity.budgetAmmount | currencyFormat }}</td>
+            <th></th>
+        </tr>
+        <tr>
+            <td>
+                <label>预算附件</label>
+            </td>
+            <td colspan="6" class="text-left">
+                {{ each listAttach as item }}
+                <a href="/download/file/?cabid={{item.id}}" class="btn btn-defalut btn-download"
+                   target="_blank" download="{{item.fileName||''}}">{{item.fileName}}</a>
+                {{/each}}
+            </td>
+        </tr>
+    </table>
+
+
+    <div class="row data-preview">
+        <div class="col-xs-12">
+            <button class="btn btn-primary">部门预算全貌</button>
+        </div>
+        <div class="col-xs-12" style="display:none;">{{#budgetHtmlStr}}</div>
+    </div>
+</script>

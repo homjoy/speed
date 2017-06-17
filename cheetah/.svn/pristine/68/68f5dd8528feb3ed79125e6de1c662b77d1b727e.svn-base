@@ -1,0 +1,49 @@
+fml.define('speed/user/index', ['jquery','plugin/bootstrap/validator'], function (require, exports) {
+    var $ = require('jquery');
+    //查看帮助
+    $('.how-to-get').on("click",function(e){
+        //取消事件冒泡
+        e.stopPropagation();
+        $('.how-to-get-tips').fadeToggle();//toggle().toggleClass('in');
+    });
+    //点提示框跳转不关闭
+    $(".how-to-get-tips a").on('click',function(e){e.stopPropagation();});
+    $(document).on("click",function(event){
+        "use strict";
+        var target = $(event.target);
+        if(!target.hasClass('how-to-get') || target.parents('.how-to-get-tips').size() == 0){
+            $('.how-to-get-tips').fadeOut();
+        }
+    });
+
+    // 表单验证
+    $('#form-userinfo').bootstrapValidator({
+        container: '#cc'
+    }).on('success.form.bv', function (e) {
+        e.preventDefault();
+        $('.save_basic_info').button('loading').delay(3000);
+        var myForm = $('#form-userinfo').serializeArray();
+        console.log(myForm);
+        $.post('/aj/user/selfInfoUpdate', myForm, function (ret) {
+            console.warn(ret);
+            if (ret.code == 200) {
+                show_message(200, '操作成功');
+            } else if (ret.code == 400 || ret.code == 500) {
+                show_message(400, ret.error_msg);
+            }
+            $('.save_basic_info').button('reset');
+        }, 'json');
+        return false;
+    });
+    $('#coat_size').focus(function(){
+        $('.input-select').removeClass('hide');
+    }).blur(function(){
+        setTimeout(function () {
+            $('.input-select').addClass('hide');
+        },100);
+
+    }).next().children().click(function(e){
+        var coat_size = $(this).html();
+        $('#coat_size').val(coat_size);
+    });
+});

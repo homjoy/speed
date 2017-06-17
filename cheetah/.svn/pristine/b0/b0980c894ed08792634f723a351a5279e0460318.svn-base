@@ -1,0 +1,184 @@
+<%#head.html %>
+<div id="container" class="effect mainnav-lg">
+    <%#navbar.html %>
+
+    <div class="boxed">
+        <!--CONTENT CONTAINER-->
+        <!--===================================================-->
+        <div id="content-container" >
+            <ol class="breadcrumb">
+                <li><a href="/home">主页</a></li>
+                <li><a href="/home/window/?f=executive&s=all"> 行政中心</a></li>
+                <li class="active">名片申请</li>
+            </ol>
+            <div id="page-content" class="panel">
+                <ul class="nav nav-tabs slope col-lg-12 col-sm-12 col-xs-12" style="margin-bottom: 30px">
+                    <li role="presentation" ><a href="/administration">名片申请</a></li>
+                    <li role="presentation" ><a href="/administration/businesscard/my" class="application_num">我的申请<span class="approval-badge"><%if(this.apply_card_get.code==200){%><%=this.apply_card_get.data.application_num%><%}%></span></a></li>
+                    <li role="presentation" ><a href="/administration/businesscard/approval" class="approval_num">我的审批<span class="approval-badge"><%if(this.apply_card_get.code==200){%><%=this.apply_card_get.data.approval_num%><%}%></span></a></li>
+                    <li class="active" role="presentation" class=""><a href="/administration/businesscard/manage" >名片管理</a></li>
+                </ul>
+                <div class="panel-body" style="min-width:580px">
+
+                    <div class="tab-content">
+                        <div role="tabpanel" class="tab-pane row active">
+                            <div class="row">
+                            </div>
+
+                            <div class="row search-head" style="text-align: center;">
+
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <%#footer.html%>
+        </div>
+        <%#mainnav.html%>
+    </div>
+</div>
+
+<script type="text/html" id="left-table">
+    <table class="table position-fix my">
+        <thead>
+        <tr>
+            <th class="checkth"></th>
+            <th class="nameth">姓名</th>
+            <th class="hidden-narrow departth">部门</th>
+            <th class="jobth">职位</th>
+            <th class="hidden-narrow dateth">申请日期</th>
+        </tr>
+        </thead>
+    </table>
+    <table class="table">
+        <thead>
+        <tr>
+            <th class="checkth"></th>
+            <th class="nameth">姓名</th>
+            <th class="hidden-narrow departth">部门</th>
+            <th class="jobth">职位</th>
+            <th class="hidden-narrow dateth">申请日期</th>
+        </tr>
+        </thead>
+        {{each data as info}}
+        <tr class="show-info" data-order_id="{{info.order_id}}">
+            <td>
+                {{if info.output=='2'}}
+                <input type="checkbox" data-task_id="{{info.task_id}}" data-order_id="{{info.order_id}}" data-user_id="{{info.user_id}}" data-name_cn="{{info.name_cn}}" data-depart_name="{{info.depart_name}}" data-absence_name="{{info.absence_name}}" data-leave_date="{{info.leave_date}}" data-length="{{info.length}}" data-memo="{{info.memo}}" value="{{info.order_id}}"/>
+                {{else}}
+                <i class="icon icon-{{info.status_eng}}"></i>
+                {{/if}}
+            </td>
+            <td>
+                <div>{{info.name_cn}}</div>
+                <div class="hidden-fat bottom-word">{{info.depart_name}}</div>
+            </td>
+            <td class="hidden-narrow">{{info.depart_name}}</td>
+            <td>
+                <div>{{info.job}}</div>
+                <div class="hidden-fat bottom-word">
+                    {{info.create_time}}
+                </div>
+            </td>
+            <td class="hidden-narrow word-break">{{info.create_time}}</td>
+        </tr>
+        {{/each}}
+    </table>
+</script>
+<script type="text/html" id="right-show">
+    <div class="panel-heading ">
+        <span>申请详情</span>
+        {{if data.show=='1'}}
+        <a href="javascript:void(0);" data-user_id="{{data.user_id}}" data-order_id="{{data.order_id}}" data-task_id="{{data.task_id}}" class="btn btn-danger single list-reject2 btn-xs">驳回</a>
+        <a href="javascript:void(0);" data-user_id="{{data.user_id}}" data-order_id="{{data.order_id}}" data-task_id="{{data.task_id}}" class="btn btn-warning single list-undo btn-xs">已发放</a>
+        <a href="javascript:void(0);" data-user_id="{{data.user_id}}" data-order_id="{{data.order_id}}" data-task_id="{{data.task_id}}" data-name_cn="{{data.name_cn}}" class="btn btn-agree single list-pushon btn-xs">通知领取</a>
+        {{/if}}
+    </div>
+    <div class="panel-body pad-lr70">
+        <div class="info-head">
+            <dl>
+                <dt class="left-dt left-pink">申请人</dt>
+                <dd>
+                    <div class="avatar-name">
+                        <img class="avatar" src="{{data.user_avatar}}" alt=""/>
+                        <span>{{data.name_cn}}</span>
+                    </div>
+                    <div class="depart-date">
+                        <dl>
+                            <dt>申请部门</dt><dd>{{data.depart_name}}</dd>
+                            <dt >申请日期</dt><dd>{{data.create_time}}</dd>
+                            <dt class="bottom">申请编号</dt><dd class="bottom">{{data.order_id}}</dd>
+                        </dl>
+                    </div>
+                </dd>
+                {{if !!data.name}}
+                <dt class="left-dt left-pink">姓名</dt><dd >{{data.name}}</dd>
+                {{/if}}
+                {{if !!data.english_name}}
+                <dt class="left-dt">英文名</dt><dd >{{data.english_name}}</dd>
+                {{/if}}
+                {{if !!data.job}}
+                <dt class="left-dt">职位</dt><dd >{{data.job}}</dd>
+                {{/if}}
+                {{if !!data.english_job}}
+                <dt class="left-dt">职位英文</dt><dd>{{data.english_job}}</dd>
+                {{/if}}
+                {{if !!data.mobile}}
+                <dt class="left-dt">联系电话</dt><dd>{{data.mobile}}</dd>
+                {{/if}}
+                {{if !!data.mail}}
+                <dt class="left-dt">邮箱</dt><dd class="word-break">{{data.mail}}</dd>
+                {{/if}}
+                {{if !!data.qq}}
+                <dt class="left-dt">QQ</dt><dd>{{data.qq}}</dd>
+                {{/if}}
+                {{if !!data.we_chat}}
+                <dt class="left-dt">微信</dt><dd>{{data.we_chat}}</dd>
+                {{/if}}
+                {{if !!data.work_place}}
+                <dt class="left-dt">工作地点</dt><dd>{{data.work_place}}</dd>
+                {{/if}}
+                {{if !!data.memo}}
+                <dt class="left-dt">其他说明</dt><dd>{{data.memo}}</dd>
+                {{/if}}
+            </dl>
+        </div>
+        <hr/>
+        <div class="info-body">
+            <a href="javascript:void(0);" class="approval-history history-icon" data-task_id="{{data.task_id}}">审批记录</a>
+            <div class="timeline-wraper" style="float:right;width: 100%">
+
+            </div>
+        </div>
+        <div class="info-foot">
+            <span>如对此审批流有疑问，请联系 <a href="/contacts/speedim/?u=MzUyMQ==" class="speedim" target="_blank"><span>孙艺鸣</span></a></span>
+        </div>
+    </div>
+
+</script>
+<script type="text/html" id="approve-history">
+    <div class="timeline timeline-mini approval-progress">
+        {{each data as info}}
+        <div class="timeline-entry">
+            <div class="timeline-stat">
+                <div class="timeline-icon"><i class="icon icon-{{info.timeline_status}}"></i></div>
+            </div>
+            <div class="timeline-label {{info.timeline_status}}">
+                <div class="timeline-left">
+                    <div class="uname">{{info.user_name}} <span class="font12">（{{info.name}}）</span></div>
+                    <div class="time">{{info.create_time}}</div>
+                </div>
+                <div class="remark timeline-right">{{info.progress_content}}</div>
+            </div>
+        </div>
+        {{/each}}
+    </div>
+</script>
+
+<%! $_ENGINE_SELF.callFn("useModule")("<<<_use:
+        fml.use('speed/common/base');
+fml.use('speed/administration/businesscard/manage');
+_use:", this._JSstack , this._JSmods); %>
+
+<%#foot.html%>

@@ -1,0 +1,698 @@
+fml.define('component/trees', ['jquery'], function (require, exports) {
+    "use strict";
+    var $ = require('jquery');
+
+
+    (function ($, window, document, undefined) {
+
+        var defaults = {
+            data: null,         //数据列表
+            idKey: 'id',        //id 字段
+            pidKey: 'pid',      //pid字段
+            nameKey: 'name',      //name字段
+            multiple: false,    //是否支持多选.
+            unique: true,    //是否允许重复.
+            allowSearch: true, //允许搜索
+            valueField: "id", //取值的字段.
+            delimiter: ',', //多选的时候
+            pathTextSep: '--', //多级节点的分隔符号
+            placeholder: '请选择',
+            showSelectedText: false,
+            triggerHover: true,
+            text: {
+                columnTitle: "{level}级部门"
+            }
+        };
+
+        var KEY = {
+            BACKSPACE: 8,
+            //TAB: 9,
+            ENTER: 13,
+            //ESCAPE: 27,
+            //SPACE: 32,
+            //PAGE_UP: 33,
+            //PAGE_DOWN: 34,
+            //END: 35,
+            //HOME: 36,
+            //LEFT: 37,
+            UP: 38,
+            //RIGHT: 39,
+            DOWN: 40
+            //NUMPAD_ENTER: 108,
+            //COMMA: 188
+        };
+
+
+        /**
+         * 数组复制
+         * @param arr
+         * @param idKey
+         * @param pidKey
+         * @param textKey
+         * @returns {*}
+         */
+        function cloneArray(arr, idKey, pidKey, textKey) {
+            var nodes = [];
+            $.each(arr, function (index, obj) {
+                nodes.push({
+                    id: obj[idKey],
+                    pid: obj[pidKey],
+                    name: obj[textKey],
+                    index: index
+                });
+            });
+
+            return nodes;
+        }
+
+        /**
+         * from http://stackoverflow.com/questions/18017869/build-tree-array-from-flat-array-in-javascript
+         * @param nodes
+         * @returns {Array}
+         */
+        function array2tree(nodes) {
+            if (!$.isArray(nodes) || !nodes.length) {
+                return [];
+            }
+
+            var tree = [],
+                mapped = {},
+                arrElem,
+                mappedElem, pNode;
+            // First map the nodes of the array to an object -> create a hash table.
+            for (var i = 0, len = nodes.length; i < len; i++) {
+                arrElem = nodes[i];
+                arrElem.child = [];
+                arrElem.path = [];
+                arrElem.fullText = [];
+                mapped[arrElem['id']] = arrElem;
+            }
+
+            for (var id in mapped) {
+                if (!mapped.hasOwnProperty(id)) {
+                    continue;
+                }
+
+                pNode = mappedElem = mapped[id];
+                //数组头部插入
+                mappedElem.path.unshift(mappedElem['index']);
+                mappedElem.fullText.unshift(mappedElem['name']);
+
+                //构建path路径.
+                do {
+                    pNode = mapped[pNode['pid']];
+                    if (pNode) {
+                        mappedElem.path.unshift(pNode['index']);
+                        mappedElem.fullText.unshift(pNode['name']);
+                    }
+                } while (pNode);
+
+
+                //mappedElem.path = mappedElem.path.join('-');
+                if (mappedElem['pid']) {
+                    if (!mapped[mappedElem['pid']]) {
+                        //TODO 处理不正确的上下级节点.
+
+                        continue;
+                    }
+                    mappedElem.pIndex = mapped[mappedElem['pid']].index;
+                    mapped[mappedElem['pid']]['child'].push(mappedElem);
+                } else {
+                    tree.push(mappedElem);
+                }
+            }
+            return tree;
+        }
+
+        function levelToText(level) {
+            if (level >= 11) {
+                return level;
+            }
+            return ['零', '一', '二', '三', '四', '五', '六', '七', '八', '九', '十'][level];
+        }
+
+
+        /**
+         *
+         * @param element
+         * @param options
+         * @constructor
+         */
+        function QueenTrees(element, options) {
+            this.$element = $(element);
+            this.options = options;
+
+            //转换为树形数据
+            if ($.isArray(options.data)) {
+                //复制并格式化同一份数据
+                this.formattedNodes = cloneArray(options.data, options.idKey, options.pidKey, options.nameKey);
+                //转换为树形结构
+                this.treeNodes = array2tree(this.formattedNodes);
+
+                //console.log(JSON.stringify(this.formattedNodes));
+            } else {
+                this.formattedNodes = [];
+                this.treeNodes = [];
+            }
+
+            //已选中的节点列表.
+            this.selectedMap = {};
+            this.selectedNodes = [];
+            //当前选中的节点.
+            this.currentNode = null;
+            this.lastInputValue = null;
+
+            this.init();
+        }
+
+        QueenTrees.prototype = {
+            init: function () {
+                this.render();
+                this.bindEvent();
+            },
+            getNode: function (nid) {
+                return nid >=0 ? this.formattedNodes[nid] : null;
+            },
+            changeElementValue: function () {
+                var ids = $.map(this.selectedNodes, function (node) {
+                    return node.id;
+                });
+
+                //设置值.
+                this.$element.val(ids.join(this.options.delimiter));
+
+                this.$element.trigger('change', [this.selectedNodes]);
+            },
+            addSelectedNode: function (node) {
+                //默认唯一并且已存在.
+                if (this.options.unique && this.selectedMap[node.id]) {
+                    return false;
+                }
+
+                this.selectedNodes.push(node);
+                //记录为索引
+                this.selectedMap[node.id] = true;
+
+                this.changeElementValue();
+
+                return true;
+            },
+            removeSelectedNode: function (node) {
+                if(!node){
+                    return ;
+                }
+                var deletedIdx = -1;
+
+                if (this.options.unique) {
+                    $.each(this.selectedNodes, function (i, value) {
+                        if (value.id === node.id) {
+                            deletedIdx = i;
+                        }
+                    })
+                } else {
+                    //TODO 找出对应位置的数据进行删除.
+                }
+
+                if (deletedIdx >= 0) {
+                    this.selectedMap[node.id] = undefined;
+                    this.selectedNodes.splice(deletedIdx, 1);
+                    this.changeElementValue();
+                }
+            },
+            render: function () {
+                this.$element.hide();
+
+
+                this.$trees = $("<div></div>").addClass('queen-trees');
+
+                var toggleDiv = $('<div></div>').addClass('queen-trees-toggle');
+                //单选，则放置下拉按钮
+                //if (!this.options.multiple) {
+                toggleDiv.append('<a href="javascript:void(0);" class="queen-toggle-btn">' + this.options.placeholder + '</a>'
+                    + '<i class="queen-caret caret-down"></i><div class="white-overlay"></div>');
+                //} else {
+                //    toggleDiv.append('<input type="text" value="" placeholder="请选择"/>');
+                //}
+                this.$trees.append(toggleDiv);
+
+
+                var dropdown = $("<div></div>").addClass('queen-trees-dropdown');
+
+                if (this.options.allowSearch) {
+                    this.$searchBox = $("<div></div>").addClass('queen-trees-dropdown-head');
+
+                    this.$searchBox.append('<div class="queen-trees-searchbox">'
+                            //+ '<input type="text" class="searchbox-input" name="term" placeholder="时尚运营"/>'
+                        + '<i class="queen-icon-search"></i><ul class="queen-token-list">'
+                            //+ '<li class="queen-token-placeholder">时尚运营</li>'
+                            //+ '<li class="queen-token-item">'
+                            //+ '<span>内容</span>'
+                            //+ '<span class="queen-token-remove-item">x</span>'
+                            //+ '</li>'
+                        + '<li class="queen-token-item searchbox-input"><input type="text" autocomplete="off"><span class="searchbox-input-tester"></span></li>'
+                        + '</ul>'
+                        + '<div class="matched-items">'
+                        + '</div>'
+                        + '</div>'
+                        + '<p class="current-selected-text"></p>'
+                    );
+
+                    if(!this.options.showSelectedText){
+                        this.$searchBox.find('.current-selected-text').hide();
+                    }
+                    dropdown.append(this.$searchBox);
+                }
+
+                dropdown.append($('<div class="queen-trees-dropdown-body"><div class="queen-trees-column-wrap"></div></div>'));
+
+                this.$dropdownWrap = dropdown.find('.queen-trees-column-wrap');
+                this.$dropdownWrap.append(this.makeColumn(this.treeNodes, null, 1));
+                this.$dropdownWrap.show();
+
+
+                dropdown.append('<div class="queen-trees-dropdown-footer">'
+                    + '<div class="footer-buttons">'
+                    + (this.options.multiple ? '<a class="btn-choose">添加</a>' : '')
+                    + '<a class="btn-complete">完成</a>'
+                    + '</div>'
+                    + '</div>'
+                );
+
+                this.$dropdown = dropdown;
+                this.$trees.append(dropdown);
+
+                this.$element.after(this.$trees);
+            },
+            makeColumn: function (nodes, selected, level) {
+                if (!nodes || !nodes.length) {
+                    return;
+                }
+                var column = $("<div></div>").addClass('dropdown-column');
+
+                if (this.options.text.columnTitle) {
+                    var title = this.options.text.columnTitle.replace('{level}', levelToText(level));
+                    column.append('<h4 class="column-level">' + title + '</h4>');
+                }
+
+                var nodesList = $('<ul class="nodes-list"></ul>');
+                var liArr = [];
+                $.each(nodes, function (index, node) {
+                    var nid = node.index;
+                    var cls = selected == nid ? ' selected' : '';
+                    if(node.child && node.child.length){
+                        cls += ' has-child ';
+                    }
+                    liArr.push('<li><a href="javascript:void(0);" class="trees-node' + cls + '"' + ' data-nid="' + nid
+                        + '" data-level="' + level + '">' + node['name'] + '</a></li>');
+                });
+
+                nodesList.html(liArr.join(''));
+
+                column.append(nodesList);
+                return column;
+            },
+            search: function (term) {
+                if (!term) {
+                    return [];
+                }
+                term = term.toLowerCase();
+
+                var matchedNodes = [];
+                $.each(this.formattedNodes, function (index, node) {
+                    var searchText = node.name.toLowerCase();
+                    if (searchText.indexOf(term) >= 0) {
+                        matchedNodes.push(node);
+                    }
+                });
+
+                return matchedNodes;
+            },
+
+            makeSearchResult: function (result) {
+                if (!result || !result.length) {
+                    return '';
+                }
+                var that = this, items = [];
+                $.each(result, function (index, node) {
+                    var path = node.path.join('-');
+                    var text = node.fullText.join(that.options.pathTextSep);
+                    items.push('<li><a href="javascript:void(0);" class="matched-item' + (index == 0 ? ' selected' : '') + '" data-path="' + path + '">' + text + '</a></li>');
+                });
+
+                return '<ul>' + items.join('') + '</ul>';
+            },
+            makeToken: function (node, selected) {
+                var token = $('<li class="queen-token-item ' + (selected ? 'selected' : '') + '">'
+                    + '<span>' + node.name + '</span>'
+                    + '<span class="queen-token-remove-item">x</span>'
+                    + '</li>');
+
+                token.data('path', node.path.slice());
+                return token;
+            },
+            addSelectToken: function (item) {
+                var that = this;
+
+                var path = item.attr('data-path');
+                path = path ? path.split('-') : [];
+                if (!path.length) {
+                    return false;
+                }
+
+                //清空输入值.
+                that.$searchBox.find('.searchbox-input input').val('').focus();
+                //显示当前节点完整路径
+                that.$searchBox.find('.current-selected-text').text(item.text());
+                //隐藏搜索结果.
+                that.$searchBox.find('.matched-items').removeClass('active');
+                that.$dropdownWrap.show();
+                that.showPath(path);
+
+
+                //单选增加限制
+                if (!that.options.multiple && that.selectedNodes.length) {
+                    return false;
+                }
+
+                var node = that.getNode(path[path.length - 1]);
+                //已存在的TOKEN
+                if (!that.addSelectedNode(node)) {
+                    that.lastInputValue = null;
+                    return;
+                }
+                //插入TOKEN.
+                var token = that.makeToken(node);
+                that.$searchBox.find('.searchbox-input').before(token);
+            },
+            removeSelectToken: function (token) {
+                var path = token.data('path');
+                token.remove();
+                if (path && path.length > 0) {
+                    //查找对应的指进行删除.
+                    var node = this.getNode(path.pop());
+                    this.removeSelectedNode(node);
+                }
+            },
+
+            showPath: function (path) {
+                var that = this;
+                if ($.type(path) === 'string') {
+                    path = path.split('-');
+                }
+
+                var columns = [];
+
+                $.each(path, function (index, nid) {
+                    var node = that.formattedNodes[nid];
+                    if (!node) {
+                        return; //
+                    }
+                    //没有pIndex的都是顶级节点.
+                    var parentNode = that.formattedNodes[node.pIndex];
+                    if (!parentNode) {
+                        columns.push(that.makeColumn(that.treeNodes, nid, index + 1));
+                    } else {
+                        columns.push(that.makeColumn(parentNode.child, nid, index + 1));
+                    }
+                });
+                that.$dropdownWrap.html(columns);
+
+
+                //切换到顶部.
+                that.$dropdownWrap.find('.dropdown-column').each(function () {
+                    var column = $(this);
+                    var selected = column.find('.selected');
+                    //选中元素的top - 固定头的高度
+                    var top = 0;
+                    if (selected.length) {
+                        //@see http://stackoverflow.com/questions/4583476/scrolling-to-li-element-jquery
+                        top = selected.position().top - column.find('.nodes-list li:first').position().top;
+                        column.find('.nodes-list').animate({
+                            scrollTop: top
+                        }, 'fast');
+                    }
+                });
+            },
+
+            selectPath: function (path) {
+                var that = this;
+                if ($.type(path) === 'string') {
+                    path = path.split('-');
+                }
+            },
+
+            bindEvent: function () {
+                var that = this;
+
+                $('body').on('click', function (event) {
+                    var target = $(event.target);
+                    if (!target.closest('.queen-trees').length) {
+                        that.$trees.removeClass('active');
+                        that.$dropdown.slideUp('fast');
+                    }
+                });
+
+
+                /**
+                 * 鼠标悬浮触发.
+                 */
+                if(that.options.triggerHover){
+                    this.$trees.on('mouseenter',function(){
+                        that.$trees.addClass('active');
+                        that.$dropdown.slideDown('fast');
+                    }).on('mouseleave',function(){
+                        if (that.$trees.hasClass('active')) {
+                            that.$trees.removeClass('active');
+                            that.$dropdown.slideUp('fast');
+                        }
+                    });
+                }
+
+                this.$trees.on('click', '.queen-trees-toggle', function () {
+                    /**
+                     * 切换下拉.
+                     */
+                    var btn = $(this);
+
+                    //已经展开
+                    if (that.$trees.hasClass('active')) {
+                        that.$trees.removeClass('active');
+                        that.$dropdown.slideUp('fast');
+
+                    } else {
+                        that.$trees.addClass('active');
+                        that.$dropdown.slideDown('fast');
+                    }
+
+                }).on('click', '.trees-node', function (e) {
+                    e.preventDefault();
+                    /**
+                     * 点击节点，展开下一级
+                     */
+
+                    var item = $(e.target), currentColumn = item.closest('.dropdown-column');
+                    var idx = item.attr('data-nid');
+                    var level = parseInt(item.attr('data-level'), 10) || 1;
+                    var node = that.formattedNodes[idx];
+
+                    //
+                    that.currentNode = node;
+                    //切换选中状态
+                    currentColumn.find('.selected').removeClass('selected');
+                    item.addClass('selected');
+
+                    //删除之后的列
+                    currentColumn.nextAll().remove();
+                    if (node && node.child && node.child.length) {
+                        //生成数据列.
+                        var column = that.makeColumn(node.child, null, level + 1);
+                        //追加到后面.
+                        currentColumn.after(column);
+                    }
+                });
+
+
+                this.$trees.on("click", '.queen-token-list', function () {
+                    /**
+                     * 点击输入.
+                     */
+                    var ul = $(this);
+                    that.$searchBox.find('input').focus();
+
+
+                }).on("click", '.queen-token-item', function () {
+                    /**
+                     * 选中TOKEN.
+                     */
+                    var li = $(this);
+                    var path = li.data('path');
+
+                    if (li.hasClass('searchbox-input')) {
+                        //单击搜索框.
+                        return;
+                    }
+
+                    if (li.hasClass('queen-token-item-selected')) {
+                        li.removeClass('queen-token-item-selected');
+                    } else {
+                        li.addClass('queen-token-item-selected');
+                        li.siblings('.queen-token-item-selected').removeClass('queen-token-item-selected');
+                        path && that.showPath(path);
+                    }
+                });
+
+                /**
+                 * 删除TOKEN
+                 */
+                this.$trees.on("click", '.queen-token-remove-item', function (e) {
+                    e.preventDefault();
+                    var btn = $(this);
+                    var li = btn.closest('.queen-token-item');
+                    that.removeSelectToken(li);
+
+                    return false;
+                });
+
+
+                /**
+                 * 数据搜索
+                 */
+                this.$trees.on('focus', '.searchbox-input input', function (e) {
+                    $(this).val('');
+                });
+                /**
+                 * 数据搜索
+                 */
+                this.$trees.on('input keyup', '.searchbox-input input', function (e) {
+                    e.preventDefault();
+                    var input = $(e.target);
+                    var value = input.val(), matched, resultBox = that.$searchBox.find('.matched-items');
+                    //为改变的情况不做任何处理.
+                    if (value && that.lastInputValue == value) {
+                        return;
+                    }
+
+                    that.lastInputValue = value;
+
+                    //自适应输入框高度.
+                    var fontSize = input.css('font-size');
+                    var padding = input.outerWidth() - input.width();
+                    var contentWidth = input.next().css({fontSize: fontSize}).text(value.replace(' ', '-')).outerWidth();
+                    input.width((contentWidth + padding) + 'px');
+
+                    if (value) {
+                        matched = that.search(value);
+                        resultBox.html(that.makeSearchResult(matched));
+
+                        resultBox.addClass('active');
+                        that.$dropdownWrap.hide();
+                    } else {
+                        resultBox.html('').removeClass('active');
+                        that.$dropdownWrap.show();
+                    }
+                }).on("keydown", '.searchbox-input input', function (e) {
+                    var input = $(this);
+                    var searchBox = input.parent();
+                    var selected, next;
+                    switch (e.keyCode) {
+                        case KEY.BACKSPACE:
+                            //没有内容的时候删除前一个token
+                            if (!input.val() && searchBox.prev()) {
+                                that.removeSelectToken(searchBox.prev());
+                            }
+                            break;
+                        case KEY.UP:
+                        case KEY.DOWN:
+                            selected = that.$searchBox.find('.matched-items .selected');
+                            next = e.keyCode == KEY.UP ? selected.parent().prev() : selected.parent().next();
+                            if (next && next.length) {
+                                selected.removeClass('selected');
+                                next.find('.matched-item').addClass('selected');
+                            }
+                            return false; //阻止输入框光标移动。
+                            break;
+
+                        case KEY.ENTER:
+                            selected = that.$searchBox.find('.matched-items .selected');
+                            selected && selected.length && that.addSelectToken(selected);
+                            //阻止事件冒泡.
+                            return false;
+                            break;
+                        default:
+                            break;
+                    }
+                }).on('blur', '.searchbox-input input', function () {
+                    $(this).val('');
+                    that.lastInputValue = '';
+                    that.$dropdownWrap.show();
+                });
+
+                /**
+                 * 选中搜索结果.
+                 */
+                this.$trees.on('click', '.matched-item', function (e) {
+                    e.preventDefault();
+                    var item = $(e.target);
+                    that.addSelectToken(item);
+                });
+
+
+                /**
+                 * 添加按钮
+                 * TODO 点击TOKEN的时候可以进行修改.
+                 */
+                this.$trees.on('click', '.btn-choose', function (e) {
+                    var node = that.currentNode;
+                    if (!node) {
+                        return;
+                    }
+
+                    if (that.addSelectedNode(node)) {
+                        var token = that.makeToken(node);
+                        that.$searchBox.find('.searchbox-input').before(token);
+                        that.currentNode = null;
+                        //TODO 是否需要恢复到未选择状态
+                    }
+                });
+
+                /**
+                 * 完成按钮.
+                 */
+                this.$trees.on('click', '.btn-complete', function (e) {
+                    that.$trees.removeClass('active');
+                    that.$dropdown.slideUp('fast');
+                });
+            }
+        };
+
+
+        /**
+         * 提供插件方法.
+         * @param options
+         * @returns {*}
+         * @constructor
+         */
+        $.fn.QueenTrees = function (options) {
+            var mergedOptions = $.extend(true, {}, defaults, options);
+            //提取参数.
+            var args = Array.prototype.slice.call(arguments, 1);
+            return this.each(function () {
+                var instance = $(this).data("QueenTrees");
+                if (undefined === instance) {
+                    instance = new QueenTrees(this, mergedOptions);
+                    $(this).data("QueenTrees", instance);
+                    return this;
+                }
+
+                if ($.type(options) === 'string' && options.charAt(0) !== '_' && instance[options]) {
+                    instance[options].apply(instance, args);
+                }
+
+                return this;
+            })
+        };
+
+
+    })($, window, document);
+
+});

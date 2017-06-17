@@ -1,0 +1,128 @@
+fml.define("speed/meeting/index", ['jquery', 'plugin/moment', 'plugin/bootstrap/datetimepicker','speed/common/input','plugin/bootstrap/validator'], function (require, exports) {
+    var moment = require('plugin/moment');
+    var self = require('speed/common/input');
+
+    var dateFormat = 'YYYY-MM-DD';
+    //console.log(date);
+    $('.select-half').click(function(ev){
+        ev.preventDefault();
+        var _this = $(this),
+        _dropdown_handler = _this.parents('div.input-group-btn').find('button.dropdown-toggle');
+        _dropdown_handler.attr('time',_this.attr('time'));
+        _dropdown_handler.html(_this.text() + ' <span class="caret"></span>');
+        _dropdown_handler.dropdown('toggle');
+        countDays();
+        return false;
+    });
+    $(".form_datetime").datetimepicker({
+        minView: 'month',
+        autoclose: true,
+        format: "yyyy-mm-dd"
+    }).val(moment().format(dateFormat)).on("changeDate", function (e) {
+        // $(this).datetimepicker('hide');
+        // roomBooksOverview(e.format());
+        //roomBooksOverview($(this).val());
+        countDays();
+    });
+
+
+    function function2(v){
+        $.getJSON('/aj/document/user_own_leave',{'type':v}, function (ret) {
+            console.warn(ret);
+            if (ret.code == 200) {
+                var data = ret.data;
+                if(!!data.radio){
+                    var radio,radio_name;
+                    $.each(data.radio,function(k,v){
+                        if(!!radio_name){
+                            radio+='<label class=" " id="">'+
+                                '<input type="radio" name="'+radio_name+'" value="1" >'+
+                                v.name+
+                                '</label>';
+                        }else{
+                            radio+='<label class=" " id="">'+
+                                '<input type="radio" name="'+ v.name+'" value="1" >'+
+                                v.name+
+                                '</label>';
+                        }
+                    });
+                }else if(!!data.check){
+                    var check;
+                    $.each(data.check,function(k,v){
+                        check+='<label class=" " id="">'+
+                            '<input type="checkbox" name="'+ v.name+'" value="1" >'+
+                            v.name+
+                            '</label>';
+                    });
+                }
+                var str = "当前可用"+$('.select-input').val()+data.usable+"天";
+                console.warn(str);
+            } else if (ret.code == 400 || ret.code == 500) {
+                show_message(400, ret.error_msg);
+            }
+        });
+        console.log(v);
+    }
+    self.select(false,function2);
+
+    //信息提示
+    $('.select-input').popover({
+        html: true,
+        trigger: 'manual',
+        //placement:'right',
+        template: '<div class="popover" role="tooltip"><div class="arrow"></div><div class="popover-content"></div></div>',
+        content: function () {
+            var content = $(this);
+            //var $content = $("<div>").html(content);
+
+            var title = 1;
+            if (title.length >= 10) {
+                //$content.find('span').width('200px');
+            }
+            return $(content).html();
+        }
+    }).on("shown.bs.popover", function (e) {
+        //var $content = $(e.target.nextSibling);
+        //var title = $content.find('div > span:last').text();
+        //if(title.length > 20){
+        //    $content.find('span').width('200px');
+        //}
+    });
+
+    //向后台发送数据，查询天数
+    function countDays(){
+
+    }
+
+
+    //表单提交
+    $('#form_password_fix').bootstrapValidator({
+        container: '#cc'
+    }).on('success.form.bv', function (e) {
+        e.preventDefault();
+        if (expand()) {
+
+            //$('.save_basic_info').button('loading').delay(3000);
+            var myForm = $('#form_password_fix').serializeArray();
+            console.log(myForm);
+            $.post(url, myForm, function (ret) {
+                console.warn(ret);
+                if (ret.code == 200) {
+
+                    show_message(200, '操作成功');
+
+                } else if (ret.code == 400 || ret.code == 500) {
+
+                    show_message(400, ret.error_msg);
+                }
+                $('.save_basic_info').button('reset');
+            }, 'json');
+            return false;
+        }
+
+    });
+    //提交前校验
+    function expand(){
+
+    }
+});

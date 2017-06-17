@@ -1,0 +1,88 @@
+fml.define('speed/user/password', ['jquery', 'plugin/bootstrap/validator'], function (require, exports) {
+    "use strict";
+    var $ = require('jquery');
+
+
+    // 表单验证
+
+
+    $('#form_password_fix').bootstrapValidator({
+        container: '#cc'
+    }).on('success.form.bv', function (e) {
+        e.preventDefault();
+        if (expand()) {
+
+            //$('.save_basic_info').button('loading').delay(3000);
+            var myForm = $('#form_password_fix').serializeArray();
+            console.log(myForm);
+            $.post('/aj/user/AjaxEditPwd', myForm, function (ret) {
+                console.warn(ret);
+                if (ret.code == 200) {
+                    //$.niftyNoty({
+                    //    type: 'info',
+                    //    icon: 'fa fa-heart fa-lg',
+                    //    title: '操作成功',
+                    //    message: '',
+                    //    timer: '1000'
+                    //})
+                    show_message(200, '操作成功');
+                    setTimeout(function(){
+                        location.href="/login";
+                    },2000);
+                } else if (ret.code == 400 || ret.code == 500) {
+                    //$.niftyNoty({
+                    //    type: 'pink',
+                    //    icon: 'fa fa-heart fa-lg',
+                    //    title: '操作失败',
+                    //    message: ret.error_msg,
+                    //    timer: '10000'
+                    //})
+                    show_message(200, ret.error_msg);
+                }
+                $('.save_basic_info').button('reset');
+            }, 'json');
+            return false;
+        }
+
+    });
+
+    function expand() {
+        var new_password = $('.new_password').val(),
+            new_password_again = $('.new_password_again').val();
+        if (new_password == new_password_again) {
+            return true;
+        } else {
+            show_message(400, '两次密码输入不一致，请检查后提交');
+            return false;
+        }
+    }
+
+    var time;
+    var quartz;
+    $('.send_message').click(function () {
+        var _this = $(this);
+        _this.attr('disabled', 'false');
+        _this.html('正在发送...');
+        time = 60;
+        $.getJSON('/aj/user/ajaxSendSmsCaptcha', {}, function (ret) {
+            if (ret.code != 200) {
+                _this.removeAttr('disabled');
+                _this.html('获取验证码');
+
+                show_message(400, ret.message);
+                return;
+            } else {
+                quartz = setInterval(function () {
+                    if (time > 0) {
+                        _this.html('发送成功，' + time + '秒后可重试');
+                        time--;
+                    } else {
+                        _this.removeAttr('disabled');
+                        _this.html('获取验证码');
+                        clearInterval(quartz);
+                    }
+                }, 1000);
+            } //else
+        });
+    });
+})

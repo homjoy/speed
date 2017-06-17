@@ -1,0 +1,22 @@
+/*--/Users/MLS/speed/cheetah/trunk/apps/web/views/user/login.html--*/ 
+     var est = require(config.path.lib + 'est/est.js'); 
+     var _extFn = require('/Users/MLS/speed/cheetah/trunk/nest/server/lib/est/extFn.js'); 
+     function requireFn(tpl) { return est.renderFile('/Users/MLS/speed/cheetah/trunk/apps/web/views/' ,tpl , null , null ,'web' ,true); } ; 
+     function __getHtml (_data) { 
+       function jsRender(tpl , id) { return est.jsRender(requireFn(tpl)(_data), id  ); } ; 
+       var __htm ='';
+__htm += '';
+__htm += est.renderFile("/Users/MLS/speed/cheetah/trunk/apps/web/views/" ,"head.html",_data,null,"web" )||"";
+__htm += '\n		<div class="page-hd">\n			<span><img src="';
+__htm += _data.PICTURE_URL  ;
+__htm += 'img/speed/bg-img/icon.png" ></span>\n			<span><img src="';
+__htm += _data.PICTURE_URL  ;
+__htm += 'img/speed/bg-img/speed.png" ></span>\n		</div>\n		<div class="card-container login">\n			<a class="card-corner" data-switch="card-download"></a>\n			<div class="container-bd">\n				<div class="card card-login animated flipInX active">\n					<form class="form-horizontal" method="post">\n						<div class="input-row"><div class="error-message"></div></div>\n						<div class="input-row addon-user">\n							<input type="text" id="username" name="username" class="form-control" placeholder="公司邮箱前缀" autofocus>\n						</div>\n						<div class="input-row addon-lock">\n							<input type="password" id="password" name="password" class="form-control" placeholder="邮箱密码" autocomplete="off">\n						</div>\n						<div class="input-row addon-dongtaimiyao first-show">\n							<input type="password" name="mfa_code" class="form-control" placeholder="动态秘钥" autocomplete="off">\n						</div>\n						<div class=" first-show">\n							<a class="pull-left howtoget-miyao" href="javascript:void(0);">如何获取？</a>\n							<a class="pull-right link-no-miyao" href="javascript:void(0);">没有秘钥</a>\n						</div>\n						<div class="input-row addon-message second-show animated bounceIn">\n							<input type="text" id="verify-code" name="captcha" class="form-control" maxlength="6">\n							<a href="javascript:void(0);" id="send-verify-code" class="btn btn-default">发送短信验证码</a>\n						</div>\n						<div class=" second-show animated bounceIn">\n							<a id="returnmiyao" class="pull-left" href="javascript:void(0);">秘钥登陆</a>\n							<a id="link-forget-password" class="pull-right" href="javascript:void(0);" data-switch="card-forget">忘记密码</a>\n						</div>\n						<div class="text-center">\n							<button type="submit" class="btn btn-sign-in">登录</button>\n						</div>\n					</form>\n				</div>\n				<div class="card card-download animated bounceIn">\n					<h3 class="download-title">下载APP</h3>\n					<p>\n						<span class="download-tips">请扫描右侧<br>客户端二维码</span>\n						<img src="';
+__htm += _data.PICTURE_URL  ;
+__htm += 'img/speed/bg-img/ma.png" width="140" height="140">\n					</p>\n				</div>\n				<div class="card card-forget animated fadeIn">\n					<h3 class="forget-title">忘记密码，请联系</h3>\n					<dl>\n						<dt>北京</dt>\n						<dd>\n							<div><span>李冠良</span>13041180216</div>\n							<div><span>张新新</span>18146501751</div>\n						</dd>\n						<dt>上海</dt><dd><span>陶淳</span>13564156610</dd>\n						<dt>杭州</dt><dd><span>陶淳</span>13564156610</dd>\n						<dt>广州</dt><dd><span>黄岳鹏</span>13560036718</dd>\n					</dl>\n				</div>\n			</div>\n			<div class="container-bottom">\n				<div class="triangle"></div>\n				<div class="shadow-border left"></div>\n				<div class="shadow-border right"></div>\n			</div>\n		</div>\n<script id="add" type="text/html">\n	<div class="input-row addon-dongtaimiyao first-show">\n		<input type="password" name="mfa_code" class="form-control" placeholder="动态秘钥" autocomplete="off">\n	</div>\n	<div class=" first-show">\n		<a class="pull-left howtoget-miyao" href="javascript:void(0);">如何获取？</a>\n		<a class="pull-right link-no-miyao" href="javascript:void(0);">没有秘钥</a>\n	</div>\n</script>\n';
+__htm += est.callFn("useModule")("fml.use('speed/user/login');", _data._JSstack , _data._JSmods) || '';
+ ;__htm += '\n';
+__htm += est.renderFile("/Users/MLS/speed/cheetah/trunk/apps/web/views/" ,"foot.html",_data,null,"web" )||"";
+__htm += '\n';
+return __htm;} 
+ exports.html = __getHtml; 

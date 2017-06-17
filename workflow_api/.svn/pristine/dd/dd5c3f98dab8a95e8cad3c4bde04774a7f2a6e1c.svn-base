@@ -1,0 +1,692 @@
+<?php
+namespace WorkFlowApi\Package\Task;
+
+/**
+ * 任务流转类
+ * @author yixiangwang@meilishuo.com
+ * @since 2015-08-05
+ */
+
+use WorkFlowApi\Package\Common\Response;
+use Libs\Log\Log;
+use Libs\Log\BasicLogWriter;
+
+class TaskTransfer {
+
+	private static $instance;
+	public static $uid;
+	
+    public static function getInstance(){
+        if (empty(self::$instance)) {
+            self::$instance = new self(); 
+        }   
+        return self::$instance;
+    }
+
+    public function __construct() {
+
+    }
+
+	//初始化任务(第一个节点都是填写任务相关信息)
+	public static function taskInitialize($params = array()) {
+		if(empty($params) || empty($params['taskInfo']['task_id'])) {
+			self::getLog()->log('process_task:TaskTransfer', __LINE__ . ' 参数为空!' . var_export($params, true));
+			return array(
+				'error_code'	=> 10001,
+				'error_msg'		=> '参数为空'
+			);
+		}
+		
+		$taskInitInfo = array(
+			'status'	=> 3
+		);
+		
+		$firstNode = self::getEndNode($params['processInfo']);
+		$taskInitInfo['current_node_id'] = $firstNode['process_id'];
+		
+		if(empty($taskInitInfo['current_node_id'])) {
+			self::getLog()->log('process_task:TaskTransfer', __LINE__ . ' 起始节点数据有误!' . var_export($params, true));
+			return array(
+				'error_code'	=> 10002,
+				'error_msg'		=> '起始节点数据有误'
+			);
+		}
+		
+		self::$uid = $taskInitInfo['current_user_id'] = $params['taskInfo']['user_id'];
+		$taskInitInfo['task_id'] = $params['taskInfo']['task_id'];
+		
+		//请求更新任务状态
+		$taskUpdateResult = self::taskUpdate($taskInitInfo,
+			array(
+				'task_id'			=> $params['taskInfo']['task_id'],
+				'status'			=> 3,
+				'current_user_id'	=> 0,
+				'action_type'		=> 0,
+				'process_id'		=> $taskInitInfo['current_node_id'],
+				'progress_content'	=> '系统初始化操作',
+			)
+		);
+		
+		if(!empty($taskUpdateResult['error_msg'])) {
+			self::getLog()->log('process_task:TaskTransfer',  __LINE__ . $taskUpdateResult['error_msg']. var_export($params, true));
+			return $taskUpdateResult;
+		}
+		
+		return $taskInitInfo;
+	}
+	
+	public static function operateTransfer ($params = array()) {
+	
+		$taskInfo = $params['taskInfo'];
+		$processInfo = $params['processInfo'];
+	
+		if(3 != $taskInfo['status']) {
+			self::getLog()->log('process_task:TaskTransfer',  __LINE__ . ' task 状态异常!' . var_export($params, true));
+			return array(
+				'error_code'	=> 10002,
+				'error_msg'		=> 'task 状态异常'
+			);
+		}
+	
+		self::$uid = $params['operator'];
+		
+		if(2 == $params['action_type']) {
+			//驳回
+			$firstProcessInfo = self::getEndNode($processInfo);
+			
+			if(empty($firstProcessInfo)) {
+				self::getLog()->log('process_task:TaskTransfer', __LINE__ . ' 流程首个节点数据异常!' . var_export($params, true));
+				return array(
+					'error_code'	=> 10002,
+					'error_msg'		=> '流程首个节点数据异常'
+				);
+			}
+			
+			//驳回到第一个节点 
+			$taskUpdateResult = self::taskUpdate(array(
+					'task_id'			=> $taskInfo['task_id'],
+					'status'			=> 5,
+					'current_node_id'	=> $firstProcessInfo['process_id']
+				),
+				array(
+					'task_id'			=> $taskInfo['task_id'],
+					'status'			=> 5,
+					'current_user_id'	=> $params['operator'],
+					'action_type'		=> 2,
+					'process_id'		=> $taskInfo['current_node_id'],
+					'progress_content'	=> $params['progress_content'],
+				)
+			);
+			
+			if(!empty($taskUpdateResult['error_msg'])) {
+				self::getLog()->log('process_task:TaskTransfer', __LINE__ . $taskUpdateResult['error_msg'] . var_export($params, true));
+				return $taskUpdateResult;
+			}
+			
+			self::triggerAction($taskInfo, $params['action_type']);
+			
+			return 5;
+		}
+		
+		//判断节点是不是需要逐级审批节点
+		if(strstr($processInfo[$taskInfo['current_node_id']]['role_id'],'speed_')) {
+			//获取下一个审批人
+			$nextUserId = self::getNextUser($processInfo[$taskInfo['current_node_id']]['role_id'], array(
+				//'user_id'	=> empty($params['operator']) ? $taskInfo['user_id'] : $params['operator'],
+				'user_id'	=> $taskInfo['user_id'],
+				'depart_id'	=> $params['depart_id'],
+				'taskInfo'	=> $taskInfo,
+				'operator'	=> $params['operator']
+			));
+		
+			if(!empty($nextUserId['error_msg'])) {
+				self::getLog()->log('process_task:TaskTransfer', __LINE__ . $nextUserId['error_msg'] . var_export($params, true));
+				return array(
+					'error_code'	=> empty($nextUserId['error_code']) ? 50004 : $nextUserId['error_code'],
+					'error_msg'		=> $nextUserId['error_msg']
+				);
+			}
+			
+			if(!empty($nextUserId)) {
+				
+				$nextUserId = array_pop($nextUserId);
+				
+				if(!empty($nextUserId)) {
+					$taskUpdateResult = self::taskUpdate(array(
+							'task_id'			=> $taskInfo['task_id'],
+							'current_user_id'	=> $nextUserId,
+						),
+						array(
+							'task_id'			=> $taskInfo['task_id'],
+							'status'			=> 3,
+							'current_user_id'	=> $params['operator'],
+							'action_type'		=> $params['action_type'],
+							'process_id'		=> $taskInfo['current_node_id'],
+							'progress_content'	=> $params['progress_content'],
+						)
+					);
+					
+					if(!empty($taskUpdateResult['error_msg'])) {
+						self::getLog()->log('process_task:TaskTransfer', __LINE__ . $taskUpdateResult['error_msg'] . var_export($params, true));
+						return $taskUpdateResult;
+					}
+					
+					return 3;
+				}
+			}
+		}
+	
+		//下级节点id
+		if(empty($taskInfo['current_node_id'])) {
+			self::getLog()->log('process_task:TaskTransfer', __LINE__ . 'current node 数据异常!' . var_export($params, true));
+			return array(
+				'error_code'	=> 10002,
+				'error_msg'		=> 'current node 数据异常'
+			);
+		}
+		
+		$nextNodeArr = explode(',', $processInfo[$taskInfo['current_node_id']]['next_process_ids']);
+		$nextCount = count($nextNodeArr);
+	
+		if($nextCount < 1) {
+			self::getLog()->log('process_task:TaskTransfer', __LINE__ . 'next node 数据异常!' . var_export($params, true));
+			return array(
+				'error_code'	=> 10002,
+				'error_msg'		=> 'next node 数据异常'
+			);
+		}
+		
+		//确定下级节点id
+		$next_node_id = 0;
+		if(1 == $nextCount) {
+			$next_node_id = $nextNodeArr[0];
+		}else {
+			//读取规则
+			self::getLog()->log('process_task: atom_interface', __LINE__ . ' 访问 process/process_rule_list 开始!');
+			$ruleInfo = self::getClient()->call('workflowatom', 'process/process_rule_list', array(
+				'process_id' => $taskInfo['current_node_id']
+			));
+			$ruleInfo = self::parseApiData($ruleInfo);
+			self::getLog()->log('process_task: atom_interface', __LINE__ . ' 访问 process/process_rule_list 结束!');
+			
+			if(!empty($ruleInfo['error_msg'])) {
+				self::getLog()->log('process_task:TaskTransfer', __LINE__ . $ruleInfo['error_msg'] . var_export($params, true));
+				return array(
+					'error_code'	=> empty($ruleInfo['error_code']) ? 50006 : $ruleInfo['error_code'],
+					'error_msg'		=> $ruleInfo['error_msg']
+				);
+			}elseif(empty($ruleInfo)) {
+				self::getLog()->log('process_task:TaskTransfer', __LINE__ . ' rule 数据为空!' . var_export($params, true));
+				return array(
+					'error_code'	=> 10002,
+					'error_msg'		=> 'rule 数据为空'
+				);
+			}
+			
+			$ruleParams = json_decode(html_entity_decode($taskInfo['task_content']), true);
+			if(!isset($params['ruleExtendParams'])) {
+				$params['ruleExtendParams'] = array();
+			}
+			
+			if(!empty($params['ruleExtendParams']) && is_array($params['ruleExtendParams'])) {
+				$ruleParams = array_merge($ruleParams, $params['ruleExtendParams']);
+			}
+			
+			foreach($ruleInfo as $r) {
+				
+				if(!self::getRuleResult($r['rule'], $ruleParams)) {
+					continue;
+				}
+				
+				$next_node_id = $r['next_process_id'];
+				break;
+			
+			}
+		}
+		
+		if(0 == $next_node_id) {
+			//处理完成流转结束
+			$return = self::finishTask($taskInfo, $params);
+			
+			if(4 === $return) {
+				self::triggerAction($taskInfo, $params['action_type']);
+			}
+			
+			return $return;
+		}
+		
+		if(empty($processInfo[$next_node_id]) || empty($processInfo[$next_node_id]['status'])) {
+			self::getLog()->log('process_task:TaskTransfer', __LINE__ . ' 流程下级节点数据异常!' . var_export($params, true));
+			return array(
+				'error_code'	=> 10002,
+				'error_msg'		=> '流程下级节点数据异常'
+			);
+		}
+	
+		//获取下一个审批人
+		$nextUserId = self::getNextUser($processInfo[$next_node_id]['role_id'], array(
+			'user_id'	=> $taskInfo['user_id'],
+			'depart_id'	=> $params['depart_id'],
+			'taskInfo'	=> $taskInfo,
+			'operator'	=> $params['operator']
+		));
+	
+		if(!empty($nextUserId['error_msg'])) {
+			self::getLog()->log('process_task:TaskTransfer', __LINE__ . $nextUserId['error_msg'] . var_export($params, true));
+			return array(
+				'error_code'	=> empty($nextUserId['error_code']) ? 50004 : $nextUserId['error_code'],
+				'error_msg'		=> $nextUserId['error_msg']
+			);
+		}
+	
+		// 没有获取到nextUserId
+		if(empty($nextUserId)) {
+			if(strstr($processInfo[$next_node_id]['role_id'],'speed_')) {
+				//创建人上级级别大于逐级审批级别最大设置
+				$taskParams = array(
+					'task_id'			=> $taskInfo['task_id'],
+					'status'			=> 3,
+					'current_user_id'	=> 0,
+					'current_node_id'	=> $next_node_id
+				);
+
+				$progressParams = array(
+					'task_id'			=> $taskInfo['task_id'],
+					'status'			=> 3,
+					'current_user_id'	=> $params['operator'],
+					'action_type'		=> $params['action_type'],
+					'process_id'		=> $taskInfo['current_node_id'],
+					'progress_content'	=> $params['progress_content'],
+				);
+
+				$taskUpdateResult = self::taskUpdate($taskParams, $progressParams);
+			
+				if(!empty($taskUpdateResult['error_msg'])) {
+					self::getLog()->log('process_task:TaskTransfer', __LINE__ . $taskUpdateResult['error_msg'] . var_export($params, true));
+					return $taskUpdateResult;
+				}
+
+				$taskInfo = array_merge($taskInfo, $taskParams);
+
+				//进入下个节点
+				return TaskTransfer::operateTransfer(array(
+					'task_id'			=> $taskInfo['task_id'],
+					'operator'			=> 0,
+					'action_type'		=> 0,
+					'progress_content'	=> '汇报线相关下个审批人获取失败，系统自动跳过此节点',
+					'depart_id'			=> $params['depart_id'],
+					'taskInfo'          => $taskInfo,
+					'processInfo'       => $processInfo,
+				));
+			}else {
+				self::getLog()->log('process_task:TaskTransfer', __LINE__ . ' 没有获取到数据!' . var_export($params, true));
+				return array(
+					'error_code'	=> 50002,
+					'error_msg'		=> '没有获取到数据'
+				);
+			}
+		}
+		
+		if(count($nextUserId) > 1) {
+			$nextTaskStatus = 2;
+			$current_user_id = 0;
+		}elseif(count($nextUserId) == 1) {
+			$nextTaskStatus = 3;
+			$current_user_id = array_pop($nextUserId);
+		}
+		
+		$taskUpdateResult = self::taskUpdate(array(
+				'task_id'			=> $taskInfo['task_id'],
+				'status'			=> $nextTaskStatus,
+				'current_user_id'	=> $current_user_id,
+				'current_node_id'	=> $next_node_id
+			),
+			array(
+				'task_id'			=> $taskInfo['task_id'],
+				'status'			=> $nextTaskStatus,
+				'current_user_id'	=> $params['operator'],
+				'action_type'		=> $params['action_type'],
+				'process_id'		=> $taskInfo['current_node_id'],
+				'progress_content'	=> $params['progress_content'],
+			)
+		);
+		
+		if(!empty($taskUpdateResult['error_msg'])) {
+			self::getLog()->log('process_task:TaskTransfer', __LINE__ . $taskUpdateResult['error_msg'] . var_export($params, true));
+			return $taskUpdateResult;
+		}
+		
+		self::triggerAction($taskInfo, $params['action_type']);
+		
+		return $nextTaskStatus;
+	}
+	
+	private static function triggerAction($taskInfo, $action_type) {
+
+		$userIds[] = $taskInfo['user_id'];
+		$userIds[] = $taskInfo['current_user_id'];
+
+		//读取动作 和 用户信息
+		self::getLog()->log('process_task: atom_interface', __LINE__ . ' 访问 process/process_action_list、account/get_user_info 开始!');
+		$multiClient = self::getMultiClient();
+		$multiClient->call('workflowatom', 'process/process_action_list', array(
+			'process_id' => $taskInfo['current_node_id']
+		), 'actionInfo');
+		$multiClient->call('atom', 'account/get_user_info', array(
+			'user_id' => implode(',', $userIds), 
+			'status' => 1
+		), 'userInfo');
+		$multiClient->callData();
+		
+		$actionInfo = self::parseApiData($multiClient->actionInfo);
+		$userInfo = self::parseApiData($multiClient->userInfo);
+		self::getLog()->log('process_task: atom_interface', __LINE__ . ' 访问 process/process_action_list、account/get_user_info 结束!');
+		
+		if (!empty($actionInfo['error_msg'])) {
+			self::getLog()->log('process_task:TaskTransfer', __LINE__ . $actionInfo['error_msg'] . var_export($taskInfo, true) . var_export($action_type, true));
+			return array(
+				'error_code'	=> 50006,
+				'error_msg'		=> $actionInfo['error_msg']
+			);
+		}
+
+		if (!empty($userInfo['error_msg'])) {
+			self::getLog()->log('process_task:TaskTransfer', __LINE__ . $userInfo['error_msg'] . var_export($taskInfo, true) . var_export($action_type, true));
+			return array(
+				'error_code' => 50006,
+				'error_msg'  => $userInfo['error_msg']
+			);
+		}
+		
+		$actionArr = array();
+		if (!empty($actionInfo)) {
+			foreach($actionInfo as $v) {
+				$actionArr[$v['action_type']][] = $v;
+			}
+		}
+		
+		if (!empty($actionArr[$action_type])) {
+			foreach($actionArr[$action_type] as $action) {
+				if (isset($action['action_behavior'])) {
+					$actionBehavior = '\\WorkFlowApi\Package\Actionscript\\' . $action['action_behavior'];
+					$actionObj = new $actionBehavior();
+					$actionObj->run($taskInfo, $userInfo, $action);
+				}	
+			}
+		}
+	}
+	
+	public static function getRuleResult($rule, $params) {
+		foreach($params as $k => $v) {
+			$$k = $v;
+		}
+		
+		return eval('return ' . $rule . ';');
+	}
+	
+	public static function getNextUser($role_id, $params = array()) {
+		if(strstr($role_id, 'speed_')) {
+			$role_id = str_replace('speed_', '', $role_id);
+			
+			if(strstr($role_id, '_till')) {
+				$role_id = str_replace('_till', '', $role_id);
+				return self::getNextUserByLeaderLine($role_id, $params, true);
+			}else {
+				return self::getNextUserByLeaderLine($role_id, $params, false);
+			}
+		}elseif(strstr($role_id, 'wf_')) {
+			$role_id = str_replace('wf_', '', $role_id);
+			return self::getNextUserByWFRole($role_id);
+		} else if (strstr($role_id, 'direct_')) {
+			return self::getDirectLeader($params['user_id']);
+		}
+	}
+	
+	private static function getNextUserByLeaderLine($sp_role, $params = array(), $step = true) {
+		if( !empty($params['depart_id']) ) {
+			$queryParams = array(
+				'depart_id'	=> $params['depart_id']
+			);
+		}elseif( !empty($params['user_id']) ) {
+			$queryParams = array(
+				'user_id' => $params['user_id']
+			);
+		}
+		
+		if(empty($queryParams)) {
+			self::getLog()->log('process_task:TaskTransfer', __LINE__ . '参数有误，汇报线获取失败' . var_export($params, true));
+			return array(
+				'error_code'	=> 10001,
+				'error_msg'		=> '参数有误，汇报线获取失败'
+			);
+		}
+		
+		//读取汇报线
+		self::getLog()->log('process_task: atom_interface', __LINE__ . ' 访问 department/get_all_depart_leader 开始!');
+		$leaderLineInfo = self::getClient()->call('atom', 'department/get_all_depart_leader', $queryParams);
+		$leaderLineInfo = self::parseApiData($leaderLineInfo);
+		self::getLog()->log('process_task: atom_interface', __LINE__ . ' 访问 department/get_all_depart_leader 结束!');
+	
+		if(!empty($leaderLineInfo['error_msg'])) {
+			self::getLog()->log('process_task:TaskTransfer', __LINE__ . $leaderLineInfo['error_msg'] . var_export($params, true));
+			return array(
+				'error_code'	=> empty($leaderLineInfo['error_code']) ? 50006 : $leaderLineInfo['error_code'],
+				'error_msg'		=> $leaderLineInfo['error_msg']
+			);
+		}
+
+		$currentRoleId = 0;
+		foreach ($leaderLineInfo as $v) {
+			if ($v['leader_user_id'] == $params['taskInfo']['current_user_id']) {
+				$currentRoleId = $v['role_id'];
+			}
+		}
+
+		$user_id = array();
+		
+		//读取历史处理记录
+		self::getLog()->log('process_task: atom_interface', __LINE__ . ' 访问 process/progress_list 开始!');
+		$progressInfo = self::getClient()->call('workflowatom', 'process/progress_list', array(
+			'task_id'		=> $params['taskInfo']['task_id'],
+			'process_id'	=> $params['taskInfo']['current_node_id'],
+		));
+		$progressInfo = self::parseApiData($progressInfo);
+		self::getLog()->log('process_task: atom_interface', __LINE__ . ' 访问 process/progress_list 结束!');
+
+		if(!empty($progressInfo['error_msg'])) {
+			self::getLog()->log('process_task:TaskTransfer', __LINE__ .  $progressInfo['error_msg'] . var_export($params, true));
+			return array(
+				'error_code'	=> $progressInfo['error_code'],
+				'error_msg'		=> $progressInfo['error_msg']
+			);
+		}
+		
+		$progressUid = array();
+		if(!empty($progressInfo)) {
+			foreach($progressInfo as $v) {
+				$progressUid[] = $v['current_user_id'];
+			}
+		}
+		
+		foreach($leaderLineInfo as $v) {
+			
+			if($step) {
+				if (!empty($currentRoleId) && $v['role_id'] > $currentRoleId) {
+					continue;
+				}
+
+				if($v['role_id'] >= $sp_role && !in_array($v['leader_user_id'], $progressUid) && $params['operator'] != $v['leader_user_id']) {
+					$user_id[] = $v['leader_user_id'];
+					break;
+				}
+			}else {
+				if($v['role_id'] == $sp_role && !in_array($v['leader_user_id'], $progressUid) && $params['operator'] != $v['leader_user_id']) {
+					$user_id[] = $v['leader_user_id'];
+					break;
+				}
+			}
+			
+		}
+		
+		return $user_id;
+	}
+	
+	private static function getNextUserByWFRole($wf_role) {
+		$user_id = array();
+		
+		self::getLog()->log('process_task: atom_interface', __LINE__ . ' 访问 user/userRoleMapList 开始!');
+		$ruleMapList = self::getClient()->call('workflowatom', 'user/userRoleMapList', array(
+			'role_id'		=> $wf_role,
+			'status'		=> 1
+		));
+		$ruleMapList = self::parseApiData($ruleMapList);
+		self::getLog()->log('process_task: atom_interface', __LINE__ . ' 访问 user/userRoleMapList 结束!');
+	
+		if(!empty($ruleMapList['error_msg'])) {
+			self::getLog()->log('process_task:TaskTransfer', __LINE__ .  $ruleMapList['error_msg'] . var_export($wf_role, true));
+			return array(
+				'error_code'	=> empty($ruleMapList['error_code']) ? 50004 : $ruleMapList['error_code'],
+				'error_msg'		=> $ruleMapList['error_msg']
+			);
+		}
+		
+		if(!empty($ruleMapList)) {
+			foreach($ruleMapList as $v) {
+				$user_id[] = $v['user_id'];
+			}
+		}
+		
+		return $user_id;
+	}
+
+	private static function getDirectLeader($user_id) {
+
+		self::getLog()->log('process_task: atom_interface', __LINE__ . ' 访问 department/get_direct_leader 开始!');
+		$directLeader = self::getClient()->call('atom', 'department/get_direct_leader', array(
+			'user_id' => $user_id,
+		));
+		$directLeader = self::parseApiData($directLeader);
+		self::getLog()->log('process_task: atom_interface', __LINE__ . ' 访问 department/get_direct_leader 结束!');
+
+		if (!empty($directLeader['error_msg'])) {
+			self::getLog()->log('process_task:TaskTransfer', __LINE__ . $directLeader['error_msg'] . var_export($user_id, true));
+			return array(
+				'error_code'	=> empty($directLeader['error_code']) ? 50004 : $directLeader['error_code'],
+				'error_msg'		=> $directLeader['error_msg']
+			);
+		}
+
+		// 如果是CEO申请，自动跳过直属上级节点
+		if ($directLeader[$user_id]['id'] == 1 && $user_id == 1) {
+			return array();
+		}
+
+		return array($directLeader[$user_id]['id']);
+	}
+	
+	//任务完成处理
+	private static function finishTask($taskInfo, $params) {
+		$taskUpdateResult = self::taskUpdate(array(
+				'task_id'			=> $taskInfo['task_id'],
+				'status'			=> 4
+			),
+			array(
+				'task_id'			=> $taskInfo['task_id'],
+				'status'			=> 4,
+				'current_user_id'	=> $params['operator'],
+				'action_type'		=> $params['action_type'],
+				'process_id'		=> $taskInfo['current_node_id'],
+				'progress_content'	=> $params['progress_content'],
+			)
+		);
+		
+		if(!empty($taskUpdateResult['error_msg'])) {
+			self::getLog()->log('process_task:TaskTransfer', __LINE__ . $taskUpdateResult['error_msg'] . var_export($taskInfo, true) . var_export($params, true));
+			return $taskUpdateResult;
+		}
+		
+		return 4;
+	}
+	
+	private static function taskUpdate($taskParams, $progressParams = array()) {
+
+		self::getLog()->log('process_task: atom_interface', __LINE__ . ' 访问 process/taskUpdate 开始!');
+		$taskUpdateResult = self::getClient()->call('workflowatom', 'process/taskUpdate', array(
+			'taskParams'		=> $taskParams,
+			'progressParams'	=> $progressParams
+		));
+		$taskUpdateResult = self::parseApiData($taskUpdateResult);
+		self::getLog()->log('process_task: atom_interface', __LINE__ . ' 访问 process/taskUpdate 结束!');
+		
+		if(!empty($taskUpdateResult['error_msg'])) {
+			self::getLog()->log('process_task:TaskTransfer', __LINE__ . $taskUpdateResult['error_msg'] . var_export($taskParams, true) . var_export($progressParams, true));
+			return array(
+				'error_code'	=> empty($taskUpdateResult['error_code']) ? 50004 : $taskUpdateResult['error_code'],
+				'error_msg'		=> $taskUpdateResult['error_msg']
+			);
+		}
+		
+		return $taskUpdateResult;
+	}
+	
+	//获取流程两端节点
+	public static function getEndNode($processList, $type = 'first') {
+		
+		$return = array();
+		
+		foreach($processList as $v) {
+			if(1 == $v['status']) {
+				if('first' == $type && '0' === $v['pre_process_ids']) {
+					$return = $v;
+					break;
+				}elseif('last' == $type && '0' === $v['next_process_ids']) {
+					$return = $v;
+					break;
+				}
+			}
+		}
+		
+		return $return;
+	}
+	
+	protected static function getClient() {   
+        static $client = null;
+        if (is_null($client)) {
+            $client = new \Libs\Serviceclient\Client;
+            \Libs\Serviceclient\RemoteHeaderCreator::setHeaders('Meilishuo', 'uid:' . self::$uid . ';ip:'.$_SERVER['SERVER_ADDR'].';v:0;master:0');
+        }
+
+        return $client;
+    }
+
+    protected static function getMultiClient() {
+        static $multiClient = null;
+        if (is_null($multiClient)) {
+            $multiClient = new \Libs\Serviceclient\MultiClient;
+            \Libs\Serviceclient\RemoteHeaderCreator::setHeaders('Meilishuo', 'uid:' . self::$uid . ';ip:'.$_SERVER['SERVER_ADDR'].';v:0;master:0');
+         }
+
+        return $multiClient;
+    }
+	
+	protected static function parseApiData( $data ) {
+        $return = $data['content'];
+        if( (isset($return['error_code']) && !empty($return['error_code'])) || (isset($return['code']) && !empty($return['code']) && $return['code'] != 200)) {
+            
+            return Response::gen_error($return['error_code'] ? $return['error_code'] : $return['code'], $return['error_msg']);
+        } else if (empty($return)) {
+            return Response::gen_error(10000);
+        }
+        
+        return $return['data'];
+    }
+
+    protected static function getLog() {
+    	static $log = null;
+    	if (is_null($log)) {
+    		$log = new log(new BasicLogWriter());
+    	}
+    	
+    	return $log;
+    }
+}

@@ -1,0 +1,10 @@
+.login-layout {
+    width: 300px;
+    margin: 0 auto;
+}
+.fr{
+	position:fixed;
+	right: 0;
+	width:20%;
+	height:30px;
+}

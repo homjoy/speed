@@ -1,0 +1,21 @@
+//半天
+.toggle-half{
+  height: 42px;
+  border-radius: 0 !important;
+  background: white;
+  border: 1px solid #eee;
+  &:hover{
+    border: 1px solid #eee;
+  }
+}
+//半天下拉菜单
+.dropdown-menu>li>a:hover {
+  background-color: #ff80a9;
+  color: #ffffff;
+}
+//时间input
+.form_datetime{
+  background: white !important;
+  cursor: pointer !important;
+
+}

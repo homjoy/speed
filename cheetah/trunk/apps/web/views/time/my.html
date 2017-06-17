@@ -1,0 +1,219 @@
+<%#head.html %>
+<div id="container" class="effect mainnav-lg">
+    <%#navbar.html %>
+    <div class="boxed">
+        <div id="content-container">
+            <ol class="breadcrumb">
+                <li><a href="/home">首页</a></li>
+                <li><a href="/time">我的时间</a></li>
+                <li class="active">时间列表</li>
+            </ol>
+            <div id="page-content" class="event-list-view">
+                <%#time/shares.html%>
+                <div class="row toolbar">
+                    <div class="col-lg-4 col-md-4 col-sm-4 left">
+                        <div class="btn-group btn-change">
+                            <button class="btn btn-default btn-prev"><span>‹</span></button>
+                            <button class="btn btn-default btn-next"><span>›</span></button>
+                        </div>
+
+                        <a class="btn btn-today" href="javascript:void(0);">今天</a>
+
+                        <div class="form-group">
+                            <input type="text" class="form-control" autocomplete="off" id="to-some-day">
+                        </div>
+                    </div>
+
+                    <div class="col-lg-4 col-md-4 col-sm-4 text-center">
+                        <h3></h3>
+                    </div>
+
+                    <div class="col-lg-4 col-md-4 col-sm-4 right">
+                        <div class="btn-group switch-group">
+                            <a class="btn btn-calendar" href="/time/?user_id=<%=this.params.userId || '' %>&iw=<%=this.params.iw ||0%>">日历</a>
+                            <span class="line"></span>
+                            <a class="btn btn-list active" href="javascript:void(0);">列表</a>
+                        </div>
+                        <div class="btn-group month-group">
+                            <button class="btn btn-default btn-month" data-interval="month">月</button>
+                            <button class="btn btn-default btn-week" data-interval="week">周</button>
+                            <button class="btn btn-default btn-day" data-interval="day">日</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div id="my-event">
+                            <div class="event-list">
+                                <dl class="event-header">
+                                    <dt>
+                                        <span class="column date">日期</span>
+                                        <span class="column type">
+                                            <span class="select-container">
+                                                <span class="current">类别<i class="caret-down"></i></span>
+                                                <span class="select-list">
+                                                  <a href="javascript:void(0)" data-type="">全部</a>
+                                                  <a href="javascript:void(0)" data-type="meeting">会议</a>
+                                                  <a href="javascript:void(0)" data-type="event">事件</a>
+                                                 </span>
+                                            </span>
+                                        </span>
+                                        <span class="column time">时间</span>
+                                        <span class="column creator">预订人</span>
+                                        <span class="column title">主题</span>
+                                        <span class="column status">当前状态</span>
+                                        <span class="column repeat">是否重复</span>
+                                        <span class="column manage">操作</span>
+                                    </dt>
+                                </dl>
+                            </div>
+
+                            <div class="text-center"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="hide">
+                    <form method="get" action="/aj/time/my" id="hidden-form">
+                        <input type="hidden" name="type" value="<%=this.params.t || ''%>" />
+                        <input type="hidden" name="start" value="<%=this.params.start || ''%>" />
+                        <input type="hidden" name="end" value="<%=this.params.end || ''%>" />
+                        <input type="hidden" name="user_id" value="<%=this.params.userId || '' %>" />
+                        <input type="hidden" name="iw" value="<%=this.params.iw || 0%>" />
+                        <input type="hidden" name="page" value="1"/>
+                    </form>
+                </div>
+            </div>
+            <%#footer.html%>
+        </div>
+        <%#mainnav.html%>
+    </div>
+
+</div>
+<script id="event-list" type="text/html">
+    {{each events as event index }}
+    <dl class="event {{event.type}} {{event.status}}">
+        <dt>
+            <span class="column date">{{event.date }}</span>
+            <span class="column type">{{event.typeText }}</span>
+            <span class="column time">{{event.time }}</span>
+            <span class="column creator">{{event.creator }}</span>
+            <span class="column title">{{event.title }}</span>
+            <span class="column status">{{event.statusText }}</span>
+            <span class="column repeat">{{event.repeat }}</span>
+            <span class="column manage">
+                {{ each event.handle as cls }}
+                    {{if cls =='edit'}}
+                    <a href="javascript:void(0);" class="btn-{{cls}}" data-id="{{event.id || 0}}" data-toggle="tooltip" data-placement="top" title="修改"></a>
+                    {{else if cls == 'checkin' }}
+                    {{else if cls == 'cancel' }}
+                    <a href="javascript:void(0);" class="btn-{{cls}}" data-id="{{event.id || 0}}" data-toggle="tooltip" data-placement="top" title="取消"></a>
+                    {{else if cls == 'decline' }}
+                    <a href="javascript:void(0);" class="btn-{{cls}}" data-id="{{event.id || 0}}" data-toggle="tooltip" data-placement="top" title="拒绝"></a>
+                    {{else}}
+                    {{/if}}
+                {{/each}}
+            </span>
+        </dt>
+        <dd>
+            <div class="column one">
+                <div class="row place">
+                    <div class="tt">地点</div>
+                    <div class="ct">
+                        {{ each event.place as place}}
+                            <div class="row">
+                                {{if event.type == 'meeting' }}
+                                <strong>{{place.room }}<em>({{place.position || ''}})</em></strong>
+                                {{else}}
+                                <strong>{{place.fullText }}</strong>
+                                {{/if}}
+                            </div>
+                        {{/each }}
+                    </div>
+                </div>
+                {{if event.type == "meeting" && event.services.length > 0 }}
+                <div class="row services">
+                    <div class="tt">服务支持</div>
+                    <div class="ct">
+                        {{ each event.services as service }}
+                        <i class="service_{{service.id || 0}}"></i>
+                        {{/each }}
+                        {{ if event.type == 'meeting' && event.remark }}
+                        <span class="remark">({{event.remark || '' }})</span>
+                        {{/if}}
+                    </div>
+                </div>
+                {{/if}}
+            </div>
+            <div class="column two">
+                <div class="row invite-users">
+                    <div class="tt">参加人</div>
+                    <div class="ct">
+                        {{ each event.invite_user as room}}
+                        <div class="row">
+                            {{each room.user as user }}
+                            {{if user.reject == true }}
+                            <strong class="decline">{{user.username }}（拒绝）</strong>
+                            {{ else }}
+                            <strong>{{user.username }}</strong>
+                            {{/if}}
+                            {{/each }}
+                        </div>
+                        {{/each }}
+                    </div>
+                </div>
+
+                {{ if event.type != 'meeting' && event.remark }}
+                <div class="row remark">
+                    <span class="tt">备注</span>
+                    <span class="ct">{{event.remark || '' }}</span>
+                </div>
+                {{/if}}
+            </div>
+        </dd>
+    </dl>
+    {{/each}}
+</script>
+
+<script id="pagination" type="text/html">
+    <ul class="pagination">
+        {{ if page.currentPage > 1 }}
+        <li class="prev">
+            <a href="javascript:void(0);" aria-label="上一页" data-page="{{page.currentPage-1 }}"><</a>
+        </li>
+        {{/if }}
+
+        {{ each page.list as i }}
+        {{ if i == page.currentPage }}
+        <li class="active">
+            <a href="javascript:void(0);" data-page="{{i}}">{{i}}</a>
+        </li>
+        {{ else }}
+        <li><a href="javascript:void(0);" data-page="{{i }}">{{i }}</a></li>
+        {{/if}}
+        {{/each}}
+
+        {{ if page.currentPage < page.maxPage }}
+        <li class="next">
+            <a href="javascript:void(0);" aria-label="下一页" data-page="{{ page.currentPage+1 }}">></a>
+        </li>
+        {{/if }}
+
+        <li class="go-page">
+            <div class="form-inline" method="get">
+                <input type="text" class="form-control" name="page"/>
+                <a href="javascript:void(0);" class="btn" data-max="{{page.maxPage || 1}}">Go</a>
+            </div>
+        </li>
+    </ul>
+</script>
+
+<%#time/modal.html %>
+
+<%! $_ENGINE_SELF.callFn("useModule")("<<<_use:
+        fml.use('speed/common/base');
+fml.use('speed/time/my');
+_use:", this._JSstack , this._JSmods); %>
+
+<%#foot.html%>

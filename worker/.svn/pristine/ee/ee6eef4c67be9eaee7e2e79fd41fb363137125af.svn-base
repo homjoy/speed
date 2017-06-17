@@ -1,0 +1,12 @@
+<div class="mail-wrapper">
+    <div class="title">
+        <p>Hi! {{username}}：</p>
+        <h3>你的{{orderName}}已通过审批啦！{{memo}}</h3>
+    </div>
+</div>
+
+<div class="mail-wrapper">
+    <div class="btn-group">
+        <a href="http://speed.meilishuo.com/document/leave_application/" class="btn btn-view">查 看</a>
+    </div>
+</div>

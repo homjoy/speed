@@ -1,0 +1,81 @@
+<?php
+namespace Admin\Modules\Config;
+use Libs\Util\Format;
+use Admin\Modules\Common\BaseModule;
+use Admin\Package\Common\Response;
+use Admin\Package\Core\Config;
+use Admin\Package\Log\Log;
+/**
+ * Created by hongzhou@meilishuo.com
+ * User: MLS  AjaxAddUpdateConfig
+ * Date: 15/11/25
+ * Time: 下午12:18
+ */
+class AjaxAddUpdateConfig extends BaseModule {
+    protected $errors = NULL;
+    private $params = NULL;
+    public static $CONFIG_TYPE =11;
+    public static $VIEW_SWITCH_JSON = TRUE;
+    public function run() {
+        $this->_init();
+        if(isset($this->params['value'])){
+            $this->params['value'] = htmlspecialchars_decode( $this->params['value']);
+
+        }
+        if(empty($this->params['id'])){
+            $result = Config::getInstance()->createConfig($this->params);
+        }else{
+            $result = Config::getInstance()->updateConfig($this->params);
+        }
+        if($result === FALSE) {
+            $return = Response::gen_error(50001,'添加或修改信息失败');
+        }else{
+            $return = Response::gen_success($result);
+        }
+        $this->doLog($this->params);
+        $this->app->response->setBody($return);
+
+    }
+    protected function doLog($new_param=array(),$old_param='add'){
+
+        $ret = Log::getInstance()->createLogs(array('user_id'=>$this->user['id'],'handle_id'=>isset($new_param['id'])?$new_param['id']:'',
+            'operation_type'=>$old_param,'after_data'=>json_encode($new_param),'handle_type'=>self::$CONFIG_TYPE));
+        return $ret;
+    }
+    private function _init() {
+
+            $this->rules = array(
+                'id'			=> array(
+                    'type'		=> 'integer',
+                    'maxLength'	=> 9,
+                ),
+                'path'			=> array(
+                    'required'	=> true,
+                    'type'		=> 'string',
+                    'maxLength'	=> 100,
+                ),
+                'key'		=> array(
+                    'type'		=> 'string',
+                    'maxLength'	=> 50,
+                ),
+                'value'			=> array(
+                    'type'		=> 'string',
+                ),
+                'memo'			=> array(
+                    'type'		=> 'string',
+                    'maxLength'	=> 255,
+                ),
+                'father_id'		=> array(
+                    'type'		=> 'integer',
+                    'maxLength'	=> 9,
+                ),
+                'status'		=> array(
+                    'type'		=> 'integer',
+                    'default'	=> 1,
+                ),
+            );
+        $this->params = $this->post()->safe();
+        $this->errors = $this->post()->getErrors();
+    }
+
+}

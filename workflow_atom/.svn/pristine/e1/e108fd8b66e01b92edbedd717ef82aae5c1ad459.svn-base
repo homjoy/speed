@@ -1,0 +1,96 @@
+<?php 
+namespace WorkFlowAtom\Modules\Process;
+
+use WorkFlowAtom\Modules\Common\BaseModule;
+use WorkFlowAtom\Package\Common\Response;
+use WorkFlowAtom\Package\Process\Task;
+use Libs\Util\Format;
+
+/**
+ * 任务更新
+ * @author jingjingzhang@meilishuo.com
+ * @date 2015-7-31
+ */
+
+class TaskUpdate extends BaseModule {
+
+	protected $task;
+	protected $errors = array();
+	private $sample;
+
+	public function run() {
+
+		$this->_init();
+
+		$this->sample = Task::getInstance()->getFields();
+
+		//参数校验
+		if($this->post()->hasError()){
+        	$return = Response::gen_error(10001, '', $this->errors);
+        	return $this->app->response->setBody($return);
+        }
+
+        if (empty($this->task['task_id'])) {
+        	$return = Response::gen_error(10001);
+        	return $this->app->response->setBody($return);
+        }
+
+        //获取参数
+        $queryParams = array();
+        foreach ($this->task as $key => $value) {
+            if (!empty($value)) {
+                $queryParams[$key] = $value;
+            }
+        }
+
+        $result = Task::getInstance()->update($queryParams);
+
+        if ($result === FALSE) {
+			$return =  Response::gen_error(50001);
+		} else if (empty($result)) {
+			$return = Response::gen_error(50012);
+		} else {
+			$return = Response::gen_success($result);
+		}
+
+		$this->app->response->setBody($return);
+	}
+
+	private function _init() {
+
+		$this->rules = array(
+			'task_id' => array(
+				'required'   => TRUE,
+				'type'       => 'integer',
+				'maxLength'  => 5,
+			),
+			'tasktype_id' => array(
+				'type'       => 'integer',
+				'maxLength'  => 5,
+			),
+			'user_id' => array(
+				'type'       => 'integer',
+				'maxLength'  => 11,
+			),
+			'task_name' => array(
+				'type'       => 'string',
+				'maxLength'  => 100,
+			),
+			'task_content' => array(
+				'type'       => 'string',
+			),
+			'current_user_id' => array(
+				'type'       => 'integer',
+			),
+			'status' => array(
+				'type'    => 'integer',
+			),
+			'current_node_id' => array(
+				'type'    => 'integer',
+			),
+		);
+
+		$this->task = $this->post()->safe();
+		$this->errors = $this->post()->getErrors();
+	}
+}

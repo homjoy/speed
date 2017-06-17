@@ -1,0 +1,125 @@
+<%#head.html %>
+<div id="container" class="effect mainnav-lg">
+    <%#navbar.html %>
+
+    <div class="boxed">
+        <!--CONTENT CONTAINER-->
+        <!--===================================================-->
+        <div id="content-container" >
+            <ol class="breadcrumb">
+                <li><a href="/home">主页</a></li>
+                <li><a href="/home/window/?f=executive&s=all"> 行政中心</a></li>
+                <li class="active">快递申请</li>
+            </ol>
+            <div id="page-content" class="no-padding panel">
+                <ul class="nav nav-tabs slope col-lg-12 col-sm-12 col-xs-12" style="margin-bottom: 30px">
+                    <li class="active"  role="presentation" ><a href="/administration/fastmail/">快递申请</a></li>
+                    <li role="presentation" ><a href="/administration/fastmail/my" class="application_num">我的申请<span class="approval-badge"><%if(this.apply_num_get.code==200){%><%=this.apply_num_get.data.application_num%><%}%></span></a></li>
+                    <li role="presentation" ><a href="/administration/fastmail/approval" class="approval_num">我的审批<span class="approval-badge"><%if(this.apply_num_get.code==200){%><%=this.apply_num_get.data.approval_num%><%}%></span></a></li>
+                    <%if(this.permission_control.code==200){%>
+                    <%if(!!this.permission_control.data.manager){%>
+                    <li role="presentation" class=""><a href="/administration/fastmail/manage" >快递管理</a></li>
+                    <%}%>
+                    <%}%>
+                </ul>
+                <div class="panel-body" style="min-width:580px">
+
+                    <div class="tab-content">
+                        <div class=" tap">
+                                    <form class="form-horizontal speed" id="form_leave" >
+
+                                        <div class="row">
+                                            <div class="form-group col-lg-6 col-sm-6 col-xs-6 ">
+                                                <label class="col-lg-4 col-sm-4 col-xs-4 control-label">寄出地</label>
+                                                <div class="col-lg-8 col-sm-8 col-xs-8">
+                                                    <select name="post_place" class="select post_place">
+                                                        <%if(this.express_request_place.code==200){%>
+                                                        <option value="">请选择</option>
+                                                        <% this.express_request_place.data.city.forEach(function(v,index){ %>
+                                                        <option value="<%=v.key%>"><%=v.value%></option>
+                                                        <%})%>
+                                                        <%}%>
+                                                    </select>
+                                                </div>
+                                            </div>
+
+                                            <div class="form-group col-lg-6 col-sm-6 col-xs-6">
+                                                <label class="col-lg-3 col-sm-3 col-xs-3 control-label">快递公司</label>
+                                                <div class="col-lg-8 col-sm-8 col-xs-8">
+                                                    <select name="express_company" class="select express_company">
+
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="row form-group">
+                                            <label class="col-lg-2 col-sm-2 col-xs-2 control-label">用途</label>
+                                            <div class="col-lg-9 col-sm-9 col-xs-9" style="padding-left: 8px;">
+                                                <input type="text" class="form-control memo" data-bv-notempty name="memo" value="">
+                                            </div>
+                                        </div>
+                                        <div class="row form-group minusdiv">
+                                            <label class="col-lg-2 col-sm-2 col-xs-2 control-label">快递单号</label>
+                                            <div class="col-lg-9 col-sm-9 col-xs-9" style="padding-left: 8px;">
+                                                <input type="text" class="form-control detail-num" data-bv-notempty name="tracking_id[]" value="">
+                                            </div>
+                                            <div class="col-lg-1 col-sm-1 col-xs-1 ">
+                                                <a href="javascript:void(0)" class="btn btn-danger btn-plus hide"><i class="fa fa-minus"></i></a>
+                                            </div>
+                                        </div>
+                                        <div class="row form-group add-btn-row">
+                                            <label class="col-lg-2 col-sm-2 col-xs-2"></label>
+                                            <div class="col-lg-5 col-sm-5 col-xs-5">
+                                                <!--<a href="javascript:void(0);" type="submit" class="btn btn-agree add-btn"></a>-->
+                                                <a href="javascript:void(0)" class="addItem btn btn-agree add-btn"><i class="fa fa-plus"></i></a>
+                                            </div>
+                                        </div>
+
+                                        <div class="row form-group">
+                                            <label class="col-lg-2 col-sm-2 col-xs-2"></label>
+                                            <label class="col-lg-10 col-sm-10 col-xs-10 pink-word">
+                                                顺丰快递限于特别紧急、重要、贵重的物品，如无特殊情况一律请用其他快递
+                                            </label>
+                                        </div>
+
+                                        <div class="row">
+                                            <label class="col-lg-2 col-sm-2 col-xs-2"></label>
+                                            <div class="col-lg-5 col-sm-5 col-xs-5">
+                                                <button type="submit" class="btn btn-beauty save_password ">提交申请</button>
+                                            </div>
+                                        </div>
+                                        <div class="form-group pink-word-row hide">
+                                            <label class="col-lg-1 col-sm-1 col-xs-1"></label>
+                                            <div class="col-lg-10 col-sm-10 col-xs-10 pad-no">
+                                                <div class="approval-process">
+                                                    <p>预计审批流程为：</p>
+                                                    <p class="pink-word">
+                                                    </p>
+                                                    <p>若有<span>流程问题</span>,请联系<a href="/contacts/speedim/?u=MzUyMQ==" class="speedim" target="_blank"><span>孙艺鸣</span></a></p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                    </div>
+
+                </div>
+
+            </div>
+            <%#footer.html%>
+        </div>
+        <%#mainnav.html%>
+    </div>
+</div>
+<div class="wizard-container hide">
+    <div class="wizard-card-example "></div>
+    <div class="wizard-guanbi"></div>
+</div>
+
+<%! $_ENGINE_SELF.callFn("useModule")("<<<_use:
+        fml.use('speed/common/base');
+fml.use('speed/administration/fastmail/apply');
+_use:", this._JSstack , this._JSmods); %>
+
+<%#foot.html%>

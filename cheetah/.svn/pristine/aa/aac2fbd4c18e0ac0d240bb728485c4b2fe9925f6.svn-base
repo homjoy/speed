@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<!--[if IE 7]><html class="ie7 lt-ie10"><![endif]-->
+<!--[if IE 8]><html class="ie8 lt-ie10"><![endif]-->
+<!--[if IE 9]><html class="ie9 lt-ie10"><![endif]-->
+<!--[if gt IE 9]><!-->
+<html>
+<!--<![endif]-->
+<head>
+	<meta charset="utf-8" />
+	<title><%== this.pageTitle || this.defaultTitle %></title>
+    <meta name="description" content="<%= this.meta_description ||''%>" />
+    <meta name="keywords" content="<%= this.keywords||''%>" />
+	<meta name="author" content="<%= this.author || ''%>"/>
+    <meta http-equiv="x-ua-compatible" content="IE=edge,chrome=1" />
+	<% if(!this.noBasecss){ %>
+	<link rel="stylesheet" type="text/css" href="<%= this.JCSTATIC_BASE %>css/nifty/bootstrap.css?<%=this.SVERSION%>" />
+	<link rel="stylesheet" type="text/css" href="<%= this.JCSTATIC_BASE %>css/nifty/nifty.css?<%=this.SVERSION%>" />
+	<link rel="stylesheet" type="text/css" href="<%= this.JCSTATIC_BASE %>css/nifty/font-awesome.css?<%=this.SVERSION%>" />
+	<%  } %>
+	<%= (function(link){
+		var str = '';
+		var base = this.JCSTATIC_BASE;
+		var sversion = this.SVERSION;
+		link && link.map(function(src){
+			str += '<link rel="stylesheet" type="text/css" href="'+base+'css/'+src+'.css?'+ sversion +'"/>';
+			});
+		return str;
+		})(this._CSSLinks)%>
+	<script type="text/javascript" src="<%= this.JCSTATIC_BASE + this.SCRIPT_BASE %>fml.js?<%= this.SVERSION%>" ></script>
+	<script>
+	fml.setOptions({'sversion' : '<%= this.SVERSION %>','defer' : <%= this.JS_Defer %> ,'modulebase' : '<%= this.JCSTATIC_BASE + this.SCRIPT_BASE %>'});
+	</script>
+</head>
+<body>

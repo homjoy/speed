@@ -1,0 +1,31 @@
+fml.define('speed/common/input', ['jquery'], function (require, exports) {
+    var $ = require('jquery');
+
+    function select(function1,function2) {
+        $('.select-input').focus(function () {
+            $(this).next().removeClass('hide');
+        }).blur(function () {
+            var _this = this;
+            setTimeout(function () {
+                $(_this).next().addClass('hide');
+            }, 200);
+        }).next().find('li').click(function () {
+            var view = $(this).html();
+            var value = $(this).attr('info');
+            $(this).parent().prev().val(view).trigger('input');
+            $(this).parent().next('input').val(value).trigger('input');
+            if(!!function1){
+                function1(view);
+            }
+            if(!!function2){
+                function2(value);
+            }
+        });
+    }
+
+    exports.select = select;
+
+    //return {
+    //    select:select;
+    //}
+});

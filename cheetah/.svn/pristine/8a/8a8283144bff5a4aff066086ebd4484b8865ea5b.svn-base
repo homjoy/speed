@@ -1,0 +1,21 @@
+<%if(!this.detail || this.detail.rcode != 200){%>
+<div class="alert alert-danger fade in"><%= this.detail ? (this.detail.rmessage || '获取信息出错.') : ''%></div>
+<script>
+    (function(){
+        setTimeout(function(){window.close();},3000);
+    })();
+</script>
+<%}else{%>
+
+<%#head.html%>
+    <div class="print-content">
+        <script>var TPL_DETAIL = <%= JSON.stringify(this.detail) %>;</script>
+        <div class="table-template-container" data-tpl="budget-detail-tpl" data-class="table-printed"></div>
+        <%#budget/detail.tpl.html %>
+        <%#partial/approval_history.html%>
+    </div>
+<%! $_ENGINE_SELF.callFn( "useModule")( "<<<_use:
+    fml.use('fms/common/print');
+_use:", this._JSstack , this._JSmods); %>
+<%#foot.html%>
+<%}%>

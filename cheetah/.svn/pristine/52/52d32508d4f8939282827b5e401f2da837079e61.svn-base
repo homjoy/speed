@@ -1,0 +1,159 @@
+<%#head.html%>
+<div id="container" class="effect mainnav-lg">
+    <%#navbar.html%>
+    <div class="boxed">
+        <div id="content-container">
+            <div id="page-content">
+                <div class="panel">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">预算申请单-test</h3>
+                    </div>
+                    <div class="panel-body">
+
+                        <form class="form-horizontal" id="formBudget" method="POST" action="/aj/budget/submit">
+                            <fieldset>
+                                <legend>基本信息</legend>
+
+                                <div class="row">
+                                    <div class="form-group col-xs-6">
+                                        <label class="control-label col-xs-4">申请人</label>
+                                        <div class="col-xs-8">
+                                            <input type="text" class="form-control" name="nameCn" value="<%=this.userInfo.data.nameCn%>" readonly>
+                                        </div>
+                                    </div>
+                                    <div class="form-group col-xs-6">
+                                        <label class="control-label col-xs-4">申请部门</label>
+                                        <div class="col-xs-8">
+                                            <input type="text" class="form-control" name="departName" value="<%=this.userInfo.data.department.departName%>" readonly>
+                                        </div>
+                                    </div>
+                                </div>
+
+
+                                <div class="row">
+                                    <div class="form-group col-xs-6">
+                                        <label class="control-label col-xs-4">单据编号</label>
+                                        <div class="col-xs-8">
+                                            <input type="text" class="form-control" readonly data-bv-notempty>
+                                        </div>
+                                    </div>
+                                    <div class="form-group col-xs-6">
+                                        <label class="control-label col-xs-4">申请日期</label>
+                                        <div class="col-xs-8">
+                                            <input type="text" class="form-control" readonly data-bv-notempty>
+                                        </div>
+                                    </div>
+                                </div>
+                            </fieldset>
+                            <fieldset>
+                                <legend>单据内容</legend>
+                                <div class="row">
+                                    <div class="form-group col-xs-6">
+                                        <label class="control-label col-xs-4">年度预算</label>
+                                        <div class="col-xs-8">
+                                            <select name="" id="year" class="form-control" data-required>
+                                                <option value="0">2014</option>
+                                                <option value="1" selected>2015</option>
+                                                <option value="2">2016</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="form-group col-xs-6">
+                                        <label class="control-label col-xs-4">编制期间</label>
+                                        <div class="col-xs-8">
+                                            <select name="" id="quarter" class="form-control" data-required>
+                                                <option value="0" selected>请选择</option>
+                                                <option value="1">Q1</option>
+                                                <option value="2">Q2</option>
+                                                <option value="3">Q3</option>
+                                                <option value="4">Q4</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!--预算项目-->
+                                <div class="row">
+                                    <div class="form-group col-xs-12 table-adjust">
+                                        <table class="table table-hover table-striped">
+                                            <thead>
+                                            <tr>
+                                                <th>预算项目</th>
+                                                <th>Q1</th>
+                                                <th>Q2</th>
+                                                <th>Q3</th>
+                                                <th>Q4</th>
+                                                <th>全年合计</th>
+                                                <th>备注</th>
+                                            </tr>
+                                            </thead>
+                                            <tbody class="budgetItems">
+                                            <tr>
+                                                <td id="department" class="text-left">
+                                                    <input type="text" name="departmentId" class="form-control" placeholder="请选择"/>
+                                                </td>
+                                                <td><input type="text" class="money" name="bpbMoney" data-required/></td>
+                                                <td><input type="text" class="money" name="bpbMoney" data-required/></td>
+                                                <td><input type="text" class="money" name="bpbMoney" data-required/></td>
+                                                <td><input type="text" class="money" name="bpbMoney" data-required/></td>
+                                                <td><input type="text" class="money" name="bpbMoneyTotal" data-required/></td>
+                                                <td><input type="text" name="remark"/></td>
+                                            </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+
+                                <div class="row" id="itemChange">
+                                    <div class="form-group col-xs-6 item-pos">
+                                        <div class="row">
+                                            <div class="col-xs-4">
+                                                <a href="javascript:void(0)" class="addItem"><i class="fa fa-plus"></i></a>
+                                                <label class="control-label">增加项目</label>
+                                            </div>
+                                            <div class="col-xs-4">
+                                                <a href="javascript:void(0)" class="removeItem"><i class="fa fa-minus"></i></a>
+                                                <label class="control-label">删除项目</label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+
+                                <div class="row">
+                                    <div class="form-group col-xs-12">
+                                        <label class="control-label col-xs-2">说明</label>
+                                        <div class="col-xs-10">
+                                            <textarea name="cpbRemark" id="remark"></textarea>
+                                        </div>
+                                    </div>
+                                </div>
+                                <input type="hidden" name="cpbFilePath" value=""/>
+                            </fieldset>
+                        </form>
+
+                        <div class="row">
+                            <div class="form-group">
+                                <label class="col-xs-2 control-label text-right">上传附件</label>
+                                <div class="col-xs-6">
+                                    <div action="" method="post" class="dropzone file-zone" id="fileZone"></div>
+                                    <input type="hidden" class="cabFilePath" name="cabFilePath" value="">
+                                    <!--<input type="file" class="form-control" id="input" name="upload" data-required> 文件拖拽或点击此处实现上传，支持pdf/doc/dpcx/xlsx/xls/ppt/pptx/rar/zip格式-->
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="panel-footer text-right">
+                            <button class="btn btn-info btn-submit" type="submit" form="formBudget">提交</button>
+                            <button class="btn btn-info btn-save-drafts" type="button">保存草稿</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <%#sidebar.html%>
+        </div>
+        <%#footer.html%></div>
+    <%! $_ENGINE_SELF.callFn( "useModule")( "<<<_use:
+        fml.use('fms/budget/apply');
+    _use:", this._JSstack , this._JSmods); %>
+    <%#foot.html%>

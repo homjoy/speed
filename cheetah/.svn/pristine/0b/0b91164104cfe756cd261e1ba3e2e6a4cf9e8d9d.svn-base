@@ -1,0 +1,90 @@
+<%#head.html%>
+<div id="container" class="effect mainnav-lg">
+    <%#navbar.html%>
+    <div class="boxed">
+        <div id="content-container">
+            <div id="page-content">
+                <div class="panel panel-nav">
+                    <div class="panel-heading">
+                        <ul class="nav nav-tabs slope ul-template-container" data-tpl="slope-tab-tpl" data-name="预算项目季度汇总" data-json="<%==JSON.stringify(this.userInfo.label.report)%>">
+                        </ul>
+                        <%#partial/slope_tab.html%>
+                    </div>
+                    <div class="panel-body">
+
+
+
+                        <form class="form-horizontal search-form" method="post" action="/aj/report/budget_quarter_summary">
+                            <div class="row">
+                                <div class="form-group col-sm-4">
+                                    <label class="col-sm-4 control-label">预算项目</label>
+                                    <div class="col-sm-8">
+                                        <input type="text" class="form-control" name="budgetItem">
+                                    </div>
+                                </div>
+
+                                <div class="form-group col-sm-4">
+                                    <label class="col-sm-4 control-label">部门</label>
+                                    <div class="col-sm-8">
+                                        <input type="text" class="form-control" name="deptId">
+                                    </div>
+                                </div>
+
+
+                                <div class="form-group col-sm-4">
+                                    <label class="col-sm-4 control-label">编制期间</label>
+                                    <div class="col-sm-4">
+                                        <select class="form-control" name="budgetYear">
+                                            <option value="2015">2015</option>
+                                            <option value="2016">2016</option>
+                                            <option value="2017">2017</option>
+                                            <option value="2018">2018</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <select class="form-control" name="draftTerm">
+                                            <option value="Q1">Q1</option>
+                                            <option value="Q2">Q2</option>
+                                            <option value="Q3">Q3</option>
+                                            <option value="Q4">Q4</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="form-group col-sm-4">
+                                    <label class="col-sm-8 control-label">是否包含待审数据</label>
+                                    <div class="col-sm-4">
+                                        <select class="form-control" name="flag">
+                                            <option value="">请选择</option>
+                                            <option value="1">不包含</option>
+                                            <option value="2">包含</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-group col-sm-12">
+                                <div class="col-sm-offset-4 col-sm-4">
+                                    <button type="submit" class="btn btn-success btn-search" data-loading-text="查询中">查询</button>
+                                </div>
+                            </div>
+                        </form>
+                        <div class="report-content"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <%#sidebar.html%>
+    </div>
+    <%#footer.html%>
+
+</div>
+
+
+<%! $_ENGINE_SELF.callFn( "useModule")( "<<<_use:
+        fml.use('fms/report/budget/base');
+_use:", this._JSstack , this._JSmods); %>
+
+<%#foot.html%>

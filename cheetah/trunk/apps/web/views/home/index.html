@@ -1,0 +1,371 @@
+<%#head.html %>
+<div id="container" class="effect mainnav-lg">
+	<%#navbar.html %>
+	<div class="boxed">
+		<!--CONTENT CONTAINER-->
+		<!--===================================================-->
+		<div id="content-container">
+
+			<div id="page-content">
+				<div class="row">
+					<div class="col-lg-8" style="padding-left:20px;padding-right:30px">
+						<div class="row">
+							<div class="panel panel_right">
+								<div class="panel_body clearfix newsDiv">
+									<% if(this.home_newspics.code == 200){%>
+									<div id="newsCarousel" class="carousel slide" data-ride="carousel">
+										<!-- Carousel indicators -->
+										<ol class="carousel-indicators">
+											<% this.home_newspics.data.forEach(function(news,index){ %>
+											<li data-target="#newsCarousel" data-slide-to="<%=index%>" class="active"></li>
+											<% }); %>
+										</ol>
+										<!-- Wrapper for carousel items -->
+										<div class="carousel-inner">
+											<% this.home_newspics.data.forEach(function(news,index){ %>
+											  <% if(index == 0){ %>
+												<div class="item active">
+											  <% }else{ %>
+											   <div class="item">
+											  <% } %>
+													<a href="<%=news.url%>" target="_blank">
+														<img src="<%=news.image%>">
+														<div class="carousel-caption"><span><%=news.title%></span></div>
+													</a>
+												</div>
+											<% }); %>
+										</div>
+											<!-- Carousel controls -->
+											<a class="carousel-control left" href="#newsCarousel" data-slide="prev">
+												<span class="fa fa-angle-left fa-4x"></span>
+											</a>
+											<a class="carousel-control right" href="#newsCarousel" data-slide="next">
+												<span class="fa fa-angle-right fa-4x"></span>
+											</a>
+										</div>
+									<% } %>
+
+									<div class="newsList">
+											<ul>
+												<% if(this.top_news.code == 200){%>
+												<% this.top_news.data.forEach(function(bannar, index){ %>
+												<li>
+
+													<a href="<%=bannar.url%>" class="news_home" target="<%= index %>"><%=bannar.title %></a>
+													<% if(index==0){ %>
+													<img src="<%= this.PICTURE_URL  %>img/speed/home/newicon.png" class="new">
+													<% } %>
+												</li>
+												<% }); %>
+												<% } %>
+											</ul>
+											<a class="more pull-right" href="http://home.meilishuo.com/news?t=3" target="_Blank1">更多 >>> </a>
+									</div>
+								</div>
+							</div>
+						</div>
+
+						<!-- 常用功能 -->
+						<div class="row">
+							<div class="panel shortcut-content">
+								<div class="panel_body">
+									<ul class="shortCutlIST">
+									<li>
+										<a href="/meeting">
+											<div class="meeting-apply"></div>
+											<p>预定会议室</p>
+										</a>
+									</li>
+									<li>
+										<a href="/hr/leave/apply">
+											<div class="leave-apply"></div>
+											<p>请假申请</p>
+										</a>
+									</li>
+									<li>
+										<a href="/administration/officesupply/apply">
+											<div class="officesupply-apply"></div>
+											<p>办公用品申请</p>
+										</a>
+									</li>
+									<li>
+										<a href="/home/window/?f=executive&s=requestTravel">
+											<div class="travel-apply"></div>
+											<p>出差申请</p>
+										</a>
+									</li>
+									<li>
+										<a href="/administration/fixedassets/apply">
+											<div class="asset-apply"></div>
+											<p>固定资产申请</p>
+										</a>
+									</li>
+									<li>
+										<a href="http://home.meilishuo.com/app/group/65">
+											<div class="userExpMoney-apply"></div>
+											<p>用户体验</p>
+										</a>
+									</li>
+								</ul>
+								</div>
+								<span class="editPen"></span>
+								</div>
+							</div>
+						<!--时间及共享-->
+						<div class="row">
+							<div class="panel panel_time">
+								<div class="panel-top"></div>
+								<div id="demo-dp-range"></div>
+								<div class="time-share-users">
+									<span>共享人</span>
+									<% if(this.user_share_list.code==200){ %>
+									<ul>
+										<% this.user_share_list.data.forEach(function(bannar, index){ %>
+										<li>
+											<a href="/time/?user_id=<%= bannar.user_id%>&iw=<%= bannar.is_write%>">
+												<img src="<%= bannar.avatar%>">
+											</a>
+										</li>
+										<% }); %>
+									</ul>
+									<% }else{ %>
+										<span class="empty-share-tip">还没有共享人？快去
+											<a href="/time/share_time/" target="_blank">设置</a>吧！
+										</span>
+									<% } %>
+								</div>
+								<div class="todo_today">
+									<div class="panel_head">当日待办事项</div>
+									<div class="panel_body">
+										<div></div>
+									</div>
+								</div>
+								<a class="check-mytime" href="/time/">我的<br/>时间</a>
+							</div>
+						</div>
+						<!--办公室攻略-->
+						<div class="row">
+							<div class="panel office-guides">
+								<div class="panel_head">
+									<img src="<%= this.PICTURE_URL  %>img/speed/newIcon/gonglue.png">办公室攻略
+								</div>
+								<hr>
+								<div class="panel_body">
+									<span><i class="location"></i>北京</span>
+									<a target="guide-shuttle-time" href="/page/shuttletime/">班车时刻表</a>
+									<a target="guide-lbs-service" href="http://uploads.speed.meilishuo.com/words/15/09/14_20150902155747.pdf?_from_14">浦项服务指引</a>
+									<a target="guide-room-map" href="/meeting/map/">办公室平面图</a>
+									<div class="city-info">
+										<a  target="1" href="http://uploads.speed.meilishuo.com/words/14/12/14_20141210113647.pdf?_from_14&up=1440149037">
+											<i class="location"></i>上海
+										</a>
+										<a  target="3" href="http://uploads.speed.meilishuo.com/words/14/12/14_20141210114002.pdf?_from_14&up=1440149037">
+											<i class="location"></i>广州
+										</a>
+									</div>
+							</div>
+							</div>
+						</div>
+						<!--友情链接-->
+						<div class="row friendly-link">
+								<div class="panel antenna" style="min-width:560px">
+									<div class="panel_head">
+										<img src="<%= this.PICTURE_URL  %>img/speed/home/lianjie.png">友情链接
+									</div>
+									<div class="panel_body ">
+										<ul>
+
+											<li><a href="http://open.speed.meilishuo.com/" target="_blank"><img src="<%= this.PICTURE_URL  %>img/speed/home/kaifang.png" ><span>SPEED开放平台</span></a></li>
+											<li><a href="http://developer.meiliworks.com/apply/index" target="_blank"><img src="<%= this.PICTURE_URL  %>img/speed/home/kaifangfuwu.png" ><span>权限管理平台</span></a></li>
+											<li><a href="http://interfaces.meiliworks.com/" target="_blank"><img src="<%= this.PICTURE_URL  %>img/speed/home/jiekouguanli.png" ><span>接口管理平台</span></a></li>
+											<li><a href="http://redmine.meilishuo.com/welcome" target="_blank"><img class="dayee" src="<%= this.PICTURE_URL  %>img/speed/home/wikiicon.png"><span>wiki</span></a></li>
+											<li><a href="http://home.meilishuo.com/index.php?app=homeapi&mod=AutoLogin" target="_blank"><img src="<%= this.PICTURE_URL  %>img/speed/home/home.png"><span>home</span></a></li>
+											<li><a href="/home/dayee/" target="_blank"><img class="dayee" src="<%= this.PICTURE_URL  %>img/speed/home/dayee.png" ><span>内部推荐</span></a></li>
+											<li><a href="http://yun.meiliworks.com" target="_blank"><img src="<%= this.PICTURE_URL  %>img/speed/home/logo_n5.png" ><span>私有云</span></a></li>
+											<li><a href="http://roi.meiliworks.com/main/index " target="_blank"><img src="<%= this.PICTURE_URL  %>img/speed/home/rio.png"><span>Roi渠道</span></a></li>
+											<li><a href="http://brand.meiliworks.com/main/index " target="_blank"><img src="<%= this.PICTURE_URL  %>img/speed/home/brand.png"><span>Brand品牌</span></a></li>
+										</ul>
+									</div>
+								</div>
+							</div>
+					</div>
+					<div class="col-lg-4" style="padding:0px">
+						<!--天气-->
+						<% if(this.weather && this.weather.code == 200){%>
+						<div class="panel panel_right">
+							<div id="demo-weather-widget" class="panel panel-mint text-center">
+								<div class="panel-body">
+
+									<!--Weather widget body-->
+									<div class="row pad-top">
+
+										<div class="col-xs-7">
+											<h1 style="color:#6a6a6a;"><%= this.weather.data.today.main.temp %> ℃</h1>
+											<h4 class="text-semibold"><%= this.weather.data.city.city_name %></h4>
+										</div>
+										<div class="col-xs-5">
+											<input type="hidden" id="demo-weather-skycon-today"
+												   value="<%= this.weather.data.today.weather.skycon %>"/>
+											<canvas id="demo-weather-icon-today" width="64" height="64"></canvas>
+										</div>
+									</div>
+									<hr/>
+									<!--Weather widget footer-->
+									<ul class="list-unstyled text-center clearfix">
+
+										<% this.weather.data.forecast.forEach(function(weather, index){ %>
+										<li class="col-xs-4">
+											<input type="hidden" id="demo-weather-skycon-<%= index%>"
+												   value="<%= weather.weather.skycon %>"/>
+											<canvas id="demo-weather-icon-<%= index%>" width="32" height="32"></canvas>
+											<p class="text-sm mar-no"><%= weather.date_cn %></p>
+
+											<p><%= weather.temp.min%>-<%= weather.temp.max%> ℃</p>
+										</li>
+										<% }) %>
+
+									</ul>
+								</div>
+							</div>
+						</div>
+						<%}%>
+						<% if (this.get_user_birthday && this.get_user_birthday.code == 200 ) { %>
+						<!-- 生日会 -->
+						<div class="panel birthdayremit">
+							<div class="panel_head">
+								<img src="<%= this.PICTURE_URL  %>img/speed/newIcon/shengrihui.png">生日汇
+								<span class="pull-right"><%= this.curdate%></span>
+							</div>
+							<div class="panel_body ">
+								<hr/>
+								<div id="carousel-example-generic" class="carousel slide" data-ride="carousel">
+									<!-- Indicators -->
+									<!--<ol class="carousel-indicators">-->
+										<!--<li data-target="#carousel-example-generic" data-slide-to="0" class="active"></li>-->
+										<!--<li data-target="#carousel-example-generic" data-slide-to="1"></li>-->
+										<!--<li data-target="#carousel-example-generic" data-slide-to="2"></li>-->
+									<!--</ol>-->
+
+									<!-- Wrapper for slides -->
+									<ul class="carousel-inner" role="listbox">
+										<li class="hide">
+										<% this.get_user_birthday.data.forEach(function(value,index){%>
+
+											<% if((index+1)%4==1){%>
+											</li>
+											<li class="item <% if (index==0){%>active<%}%> birth-people">
+												<div>
+													<img src="<%=value.user_avatar%>" alt=""/>
+													<span class="birth-name"><%=value.user_name%></span>
+													<span class="dep"><%=value.depart_name%></span>
+												</div>
+											<%}else{%>
+												<div>
+													<img src="<%=value.user_avatar%>" alt=""/>
+													<span class="birth-name"><%=value.user_name%></span>
+													<span class="dep"><%=value.depart_name%></span>
+												</div>
+											<%}%>
+										<%})%>
+										</li>
+
+										<!--<div class="item">-->
+											<!--<img src="..." alt="...">-->
+											<!--<div class="carousel-caption">-->
+												<!--...-->
+											<!--</div>-->
+										<!--</div>-->
+										<!--<div class="item">-->
+											<!--<img src="..." alt="...">-->
+											<!--<div class="carousel-caption">-->
+												<!--...-->
+											<!--</div>-->
+										<!--</div>-->
+									</ul>
+
+									<!-- Controls -->
+									<a class="left carousel-control" href="#carousel-example-generic" role="button" data-slide="prev">
+										<span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span>
+										<span class="sr-only">Previous</span>
+									</a>
+									<a class="right carousel-control" href="#carousel-example-generic" role="button" data-slide="next">
+										<span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>
+										<span class="sr-only">Next</span>
+									</a>
+								</div>
+
+							</div>
+						</div>
+						<% } %>
+						<% if(this.get_hire_anniversary && this.get_hire_anniversary.code==200){%>
+						<div class="panel becauseofyou">
+							<div class="panel_head">
+								<img src="<%= this.PICTURE_URL  %>img/speed/newIcon/zhounian.png">
+								周年榜
+							</div>
+							<div class="panel_body ">
+								<hr/>
+								<ul>
+									<% this.get_hire_anniversary.data.forEach(function(value,index){%>
+									<li class="left">
+										<img class="ava" src="<%= value.user_avatar%>" width="45" height="45">
+										<div class="birth-describe">
+											<p><span><%= value.user_name%></span>加入美丽说 <span><%= value.hire_long%></span>周年</p>
+											<p>来自<%= value.depart_name%></p>
+										</div>
+<!--
+										<p>今天是<span class="birth-name"><%= value.user_name%></span>-<span class="birth-depart"><%= value.depart_name%></span>加入美丽说 <span><%= value.hire_long%></span>周年纪念日</p>
+-->
+									</li>
+									<%})%>
+								</ul>
+							</div>
+						</div>
+						<%}%>
+					</div>
+				</div>
+			</div>
+			<!--===================================================-->
+			<!--End page content-->
+
+				<div class="foot_panel">
+					<div class="panel_head">
+						联系方式
+					</div>
+					<div class="panel_body">
+						<ul>
+							<li>
+								<span >北京</span>
+								<p>总部：北京市朝阳区大望京科技商务园区浦项中心B座21-28层</p>
+								<p> 总机：82486129－6316   &nbsp;&nbsp;传真：010-60190662</p>
+								<p>客服：北京市海淀区海淀中街15号远中悦莱大厦B区3层305C</p>
+							</li>
+
+							<li>
+								<span >广州</span>
+								<p> 广州市天河区冼村路11号保利威座北塔32层全层（珠江新城W酒店对面）</p>
+								<p>仓库：广州市黄埔区护林路1199号 C库</p>
+							</li>
+
+							<li>
+								<span >上海</span>
+								<p>上海市长宁区娄山关路523号金虹桥国际中心I座706室</p>
+							</li>
+						</ul>
+					</div>
+				</div>
+			</div>
+			<%#footer.html%>
+		</div>
+		<%#mainnav.html%>
+	</div>
+</div>
+
+	<!--===================================================-->
+	<!-- END OF CONTAINER -->
+<%! $_ENGINE_SELF.callFn("useModule")("<<<_use:
+		fml.use('speed/common/base');
+		fml.use('nifty/skycons.min');
+		fml.use('speed/home/index');
+_use:", this._JSstack , this._JSmods); %>
+<%#foot.html%>

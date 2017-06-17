@@ -1,0 +1,65 @@
+<?php
+
+namespace Admin\Package\Itserver;
+
+use Admin\Modules\Common\BaseModule;
+use Admin\Package\Common\Response;
+/**
+ * 获取用户信息
+ * @package Admin\Package\UserInfo
+ * @author hongzhou@meilishuo.com
+ * @since 2015-12-25
+ */
+
+class Itserver extends \Admin\Package\Common\BasePackage {
+
+    private static $instance = null;
+    private function __construct() {}
+
+    public static function getInstance()
+    {
+        if(is_null(self::$instance)){
+            self::$instance = new self();
+
+        }
+        return self::$instance;
+    }
+
+    public  function checkRedmine($params = array()){
+
+        $ret = self::getClient()->call('joint', 'itserver/check_redmine', $params);
+        $ret = self::parseRemoteData($ret);
+        return $ret;
+    }
+
+    public  function checkMail($params = array()){
+
+        $ret = self::getClient()->call('joint', 'itserver/check_mail', $params);
+        $ret = self::parseRemoteData($ret);
+        return $ret;
+    }
+    public  function createMail($params = array()){
+
+        $ret = self::getClient()->call('joint', 'itserver/email_create', $params);
+        $ret = self::parseRemoteData($ret);
+        return $ret;
+    }
+    public  function createVpn($params = array()){
+
+        $ret = self::getClient()->call('joint', 'itserver/grant_vpn_auth', $params);
+        $ret = self::parseRemoteData($ret);
+        return $ret;
+    }
+    public  function createWifi($params = array()){
+
+        $ret = self::getClient()->call('joint', 'itserver/grant_wifi_auth', $params);
+        $ret = self::parseRemoteData($ret);
+        return $ret;
+    }
+    public  function createRedmine($params = array()){
+
+        $ret = self::getClient()->call('joint', 'itserver/grant_redmine_auth', $params);
+        $ret = self::parseRemoteData($ret);
+        return $ret;
+    }
+}

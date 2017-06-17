@@ -1,0 +1,146 @@
+fml.define('fms/common/common', ['jquery','plugin/cookie','fms/common/utils'], function (require, exports) {
+    var $ = require('jquery');
+
+    var Cookies = require('plugin/cookie');
+    var utils = require('fms/common/utils');
+
+    /**
+     *
+     * @param cookie_name
+     * @param element1
+     * @param element2
+     */
+    function panelClick(cookie_name,element1,element2){
+        var panel_type = Cookies.get(cookie_name);
+        if(panel_type){
+            console.log('fyc');
+            $(element1).click();
+        }
+        $(element1).click(function(){
+            Cookies.set(cookie_name,1,{domain:'meilishuo.com'});
+        });
+        $(element2).click(function(){
+            Cookies.remove(cookie_name,{domain:'meilishuo.com'});
+        });
+    }
+// 格式化日期   已经使用moment插件替换了该功能 目前没有使用
+    Date.prototype.Format = function (fmt) { //author: meizz
+        var o = {
+            "M+": this.getMonth() + 1, //月份
+            "d+": this.getDate(), //日
+            "h+": this.getHours(), //小时
+            "m+": this.getMinutes(), //分
+            "s+": this.getSeconds(), //秒
+            "q+": Math.floor((this.getMonth() + 3) / 3), //季度
+            "S": this.getMilliseconds() //毫秒
+        };
+        if (/(y+)/.test(fmt))
+            fmt = fmt.replace(RegExp.$1, (this.getFullYear() + "").substr(4 - RegExp.$1.length));
+        for (var k in o)
+            if (new RegExp("(" + k + ")").test(fmt))
+                fmt = fmt.replace(RegExp.$1, (RegExp.$1.length == 1) ? (o[k]) : (("00" + o[k]).substr(("" + o[k]).length)));
+        return fmt;
+    };
+
+    $.fn.getId = function () {
+        var id = $(this).parents('tr').data('id');
+        return id;
+    };
+    $.fn.getType = function () {
+        var type = $(this).parents('tr').data('type');
+        return type;
+    };
+
+
+// 跳转的详情页
+//跳转到该id的详情页
+//myapproval的
+//$('body').on('click', 'tbody td', function(e) {
+//    isFlag = $(this).children().hasClass('btn') || $(this).find('input').length > 0 || $(this).hasClass('dataTables_empty')
+//    console.log(isFlag);
+//    // return;
+//    if (!isFlag) {
+//        var curid = $(this).getId(),
+//            curtype = $(this).getType();
+//        window.open('../contract/view/?id=' + curid + '&type=' + curtype);
+//    }
+//})
+//myapply的
+//$('#tb-waitlist,#tb-overlist').on('click','tbody td',function(e){
+//    console.log('ddd')
+//    var curid = $(this).getId(),
+//        curtype = $(this).getType();
+//    var isBtn = $(this).children().hasClass('btn') || $(this).hasClass('dataTables_empty');
+//    if(!isBtn){
+//        window.open('../contract/view/?id='+curid+'&type='+curtype);
+//    }
+//})
+//filing的
+//// 跳转到详情页
+//$('#tb-filing,#tb-over-filing').on('click', 'td', function (e) {
+//    // var curid = $(this).attr('data-id');
+//    var curid = $(this).getId(),
+//        curtype = $(this).getType();
+//    var isFlag = $(this).find('.btn-filing').length > 0 || $(this).find('input').length > 0 || $(this).find('.btn-filing-edit').length > 0 || $(this).hasClass('dataTables_empty');
+//    if (!isFlag) {
+//        window.open('/contract/view/?id=' + curid + '&type=' + curtype);
+//    }
+//})
+//query的
+//$('#tb-filing-query').on('click', 'td', function(e) {
+//    var _this = this;
+//    var curid = $(this).getId(),
+//        curtype = $(this).getType();
+//    var isFlag = $(this).hasClass('dataTables_empty');
+//    if (!isFlag) {
+//        window.open('/contract/view/?id=' + curid +'&type=' + curtype);
+//    }
+//})
+//var tbView = ['#tb-filing,#tb-over-filing,#tb-filing-query','#tb-waitlist','#tb-overlist'];
+//for (var i = 0;i<tbView.length;i++){
+//    $('body').on('click',tbView[i],function(){
+//        console.log(tbView[i]);
+//    })
+//}
+    /**
+     * 合同跳到合同-view页面
+     * myApproval 中待审批标签页 跳到vipView页面。方便审批人点进去查看并审批
+     * 两个页面的区别是。一个有同意、驳回的按钮，一个没有。
+     * 以后可能还要根据curtype判断  跳到不同种类的-view页面。比如  付款的、报销单的。
+     * 此处没有做query.html中的view
+     */
+
+        //#tb-filing-query   暂时注释掉这一块  query 跳-view这一处   input:not([type=hidden])
+    $('#tb-filing,#tb-over-filing,#tb-filing-query,#tb-waitlist,#tb-overlist,#tb-index-apply,#tb-index-approval').on('click', 'td', function (e) {
+        //var _this = this;
+        var curid = $(this).getId(),
+            curtype = $(this).getType(),
+            isVp = $(this).parents('table').hasClass('vip');
+        //从我的审批中 待审批标签页   跳到vipView页面
+        var inpLen = $(this).find('input:not([type=hidden])').length,
+            btnLen = $(this).children().hasClass('btn'),
+            fiLen = $(this).find('.btn-filing').length,
+            fiEditLen = $(this).find('.btn-filing-edit').length,
+            dataTableEmpty = $(this).hasClass('dataTables_empty');
+
+        var isFlag = btnLen || fiLen > 0 || inpLen > 0 || fiEditLen > 0 || dataTableEmpty;
+        if (!isFlag ) {
+            if(isVp){
+                var taskid = $(this).parents('tr').attr('taskid'),
+                    formkey = $(this).parents('tr').attr('formkey');
+                Cookies.set('taskid',taskid);
+                Cookies.set('formkey',formkey);
+            }
+            window.open('/contract/view/?id=' + curid + '&type=' + curtype);
+        }
+        //if (!isFlag) {
+        //    window.open('/contract/view/?id=' + curid + '&type=' + curtype);
+        //}
+    });
+
+    return {
+        changeMoney:utils.formatCurrency,
+        panelClick:panelClick
+    };
+
+});

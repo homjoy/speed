@@ -1,0 +1,12 @@
+<?php $__env->startSection('content'); ?>
+	<div role="alert" class="alert alert-danger">
+			<strong><?php echo e($data['error_msg']); ?></strong> 
+	</div>
+    <img style="margin:50px auto;margin-top: 150px;" src="/static/img/404.jpg" alt="" />
+	<style>
+		#right_container {
+			text-align: center;
+		}
+	</style>
+<?php $__env->stopSection(); ?>
+<?php echo $__env->make('layouts.master', array_except(get_defined_vars(), array('__data', '__path')))->render(); ?>

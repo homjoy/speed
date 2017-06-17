@@ -1,0 +1,48 @@
+function document() {
+    return this;
+}
+var controlFns = {
+    'index' : function(){
+        return this.redirectTo('/document/leaveRequest/');
+    }
+    ,'leaveRequest' : function(){
+        var php = {
+            'LeaveRequest':'/hr_leave/LeaveRequest'
+        };
+        var date = new Date();
+        this.bindDefault(php);
+        this.bridgeMuch(php);
+        this.listenOver(function(data){
+            data._CSSLinks = ['speed/document/leaveRequest'];
+            data.date = date;
+            this.render('document/leaverequest.html' , data);
+        })
+    }
+    ,'leaveNotice' : function(){
+        var php = {
+            'leave_instruction':'/hr_leave/leave_instruction'
+        };
+        var date = new Date();
+        this.bindDefault(php);
+        this.bridgeMuch(php);
+        this.listenOver(function(data){
+            data._CSSLinks = [];
+            data.date = date;
+            this.render('document/leaveNotice.html' , data);
+        })
+    }
+    ,'leaveApproval' : function(){
+        var php = {
+            'LeaveRequest':'/hr_leave/LeaveRequest'
+        };
+        var date = new Date();
+        this.bindDefault(php);
+        this.bridgeMuch(php);
+        this.listenOver(function(data){
+            data._CSSLinks = [];
+            data.date = date;
+            this.render('document/leaveApproval.html' , data);
+        })
+    }
+};
+exports.__create = controller.__create(document, controlFns);

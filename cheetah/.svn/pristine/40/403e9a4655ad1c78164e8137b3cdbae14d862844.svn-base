@@ -1,0 +1,193 @@
+fml.define('fms/query/IDCinfo',['jquery', 'plugin/bootstrap/datepicker', 'fms/common/utils','component/notify','plugin/tokeninput', 'fms/common/SearchTable'],function(require,exports){
+    var $ = require('jquery'),
+        notify = require('component/notify'),
+        utils = require('fms/common/utils'),
+        SearchTable = require('fms/common/SearchTable');
+
+
+    //绑定datepicker
+    $('[name=sTime],[name=eTime],[name=contractStartDate],[name=contractEndTime]').datepicker({
+        'format': 'yyyy-mm-dd',
+        'autoclose': true,
+        'todayHighlight': true
+    });
+
+    //绑定选择区域select触发事件
+    var $relatedSelect = $('select[name=roomName]');
+    $('select[name=areaName]').change(function(){
+        var areaRoom = $(this).val();
+
+        $.post('/aj/IDCinfo/areaRoomInfo',{type:areaRoom},function(resp){
+
+            if(resp.rcode != 200){
+                return notify.error(resp.rmessage);
+            }
+
+            if(resp.data && resp.data.length ){
+
+                var rooms = resp.data;
+                $relatedSelect.html('');
+                $relatedSelect.html('<option value="">请选择（关联机房）</option>');
+                rooms.forEach(function(room){
+                    $relatedSelect.append('<option value="'+room.itemValue+'">'+room.itemName+'</option>');
+                });
+            }else {
+                $relatedSelect.html('<option value="">请选择（关联机房）</option>');
+            }
+
+        },'json');
+    });
+
+    //合同编号模糊查询
+    $('[name=contractCompany]').tokenInput('/aj/IDCinfo/contractNoInfo',{
+        tokenLimit: 1,
+        propertyToSearch:'contract_name',
+        onAdd:function(item){
+            $('input[name=contractCompany]').val(item['contract_no']);
+            $('.token-input-token').css({'white-space':'normal'});
+        },
+        tokenFormatter:function(item){
+            return "<li><p>" +  item['contract_name']+ "</p></li>";
+        },
+        resultsFormatter:function(item){
+            return "<li>" + item['contract_name'] +"</li>";
+        }
+
+    });
+
+    //点对点选择
+    $('[name=roomType]').change(function(){
+        var $isPointSelect = $(this);
+
+        if($isPointSelect.val() == '1'){
+            $('[name^=point]').prop('disabled',false);
+            return ;
+        }
+
+        $('[name^=point]').prop('disabled',true).val('');
+
+    });
+
+
+    /*//money格式转换
+    $('[name$=Amount],[name$=Month]').on('blur',function(){
+
+        var value = $(this).val().replace(/(^\s+)|(\s+$)/g,"");
+        if(value) $(this).val(utils.formatCurrency(value));
+    }).on('focus',function(){
+
+        var value = $(this).val().replace(/(^\s+)|(\s+$)/g,"");
+        if(value) $(this).val(utils.getCurrencyValue(value));
+    });*/
+
+    //导出
+    $('.btn-export').on('click', function () {
+        var queryParams = $('form').serialize();
+        $(this).attr('href', '/export/IDCinfo?' + queryParams);
+    });
+
+    var table = new SearchTable({
+        container: ".table-container",
+        searchForm: ".query-form",
+        summaryRow:false,
+        summaryTable:true,
+        ajustTable:{'checkFiled':'roomType',
+            type:'check',
+            'removeHeaders':['点A','点B'],
+            'removeColumns':['point_a','point_b'],
+            'removeColumnIndex':[4,5],'removeFlag':false},
+        ajax: {
+            url: '/aj/query/search_IDCinfo'
+        },
+        headers: [
+            '地域',
+            '机房',
+            '单据状态',
+            '单据类型',
+            '点A',
+            '点B',
+            '申请日期',
+            '合同编号',
+            '合同签订公司',
+            '对方单位',
+            '合同期限',
+            '合同金额',
+            '月付金额',
+            '付款方式',
+            '机柜数量',
+            '机柜单价',
+            '机柜总价',
+            '宽带数量',
+            '宽带单价',
+            '宽带总价',
+            'IP数量',
+            'U',
+            '电源类型',
+            '链路类型',
+        ],
+        columns: [
+            'server_room_area_name',
+            'server_room_name_name',
+            'approve_state_name',
+            'room_type_name',
+            'point_a',
+            'point_b',
+            'make_date',
+            'contract_no',
+            'contract_company',
+            'customer_company',
+            'contract_term',
+            'contract_amount',
+            'contract_month_amount',
+            'pay_way_name',
+            'cabinet_amount',
+            'cabinet_unit_price',
+            'cabinet_price',
+            'band_width',
+            'band_unit_price',
+            'band_price',
+            'ip_amount',
+            'cabinet_unit',
+            'power_type',
+            'link_type_name'
+        ],
+        summaryTableHeaders:[
+            '合同金额(总)',
+            '月付金额(总)',
+            '机柜数量(总)',
+            '机柜单价(平)',
+            '机柜总价(总)',
+            '宽带数量(总)',
+            '宽带单价(平)',
+            '宽带总价(总)',
+            'IP个数(合)'
+        ],
+        summaryTableColumns:[
+            'contractAmount',
+            'contractMonhtAmount',
+            'cabinetAmount',
+            'cabinetUnitPrice',
+            'cabinetPrice',
+            'bandWidth',
+            'bandUnitPrice',
+            'bandPrice',
+            'ipAmount'
+        ],
+
+        rowFormatter: function (columns, obj) {
+            var id = obj['id'] || 0;
+            return '<tr dbl-open="/IDCinfo/view/?id=' + id + '">' + columns + '</tr>';
+        },
+        columnFormatter:function(column, value){
+
+            if(this.summaryTable && SearchTable.prototype.isMoneyField(column))
+                return utils.formatCurrency(value);
+
+            return value;
+        }
+    });
+
+
+
+
+});

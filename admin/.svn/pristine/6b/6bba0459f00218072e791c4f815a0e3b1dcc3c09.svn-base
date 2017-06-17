@@ -1,0 +1,22 @@
+<?php
+
+namespace Admin\Modules\Message_send;
+
+use Admin\Modules\Common\BaseModule;
+use Admin\Package\Common\Response;
+/**
+ * MessageSend 信息发送界面
+ * guojiezhu@meilishuo.com
+ * 2016-02-25
+ */
+class MessageUpSert extends BaseModule {
+    protected $all = 1;
+    protected $status = 1;
+    protected $checkUserPermission = TRUE;
+    public function run() {
+        $this->app->response->setBody(array());
+    }
+
+
+
+}

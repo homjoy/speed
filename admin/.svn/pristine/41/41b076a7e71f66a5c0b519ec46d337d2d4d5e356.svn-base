@@ -1,0 +1,12 @@
+@extends('layouts.master')
+
+@section('content')
+    <div class="panel-heading" >
+
+        <div class="table-container">
+            <ul>
+                <li>增加功能</li>
+            </ul>
+        </div>
+    </div>
+@endsection

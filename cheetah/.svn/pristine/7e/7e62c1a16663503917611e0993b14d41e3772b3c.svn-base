@@ -1,0 +1,76 @@
+<%#head.html %>
+<div id="container" class="effect mainnav-lg">
+	<%#navbar.html %>
+
+	<div class="boxed">
+		<div id="content-container">
+			<ol class="breadcrumb">
+				<li><a href="/home">主页</a></li>
+				<li class="active">个人中心</li>
+			</ol>
+			<div id="page-content">
+
+				<div class="panel row" style="min-width:580px">
+
+					<div class="col-lg-2 col-sm-2 col-xs-2 user_left">
+						<img class="head_img"
+							 src="<%if(this.userInfo.code==200){%><%= this.userInfo.data.user.avatar.avatar_middle %><%}%>">
+						<span class="first-title">个人中心</span>
+						<ul>
+							<li><a class="second-title" href="/user">基本信息</a></li>
+							<li class="active "><a class="second-title" href="/user/avatar/">修改头像</a></li>
+							<li><a class="second-title" href="/user/password/">修改密码</a></li>
+						</ul>
+					</div>
+					<div class="col-lg-10 col-sm-10 col-xs-10 user_right">
+
+						<div class="panel_pink">修改头像</div>
+
+						<div class="head_fix tap">
+							<form id="upload_form" enctype="multipart/form-data" method="post">
+
+								<div id="photoContainer" style="width: 600px;height: 300px;">
+									<div id="previewContainer">
+										<div id="upRemind">
+											支持JPG,JPEG,PNG,GIF，图片小于<em><font
+												color="green">20MB</font></em>，尺寸<em>不小于<font
+												color="green">400*400</font></em>,真实高清头像更受欢迎！
+										</div>
+										<span class="avatar_preview">头像预览</span>
+										<canvas id="cropper" class="forCanvas"></canvas>
+										<canvas id="preview100" width="100" height="100"></canvas>
+										<canvas id="preview50" width="50" height="50"></canvas>
+										<div id="errors"></div>
+										<!-- 显示错误消息 -->
+									</div>
+									<!--  / previewContainer -->
+									<div id="buttons">
+										<!-- <div id="prev">头像预览</div> -->
+										<a id="selectBtn" href="javascript:void(0);" class="btn  btn-beauty"
+										   onclick="document.getElementById('input').click();">选 择</a>
+										<a id="saveBtn" href="javascript:void(0);" class="btn  btn-beauty"> 保 存 </a>
+										<input type="file" id="input" size="10" name="Filedata"
+											   style="visibility:hidden;"/>
+									</div>
+									<!-- / buttons -->
+								</div>
+								<!-- photoContainers -->
+							</form>
+						</div>
+					</div>
+
+				</div>
+			</div>
+			<%#footer.html%>
+		</div>
+		<%#mainnav.html%>
+	</div>
+</div>
+
+
+<%! $_ENGINE_SELF.callFn("useModule")("<<<_use:
+		fml.use('speed/common/base');
+fml.use('speed/user/avatar');
+_use:", this._JSstack , this._JSmods); %>
+
+<%#foot.html%>

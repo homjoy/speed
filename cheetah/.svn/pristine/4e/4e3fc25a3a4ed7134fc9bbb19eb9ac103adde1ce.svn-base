@@ -1,0 +1,104 @@
+fml.define('speed/it/index', ['jquery', 'plugin/bootstrap/validator', 'component/notify'], function (require, exports) {
+
+    var $ = require('jquery');
+    var notify = require('component/notify');
+
+//自写下拉框
+    function select(function1) {
+        $('.select-input').focus(function () {
+            $(this).next().removeClass('hide');
+        }).blur(function () {
+            var _this = this;
+            setTimeout(function () {
+                $(_this).next().addClass('hide');
+            }, 200);
+        }).next().find('li').click(function () {
+            $(this).parent().prev().val($(this).html()).trigger('input');
+
+            function1($(this).html());
+        });
+    }
+
+    select(function1);
+    var url = "";
+
+    function function1(v) {
+        if (v == "WIFI密码") {
+            $('.wifi-notice').removeClass('hide');
+            $('.vpn_notice').addClass('hide');
+            url = "/aj/it/WifiEditPwd";
+        } else {
+            $('.wifi-notice').addClass('hide');
+            $('.vpn_notice').removeClass('hide');
+            url = "/aj/it/VPNEditPwd";
+        }
+    }
+
+
+    $('.new_password').focus(function () {
+        $('.password_notice').removeClass('hide');
+    }).blur(function () {
+        $('.password_notice').addClass('hide');
+    });
+
+    $('#form_password_fix').bootstrapValidator({
+        container: '#cc'
+    }).on('success.form.bv', function (e) {
+        e.preventDefault();
+        if (expand()) {
+
+            //$('.save_basic_info').button('loading').delay(3000);
+            var myForm = $('#form_password_fix').serializeArray();
+            console.log(myForm);
+            $.post(url, myForm, function (ret) {
+                console.warn(ret);
+                if (ret.code == 200) {
+                    notify.success('操作成功');
+                } else if (ret.code == 400 || ret.code == 500) {
+                    notify.error(ret.error_msg || '操作失败');
+                }
+                $('.save_basic_info').button('reset');
+            }, 'json');
+            return false;
+        }
+
+    });
+
+    function expand() {
+        var new_password = $('.new_password').val(),
+            new_password_again = $('.new_password_again').val();
+        if (new_password == new_password_again) {
+            return true;
+        } else {
+            notify.error('两次密码输入不一致，请检查后提交');
+            return false;
+        }
+    }
+
+    var time;
+    var quartz;
+    $('.send_message').click(function () {
+        var _this = $(this);
+        _this.attr('disabled', 'false');
+        _this.html('正在发送...');
+        time = 60;
+        $.getJSON('/aj/user/ajaxSendSmsCaptcha', {}, function (ret) {
+            if (ret.code != 200) {
+                _this.removeAttr('disabled');
+                _this.html('获取验证码');
+                notify.error(ret.message);
+            } else {
+                quartz = setInterval(function () {
+                    if (time > 0) {
+                        _this.html('发送成功，' + time + '秒后可重试');
+                        time--;
+                    } else {
+                        _this.removeAttr('disabled');
+                        _this.html('获取验证码');
+                        clearInterval(quartz);
+                    }
+                }, 1000);
+            } //else
+        });
+    });
+});

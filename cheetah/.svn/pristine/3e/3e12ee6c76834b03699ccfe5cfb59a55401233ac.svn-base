@@ -1,0 +1,579 @@
+  // $('.btn-group .dropdown-toggle').dropdown();
+  $(".form_datetime").datetimepicker({
+      startView: 1,
+      format: "yyyy-mm-dd hh:ii",
+      autoclose: true,
+      todayBtn: true,
+      pickerPosition: "bottom-left",
+      //startDate: "2013-02-14 10:00",
+      minuteStep: 10
+  });
+  $('form').delegate("#notice_input_1", "click", function(){
+    if($(this).attr('checked')==undefined){
+      $(this).attr('checked','true');
+      $('#part_div').show();
+    }else{
+      $(this).removeAttr('checked');
+      $('#part_div').find("[type='checkbox']").removeAttr('checked');
+      $('#part_div').hide();
+    }
+  });
+  // $('#notice_input_1').on('click',function(){
+  //   if($(this).attr('checked')==undefined){
+  //     $(this).attr('checked','true');
+  //     $('#part_div').show();
+  //   }else{
+  //     $(this).removeAttr('checked');
+  //     $('#part_div').find("[type='checkbox']").removeAttr('checked');
+  //     $('#part_div').hide();
+  //   }
+  // });
+  // $(".dropdown-toggle").hover(
+  //   function () {
+  //     $(this).addClass("hover");
+  //   },
+  //   function () {
+  //     $(this).removeClass("hover");
+  //   }
+  // );
+
+  // $('.modal').on('show.bs.modal', function () {
+  //   $(".modal-content .alert").removeClass("alert-danger");
+  //   $(".modal-content .alert").removeClass("alert-success");
+  //   $(".modal-content .alert").hide();
+  //   $("#btn_submit").removeClass("disabled");
+  // })
+
+$("#available_room_id").on('change',function(){
+  // 会议室更改
+  $('.service_open').html('');
+  $.getJSON('/aj/meeting/get_room_service',{room_id:$(this).val()},function(ret) {    
+    if(ret.code==200){
+      $.each(ret.data,function(k,v){
+        console.log(v);
+var str='<span class="content_padding fontColor" id="notice_'+v.service_id+'">'+
+          '<input type="checkbox" datatype="array" name="service_id" value="'+v.service_id+'" id="notice_input_'+v.service_id+'">'+ 
+          '<label for="tele_conferencin">'+v.name+'</label>'+
+        '</span>'
+        $('.service_open').append(str);
+      });
+    }        
+  });
+  // $('#part_div').hide();
+});
+
+$('#btn_submit').click(function(){
+  // 添加功能,删除功能
+  var myForm = $('#myForm').serializeArray();
+  console.warn(myForm);
+  var formData ={};
+      
+  for(var i in myForm){
+    var k = myForm[i].name;
+    var v = myForm[i].value;
+    formData[k]=v;
+  }
+  var url = $(this).attr('submit-url');
+//   if($(this).hasClass('delete')){
+//     url = '/aj/meeting/mytime_ajax_delete';
+//   }else if($('#book_id'!=0)){
+// // 修改接口
+//   }
+  $.post(url,formData,function(ret) {    
+    console.warn(ret);
+    if(ret.code==200){
+      $(".modal-content .alert").slideDown();
+      $(".modal-content .alert").children("p").html(data.message);
+      $(".modal-content .alert").addClass("alert-success");
+      $(".modal-content .alert").children("h4").html("Success!");
+      setTimeout("$('.modal').modal('hide');",1000);
+      setTimeout("location.reload();",1300);
+    }        
+  },'json');
+});
+
+
+$("#data_delete").click(function(){
+    $(this).hide();
+    $(".modal-body p").show();
+    $(".modal-body .tab-head").slideUp();
+    $(".modal-body .tab-content").slideUp();
+    $(".modal-title").html("删除时间安排");
+    $(".modal-body p").html("删除时间安排：<b>" + $("#title").val() + "</b> 吗？");
+    $('#btn_submit').addClass('delete');
+});
+  //标签切换
+  var tab_enable = true;
+  $('#myTab a').click(function (e) {
+    if (tab_enable == true) {
+      e.preventDefault();
+      $(this).tab('show');
+      var data_id = $(this).attr("data-id");
+      $('.form-horizontal').attr("id", "");
+      $('.'+data_id).attr("id", "myForm");
+    };
+  })
+  //初始化
+  //$('#myTab').children().last().hide();
+  //时间初始化
+  var date = new Date();
+  var d = date.getDate();
+  var m = date.getMonth();
+  var y = date.getFullYear();
+  window.drag_start = '';
+  window.drag_end = '';
+
+  //记录用户选定的时间按钮状态(月，周，日)
+  // var last_time_type = getCookie('OA_MEILISHUO_TIME_TYPE');
+
+  //日历初始化
+  var calendar = $('#calendar').fullCalendar({
+    // defaultView: last_time_type ? last_time_type : 'agendaWeek',
+    header: {
+      left: 'prev,next today',
+      center: 'title',
+      right: 'month,agendaWeek,agendaDay'
+    },
+    minTime:8,
+    maxTime:24,
+    firstDay:1,
+    //防止重叠
+    slotEventOverlap:false,
+    selectable: true,
+    selectHelper: true,
+
+  select: function(start, end, allDay) {
+    console.log(1);
+    $('#myTab').children().first().removeClass('active');
+        var myDate = new Date();
+        if (start > myDate) {
+            //表单初始化
+            // $(".form_time").attr("action", "/time/ajax_time_add");
+            // $(".form_meeting").attr("action", "/meeting/ajax_book_add");
+            // $(".form_others").attr("action", "/meeting/ajax_others_add");
+
+            //初始化
+            tab_enable = true;
+            $(".modal-body p").html('');
+            $(".modal-body .tab-head").show();
+            $(".modal-body .tab-content").show();
+            $('#myTab a:first').click();
+// 个人时间
+            $("#inputUserBox_mytime").html('<input type="text" class="form-control" id="relation_user_id" name="invite_users" placeholder="参加人员">');
+            
+            $("#relation_user_id").tokenInput("/aj/address/ajax_search_name", {
+                prePopulate: ''
+            });
+// 会议室
+            $("#invite_users").tokenInput("/aj/address/ajax_search_name", {
+                prePopulate: ''
+            });
+            $("#inputUserBox").html('<input type="text" class="form-control" id="invite_users" name="invite_users" placeholder="参加人员">');
+            
+            //清空上次选择
+            $('#notice_1,#notice_2,#notice_3').addClass('hide');
+            $('#part_div').find("[type='checkbox']").prop('checked', '');
+            $('#part_div').hide();
+            $(".token-input-token").remove();
+            $(".form-horizontal").each(function(){
+              $(this)[0].reset();
+            });
+            $(".available_room").empty();
+            // $(".available_room_id").html(' 点击选择可用会议室... <span class="caret"></span>');
+
+            $("#data_delete").hide();
+            var start_time = $.fullCalendar.formatDate(start,'yyyy-MM-dd HH:mm');
+            var end_time = $.fullCalendar.formatDate(end,'yyyy-MM-dd HH:mm');
+            $('.date_start').val(start_time);
+            $('.date_end').val(end_time);
+            $('#eventModal').modal('show');
+            $(".modal-body p.modal-message").hide();
+            $(".modal-body form").show();
+            $(".modal-title").html("新增时间安排");
+        };
+        //判断预定会议室tab是否出现
+        if(start < myDate){
+          $('#myTab').children().last().hide();
+        }else{
+          $('#myTab').children().last().show();
+        }
+  },
+
+    viewDisplay: function(view) {
+console.log(2);
+        var viewStart = $.fullCalendar.formatDate(view.start,"yyyy-MM-dd HH:mm"); 
+        var viewEnd = $.fullCalendar.formatDate(view.end,"yyyy-MM-dd HH:mm");
+        //记录用户next prev 的状态
+        //alert(date.getDate());
+        //alert(view.end.getDate());
+        //alert((view.end.getDate()) - date.getDate());
+        //TODO 需要处理一些临界条件 or 其他判断条件
+        // if (Math.abs((view.start.getDate()) - date.getDate()) >= 6) {
+        //     setCookie('OA_MEILISHUO_TIME_CHANGE_YEAR', $.fullCalendar.formatDate(view.start,"yyyy"), 1);
+        //     setCookie('OA_MEILISHUO_TIME_CHANGE_MONTH', $.fullCalendar.formatDate(view.start,"MM"), 1);
+        //     setCookie('OA_MEILISHUO_TIME_CHANGE_DATE', $.fullCalendar.formatDate(view.start,"d"), 1);
+        // }
+
+        $("#calendar").fullCalendar('removeEvents');
+        $.getJSON('/aj/meeting/mytime_ajax_all',{start_time:viewStart, end_time:viewEnd},function(ret) {    
+            console.log(ret);
+            var data = ret.data;
+            for(var i=0; i < data.length; i++) {
+               var obj = new Object();
+               obj.id = data[i].id;
+               obj.type = data[i].type;
+               obj.time_id = data[i].time_id;    
+               obj.title = data[i].title;
+               if (data[i].book_id > 0) {
+                    obj.display_title = data[i].display_title;                   
+               }
+               obj.color = data[i].color;
+               obj.start = data[i].start;
+               obj.end = data[i].end;
+               obj.users = data[i].users;
+               obj.others = data[i].others;
+               obj.room_info = data[i].room_info;
+               obj.allDay = data[i].allDay;
+               obj.is_repeat = data[i].is_repeat;
+               // obj.selectable = data[i].editable;
+               obj.editable = data[i].editable;
+               obj.provide_service = data[i].provide_service;
+               obj.notice = data[i].notice;
+               // obj.branch_field = data[i].branch_field;
+
+               calendar.fullCalendar('renderEvent',obj, true);
+           }
+       });
+    },
+
+    eventClick: function(event, element) {
+      console.log(3);
+      console.warn('timeid'+event.time_id);
+      //判断预定会议室tab是否出现
+      var myDate = new Date();
+      var _start = '';
+      var timer = setInterval(function(){
+        if($('#start').val() != ""){
+          _start = new Date($('#start').val());
+          console.log('_start: '+_start);
+          console.log('myDate: '+myDate);
+          if(_start < myDate){
+            $('#myTab').children().last().hide();
+            $('#myTab').children().first().addClass('active');
+          }else{
+            $('#myTab').children().last().show();
+          }
+          clearInterval(timer);
+        }
+      },10);
+      
+      
+      // $(".form_time").attr("action", "/time/ajax_update_data");
+      // $(".form_meeting").attr("action", "/meeting/ajax_book_update");
+      // $(".form_others").attr("action", "/meeting/ajax_others_update");
+
+      //初始化
+      tab_enable = true;
+      $("#data_delete").show();
+      $(".modal-body p").html('');
+      $(".modal-body .tab-head").show();
+      $(".modal-body .tab-content").show();
+      $(".modal-title").html("修改时间安排");
+
+      $(".form-horizontal")[0].reset();
+      $(".input_part").html('');
+      //个人内容修改
+      if (event.type == 'time') {
+
+          $('#myTab a:first').click();
+          tab_enable = false;
+
+          $('.book_id').val(event.book_id);
+          // if (event.room_info != undefined) {
+          //   $(".available_room_id").html(event.room_info.room_name+'（'+event.room_info.room_position+'）<span class="caret"></span>');
+          //   $(".room_id").attr('value', event.room_info.room_id);
+          // }
+// 把已选room回显信息加到option中，
+
+          $('#inputId').val(event.id);
+          $('.input-title').val(event.title);
+          $('.date_start').val($.fullCalendar.formatDate(event.start,'yyyy-MM-dd HH:mm'));
+          $('.date_end').val($.fullCalendar.formatDate(event.end,'yyyy-MM-dd HH:mm'));
+          $("#selectColor").find("option[value='" + event.color + "']").attr("selected",true);
+          $('#eventModal').modal('show');
+          $("#modal-body p.modal-message").hide();
+          $("#modal-body form").show();
+          calendar.fullCalendar('updateEvent', event);
+          $('.time_id').val(event.time_id);
+      }
+      //会议室修改
+      else if(event.type == 'meeting'){
+
+          $("#inputUserBox_mytime").html('<input type="text" class="form-control" id="relation_user_id" name="invite_users" placeholder="参加人员">');
+            
+          $("#relation_user_id").tokenInput("/aj/address/ajax_search_name", {
+              prePopulate: ''
+          });
+          $('#myTab a:eq(1)').click();
+          tab_enable = false;
+
+          //删除邀请
+          if (event.editable == false) {
+            
+            $('#eventModal').modal('show');
+            $("#data_delete").hide();
+            $(".modal-body p").show();
+            $(".modal-body .tab-head").slideUp();
+            $(".modal-body .tab-content").slideUp();
+            $(".modal-title").html("删除时间安排");
+            $(".modal-body p").html("要拒绝参加会议：<b>" + event.title + "</b> 吗？");
+
+            // $('.time_id').val(event.time_id);
+            $('#btn_submit').attr('url','/aj/meeting/mytime_ajax_reject');
+            return false;
+          }
+
+          $("#inputUserBox").html('<input type="text" class="form-control" id="invite_users" name="invite_users" placeholder="参加人员">');
+          $("#invite_users").tokenInput("/aj/address/ajax_search_name", {
+              prePopulate: event.users
+          });
+
+          // $('.time_id').val(event.time_id);
+          // $('#notice_1,#notice_2,#notice_3').addClass('hide');
+          var room_id = event.room_id;
+          console.warn(room_info);
+          $.getJSON('/aj/meeting/get_room_service',{room_id:'1'},function(ret) {    
+            if(ret.code==200){
+              $.each(ret.data,function(k,v){
+                console.log(v);
+        var str='<span class="content_padding fontColor" id="notice_'+v.service_id+'">'+
+                  '<input type="checkbox" datatype="array" name="service_id" value="'+v.service_id+'" id="notice_input_'+v.service_id+'">'+ 
+                  '<label for="tele_conferencin">'+v.name+'</label>'+
+                '</span>'
+                $('#input_part').append(str);
+              });
+            }        
+          });
+
+          var book_id = '127';
+          get_room_service
+          $.getJSON('/aj/meeting/ajax_book_read',{book_id:book_id},function(ret){
+
+          console.log(ret);
+          var notice_ids =[];
+          $.each(ret.data,function(key,item){
+            if(key == book_id){
+              $.each(item.services,function(k,v){
+                notice_ids.push(v.service_id);
+              });
+            }else{
+              $('#branch_'+item.room_id).prop('checked','checked');
+            }
+          });
+          
+          if(notice_ids.indexOf('3')>-1){
+            $('#notice_3 input').prop('checked','checked');
+          }
+          if(notice_ids.indexOf('1')>-1){
+            $('#notice_1 input').prop('checked','checked');
+            $('#part_div').show();
+          }
+          if(notice_ids.indexOf('2')>-1){
+            $('#notice_2 input').prop('checked','checked');
+          }
+          if(notice_ids.indexOf('4')>-1){
+            $('#notice_4 input').prop('checked','checked');
+          }
+          if(notice_ids.indexOf('5')>-1){
+            $('#notice_5 input').prop('checked','checked');
+          }
+          //判断招待服务
+          // if(data.provide_service == '1'){
+          //   $('#provide_service').val('1');
+          // }
+
+          $('#inputNotice').attr('data_notice',data.notice);
+          $('#input_part').attr('data_branch',data.branch_field);
+
+        });
+
+          $('.input-title').val(event.title);
+          $('.date_start').val($.fullCalendar.formatDate(event.start,'yyyy-MM-dd HH:mm'));
+          $('.date_end').val($.fullCalendar.formatDate(event.end,'yyyy-MM-dd HH:mm'));
+          $('#inputMemo').val(event.others);
+          $("#inputRepeat").find("option[value='" + event.is_repeat + "']").attr("selected",true);
+
+          $('#eventModal').modal('show');
+          $("#modal-body p.modal-message").hide();
+          $("#modal-body form").show();
+          calendar.fullCalendar('updateEvent', event);
+        }
+        //其它事件
+        else
+        {
+          $('#myTab a:eq(2)').click();
+          tab_enable = false;
+        }
+    },
+
+    eventDragStart: function(event, jsEvent, ui, view) {
+        window.drag_start = $.fullCalendar.formatDate(event.start,'yyyy-MM-dd HH:mm:ss'),
+        window.drag_end = $.fullCalendar.formatDate(event.end,'yyyy-MM-dd HH:mm:ss')
+    },
+    eventDragStop: function(event, jsEvent, ui, view) {
+
+    },
+
+    eventDrop: function(event, jsEvent, ui, view) {
+      console.log(7);
+        if (event.type == 'time') {
+
+          if (event.room_info != undefined) {
+            var available_room_id = event.room_info.room_id;
+          }else{
+            var available_room_id = 0;
+          }
+          $.post("/aj/meeting/mytime_ajax_update_time", {
+            book_id: event.id,
+            book_start: $.fullCalendar.formatDate(event.start,'yyyy-MM-dd HH:mm:ss'),
+            book_end: $.fullCalendar.formatDate(event.end,'yyyy-MM-dd HH:mm:ss')
+          },function(result){
+            console.log(result);
+              // show_message(result.code, result.message);
+              // if (result.code == 400 || result.code == 300) {
+              //   event.start = window.drag_start;
+              //   event.end = window.drag_end;
+              // };
+              // calendar.fullCalendar('updateEvent', event);
+          }, "json");
+        }else if(event.type == 'meeting'){
+          $.post("/aj/meeting/ajax_meeting_update_time", {
+            book_id: event.id,
+            book_start: $.fullCalendar.formatDate(event.start,'yyyy-MM-dd HH:mm:ss'),
+            book_end: $.fullCalendar.formatDate(event.end,'yyyy-MM-dd HH:mm:ss')
+          },function(result){
+            console.log(result);
+              // show_message(result.code, result.message);
+              // if (result.code == 400 || result.code == 300) {
+              //   event.start = window.drag_start;
+              //   event.end = window.drag_end;
+              // };
+              // calendar.fullCalendar('updateEvent', event);
+          }, "json");
+        }
+        else
+        {
+
+        }
+
+    },
+
+    eventResizeStart: function(event, jsEvent, ui, view) {
+        window.drag_start = $.fullCalendar.formatDate(event.start,'yyyy-MM-dd HH:mm:ss'),
+        window.drag_end = $.fullCalendar.formatDate(event.end,'yyyy-MM-dd HH:mm:ss')
+    },
+
+    eventResize: function(event, jsEvent, ui, view) {
+      console.log(6);
+        if (event.type == 'time') {
+
+          if (event.room_info != undefined) {
+            var available_room_id = event.room_info.room_id;
+          }else{
+            var available_room_id = 0;
+          }
+
+          $.post("/aj/meeting/mytime_ajax_update_time", {
+            book_id: event.id,
+            book_start: $.fullCalendar.formatDate(event.start,'yyyy-MM-dd HH:mm:ss'),
+            book_end: $.fullCalendar.formatDate(event.end,'yyyy-MM-dd HH:mm:ss')
+          },function(result){
+            console.log(result);
+              // show_message(result.code, result.message);
+              // if (result.code == 400 || result.code == 300) {
+              //   event.start = window.drag_start;
+              //   event.end = window.drag_end;
+              // };
+              // calendar.fullCalendar('updateEvent', event);
+          }, "json");
+        }else if(event.type == 'meeting'){
+          $.post("/aj/meeting/ajax_meeting_update_time", {
+           book_id: event.id,
+           book_start: $.fullCalendar.formatDate(event.start,'yyyy-MM-dd HH:mm:ss'),
+           book_end: $.fullCalendar.formatDate(event.end,'yyyy-MM-dd HH:mm:ss')
+        
+        },function(result){
+          console.log(result);
+            // show_message(result.code, result.message);
+            // if (result.code == 400 || result.code == 300) {
+            //   event.start = window.drag_start;
+            //   event.end = window.drag_end;
+            // };
+            // calendar.fullCalendar('updateEvent', event);
+        }, "json");
+
+        }
+        else
+        {
+
+        }
+
+    },
+    eventMouseover: function(event, jsEvent, view){
+        showDetail(event, jsEvent);
+    },
+    eventMouseout: function(event, jsEvent, view){
+        $('.tip').remove();
+    },
+
+  });
+
+function showDetail(obj, e){
+    var eInfo = '<div id="tip" class="bs-callout bs-callout-danger tip" style="display:none;"><ul>';  
+    eInfo += '<li class="clock">' + '开始：'+$.fullCalendar.formatDate(obj.start,"yyyy-MM-dd HH:mm:ss") +'</br>结束：'+$.fullCalendar.formatDate(obj.end,"yyyy-MM-dd HH:mm:ss")+ '</li>';  
+    if (obj.book_id) {
+        eInfo += '<li class="message">' +'会议室：'+ obj.room_info.room_name+'（'+obj.room_info.room_position+'）<br/> </li>';
+        eInfo += '<li class="message">' + obj.title+ '<br/> </li>';  
+    }
+    else {
+        eInfo += '<li class="message">' +'内容：'+ obj.title+ '<br/> </li>';  
+    }
+    //eInfo += '<li>分类：' + obj.title + '</li>';
+    eInfo += '</ul></div>';  
+    $(eInfo).appendTo($('body'));  
+    $('#tip').css({"opacity":"0.4", "display":"none", "left":(e.pageX + 20) + "px", "top":(e.pageY + 10) + "px"}).fadeTo(600, 0.9);  
+    //鼠标移动效果  
+    $('.fc-event-inner').mousemove(function(e){  
+        $('#tip').css({'top': (e.pageY + 10), 'left': (e.pageX + 20)});  
+    });
+}
+
+  //视频会议开启事件
+  $('#video_conferencing').on('click',function(){
+    if($(this).attr('checked')==undefined){
+      $(this).attr('checked','true');
+      $('#part_div').show();
+    }else{
+      $(this).removeAttr('checked');
+      $('#part_div').find("[type='checkbox']").removeAttr('checked');
+      $('#part_div').hide();
+    }
+  });
+  //分会场选择事件
+  $('#part_div').find("[type='checkbox']").on('click',function(e){
+    if($(e.target).attr('checked')==undefined){
+      $(e.target).attr('checked','true');
+    }else{
+      $(e.target).removeAttr('checked');
+    }
+  });
+
+  
+
+
+
+
+
+ 
+          
+            

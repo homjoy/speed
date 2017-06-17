@@ -1,0 +1,10 @@
+<li role="presentation"><a href="/my/approval/reimburse">报销 <span class="badge badge-header badge-warning"></span></a></li>
+<li role="presentation"><a href="/my/approval/loan" >借款<span class="badge badge-header badge-warning"></span></a></li>
+<li role="presentation"><a href="/my/approval/pay">付款<span class="badge badge-header badge-warning"></span></a></li>
+<li role="presentation"><a href="/my/approval/contract">合同<span class="badge badge-header badge-warning"></span></a></li>
+<li role="presentation"><a href="/my/approval/budget">预算<span class="badge badge-header badge-warning"></span></a></li>
+<style>
+    .badge-header{
+        right: -5px;
+    }
+</style>

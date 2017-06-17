@@ -1,0 +1,110 @@
+<%#head2.html%>
+
+<div class="boxed">
+    <!--CONTENT CONTAINER-->
+    <!--===================================================-->
+    <div id="content-container">
+        <ol class="breadcrumb">
+            <li><a href="/home">主页</a></li>
+
+            <%if(this.f=='document'){%>
+            <li class="active"><a  href="/home/window/?f=document&s=all">人力资源</a></li>
+                <% /* if(this.s=='requestAbsence'){%>
+                <li><a href="/home/window/?f=document&s=requestAbsence">请假</a></li>
+                <%}else if(this.s=='absenceApprove'){%>
+                <li><a href="/home/window/?f=document&s=absenceApprove">请假审批</a></li>
+                <%}else if(this.s=='requestDimission'){%>
+                <li><a href="/home/window/?f=document&s=requestDimission">离职申请</a></li>
+                <%}else if(this.s=='DimissionApprove'){%>
+                <li><a href="/home/window/?f=document&s=DimissionApprove">离职审批</a></li>
+                <%}else if(this.s=='HandOverApprove'){%>
+                <li><a href="/home/window/?f=document&s=HandOverApprove">交接审批</a></li>
+                <%}else if(this.s=='requestChange'){%>
+                <li><a href="/home/window/?f=document&s=requestChange">申请换岗</a></li>
+                <%}else if(this.s=='changeApprove'){%>
+                <li><a href="/home/window/?f=document&s=changeApprove">换岗审批</a></li>
+                <%}else if(this.s=='Positive_approve_list'){%>
+                <li><a href="/home/window/?f=document&s=Positive_approve_list">转正</a></li>
+                <%}else if(this.s=='jd'){%>
+                <li><a href="/home/window/?f=document&s=jd">职位描述</a></li>
+                <%}else if(this.s=='hrRecommend'){%>
+                <li><a href="/home/window/?f=document&s=hrRecommend">简历推荐</a></li>
+                <%} */ %>
+            <%}else if(this.f=='executive'){%>
+            <li class="active"><a href="/home/window/?f=executive&s=all">行政中心</a></li>
+                <% /* if(this.s=='requestStationery'){%>
+                <li><a href="/home/window/?f=executive&s=requestStationery">办公用品申请</a></li>
+                <%}else if(this.s=='stationeryApprove'){%>
+                <li><a href="/home/window/?f=executive&s=stationeryApprove">办公用品审批</a></li>
+                <%}else if(this.s=='requestCard'){%>
+                <li><a href="/home/window/?f=executive&s=requestCard">名片申请</a></li>
+                <%}else if(this.s=='visaRequest'){%>
+                <li><a href="/home/window/?f=executive&s=visaRequest">签证申请</a></li>
+                <%}else if(this.s=='visaApprove'){%>
+                <li><a href="/home/window/?f=executive&s=visaApprove">签证审批</a></li>
+                <%}else if(this.s=='visaHelp'){%>
+                <li><a href="/home/window/?f=executive&s=visaHelp">签证须知</a></li>
+                <%}else if(this.s=='requestTravel'){%>
+                <li><a href="/home/window/?f=executive&s=requestTravel">出差申请</a></li>
+                <%}else if(this.s=='travelApprove'){%>
+                <li><a href="/home/window/?f=executive&s=travelApprove">出差审批</a></li>
+                <%}else if(this.s=='travelTotal'){%>
+                <li><a href="/home/window/?f=executive&s=travelTotal">出差天数</a></li>
+                <%}else if(this.s=='assets_request'){%>
+                <li><a href="/home/window/?f=executive&s=assets_request">固定资产申请</a></li>
+                <%}else if(this.s=='assets_approve'){%>
+                <li><a href="/home/window/?f=executive&s=assets_approve">固定资产审批</a></li>
+                <%} */%>
+            <%}else if(this.f=='words'){%>
+            <li class="active"><a href="/home/window/?f=words&s=show_all">办公文档</a></li>
+                <% /* if(this.s=='show_by_type?type=1'){%>
+                <li><a href="/home/window/?f=executive&s=show_by_type?type=1">人力文档</a></li>
+                <%}else if(this.s=='show_by_type?type=3'){%>
+                <li><a href="/home/window/?f=executive&s=show_by_type?type=3">行政文档</a></li>
+                <%}else if(this.s=='show_by_type?type=5'){%>
+                <li><a href="/home/window/?f=executive&s=show_by_type?type=5">财务法务文档</a></li>
+                <%}else if(this.s=='show_by_type?type=9'){%>
+                <li><a href="/home/window/?f=executive&s=show_by_type?type=9">IT文档</a></li>
+                <%}else if(this.s=='show_by_type?type=7'){%>
+                <li><a href="/home/window/?f=executive&s=show_by_type?type=7">其它文档</a></li>
+                <%} */ %>
+            <%}else if(this.f=='redmine'){%>
+            <li class="active"><a href="javascript:void(0);">IT服务</a></li>
+            <!-- <li><a href="/home/window/?f=redmine&s=request">redmine权限</a></li> -->
+            <%}else if(this.f=='svn'){%>
+            <li class="active"><a href="javascript:void(0);">IT服务</a></li>
+            <%}else if(this.f=='vpn'){%>
+            <li class="active"><a href="javascript:void(0);">IT服务</a></li>
+            <!-- <li><a href="/home/window/?f=vpn&s=request">VPN权限</a></li> -->
+            <%}else if(this.f=='user'&&this.s=='profile'){%>
+            <li class="active"><a href="javascript:void(0);">个人中心</a></li>
+                <%if(this.s=='wifi'){%>
+                <!-- <li><a href="/home/window/?f=user&s=wifi">访客WIFI</a></li> -->
+                <%}%>
+            <%}else if(this.s=='map'){%>
+            <li><a href="/meeting">会议室预定</a></li>
+            <li class="active">楼层分布图</li>
+            <%}%>
+        </ol>
+        <div id="page-content" style="padding-top:0;">
+            <iframe src="<%=this.url%>" marginheight="0" marginwidth="0" frameborder="0" scrolling="no" width="100%"
+                    height=100% id="iframepage" name="iframepage"></iframe>
+        </div>
+
+    </div>
+    <!--===================================================-->
+    <!--END CONTENT CONTAINER-->
+    <%#mainnav_container_left.html%>
+    <%#footer.html%>
+</div>
+
+</div>
+<!-- END SETTINGS -->
+
+
+<%! $_ENGINE_SELF.callFn("useModule")("<<<_use:
+        document.domain = 'meilishuo.com';
+        fml.use('speed/common/base');
+        fml.use('speed/common/iframe',function(iframe){iframe.init('#iframepage');});
+_use:", this._JSstack , this._JSmods); %>
+<%#foot.html%>

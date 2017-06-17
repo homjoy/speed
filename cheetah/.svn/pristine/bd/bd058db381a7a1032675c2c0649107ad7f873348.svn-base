@@ -1,0 +1,13 @@
+<header id="navbar" style="z-index:1;">
+    <div id="navbar-container">
+        <img class="navbar-logo" src="<%= this.PICTURE_URL  %>img/family/navbar/logo.png"/>
+        <div class="navbar-function-content pull-right">
+            <div class="navbar-search">
+                <input placeholder="可按姓名、花名、拼音、手机号、邮箱前缀搜索"/>
+
+            </div>
+            <span>Hello ! 树懒 </span>
+            <img src="<%= this.PICTURE_URL %>img/family/navbar/exit.png "/>
+        </div>
+    </div>
+</header>

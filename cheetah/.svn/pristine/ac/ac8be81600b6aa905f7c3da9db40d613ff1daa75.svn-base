@@ -1,0 +1,142 @@
+body{
+font-family: '微软雅黑', 'Microsoft YaHei' !important;
+}
+#mainnav-menu li a {
+  position: relative;
+}
+
+.left_img {
+  height: 16px;
+  width: 20px;
+  position: absolute;
+  left: 14px
+}
+
+#mainnav-menu .menu-title {
+  margin-left: 28px
+}
+
+.brand-icon-fyc {
+  margin-left: 70px;
+  float: left;
+  margin-top: 3px
+}
+
+.down_load img {
+  width: 110px;
+}
+
+.down_load a {
+  text-align: center;
+}
+
+.head-list-user li img {
+  margin-left: 20px;
+  margin-right: 10px
+}
+
+.breadcrumb {
+  margin-top: 15px;
+  font-size: 14px
+}
+
+.share_high_light {
+  background: #F3F3F3;
+  border-radius: 5px
+}
+
+#mainnav-container {
+  position: fixed !important;
+}
+
+header {
+  position: fixed !important;
+}
+
+.pad-all {
+  text-align: center;
+}
+
+.left {
+  float: left;
+}
+
+.right {
+  float: right;
+}
+
+.message_to_do {
+  border-radius: 16px;
+  padding: 0px 5px;
+  color: white
+}
+
+// 我的时间
+.myself_time, .share_time_head {
+  list-style: none;
+  text-align: center;
+  float: left;
+  margin-bottom: 10px;
+  padding-top: 12px;
+  width: 100px;
+  height: 100px;
+  color: black;
+  font-size: 14px;
+  margin-left: 5px;
+  border-radius: 5px;
+  &:hover {
+    background-color: #f2f2f2;
+    border-radius: 5px;
+  }
+  &:active {
+    background-color: #E3E3E3;
+    border-radius: 5px;
+  }
+}
+
+.modal-backdrop {
+  height: 100%;
+  position: fixed;
+}
+
+// 面包屑
+.breadcrumb {
+  margin: 20px 0 !important;
+}
+.breadcrumb>.active>a{color:#777777}
+// 会议室插件
+#calendar > table > tbody > tr > td.fc-header-left > span.fc-button.fc-button-prev.fc-state-default.fc-corner-left, #calendar > table > tbody > tr > td.fc-header-left > span.fc-button.fc-button-next.fc-state-default.fc-corner-right {
+  height: 31px;
+  line-height: 30px;
+  &:hover {
+    background-color: #F4F4F4;
+  }
+}
+
+#calendar > table > tbody > tr > td.fc-header-left > span.fc-button.fc-button-today.fc-state-default.fc-corner-left.fc-corner-right.fc-state-disabled {
+  background-color: #5fa2dd;
+  color: white;
+  opacity: 1;
+  &:hover {
+    background-color: darken(#5fa2dd, 5%) !important;
+  }
+}
+//右侧蓝色竖条bug
+#navbar-container > div.navbar-content.clearfix > ul{max-height: 50px}
+// .fc-state-hover{background-color: #f4f4f4;color: black !important;}
+// 行距重写
+.panel {
+  margin-bottom: 16px !important;
+}
+
+.modal-content {
+  border-radius: 5px !important;
+}
+
+.btn {
+  border-radius: 5px !important;
+}
+
+#navbar-container {
+  max-height: 50px
+}

@@ -1,0 +1,138 @@
+<?php 
+namespace WorkFlowApi\Modules\Task;
+
+/**
+ * 任务创建
+ * @author yixiangwang@meilishuo.com
+ * @since 2015-07-30
+ */
+
+use WorkFlowApi\Modules\Common\BaseModule;
+use WorkFlowApi\Package\Common\Response;
+use WorkFlowApi\Package\Task\TaskTransfer;
+
+class GetTaskInfoById extends BaseModule {
+
+	private $params;
+	
+	public function run() {
+	
+		$this->_init();
+	
+		//参数校验
+		if($this->post()->hasError()){
+			$return = Response::gen_error(10001, '', $this->post()->getErrors());
+			return $this->app->response->setBody($return);
+		}
+		
+		if(empty($this->params['task_id'])) {
+			$return = Response::gen_error(10002, '', 'task_id 校验为空');
+			return $this->app->response->setBody($return);
+		}
+		
+		$taskInfo = $this->getClient()->call('workflowatom', 'process/TaskList', $this->params);
+		$taskInfo = $this->parseApiData($taskInfo);
+	
+		if($taskInfo === FALSE) {
+			return;
+		}
+		$taskInfo = array_pop($taskInfo);
+		
+		if(empty($taskInfo)) {
+			$this->app->response->setBody(Response::gen_success($taskInfo));
+		}
+		
+		$userIds = array($taskInfo['user_id']);
+		$currentUserId = array();
+		if(!empty($taskInfo['current_user_id'])) {
+			$currentUserId[] = $userIds[] = $taskInfo['current_user_id'];
+		}else {
+			$processInfo = $this->getClient()->call('workflowatom', 'process/get_process_info_by_id', array(
+				'process_id'	=> $taskInfo['current_node_id']
+			));
+			$processInfo = $this->parseApiData($processInfo);
+			
+			if(!empty($processInfo['error_msg'])) {
+				return $this->app->response->setBody(Response::gen_error($processInfo['error_code'], $processInfo['error_msg']));
+			}
+			
+			TaskTransfer::$uid = $this->app->currentUser['id'];
+			$currentUserId = $nextUserIds = TaskTransfer::getNextUser($processInfo['role_id']);
+
+			if (isset($nextUserIds['error_msg']) && !empty($nextUserIds['error_msg'])) {
+				return $this->app->response->setBody(Response::gen_error($nextUserIds['error_code'], $nextUserIds['error_msg']));
+			} else if (empty($nextUserIds)) {
+				return $this->app->response->setBody(Response::gen_error(10001, '获取上级审批人失败'));
+			}	
+
+			$userIds = array_merge($userIds, $nextUserIds);
+		}
+		
+		//获取task相关信息
+		$multiClient = $this->getMultiClient();
+		//typeInfo
+		$multiClient->call('workflowatom', 'process/get_type_info_by_id', array(
+			'type_id'	=> $taskInfo['tasktype_id']
+		), 'typeInfo');
+		
+		$multiClient->call('atom', 'user/user_info_get', array(
+			'user_id'	=> implode(',', $userIds)
+		), 'userInfo');
+		
+		$multiClient->callData();
+			
+		$error_msg = '';
+		
+		if(!empty($multiClient->typeInfo['content']['error_msg'])) {
+			$error_msg .= $multiClient->typeInfo['content']['error_msg'] . '<br />';
+		}else {
+			$typeInfo = $this->parseApiData($multiClient->typeInfo);
+		}
+		
+		if(!empty($multiClient->userInfo['content']['error_msg'])) {
+			$error_msg .= $multiClient->userInfo['content']['error_msg'] . '<br />';
+		}else {
+			$userInfo = $this->parseApiData($multiClient->userInfo);
+		}
+		
+		if(!empty($error_msg)) {
+			$this->app->response->setBody(Response::gen_error(10000, $error_msg));
+		}else {
+			
+			$return = $taskInfo;
+			
+			$return['taskType'] = $typeInfo['type_name'];
+			$return['create_user_name'] = $userInfo[$taskInfo['user_id']]['name_cn'];
+			$return['create_user_email'] = $userInfo[$taskInfo['user_id']]['mail_full'];
+			
+			if(!empty($currentUserId)) {
+				$return['current_user_name'] = $return['current_user_email'] = $return['current_user_info'] = array();
+				
+				foreach($currentUserId as $uid) {
+					$return['current_user_name'][] = $userInfo[$uid]['name_cn'];
+					$return['current_user_email'][] = $userInfo[$uid]['mail_full'];
+
+					$return['current_user_info'][] = array(
+						'user_id' => $uid,
+						'name'    => $userInfo[$uid]['name_cn'],
+						'mail'    => $userInfo[$uid]['mail_full']
+					);
+				}
+			}
+			
+			$this->app->response->setBody(Response::gen_success($return));
+		}
+	}
+	
+	private function _init() {
+	
+		$this->rules = array(
+			'task_id'	=> array(
+				'type'		=> 'integer',
+				'default'	=> 0,
+			)
+		);
+		
+		$this->params = $this->post()->safe();
+	}
+}

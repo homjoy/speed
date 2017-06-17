@@ -1,0 +1,80 @@
+<?php
+
+namespace Admin\Package\Mail;
+
+use Admin\Modules\Common\BaseModule;
+use Admin\Package\Common\Response;
+/**
+ * mail 的通用方法
+ * @package Admin\Package\Workflow
+ * @author guojiezhu@meilishuo.com
+ * @since 2015-11-05
+ */
+
+class MailGroup extends \Admin\Package\Common\BasePackage {
+    //mail的发送地址
+    const EMAIL_URL ='http://172.16.0.123/apis/core_api_v1.php';
+    private static $instance = null;
+    private function __construct() {}
+
+    public static function getInstance()
+    {
+        if(is_null(self::$instance)){
+            self::$instance = new self();
+          
+        }
+        return self::$instance;
+    }
+
+
+    /**
+     * 获取加密数据
+     * @param $act
+     *
+     * @return string
+     */
+    public  function checkKey($act){
+        $ts = time();
+        $sharedkey = "CoreMail2015";
+        $nseckey = $sharedkey . $act . "$ts" ;
+        $seckey = md5($nseckey);
+        return $seckey;
+    }
+    
+
+    /**
+     * 获取邮件组的列表
+     * @param array $params
+     *
+     * @return bool
+     */
+    public  function getMailGroupList($params = array()){
+        $ret = self::getClient()->call('atom', 'mail/mail_group_search', $params);
+        $ret = self::parseRemoteData($ret);
+        return $ret;
+    }
+
+    /**
+     * @param array $params
+     *
+     * @return bool
+     */
+    public  function createMailGroup($params = array()){
+        $ret = self::getClient()->call('atom', 'mail/mail_group_create', $params);
+        $ret = self::parseRemoteData($ret);
+        return $ret;
+    }
+
+    /**
+     * 删除邮件列表
+     * @param array $params
+     *
+     * @return bool
+     */
+    public  function deleteMailGroup($params = array() ){
+        $ret = self::getClient()->call('atom', 'mail/mail_group_update', $params);
+        $ret = self::parseRemoteData($ret);
+        return $ret;
+    }
+
+}

@@ -1,0 +1,1 @@
+Hi! {{receive_name}}：{{username}}提交了一个申请。{{order_explains}}申请类型：{{order_type}}

@@ -1,0 +1,58 @@
+<%#head.html %>
+<div id="container" class="effect mainnav-lg">
+    <%#navbar.html %>
+
+    <script type="text/javascript">
+        SPEED.rooms = [{'id':'<%= this.room_id || 0 %>','name':'<%= this.get_room.data[0].room_name %>',"selected":true,services:'<%=this.serviceIds || ""%>'}];
+    </script>
+    <div class="boxed">
+        <div id="content-container">
+            <ol class="breadcrumb">
+                <li><a href="/home">首页</a></li>
+                <li class="active"><a href="/meeting">会议室预定</a></li>
+
+                <% if(this.get_room){ %>
+                <li class="active meeting_room_name"><%= this.get_room.data[0].room_name %></li>
+                <% } %>
+            </ol>
+
+            <div id="page-content" class="has-switch">
+                <div class="switch-view">
+                    <a href="javascript:void(0);" class="only-workday" data-value="workday"><i class="eye"></i>只看工作日</a>
+                </div>
+                <div class="panel">
+                    <div id='calendar'></div>
+                </div>
+            </div>
+            <%#footer.html%>
+        </div>
+        <%#mainnav.html%>
+    </div>
+</div>
+
+<%#time/modal.html %>
+
+<style>
+    @media (min-width: 500px) and (max-width: 549px) {
+        .fc-header-title h2 {
+            font-size: 16px
+        }
+    }
+
+    @media (max-width: 499px) {
+        .fc-header-title h2 {
+            display: none;
+        }
+    }
+
+    #container {
+        min-height: 100%;
+        position: absolute;
+        width: 100%
+    }
+</style>
+<%! $_ENGINE_SELF.callFn("useModule")("<<<_use:
+        fml.use('speed/common/base');
+        fml.use('speed/meeting/room');
+_use:", this._JSstack , this._JSmods); %>
+<%#foot.html%>

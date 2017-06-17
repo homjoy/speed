@@ -1,0 +1,60 @@
+<%if(!this.detail || this.detail.rcode != 200){%>
+<div class="alert alert-danger fade in"><%= this.detail ? (this.detail.rmessage || '获取信息出错.') : ''%></div>
+<script>
+    (function(){
+        setTimeout(function(){window.close();},3000);
+    })();
+</script>
+<%}else{%>
+
+<%#head.html%>
+    <div class="print-content">
+        <table class="table text-left contract-header">
+            <tr>
+                <td>经办人：<%=this.detail.contractApplication.userName||''%></td>
+                <td>部门：<%=this.detail.contractApplication.departmentName||''%></td>
+                <td>联系电话：<%=this.detail.contractApplication.cabHandingPersonTel || '' %></td>
+            </tr>
+        </table>
+        <script>var TPL_DETAIL = <%= JSON.stringify(this.detail) %>;</script>
+        <div class="table-template-container" data-tpl="contract-detail-tpl"  data-class="table-printed finance"></div>
+        <%#contract/detail.tpl.html %>
+
+        <!-- 申请人-->
+        <%#partial/approval_history.html%>
+        <table class="table text-left contract-footer">
+            <tr>
+                <td colspan="6">合同盖章日期: <span class="blank"></span>年<span
+                        class="blank"></span>月<span class="blank"></span>日
+                </td>
+            </tr>
+            <tr>
+                <td><span class="blank"></span></td>
+            </tr>
+            <tr>
+                <td>本合同一式<span class="blank"></span>份，承诺于<span class="blank"></span>年<span
+                        class="blank"></span>月<span class="blank"></span>日返回<span
+                        class="blank"></span>份
+                </td>
+            </tr>
+            <tr>
+                <td><span class="blank"></span></td>
+            </tr>
+            <tr>
+                <td>合同领取人：</td>
+            </tr>
+            <tr>
+                <td><span class="blank"></span></td>
+            </tr>
+            <tr>
+                <td>合同领取日期：<span class="blank"></span>年<span class="blank"></span>月<span
+                        class="blank"></span>日
+                </td>
+            </tr>
+        </table>
+    </div>
+<%! $_ENGINE_SELF.callFn( "useModule")( "<<<_use:
+    fml.use('fms/common/print');
+_use:", this._JSstack , this._JSmods); %>
+<%#foot.html%>
+<%}%>

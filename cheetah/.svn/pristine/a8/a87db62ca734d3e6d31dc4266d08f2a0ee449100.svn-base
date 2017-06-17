@@ -1,0 +1,426 @@
+//#page-content{
+//  background: #fff;
+//  margin: 20px 25px 0;
+//  padding: 20px 30px;
+//
+//}
+body {
+  //font-family: '微软雅黑', 'Microsoft YaHei' !important;
+}
+body,a,b,caption,dd,dl,div,em,form,i,label,ol,select,strong,h1,h2,h3,h4,h5,h6,table,thead,tbody,th,td,
+option,button, input, optgroup, select, textarea{
+  letter-spacing: 1px;//字体间距.
+  font-family: "Helvetica Neue", Helvetica, Microsoft Yahei, Heiti, "黑体", Hiragino Sans GB, WenQuanYi Micro Hei, sans-serif;
+}
+#mainnav-container{
+  width:180px;
+}
+@media (min-width:0px){
+  #container.mainnav-lg #footer, #container.mainnav-lg #content-container{
+    padding-left:180px;
+  }
+}
+#container.mainnav-in.footer-fixed #footer,#container.mainnav-in #navbar,#container.mainnav-in #content-container,#container.mainnav-in #footer{
+  left: 180px;
+}
+
+#message-container {
+  width: 100%;
+  top: 50px;
+  right: 0; //TODO 为什么此布局需要设置这玩意。。//你猜
+  z-index: 100;
+  position: fixed;
+  display: none;
+  .container {
+    width: 400px;
+  }
+}
+
+#mainnav-menu li a {
+  position: relative;
+}
+
+.left_img {
+  height: 16px;
+  width: 20px;
+  position: absolute;
+  left: 14px
+}
+
+#mainnav-menu .menu-title {
+  margin-left: 28px
+}
+
+.brand-icon-fyc {
+  margin-left: 70px;
+  float: left;
+  margin-top: 3px
+}
+
+.down_load img {
+  width: 110px;
+}
+
+.down_load a {
+  text-align: center;
+}
+
+.head-list-user li img {
+  margin-left: 20px;
+  margin-right: 10px
+}
+
+.breadcrumb {
+  margin-top: 15px;
+  font-size: 14px
+}
+
+
+#mainnav-container {
+  position: fixed !important;
+}
+
+header {
+  position: fixed !important;
+  z-index: 99;
+}
+
+.pad-all {
+  text-align: center;
+}
+
+.left {
+  float: left;
+}
+
+.right {
+  float: right;
+}
+
+.message_to_do {
+  border-radius: 16px;
+  padding: 0px 5px;
+  color: white
+}
+
+
+
+.modal-backdrop {
+  height: 100%;
+  position: fixed;
+}
+
+// 面包屑
+.breadcrumb {
+  margin: 20px 0 !important;
+}
+
+.breadcrumb > .active > a {
+  color: #777777
+}
+
+// 会议室插件
+#calendar > table > tbody > tr > td.fc-header-left > span.fc-button.fc-button-prev.fc-state-default.fc-corner-left, #calendar > table > tbody > tr > td.fc-header-left > span.fc-button.fc-button-next.fc-state-default.fc-corner-right {
+  height: 31px;
+  line-height: 30px;
+  &:hover {
+    background-color: #F4F4F4;
+  }
+}
+
+//右侧蓝色竖条bug
+#navbar-container > div.navbar-content.clearfix > ul {
+  max-height: 50px
+}
+
+// .fc-state-hover{background-color: #f4f4f4;color: black !important;}
+// 行距重写
+.panel {
+  margin-bottom: 16px !important;
+}
+
+.modal-content {
+  border-radius: 5px !important;
+}
+
+.btn {
+  border-radius: 5px ;
+}
+
+#navbar-container {
+  max-height: 50px
+}
+
+#page-content {
+  background: #fff;
+  margin: 0px 25px;
+  padding: 20px 30px;
+  //各种圆角。。
+  -webkit-border-radius: 5px;
+  -moz-border-radius: 5px;
+  border-radius: 5px;
+}
+
+#download-client {
+  .head-list {
+    > li:first-child {
+      a:hover {
+        background: #fff;
+      }
+    }
+  }
+}
+
+#footer {
+  .pad-lft {
+    padding-left: 25px;
+  }
+  .pad-rgt {
+    padding-right: 25px;
+  }
+}
+//ul li 默认样式
+ul li{list-style: none;}
+ul{padding-left: 0;}
+//自定义panel_pink样式
+.panel_pink{
+  height: 42px;
+  background-color: #ff80A9;
+  line-height: 42px;
+  color: white;
+  font-size: 16px;
+  text-align: center;
+  margin: 10px 40px;
+}
+//.btn样式
+.btn-beauty{
+  color: white;
+  background-color: #F98FB3;
+  font-size: 16px;
+  line-height: 20px;
+  display:inline-block;
+  height: 33px;
+  //text-align: center;
+  //border-radius: 5px;
+  &:hover{
+    background-color: #FF3C7B;
+    color: white;
+  }
+  &:focus{color:white;}
+}
+//edit by yuchenfang,经多次测试，确定没问题添加的，表单验证时必填项覆盖掉绿色，
+.has-success .form-control{
+  border-color: #e9e9e9 !important;
+  &:focus{
+    border-color:#83cdf8 !important;
+  }
+}
+.has-success label{
+  color: currentColor !important;
+}
+
+.has-error .form-control{
+  border-color: #f56245 !important;
+}
+//颜色
+.first-title{
+  color:#515151;}
+.second-title{
+  color: #626262;}
+.thrid-title{
+  color: #6a6a6a;}
+.forth-title{
+  color: #a0a0a0;}
+//select
+.input-select{
+  border: 1px solid #eeeeee;
+  li{
+    text-indent: 10px;
+    &:hover{ background: #eeeeee;}
+  }
+}
+@import "meeting/checkin";
+
+
+
+
+.wizard-container{
+  position: absolute;
+  top:0;
+  left:0;
+  width: 100%;
+  height:100%;
+  display: block;
+  z-index: 9999;
+  background-color: rgba(0,0,0,0.65);
+
+  .wizard{
+    opacity: 1;
+    display:block;
+    position: absolute;
+
+    //&.wizard-check-in{
+    //  position: fixed;
+    //  right:5%;
+    //  top:50px;
+    //  width: 599px;
+    //  height: 452px;
+    //  background: transparent url('../../img/speed/wizard/checkin.png') center 0 no-repeat;
+    //}
+    &.new-home{
+      right:7%;
+      top:335px;
+      width: 800px;
+      height: 452px;
+      background: transparent url('../../img/speed/wizard/newhome.png') center 0 no-repeat;
+    }
+    &.wizard-close-check-in{
+      position: absolute;
+      top: 817px;
+      right:196px;
+      width: 1000px;
+      height: 430px;
+      background: transparent url('../../img/speed/wizard/busLineTable.png') center 0 no-repeat;
+    }
+
+    &.wizard-switch-overview{
+      position: fixed;
+      top: 113px;
+      right: 39px;
+      width: 281px;
+      height: 253px;
+      background: transparent url('../../img/speed/wizard/switch-overview.png') center 0 no-repeat;
+    }
+
+    &.wizard-time-my{
+      position: absolute;
+      top: 224px;
+      right: 152px;
+      width: 989px;
+      height: 685px;
+      background: transparent url('../../img/speed/wizard/myyindao.png') center 0 no-repeat;
+    }
+  }
+}
+
+
+#mainnav-container{
+  .mainnav-toggle{
+    padding: 20px 12px 0 14px;
+    height: 50px;
+    width:180px;
+    display: block;
+    //text-align: left;
+    background: url('../../img/speed/home/left_menu.png') 14px 25px no-repeat;
+    background-size:18px 10px;
+    &.thin{
+      display: block;
+      height: 50px !important;
+    }
+  }
+}
+
+.no-padding{padding:0}
+//在祖元素放个speed类就ok
+//label样式
+.speed label{
+  line-height: 30px;
+  font-size: 14px;
+}
+// 输入框样式
+.speed input:not([type="radio"]):not([type="checkbox"]){
+  height: 42px !important;font-size: 14px !important;
+}
+//下拉框。
+.select-div{
+  height: 44px;
+  z-index: 9;
+  .select-input{
+    cursor: pointer !important;
+    background-color: white;
+    background: url(../../img/speed/xiala.png) no-repeat 280px 15px;
+  }
+
+}
+.select-ul{
+  box-shadow:0px 2px 8px rgba(0, 0, 0, 0.21);
+  z-index: 9;
+  border: 1px solid #eee;
+  border-top: none;
+  width:100%;
+  cursor: pointer;
+  li{
+    text-indent: 10px;
+    line-height: 42px;
+    font-size: 14px;
+    background: white;
+    display: block;
+    height: 42px;
+    width: 100%;
+    &:hover{background-color: #eee;}
+  }
+}
+//下拉框结束
+
+
+#page-alert{
+
+  .alert-icon{
+    background: transparent url(../../img/speed/icon/laba.png) left center no-repeat;
+  }
+
+  .alert-title{
+    .open-speed-im{
+      display: inline-block;
+      padding-left:28px;
+      height: 19px;
+      line-height: 19px;
+      margin:-2px 0 0 10px;
+      color:#fff;
+      background: transparent url(../../img/speed/icon/im.png) left center no-repeat;
+      &:hover{
+        background: transparent url(../../img/speed/icon/im2.png) left center no-repeat;
+      }
+    }
+  }
+
+}
+.speedim-span,.speedim-nav{
+  display: block;
+  text-indent: 25px;
+  text-align: center;
+  background: url("../../img/speed/paopaohover.png") no-repeat;
+}
+.speedim-nav{
+  background: url("../../img/speed/paopao.png") no-repeat 36px;
+
+  &:hover{background: url("../../img/speed/paopaohover.png") no-repeat 36px}
+}
+.nav-tabs.slope {
+  > li {
+    &.active {
+      > a {
+        &,
+        &:hover,
+        &:focus {
+          color: #ff6397 !important;
+        }
+      }
+    }
+
+  }
+}
+.datetimepicker {
+  .prev i{
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    background: url("../../img/speed/shift_left.png") no-repeat 6px;
+  }
+  .next i{
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    background: url("../../img/speed/shift_right.png") no-repeat 6px;
+  }
+}

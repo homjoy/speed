@@ -1,0 +1,301 @@
+<%#head.html%>
+<div id="container" class="effect mainnav-lg">
+    <%#navbar.html%>
+    <div class="boxed">
+        <div id="content-container">
+            <div id="page-content">
+                <%if(this.conInfo.rcode!=200){%>
+                <div class="alert alert-danger fade in"><%= this.conInfo ? this.conInfo.rmessage : '';%></div>
+                <%}else{%>
+                <div class="panel">
+                    <form class="panel-body form-horizontal form-padding" enctype="multipart/form-data"
+                          style="padding:36px">
+                        <div class="panel-footer text-right">
+                            <%if(this.conInfo.canApproveFlag == 1){%>
+                            <a href="javascript:;" class="btn btn-agree" data-taskId="<%=this.conInfo.taskid%>" data-formkey="<%=this.conInfo.formkey%>">同意</a>
+                            <a href="javascript:;" class="btn btn-reject" data-taskId="<%=this.conInfo.taskid%>">驳回</a>
+                            <%}%>
+                            <%if(this.conInfo.canModifyFlag == 1){%>
+                            <a class="btn btn-default btn-large btn-edit"
+                               href="/contract/edit/?id=<%=this.conInfo.contractApplication.cabId%>&type=CA">修改</a>
+                            <%}%>
+                            <button class="btn btn-default btn-active-success con-export">打印</button>
+                        </div>
+                        <!--startprint-->
+                        <table class="table text-left contract-header">
+                            <tr>
+                                <td>经办人：<%=this.conInfo.contractApplication.userName||''%></td>
+                                <td>部门：<%=this.conInfo.contractApplication.departmentName||''%></td>
+                                <td>联系电话：<%=this.conInfo.contractApplication.cabHandingPersonTel || '' %></td>
+                            </tr>
+                        </table>
+                        <table class="table table-bordered finance">
+                            <tr>
+                                <input type="hidden" id="conId" value="<%=this.conInfo.contractApplication.cabId%>">
+                                <th colspan="7">
+                                    <h3>合同审批表</h3>
+                                </th>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <label>经办人</label>
+                                </td>
+                                <td colspan="2"><%=this.conInfo.contractApplication.userName||''%></td>
+                                <td>
+                                    <label>经办部门</label>
+                                </td>
+                                <td colspan="2"><%=this.conInfo.contractApplication.departmentName||''%></td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <label>单据编号</label>
+                                </td>
+                                <td colspan="2"><%=this.conInfo.contractApplication.cabCode||''%></td>
+                                <td>
+                                    <label>申请日期</label>
+                                </td>
+                                <td colspan="2"><%=this.conInfo.contractApplication.cabCurrentDate||''%></td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <label>合同编号</label>
+                                </td>
+                                <td colspan="2"><%=this.conInfo.contractApplication.contratno||''%></td>
+                                <td>
+                                    <label>合同签订日期</label>
+                                </td>
+                                <td colspan="2"><%=this.conInfo.contractApplication.cabSignDate||''%></td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <label>收支类型</label>
+                                </td>
+                                <td colspan="5">
+                                    <%=this.conInfo.contractApplication.cabTypeName %>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <label>合同类型</label>
+                                </td>
+                                <td colspan="5">
+                                    <%=this.conInfo.contractApplication.cabAmountTypeName %>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <label>协议类型</label>
+                                </td>
+                                <td colspan="5">
+                                    <%=this.conInfo.contractApplication.cabAddAgreementName %>
+                                </td>
+                            </tr>
+                            <%if(this.conInfo.cabAddAgreement == 'Y'){%>
+                            <tr>
+                                <td>
+                                    <label>主合同编号</label>
+                                </td>
+                                <td colspan="2"><%=this.conInfo.contractApplication.cabMasterContractNumber||''%>
+                                </td>
+                                <td>
+                                    <label>主合同名称</label>
+                                </td>
+                                <td colspan="2"><%=this.conInfo.contractApplication.cabMasterContractName||''%></td>
+                            </tr>
+                            <tr><a href="/contract/view/?id=<%=this.conInfo.contractApplication.cabId%>&type=CA"
+                                   class="btn btn-default">查看主合同</a></tr>
+                            <%}%>
+                            <tr>
+                                <td>
+                                    <label>业务线</label>
+                                </td>
+                                <td colspan="2"><%=this.conInfo.contractApplication.businesslineCodeName||''%></td>
+                                <td>
+                                    <label>合同份数</label>
+                                </td>
+                                <td colspan="2"><%=this.conInfo.contractApplication.contractnum||''%></td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <label>合同名称</label>
+                                </td>
+                                <td colspan="5"><%=this.conInfo.contractApplication.cabNameCn||''%></td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <label>预算项目</label>
+                                </td>
+                                <td colspan="2"><%=this.conInfo.contractApplication.cabBudgetItemId||''%></td>
+                                <td>
+                                    <label>合同签订公司</label>
+                                </td>
+                                <td colspan="2"><%=this.conInfo.contractApplication.cabContractCompany||''%></td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <label>合同金额</label>
+                                </td>
+                                <td colspan="2" class="show-money">
+                                    <%=this.conInfo.contractApplication.cabAmount||''%>
+                                </td>
+                                <td>
+                                    <label>合同期限</label>
+                                </td>
+                                <td colspan="2">
+                                    <%=this.conInfo.contractApplication.cabContractBegin||''%>——<%=this.conInfo.contractApplication.cabContractEnd||''%>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <label>合同主要内容</label>
+                                </td>
+                                <td colspan="5"><div class="ueditor-content"><%=this.conInfo.contractApplication.cabContractDetail||''%></div></td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <label>收/付款条件</label>
+                                </td>
+                                <td colspan="5">
+                                    <div class="ueditor-content"><%=this.conInfo.contractApplication.cabPaymentTerms||''%></div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <label>对方单位</label>
+                                </td>
+                                <td><%=this.conInfo.contractApplication.cabCustomerCompany||''%></td>
+                                <td>
+                                    <label>对方联系人</label>
+                                </td>
+                                <td><%=this.conInfo.contractApplication.cabContractPerson||''%></td>
+                                <td>
+                                    <label>联系电话</label>
+                                </td>
+                                <td><%=this.conInfo.contractApplication.cabTelephone||''%></td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <label>备注</label>
+                                </td>
+                                <td colspan="5"><div class="ueditor-content"><%=this.conInfo.contractApplication.cabRemark||''%></div></td>
+                            </tr>
+                            <tr class="hidden-print">
+                                <td>
+                                    <label>合同附件</label>
+                                </td>
+                                <td colspan="5" class="text-left">
+                                    <%if(this.conInfo.attach){%>
+                                    <%this.conInfo.attach.forEach(function(item,index){%>
+                                    <a href="/download/file/?cabid=<%=item.id%>" class="btn btn-defalut download"
+                                       target="_blank" download="<%=item.fileName||''%>"><%=item.fileName||''%></a>
+                                    <%})%>
+                                    <%}%>
+                                </td>
+                            </tr>
+                            <%if(this.conInfo.contractApplication.cabApprovalState == '5'){%>
+                            <tr>
+                                <td>
+                                    <label>归档编号</label>
+                                </td>
+                                <td>
+                                    <%=this.conInfo.contractApplication.archiveno||''%>
+                                </td>
+                                <td>
+                                    <label>归档日期</label>
+                                </td>
+                                <td>
+                                    <%=this.conInfo.signDate||''%>
+                                </td>
+                                <td class="hidden-print">
+                                    <label>归档附件</label>
+                                </td>
+                                <td class="hidden-print">
+                                    <%if(this.conInfo.archiveAttach && this.conInfo.archiveAttach.length){%>
+                                    <%this.conInfo.archiveAttach.forEach(function(item,index){%>
+                                    <a href="/download/file/?cabid=<%=item.id%>" class="btn btn-defalut download"
+                                       target="_blank" download="<%=item.fileName||''%>"><%=item.fileName||''%></a>
+                                    <%})%>
+                                    <%}%>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <label>归档备注</label>
+                                </td>
+                                <td colspan="5">
+                                    <%=this.conInfo.remark||''%>
+                                </td>
+                            </tr>
+                            <%}%>
+                        </table>
+                        <!-- 申请人-->
+                        <%if(this.conInfo.listAppHis.length>0){%>
+                        <table class="table record-print">
+                            <thead>
+                            <tr>
+                                <th colspan="10" class="text-left">审批记录</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr>
+                                <th>操作人</th>
+                                <th>操作/状态</th>
+                                <th>意见</th>
+                                <th>操作时间</th>
+                            </tr>
+                            <!-- 如果全部通过   pay-over显示 -->
+                            <%this.conInfo.listAppHis.forEach(function(info,index){%>
+                            <tr>
+                                <td><%=info.userName||''%></td>
+                                <td><%=info.ahResult||''%></td>
+                                <td><%=info.ahRemark||''%></td>
+                                <td><%=info.ahTimeStr||''%></td>
+                            </tr>
+                            <%})%>
+                            </tbody>
+                        </table>
+                        <%}%>
+                        <table class="table text-left contract-footer">
+                            <tr>
+                                <td colspan="6">合同盖章日期: <span class="blank"></span>年<span
+                                        class="blank"></span>月<span class="blank"></span>日
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><span class="blank"></span></td>
+                            </tr>
+                            <tr>
+                                <td>本合同一式<span class="blank"></span>份，承诺于<span class="blank"></span>年<span
+                                        class="blank"></span>月<span class="blank"></span>日返回<span
+                                        class="blank"></span>份
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><span class="blank"></span></td>
+                            </tr>
+                            <tr>
+                                <td>合同领取人：</td>
+                            </tr>
+                            <tr>
+                                <td><span class="blank"></span></td>
+                            </tr>
+                            <tr>
+                                <td>合同领取日期：<span class="blank"></span>年<span class="blank"></span>月<span
+                                        class="blank"></span>日
+                                </td>
+                            </tr>
+                        </table>
+                        <!--endprint-->
+                    </form>
+                </div>
+                <%}%>
+            </div>
+        </div>
+        <%#sidebar.html%>
+    </div>
+    <%#footer.html%>
+</div>
+<%! $_ENGINE_SELF.callFn("useModule")("<<<_use:
+        fml.use('fms/contract/view');
+_use:", this._JSstack , this._JSmods); %>
+<%#foot.html%>

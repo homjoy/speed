@@ -1,0 +1,63 @@
+function defaultAction(php){
+		if (!php) {
+			console.log('php not assign ' + this.req.url)
+			return
+		}
+        //php.userInfo = '/user/headinfo';
+        var mSelf = this;
+        //this.eventHandle.onOver = function(data){
+            /*if(data.userInfo){
+                return mSelf.redirectTo('/user/activateEmail/' , false);
+            }*/
+        //}
+		var appMod = require(__dirname+'/application.js');
+
+        // appMod.getGlobalKey(this.req, this.res)
+
+        // this.listenOn(function(evt){
+        //     var os = function(){
+        //         return wapMod.uaos(mSelf.req);
+        //         }
+        //     return evt(os);
+        // },'os')();
+
+        var speed_token = appMod.getCookie(mSelf.req, mSelf.res);
+        // console.log('speed_token: '+appMod.getCookie(mSelf.req, mSelf.res));
+console.log('-----------------------------------------1111'+mSelf.req.url);
+        if(speed_token == undefined && mSelf.req.url != "/login" && mSelf.req.url != "/error_404"){
+            // console.log('mSelf.req.url: '+mSelf.req.url);
+            // console.log('目录: '+"/login");
+            return mSelf.redirectTo("/login");
+        }else if(mSelf.req.url != "/error_404"&&mSelf.req.url != "/login"){
+            php.userInfo = '/auth/check_login?speed_token='+speed_token+'';
+        
+            this.eventHandle.onOver = function(data){
+                // console.log('userInfo: '+data.userInfo.data.is_login);
+                // if(data){
+                //     console.log('-----------------------------------------1'+mSelf.req.url);
+                //     if(data.userInfo){
+                //         console.log('-----------------------------------------2');
+                //         if(data.userInfo.data){
+                //             console.log('-----------------------------------------3');
+                //             if(data.userInfo.data.is_login == false && mSelf.req.url != "/login" && mSelf.req.url != "/error_404"){
+                //                 return mSelf.redirectTo('/login');
+                //             }
+                //         }else{
+                //             console.log('-----------------------------------------4');
+                //             return mSelf.redirectTo('/error_404');
+                //         } 
+                //     }else{
+                //         console.log('-----------------------------------------5');
+                //         return mSelf.redirectTo('/error_404');
+                //     }
+                // }else{
+                //     console.log('-----------------------------------------6');
+                //     return mSelf.redirectTo('/error_404');
+                // }
+            }
+        }
+        
+	}
+
+
+exports.bind = defaultAction

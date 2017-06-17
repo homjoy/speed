@@ -1,0 +1,98 @@
+@import "mixins/preboot.less";
+
+.queen-upload-container {
+
+  .queen-upload-control {
+    .clearfix();
+
+    .btn-queen-upload, .queen-upload-tips {
+      float: left;
+    }
+
+    .btn-queen-upload {
+      margin: 0;
+      padding: 0;
+      display: inline-block;
+      width: 84px;
+      height: 22px;
+      line-height: 22px;
+      text-align: center;
+      -webkit-border-radius: 5px;
+      -moz-border-radius: 5px;
+      border-radius: 5px;
+      background: #fff;
+      border: 1px solid #dddbdd;
+      font-size: 12px;
+      color: #515151;
+      position: relative;
+      overflow: hidden;
+    }
+    .queen-upload-tips {
+      margin: 3px 0 0 8px;
+      font-size: 12px;
+      color: #a0a0a0;
+    }
+  }
+
+  .queen-uploaded-files {
+    margin-top: 16px;
+
+    .queen-file-item {
+      margin: 0 0 8px 0;
+      padding: 0;
+      line-height: 16px;
+      .clearfix();
+    }
+
+    .queen-filename,
+    .queen-attachment,
+    .queen-remove-file,
+    .queen-message {
+      float: left;
+    }
+    .queen-filename {
+      margin-left: 6px;
+      display: inline-block;
+      width: 140px;
+      max-width: 140px;
+      height: 16px;
+      line-height: 16px;
+      font-size: 14px;
+      color: #515151;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      overflow: hidden;
+    }
+    .queen-attachment {
+      display: inline-block;
+      width: 16px;
+      height: 16px;
+      background: transparent url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAMAAAAoLQ9TAAAABGdBTUEAALGPC/xhBQAAACBjSFJNAAB6JgAAgIQAAPoAAACA6AAAdTAAAOpgAAA6mAAAF3CculE8AAABdFBMVEUAAADT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09MAAADo06MKAAAAenRSTlMAE5jo8sJMJN2yKxxo81Q16ooBa9hJbzBBN/lg9FbxX43Ae+5kU4EsA5XkLu09nOIqCK7VHwSe4Auz0hsZcQa8xBIMt9AUyL8QKN/RChfLuw0i2aoHOeyDWdOkMueRAk5pJxFFdWZQ1mPXj1w7bRV4oeEdFkvHzRr3ckOmeuUAAAABYktHRACIBR1IAAAACXBIWXMAAAsSAAALEgHS3X78AAAA3UlEQVQY02NggAFGJmYWVjY4l4Gdg5OLm4eXD8bnFxAUAlLCIlC+KIsYg7gEA4OkFIQvLSPLwCYnz8CgoAjmKylLMKjIqDIwqCmrA7kamlraQmo6ugwaevoGQL6hkbGJqZm5AYOFpZW1jS2Dnb2Do5Oziw2Dq5u7h6cXE4OSt4+vn38AQ2BQcEhoWLgQA0eERmSUHUN0TGxcPG8C0Agp/sSqJIZkuRSGVN40kJXpGaaZzlm82UB7csBuyDXP88hXiDbVMzeAOFKjoFC+qLiktKwc7s8IRd6KssoQKA8AeVcjxgI2HPIAAAAASUVORK5CYII=) no-repeat 0 0;
+    }
+
+    .queen-remove-file {
+      i {
+        display: inline-block;
+        width: 16px;
+        height: 16px;
+        background: transparent url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAMAAAAoLQ9TAAAABGdBTUEAALGPC/xhBQAAACBjSFJNAAB6JgAAgIQAAPoAAACA6AAAdTAAAOpgAAA6mAAAF3CculE8AAAAh1BMVEUAAADT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09Pt7e3z8/PV1dXl5eXh4eH////U1NTn5+f4+Pj09PTo6Oj6+vrZ2dn19fXv7+/g4ODy8vLj4+MAAADn83LUAAAAGXRSTlMAKo7X+NYGlP2YCbu9lSv8j/nz1JAs2Pr0wD1WjwAAAAFiS0dEAIgFHUgAAAAJcEhZcwAACxIAAAsSAdLdfvwAAACUSURBVBjTbY/pDoIwEIQXioAH5WrVtcUqgni8//s5tIkx6vejmZl0ulsiEMUiSRZxRIE0y9mTL1fer/nNJkVQ8AcZkSyZD8bCdEfmUlIFaZw58dn1kBUJnPbizODGK6SgmkMSPNch4MHNLdD4CvrjFJLWP9rhPlo3SEUaY+89+vbxxFj9tVjxb/WfzwGptrt9q/SsX2c4FEleMEPAAAAAAElFTkSuQmCC) no-repeat 0 0;
+      }
+    }
+
+    .queen-message {
+      margin-left: 26px;
+      font-size: 12px;
+
+      &.uploading {
+
+      }
+      &.success {
+        color: #98c664;
+      }
+      &.error {
+        color: #f26a43;
+      }
+    }
+  }
+
+}

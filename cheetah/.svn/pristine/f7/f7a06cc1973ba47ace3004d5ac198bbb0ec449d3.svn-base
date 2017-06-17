@@ -1,0 +1,55 @@
+<%#head.html%>
+<div id="container" class="effect mainnav-lg">
+    <%#navbar.html%>
+    <div class="boxed">
+        <div id="content-container">
+            <div id="page-content">
+                <%if(!this.detail || this.detail.rcode != 200){%>
+                    <div class="alert alert-danger fade in"><%= this.detail ? (this.detail.rmessage || '获取信息出错.') : ''%></div>
+                <%}else{%>
+                <div class="panel">
+                    <div class="panel-body">
+                        <div class="panel-footer text-right">
+                            <% var basicInfo = this.detail.ExpenseCommon.MlsExpenseCommon ; %>
+                            <% if(this.detail.canClaimFlag == 1) {%>
+                                 <a href="javascript:void(0);" data-taskid="<%=this.detail.taskid%>" data-url="/aj/reimburse/claim" class="btn btn-dark list-claim" >加签</a>
+                            <%}%>
+                            <% if(this.detail.canApproveFlag == 1){ %>
+                                <% if(this.detail.formkey!='/contract/dealTask/defaultapprove'){%>
+                                <a href="javascript:void(0);" class="btn btn-danger single activation">修改</a>
+                                <a href="javascript:void(0);" data-task_id="<%=this.detail.taskid%>" data-url="/aj/reimburse/traffic_save_draft" class="btn  btn-danger single save hide">保存</a>
+                                <a href="javascript:void(0);" data-id="<%=this.detail.ExpenseCommon.MlsExpenseCommon.id%>"  data-type="<%=this.detail.ExpenseCommon.MlsExpenseCommon.billType%>" class="btn btn-primary single btn-prompt" >催票</a>
+                                <a href="javascript:void(0);" data-task_id="<%=this.detail.taskid%>" data-url="/aj/reimburse/complete" class="btn btn-warning single list-shift">转移</a>
+                                <a href="javascript:void(0);" data-task_id="<%=this.detail.taskid%>" data-url="/aj/reimburse/approval" class="btn  btn-success single list-agree ">同意</a>
+                                <a href="javascript:void(0);" data-task_id="<%=this.detail.taskid%>" data-url="/aj/reimburse/approval" class="btn  btn-danger single list-reject ">驳回</a>
+                                <%}else{%>
+                                <a href="javascript:void(0);" data-task_id="<%=this.detail.taskid%>" data-url="/aj/reimburse/approval" class="btn  btn-success single list-agree">同意</a>
+                                <a href="javascript:void(0);" data-task_id="<%=this.detail.taskid%>" data-url="/aj/reimburse/approval" class="btn  btn-danger single list-reject">驳回</a>
+                                <%}%>
+                            <% } %>
+                            <% if(this.detail.canModifyFlag == 1){ %>
+                            <a class="btn btn-primary btn-edit" href="/reimburse/traffic/edit?id=<%=basicInfo.id %>">修改</a>
+                            <% } %>
+                            <a  href="/reimburse/traffic/print?id=<%=basicInfo.id %>" target="_blank" class="btn btn-default">打印</a>
+                        </div>
+
+                        <script>var TPL_DETAIL = <%= JSON.stringify(this.detail) %>;</script>
+                        <div class="table-template-container" data-tpl="traffic-table-tpl"  data-class="table-printed"></div>
+                        <%#reimburse/traffic/detail.tpl.html%>
+                        <%#partial/approval_history.html%>
+                    </div>
+                </div>
+                <%}%>
+            </div>
+        </div>
+
+
+        <%#sidebar.html%>
+    </div>
+<%#footer.html%>
+</div>
+
+<%! $_ENGINE_SELF.callFn( "useModule")( "<<<_use:
+        fml.use('fms/reimburse/view');
+_use:", this._JSstack , this._JSmods); %>
+<%#foot.html%>

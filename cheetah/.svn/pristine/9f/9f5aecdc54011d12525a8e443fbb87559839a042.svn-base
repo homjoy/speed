@@ -1,0 +1,16 @@
+/*--/Users/MLS/svn/finance/fms-1.2-bugfix/apps/fms/views/page/expire.html--*/ 
+     var est = require(config.path.lib + 'est/est.js'); 
+     var _extFn = require('/Users/MLS/svn/finance/fms-1.2-bugfix/nest/server/lib/est/extFn.js'); 
+     function requireFn(tpl) { return est.renderFile('/Users/MLS/svn/finance/fms-1.2-bugfix/apps/fms/views/' ,tpl , null , null ,'fms' ,true); } ; 
+     function __getHtml (_data) { 
+       function jsRender(tpl , id) { return est.jsRender(requireFn(tpl)(_data), id  ); } ; 
+       var __htm ='';
+__htm += '';
+__htm += est.renderFile("/Users/MLS/svn/finance/fms-1.2-bugfix/apps/fms/views/" ,"head.html",_data,null,"fms" )||"";
+__htm += '\n<style>\n    html, body, .login-expired {\n        width: 100%;\n        height: 100%;\n        text-align: center;\n        background-color: #fff;\n    }\n    .page-wrap {\n        margin: 90px auto 0;\n        width: 325px;\n        height: 440px;\n        /*position:fixed;*/\n        /*left:50%;top:50%;*/\n        /*margin-left:163px;*/\n        /*margin-top: 220px;*/\n    }\n    .error-ops {\n        width: 325px;\n        height: 325px;\n        background: #fff url(\'';
+__htm += _data.PICTURE_URL ;
+__htm += '/img/fms/shixiao.png\') center no-repeat;\n    }\n    p {\n        text-align: center;\n        margin:0;\n    }\n    .ops {\n        padding: 14px 0 36px;\n        color: #f05d10;\n        font-size: 18px;\n    }\n    #btn-go-login {\n        font-size: 16px;\n        height:28px;\n        line-height: 28px;\n        width:118px;\n        padding:0;\n        background-color: #eab53f;\n    }\n    #btn-go-login:hover,\n    #btn-go-login:focus,\n    #btn-go-login:active {\n        background-color: #cd9b2d;\n    }\n</style>\n<div class="login-expired">\n    <div class="page-wrap">\n        <div class="error-ops">\n        </div>\n        <p class="ops">\n            Ops ~ 登陆失效了.\n        </p>\n        <p>\n            <a id="btn-go-login" class="btn" href="';
+__htm +=_data.domain.speed;
+__htm += '/user/login/">请重新登陆</a>\n        </p>\n    </div>\n</div>\n<script>\n    (function () {\n        setTimeout(function () {\n            document.getElementById("btn-go-login").click();\n        }, 5000);\n    })();\n</script>';
+return __htm;} 
+ exports.html = __getHtml; 

@@ -1,0 +1,18 @@
+<script type="text/html" id="slope-tab-tpl">
+        {{each liList as li}}
+        {{if curTabName == li.labelName}}
+        <li role="presentation" class="active">
+        {{else}}
+        <li role="presentation">
+        {{/if}}
+            {{if curTabName == li.labelName}}
+            <a href="javascript:void(0);">
+            {{else}}
+            <a href="{{li.labelLink}}">
+            {{/if}}
+                {{li.labelName}}
+                <span class="badge badge-header badge-warning"></span>
+            </a>
+        </li>
+        {{/each}}
+</script>

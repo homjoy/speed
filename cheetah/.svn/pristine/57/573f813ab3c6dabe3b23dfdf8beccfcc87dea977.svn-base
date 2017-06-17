@@ -1,0 +1,127 @@
+// 我的时间
+.panel{box-shadow: none}
+#message-container{
+  width:100%; top:50px; z-index: 100; position: fixed;display:none;
+  .container{width:400px;}
+}
+#calendar{margin-top:15px}
+#message-container{
+  .container{width:400px;}
+  width:100%; top:70px; z-index: 100; position: fixed;display:none;
+}
+div.panel.panel-default > div{background: white;
+  border:none ;}
+blockquote{
+  display: block;
+  margin:0;
+  padding: 18px 0 0 0;
+  font-size:12px;
+  border: none !important;
+  a{
+    display: inline-block;
+    margin-bottom: 7px;
+    img{margin-right: 5px;}
+    font-size:14px;
+    color: #ff6e9d;
+    &:first-child{
+      margin-right: 70px;
+    }
+    &:hover{color: #ff6e9d;}
+  }
+  abbr{
+    border-bottom: 1px dotted #999;
+    font-size:12px;
+    margin-top: 3px;
+    color:#6a6a6a;
+  }
+}
+// 头像
+.myself_time, .share_time_head {
+  list-style: none;
+  text-align: center;
+  //float: left;
+  display: inline-block;
+  margin-bottom: 10px;
+  padding-top: 12px;
+  width: 100px;
+  height: 100px;
+  //color: black;
+  color:#6a6a6a;
+  font-size: 14px;
+  margin-left: 5px;
+  border-radius: 5px;
+  img{
+    border:1px solid #dddddd;
+    //padding: 1px 0 ;
+    display:block;
+    border-radius:30px;
+    margin:0 auto;
+  }
+  // &:hover {
+  //   background-color: #f2f2f2;
+  //   border-radius: 5px;
+  // }
+  // &:active {
+  //   background-color: #E3E3E3;
+  //   border-radius: 5px;
+  // }
+}
+// 高亮
+
+.share_high_light {
+  span{color:rgba(252,140,178,1); }
+  img{
+    border:2px solid rgba(252,140,178,0.5);
+  }
+}
+// 悬停
+  #tip {
+      position: absolute;
+      width: 250px;
+      max-width: 400px;
+      text-align: left;
+      padding: 4px;
+      border: 0;
+      /*border-radius: 6px;  */
+      z-index: 1000;
+      background-color: white;
+      border: 1px solid #999999;
+      -webkit-box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+  }
+
+  #tip ul {
+      margin: 0;
+      padding: 0;
+      li{
+        font-family: 'Microsoft YaHei', '微软雅黑', 'Microsoft JhengHei', '宋体';
+        font-size: 14px;
+        list-style: none !important;
+        padding-left: 10px;
+      }
+  }
+
+  
+  @media (min-width: 550px) and (max-width: 700px) {
+      .fc-header-title h2 {
+          font-size: 20px
+      }
+  }
+
+  @media (min-width: 500px) and (max-width: 549px) {
+      .fc-header-title h2 {
+          font-size: 16px
+      }
+  }
+
+  @media (max-width: 499px) {
+      .fc-header-title h2 {
+          display: none;
+      }
+  }
+
+  #container {
+      min-height: 100%;
+      position: absolute;
+      width: 100%
+  }

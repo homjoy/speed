@@ -1,0 +1,111 @@
+<?php
+
+namespace Worker\Scripts\Weather;
+
+use Worker\Package\Weather\City;
+use Worker\Package\Weather\WeatherToday;
+
+/*
+ * 获取每天的天气情况
+ *  author haibinzhou@meilishuo.com
+ *  date 2016-02-17
+ * 每天跑一次脚本
+ */
+class GetWeatherToday extends \Frame\Script {
+
+    public function run() {
+        //获取城市
+        $citys = City::model()->getAllData();
+        if (empty($citys)) {
+            return FALSE;
+        }
+
+        //检测是否24小时之内已经插入数据
+        $check = $this->check($citys);
+
+        if($check){  //如果没有插入过则进行
+            $weatherInfo = array();
+            foreach($citys as $key=>$val){
+                $city = explode(',',$val['pinyin']);
+                $weatherInfo['data'] = $this->getWeatherInfos($city[0]);
+                $weatherInfo['city_id'] = $val['city_id'];
+                $weatherInfo['date'] = date('Y-m-d',time());
+
+                WeatherToday::model()->create($weatherInfo);
+            }
+        }
+
+        global $start;
+        $end = microtime(true);
+        $total = $end-$start;
+        $this->app->response->setBody("开始：{$start}，结束：{$end}，总用时：{$total}秒。\n");
+    }
+
+    //调用天气接口
+    public function getWeatherInfos($city){
+        $city = strtolower($city);
+        $ch = curl_init();
+        $url = 'http://apis.baidu.com/heweather/weather/free?city='.$city;
+        $header = array(
+            'apikey: fab2ff5cf6b03bbc683e735488443e2f',
+        );
+        // 添加apikey到header
+        curl_setopt($ch, CURLOPT_HTTPHEADER  , $header);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+        // 执行HTTP请求
+        curl_setopt($ch , CURLOPT_URL , $url);
+        $res = curl_exec($ch);
+        $res = json_decode($res,true);
+        $res = array_pop($res);
+        $res = array_shift($res);
+        $result = $this->dataFormal($res);
+
+        return $result;
+    }
+
+    //整理成需要的数据格式
+    public function dataFormal($weather){
+        if(empty($weather)){
+            return array();
+        }
+
+        $date_sr = date('Y-m-d 6:50:00');
+        $date_ss = date('Y-m-d 6:40:00');
+        $sunrise = strtotime($date_sr);
+        $sunset  = strtotime($date_ss);
+        if(!empty($weather['daily_forecast'])){
+            $daily = array_pop($weather['daily_forecast']);
+            if(isset($daily['astro']) && !empty($daily['astro'])){
+                $date_sr = date('Y-m-d '.$daily['astro']['sr']);  //日出时间
+                $date_ss = date('Y-m-d '.$daily['astro']['ss']);  //日落时间
+                $sunrise = strtotime($date_sr);
+                $sunset  = strtotime($date_ss);
+            }
+        }
+
+
+        $formalInfos['country'] = 'CN';
+        $formalInfos['sunrise'] = $sunrise;
+        $formalInfos['sunset']  = $sunset;
+
+        return json_encode($formalInfos);
+    }
+
+
+    public function check($citys){
+        $check = true;
+
+        $city_id = array_shift($citys);
+        $date = date('Y-m-d',time());
+        $weatherFirst = WeatherToday::model()->getData($city_id['city_id'],$date);
+        if(!empty($weatherFirst)){
+            $updateTimediff = time() - strtotime($weatherFirst['date']);
+            if($updateTimediff < 3600*24){  //如果一天内抽入过，则不在抽入
+                $check = false;
+            }
+        }
+
+        return $check;
+    }
+
+}

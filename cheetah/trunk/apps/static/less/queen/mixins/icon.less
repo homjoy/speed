@@ -1,0 +1,82 @@
+@image-base:"../../../../img/";
+
+.size(@width: 20px ,@height: 20px) {
+  width: @width;
+  height: @height;
+}
+
+.icon{
+  display: inline-block;
+  background: transparent;
+  .size(16px, 16px);
+}
+
+.icon-nav() {
+  .size(32px, 27px);
+  color: #fff;
+}
+
+.icon-favorite() {
+  color: #ff6799;
+  .size(49px, 49px);
+}
+
+.icon-device() {
+  .size(28px, 20px);
+  background: transparent;
+  color: #c4c4c4;
+}
+
+.icon-16() {
+  .size(16px, 16px);
+}
+
+.icon-20() {
+  .size(20px, 20px);
+}
+
+.icon-21() {
+  .size(21px, 21px);
+}
+
+.icon-24() {
+  .size(24px, 24px);
+}
+
+.icon-28() {
+  .size(28px, 28px);
+}
+
+
+//全部通过
+.icon-pass{
+  background: transparent url("@{image-base}/queen/icon/pass.png") center no-repeat;
+}
+//管理员通过
+.icon-pass-admin{
+  background: transparent url("@{image-base}/queen/icon/pass-admin.png") center no-repeat;
+}
+//当前审批人通过
+.icon-pass-o{
+  background: transparent url("@{image-base}/queen/icon/mid-pass.png") center no-repeat;
+}
+//驳回
+.icon-reject{
+  background: transparent url("@{image-base}/queen/icon/reject.png") center no-repeat;
+}
+//撤销
+.icon-repeal{
+  background: transparent url("@{image-base}/queen/icon/repeal.png") center no-repeat;
+}
+//待审批（即将审批的人）
+.icon-wait{
+  background: transparent url("@{image-base}/queen/icon/wait.png") center no-repeat;
+}
+//创建
+.icon-submit{
+  background: transparent url("@{image-base}/queen/icon/tijiao.png") center no-repeat;
+}
+//待审批（还没审批的）
+.icon-inwait{
+  background: transparent url("@{image-base}/queen/icon/inwait.png") center no-repeat;
+}

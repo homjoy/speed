@@ -1,0 +1,132 @@
+<%#head2.html%>
+
+
+<div class="boxed">
+
+    <!--CONTENT CONTAINER-->
+    <!--===================================================-->
+    <div id="content-container">
+        <ol class="breadcrumb">
+            <li><a href="/home">首页</a></li>
+            <li class="active">会议室预定</li>
+        </ol>
+        <div id="page-content">
+
+            <!-- <div class="row"></div> -->
+            <div class="row" style="padding-top:10px;">
+                <div class="col-lg-9 col-md-8 col-sm-8 col-xs-9">
+                    <ul class="day-choose">
+                        <li>
+                            <a class="jumpday to-prev-day">< 上一天</a>
+                        </li>
+                        <li>
+                            <a type="button" class="jumpday today current">今天</a>
+                        </li>
+                        <li>
+                            <a type="button" class="jumpday to-next-day">下一天 ></a>
+                        </li>
+                        <li>
+                            <input type="text" placeholder="开始时间" id="to-some-day" value="<%= this.today %>">
+                        </li>
+                    </ul>
+                </div>
+                <div class="col-lg-3 col-md-4 col-sm-4 col-xs-3" style="text-align: right;">
+                    <!--<a href="/address/map" class="meeting_position" target='_blank' data-toggle="tooltip"-->
+                    <!--data-placement="bottom" title='会议室分布图'>会议室分布图</a>-->
+
+                    <div class="choose-city">
+                        <span>当前地区：</span>
+                        <div class="dropdown">
+                            <div class="btn btn-default dropdown-toggle current-city-name" data-toggle="dropdown">
+                                <span class="caret"></span>
+                            </div>
+                            <ul class="dropdown-menu dropdown-menu-md dropdown-menu-right with-arrow panel-default head-list d_menu" role="menu" aria-labelledby="dropdownMenu1">
+                                <% this.city.data.forEach(function(city, index){  %>
+                                <li><a class="city" data-cityId="<%= city.office_id %>"><%= city.city_name %> - <%= city.office_position %></a></li>
+                                <% }); %>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-lg-10 col-md-10 col-sm-10 col-xs-10">
+                    <div class="service-list">
+                        <% var serviceIcon = ['m-icon-projector','m-icon-video','m-icon-phone']; %>
+                        <% this.services.data.forEach(function(service, index){  %>
+                        <a href="javascript:void(0);" class="btn service-btn" data-serviceId="<%= service.service_id %>">
+                            <span class="filter <%= serviceIcon[service.service_id%3] %>"></span>
+                            <%= service.name %>
+                        </a>
+                        <% }); %>
+                    </div>
+                </div>
+                <div class="col-lg-2 col-md-2 col-sm-2 col-xs-2">
+                    <div class="meeting-room-map">
+                        <a href="/home/window/?f=address&s=map" target="_blank" class="btn"><span></span>会议室分布图</a>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+
+                <div class="col-lg-12 col-md-12">
+                    <table class="table" id="table_head">
+                        <thead>
+                        <tr>
+                            <th width="50">楼层</th>
+                            <th width="110">会议室名称</th>
+                            <th width="110">设备</th>
+                            <th width="60" class="hidden-md hidden-sm hidden-xs">人数</th>
+                            <th width="64%" class="overview">
+                                <table width="100%">
+                                    <thead id="time_list">
+                                    <tr>
+                                        <% for(var i = 8;i <= 21; i++){ %>
+                                        <% if(i % 2 == 0) { %>
+                                        <th class="hidden-sm hidden-xs"><%= i %>:00</th>
+                                        <% }else{ %>
+                                        <th><%= i %>:00</th>
+                                        <% }} %>
+                                    </tr>
+                                    </thead>
+                                </table>
+                            </th>
+                        </tr>
+                        </thead>
+                        <!-- <tbody></tbody> -->
+                    </table>
+                    <table class="table">
+                        <tbody id="meeting-list"></tbody>
+                    </table>
+                </div>
+            </div>
+            </div>
+        </div>
+    </div>
+    <!--===================================================-->
+    <!--END CONTENT CONTAINER-->
+    <%#mainnav_container_left.html%>
+    <%#footer.html%>
+</div>
+
+
+<!-- FOOTER -->
+<!--===================================================-->
+
+
+
+<!-- SCROLL TOP BUTTON -->
+<!--===================================================-->
+<button id="scroll-top" class="btn"><i class="fa fa-chevron-up"></i></button>
+<!--===================================================-->
+
+
+</div>
+<!--===================================================-->
+<!-- END OF CONTAINER -->
+<%! $_ENGINE_SELF.callFn("useModule")("<<<_use:
+        fml.use('speed/common/base');
+        fml.use('speed/meeting/index');
+_use:", this._JSstack , this._JSmods); %>
+<%#foot.html%>

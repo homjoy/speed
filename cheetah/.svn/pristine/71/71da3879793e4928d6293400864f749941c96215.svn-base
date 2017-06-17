@@ -1,0 +1,475 @@
+fml.define('speed/time/my', ['jquery', 'plugin/moment', 'plugin/bootstrap/datetimepicker', 'plugin/bootbox', 'plugin/artTemplate'], function (require, exports) {
+    "use strict";
+
+       var $ = require('jquery');
+    var moment = require('plugin/moment');
+    var bootbox = require('plugin/bootbox');
+    var Template = require('plugin/artTemplate');
+
+    var btnToSomeDay = $("#to-some-day");
+    var hiddenForm = $("#hidden-form");
+    var DATE_FORMAT = 'YYYY-MM-DD';
+
+    function success(msg) {
+        $.niftyNoty({
+            type: 'success',
+            icon: 'fa fa-check',
+            message: msg || '操作成功.',
+            container: 'floating',
+            timer: 3000
+        });
+    }
+
+
+    function error(msg) {
+        $.niftyNoty({
+            type: 'danger',
+            icon: 'fa fa-minus',
+            message: msg || '操作失败.',
+            container: 'floating',
+            timer: 3000
+        });
+        return false;
+    }
+
+    /**
+     * 加载时间列表
+     */
+    function loadList() {
+        $.getJSON(hiddenForm.attr("action"), hiddenForm.serialize(), function (resp) {
+            if (resp.code != 200) {
+                error('加载我的时间列表失败..');
+                return false;
+            }
+            //resp.data[1].services = [{id:1},{id:3},{id:5},{id:7}];
+            //resp.data[1].remark = '测试事实上是';
+            //resp.data[2].handle = ['edit','checkin','cancel','decline'];
+            var listHtml = Template('event-list', {events: resp.data});
+            $(".event-list > dl:not(.event-header)").remove();
+            $(".event-list").append(listHtml);
+            resp.page.list = [];
+            for (var i = 1, max = resp.page.maxPage; i <= max; i++) {
+                resp.page.list.push(i);
+            }
+            var paginationHtml = Template('pagination', {page: resp.page});
+            $("#my-event .text-center").html(paginationHtml);
+        });
+    }
+
+    /**
+     * 页面跳转.
+     * @param page
+     */
+    function goPage(page) {
+        hiddenForm.find('input[name=page]').val(page);
+        loadList();
+    }
+
+    /**
+     * 查看指定日期.
+     * @param start
+     * @param end
+     */
+    function changeDate(start, end) {
+        var title = $('.toolbar .text-center h3');
+        var type = $(".month-group .active").attr('data-interval') || 'month';
+        switch(type){
+            case 'month':
+                title.text(moment(start).format('YYYY年M月'));
+                break;
+            case 'week':
+                title.text(moment(start).format('YYYY年M月D日至') + moment(end).format('M月D日'));
+                break;
+            case 'day':
+            default:
+                title.text(moment(start).format('YYYY年M月D日 dddd'));
+                break;
+        }
+        btnToSomeDay.val(start);
+        //var start = moment().format('YYYY-MM-DD 00:00');
+        //var end = moment().format('YYYY-MM-DD 23:59');
+        hiddenForm.find('input[name=start]').val(start);
+        hiddenForm.find('input[name=end]').val(end);
+        hiddenForm.find('input[name=page]').val(1);
+        loadList();
+    }
+
+
+    //提示框.
+    $('[data-toggle="tooltip"]').tooltip();
+
+
+    (function init() {
+        var start = hiddenForm.find('input[name=start]').val();
+        var end = hiddenForm.find('input[name=end]').val();
+
+        //处理日期选择框的初始值.
+        if (!start) {
+            btnToSomeDay.val(moment().format(DATE_FORMAT));
+        } else {
+            btnToSomeDay.val(moment(start).format(DATE_FORMAT));
+        }
+
+        //处理月周日视图
+        start = start ? moment(start) : moment().startOf('month');
+        end = end ? moment(end) : moment().endOf('month');
+        var diff = end.diff(start, 'days') || 1;
+        if (diff <= 1) {
+            $(".month-group .btn-day").addClass('active');
+            $('.toolbar .text-center h3').text(start.format('YYYY年M月D日 dddd'));
+        } else if (diff > 1 && diff <= 7) {
+            $(".month-group .btn-week").addClass('active');
+            $('.toolbar .text-center h3').text(start.format('YYYY年M月D日至') + end.format('M月D日'));
+        } else {
+            $('.toolbar .text-center h3').text(start.format('YYYY年M月'));
+            $(".month-group .btn-month").addClass('active');
+        }
+    })();
+
+    /**
+     * 转到今天.
+     */
+    $(".toolbar .btn-today").on("click", function () {
+        var date = moment();
+        var start = date.format(DATE_FORMAT);
+        var end = date.add(1, 'day').format(DATE_FORMAT);
+        changeDate(start, end);
+    });
+
+    /**
+     * 日期选择框
+     */
+    btnToSomeDay.datetimepicker({
+        minView: 'month',
+        autoclose: true,
+        format: "yyyy-mm-dd"
+    }).on("changeDate", function (e) {
+        var date = moment($(this).val());
+        var start = date.format(DATE_FORMAT);
+        var end = date.add(1, 'day').format(DATE_FORMAT);
+        $(".month-group .active").removeClass('active');
+        $(".month-group .btn-day").addClass('active');
+        $('.toolbar .text-center h3').text(date.format('YYYY年M月D日 dddd'));
+        changeDate(start, end);
+    });
+
+    /**
+     * 上一天
+     */
+    $(".btn-prev").on("click", function () {
+        var view = $(".month-group .active").attr('data-interval') || 'month';
+        var start = hiddenForm.find('input[name=start]').val();
+        var end = hiddenForm.find('input[name=end]').val();
+        start = start ? moment(start) : moment().startOf('month');
+        //end = end ? moment(end) : moment().endOf('month');
+        switch (view) {
+            case 'month':
+                start = start.subtract(1, 'month');
+                end = start.clone();
+                end = end.endOf('month');
+                break;
+            case 'week':
+                start = start.subtract(1, 'week');
+                end = start.clone();
+                end = end.add(1, 'week');
+                break;
+            case 'day':
+            default :
+                start = start.subtract(1, 'day');
+                end = start.clone();
+                end = end.add(1, 'day');
+                break;
+        }
+        start = start.format(DATE_FORMAT);
+        end = end.format(DATE_FORMAT);
+        changeDate(start, end);
+    });
+
+    /**
+     * 下一天.
+     */
+    $(".btn-next").on("click", function () {
+        var view = $(".month-group .active").attr('data-interval') || 'month';
+        var start = hiddenForm.find('input[name=start]').val();
+        var end = hiddenForm.find('input[name=end]').val();
+        start = start ? moment(start) : moment().startOf('month');
+        //end = end ? moment(end) : moment().endOf('month');
+
+        switch (view) {
+            case 'month':
+                start = start.add(1, 'month');
+                end = start.clone();
+                end = end.endOf('month');
+                break;
+            case 'week':
+                start = start.add(1, 'week');
+                end = start.clone();
+                end = end.add(1, 'week');
+                break;
+            case 'day':
+            default :
+                start = start.add(1, 'day');
+                end = start.clone();
+                end = end.add(1, 'day');
+                break;
+        }
+        start = start.format(DATE_FORMAT);
+        end = end.format(DATE_FORMAT);
+        changeDate(start, end);
+    });
+
+    /**
+     * 切换月-周-日
+     */
+    $('.month-group .btn').on('click', function (e) {
+        var self = $(this);
+        if(self.hasClass('active')){
+            return false;
+        }
+        $('.month-group .btn').removeClass('active');
+        self.addClass("active");
+        var interval = self.attr('data-interval');
+        var start, end, today = moment();
+
+        switch (interval) {
+            case 'week':
+                var begin = today.startOf('isoweek');
+                start = begin.format(DATE_FORMAT);//月初第一天
+                end = begin.add(7, 'days').format(DATE_FORMAT);
+                break;
+            case 'month':
+                start = today.format('YYYY-MM-01');
+                end = today.add(1, 'month').format('YYYY-MM-01');
+                break;
+            case 'day':
+            default:
+                start = today.format(DATE_FORMAT);
+                end = today.add(1, 'day').format(DATE_FORMAT);
+                break;
+        }
+        changeDate(start, end);
+    });
+
+    /**
+     * 点击分页的时候跳转到指定页.
+     */
+    $(document).on('click', '.pagination li > a', function (e) {
+        e.preventDefault();
+        var self = $(e.target);
+        var pagination = self.closest('.pagination');
+        if (self.parent().hasClass('active')) {
+            return;
+        }
+        var page = self.attr('data-page') || 1;
+        goPage(page);
+    });
+
+    /**
+     * 点击分页.
+     */
+    $(document).on('click', ".pagination .go-page .btn", function (e) {
+        var self = $(e.target);
+        var pagination = self.closest('.pagination');
+        var toPage = self.prev().val() || 1;
+        var max = self.attr('data-max');
+        var currentPage = pagination.find('.active > a').attr('data-page');
+        //同一页
+        if (currentPage == toPage) {
+            return;
+        }
+        goPage(toPage);
+    });
+
+    /**
+     * 处理输入框回车.
+     */
+    $(document).on('keyup', ".pagination .go-page input", function (event) {
+        var self = $(event.target);
+        if (event.keyCode == 13) {
+            self.next().click();
+        }
+    });
+
+    /**
+     * 显示或者隐藏会议详情
+     */
+    $(document).on('click', ".event dt", function (e) {
+        var dt = $(e.target).closest('dt');
+        var isShow = dt.next().css('display') == 'none';
+        //dt.next().stop().slideToggle();
+        dt.closest('.event-list').find('.event dd:visible').slideUp();
+        if (isShow) {
+            dt.next().stop().slideDown();
+        } else {
+            dt.next().stop().slideUp();
+        }
+    });
+
+
+    /**
+     * 查看共享人时间.
+     */
+    $(".share-users li > a").on('click', function (e) {
+        e.preventDefault();
+        var self = $(this);
+        if (self.parent().hasClass('current')) {
+            return false;
+        }
+        self.closest('.share-users').find(".current").removeClass('current');
+        self.parent().addClass('current');
+
+        var userId = self.attr('user-id');
+        hiddenForm.find('input[name=user_id]').val(userId);
+        loadList();
+    });
+
+    ///**
+    // * TAB切换.
+    // */
+    //$('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
+    //    var t = $(e.target).attr('data-t') || 'time';
+    //    hiddenForm.find('input[name=t]').val(t);
+    //});
+
+    $(document).on("click", ".btn-cancel", function (e) {
+        e.stopPropagation();
+        e.preventDefault();
+        var self = $(this);
+        var dl = self.closest('.event');
+        var type = dl.hasClass('meeting') ? "meeting" : 'event';
+        var id = self.attr("data-id");
+        if (!id) {
+            return;
+        }
+        var userId = hiddenForm.find('input[name=user_id]').val() || 0;
+        var tips = (type == 'meeting' ? '确定要取消会议？' : "确定要取消时间安排？");
+        var url = (type == 'meeting' ? '/aj/meeting/ajax_book_delete' : '/aj/meeting/mytime_ajax_delete');
+        var params = (type == 'meeting' ? {'book_id': id} : {'time_id': id, 'user_id': userId});
+
+        bootbox.confirm(tips, function (result) {
+            if (!result) {
+                return;
+            }
+            $.post(url, params, function (resp) {
+                if (resp.code != 200) {
+                    error(resp.error_msg || '取消失败.');
+                    return false;
+                }
+                success('取消成功.');
+                loadList();
+                //self.fadeOut(function () {
+                //    $(this).remove();
+                //});
+            }, 'json');
+        });
+    });
+
+    $(document).on('click', ".btn-decline", function (e) {
+        e.stopPropagation();
+        e.preventDefault();
+        var self = $(this);
+        var dl = self.closest('.event');
+        var type = dl.hasClass('meeting') ? "meeting" : 'event';
+        var id = self.attr("data-id");
+        if (!id) {
+            return;
+        }
+
+        var userId = hiddenForm.find('input[name=user_id]').val() || 0;
+        var tips = (type == 'meeting' ? '确定要拒绝参加吗？' : "要拒绝时间安排吗？");
+        var url = (type == 'meeting' ? '/aj/meeting/ajax_meeting_reject' : '/aj/meeting/mytime_ajax_reject');
+        var params = (type == 'meeting' ? {'book_id': id,'user_id':userId} : {'time_id': id, 'user_id': userId});
+
+        bootbox.confirm(tips, function (result) {
+            if (!result) {
+                return;
+            }
+            $.post(url, params, function (resp) {
+                if (resp.code != 200) {
+                    error(resp.error_msg || '拒绝失败.');
+                    return false;
+                }
+                success('拒绝成功.');
+                //self.fadeOut(function () {
+                //    $(this).remove();
+                //});
+                loadList();
+            }, 'json');
+        });
+    });
+
+
+    /**
+     * 处理签到.
+     */
+    $(document).on("click", ".btn-checkin", function (e) {
+        e.stopPropagation();
+        e.preventDefault();
+        var self = $(e.target);
+        var bookId = self.attr("data-id");
+        if (!bookId) {
+            return;
+        }
+        $.post('/aj/meeting/checkIn', {'book_id': bookId}, function (resp) {
+            if (resp.code != 200) {
+                error(resp.error_msg || '签到失败.');
+                return false;
+            }
+            success('签到成功');
+            loadList();
+            //self.fadeOut(function () {
+            //    $(this).remove();
+            //});
+        }, 'json');
+    });
+
+    /**
+     * 处理修改.
+     */
+    $(document).on("click", ".my-meeting .btn-edit", function (e) {
+        e.stopPropagation();
+        e.preventDefault();
+        ///aj/meeting/ajax_book_update
+    });
+
+
+    var last = $(".select-container .current").html();
+    //    .on("click", function (e) {
+    //    e.preventDefault();
+    //    //if (last != '类型<i class="caret-down"></i>') {
+    //    //
+    //    //} else {
+    //    //    //$(this).html('类型<i class="caret-down"></i>');
+    //    //}
+    //    $(this).closest(".select-container").toggleClass('open');
+    //    return false;
+    //})
+    $(".select-container").on('mouseenter',function(e){
+        var target = $(this);
+        target.addClass('open');
+    }).on('mouseleave',function(e){
+        var target = $(this);
+        target.closest(".select-container").removeClass('open');
+    });
+    //$("body").on("click",function(e){
+    //    //隐藏类型选择框.
+    //    var target = $(e.target);
+    //    if(target.closest('.select-container').size() == 0){
+    //        $('.select-container').removeClass('open');
+    //    }
+    //});
+
+    $(".select-list > a").on('click', function (e) {
+        e.preventDefault();
+        var self = $(this);
+        $(".select-container .current").html(self.text() + '<i class="caret-down"></i>');
+        $(this).closest(".select-container").toggleClass('open');
+
+
+        hiddenForm.find('input[name=type]').val(self.attr("data-type"));
+        loadList();
+    });
+
+
+    loadList();
+});

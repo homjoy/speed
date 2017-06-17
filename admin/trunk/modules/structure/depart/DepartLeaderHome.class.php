@@ -1,0 +1,188 @@
+<?php
+
+namespace Admin\Modules\Structure\Depart;
+use Libs\Util\Format;
+use Admin\Modules\Common\BaseModule;
+use Admin\Package\Common\Response;
+use Admin\Package\Department\Department;
+use Admin\Package\Account\UserInfo;
+use Admin\Package\Department\DepartSub;
+use Admin\Package\Department\DepartRelation;
+/**
+ * DepartLeaderHome
+ * hongzhou@meilishuo.com
+ * 2015-11-19
+ */
+class DepartLeaderHome extends BaseModule {
+
+    protected $params = NULL;
+    protected $errors = NULL;
+//    public static $VIEW_SWITCH_JSON = TRUE;
+	public function run() {
+        $this->_init();
+        $return =$temp =$temp_sub =$return_sub =$temp_real=array();
+        $depart_view =Department::getInstance()->getDepart( array('all'=>
+            1,'status'=>1));
+        $leader_view  =UserInfo::getInstance()->getUserInfo( array('all'=>
+            1,'status'=>array(1,3)));
+        $all_leader =Department::getInstance()->getAllDepartLeader(
+            $this->params
+        );
+        $all_lower =Department::getInstance()->getLowerLevelList(
+            $this->params
+        );
+
+        if(empty($this->params['user_id'])){
+            $return = Response::gen_success(array());
+            $return['depart'] =$depart_view;
+            $return['leader'] =$leader_view;
+            $return['all_depart_leader'] =array();
+            $return['all_lower']  =array();
+
+
+            return $this->app->response->setBody($return);
+        }
+
+
+        //搜索用户为领导的部门
+        $return = DepartRelation::getInstance()->getRelationInfo(
+            array(
+                'all'=>1,
+                'user_id'=>$this->params['user_id'],
+                'is_virtual'=>1,
+            )
+        ) ;
+        if(is_array($return)){
+            foreach($return as $k =>$v ){
+                if(isset($v['user_id'])&&isset($v['depart_id'])&&isset($v['is_virtual'])){
+                    $temp[] =array(
+                        'user_id'=>$v['user_id'],
+                        'depart_id'=>$v['depart_id'],
+                        'is_virtual'=> $v['is_virtual']
+                    );
+                }
+
+            }
+        }
+
+        $return_sub =DepartSub::getInstance()->getSubInfo( array('all'=>1,
+            'user_id'=>$this->params['user_id']));
+        if(is_array($return_sub)){
+            foreach($return_sub as $k =>$v ){
+                if(isset($v['relation_id'])&&isset($v['user_id'])){
+                    $sub =DepartRelation::getInstance()->getRelationInfo(array(
+                        'relation_id'=>$v['relation_id']));
+                    $sub = is_array($sub)?array_pop($sub):'';
+                    if(isset($sub['depart_id'])){
+                        $temp_sub[] =array('user_id'=>$v['user_id'],'depart_id'=>$sub['depart_id']);
+                    }
+                }
+            }
+        }
+
+        $return_real = DepartRelation::getInstance()->getRelationInfo(
+            array(
+                'all'=>1,
+                'user_id'=>$this->params['user_id'],
+                'is_virtual'=>0,
+            )
+        ) ;
+        if(is_array($return_real)){
+            foreach($return_real as $k =>$v ){
+                if(isset($v['user_id'])&&isset($v['depart_id'])&&isset($v['is_virtual'])){
+                    $temp_real[] =array(
+                        'user_id'=>$v['user_id'],
+                        'depart_id'=>$v['depart_id'],
+                        'is_virtual'=> $v['is_virtual']
+                    );
+                }
+
+            }
+        }
+
+        //获取部门名字 用户名字
+        //关系
+        $r_t = array();
+        foreach($temp as $k =>$v ){
+            $depart =Department::getInstance()->getDepart(array('depart_id'=>
+                $v['depart_id']));
+            $user =UserInfo::getInstance()->getUserInfo(array('user_id'=>
+                $v['user_id']));
+            $depart =is_array($depart)?array_pop($depart):'';
+            $user =is_array($user)?array_pop($user):'';
+            $r_t[$k]['depart_name'] =isset($depart['depart_name'])?$depart['depart_name']:'';
+            $r_t[$k]['name_cn'] =isset($user['name_cn'])?$user['name_cn']:'' ;
+            $r_t[$k]['name_cn']='部门汇报关系:'.$r_t[$k]['name_cn'];
+
+
+        }
+        //代理
+        $r_t_s = array();
+        foreach($temp_sub as $k =>$v ){
+            $depart =Department::getInstance()->getDepart( array('depart_id'=>
+                $v['depart_id']));
+            $user =UserInfo::getInstance()->getUserInfo(array('user_id'=>
+                $v['user_id']));
+            $user =is_array($user)?array_pop($user):'';
+            $depart =is_array($depart)?array_pop($depart):'';
+            $r_t_s[$k]['name_cn']  ='部门代理领导:';
+            $r_t_s[$k]['depart_name'] =isset($depart['depart_name'])?$depart['depart_name']:'';
+            $r_t_s[$k]['name_cn'] .=isset($user['name_cn'])?$user['name_cn']:'' ;
+
+        }
+        //实际
+        $r_t_r = array();
+        foreach($temp_real as $k =>$v ){
+            $depart =Department::getInstance()->getDepart(array('depart_id'=>
+                $v['depart_id']));
+            $user =UserInfo::getInstance()->getUserInfo(array('user_id'=>
+                $v['user_id']));
+            $depart =is_array($depart)?array_pop($depart):'';
+            $user =is_array($user)?array_pop($user):'';
+            $r_t_r[$k]['depart_name'] =isset($depart['depart_name'])?$depart['depart_name']:'';
+            $r_t_r[$k]['name_cn'] =isset($user['name_cn'])?'部门领导:'.$user['name_cn']:'' ;
+
+
+        }
+        //组装数据
+        $return = array_merge($r_t,$r_t_s);
+        $return = array_merge($return,$r_t_r);
+
+        if(!$return){
+        }else{
+            $return=  Response::gen_success($return);
+        }
+        //全部数据
+        $return['depart'] =$depart_view;
+        $return['leader'] =$leader_view;
+
+        $return['all_depart_leader'] = $all_leader;
+
+        $return['all_lower']  =is_array($all_lower)?$all_lower:'';
+        if(empty( $return['all_lower'])){
+            $return['all_lower']=array();
+
+        }else{
+            array_unshift( $return['all_depart_leader'],
+                array(
+                    'leader_user_name' => isset($leader_view[$this->params['user_id']]['name_cn'])?$leader_view[$this->params['user_id']]['name_cn']:''
+                )
+            );
+        }
+
+        $this->app->response->setBody($return);
+    }
+
+    private function _init() {
+
+        $this->rules = array(
+            'user_id' => array(
+                'type'=>'integer',
+            )
+        );
+        $this->params = $this->query()->safe();
+        $this->errors = $this->query()->getErrors();
+
+    }
+
+}

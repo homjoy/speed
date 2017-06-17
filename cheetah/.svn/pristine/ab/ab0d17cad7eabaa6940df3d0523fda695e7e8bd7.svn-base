@@ -1,0 +1,73 @@
+@import "../base.less";
+//#page-content{
+//  padding: 20px 62px;
+//}
+
+
+.fontGray{
+  color:#a0a0a0;
+}
+
+
+//right
+
+.avatar-name,.depart-date{
+  display: inline-block;
+  text-align: center;
+  float: left;
+}
+.depart-date{
+  margin-bottom: 40px;
+  height: 47px;
+  width: 80%;
+}
+
+.panel-heading, .range_inputs{
+  .btn{
+    margin-left: 5px;
+    min-width: 50px;
+    font-size: 12px !important;
+    width: 54px;
+    height: 22px;
+    line-height: 22px;
+  }
+}
+
+
+.outwayHide{
+  display: none;
+}
+
+
+.btn-default {
+  color: #515151;
+  border: 1px solid #cdd6e1;
+  background-color: #fafafa;
+  vertical-align: middle;
+  &:hover{
+    border: 1px solid #cdd5e2;
+    background-color: #e9e9e9;
+  }
+}
+
+.btn-sm{
+  min-width: 68px;
+  height: 28px !important;
+  font-size: 14px !important;
+  line-height: 21px !important;
+}
+
+.linebr {
+
+  clear: both; /* 清除左右浮动 */
+
+  width: 400px; /* 必须定义宽度 */
+
+  word-break: break-all; /* 文本行的任意字内断开 */
+
+  word-wrap: break-word; /* IE */
+
+  white-space: -moz-pre-wrap; /* Mozilla */
+
+  white-space: pre-line; /* CSS 3 (and 2.1 as well, actually) */
+}

@@ -1,0 +1,34 @@
+<?php
+
+namespace Admin\Package\Log;
+
+use Admin\Modules\Common\BaseModule;
+use Admin\Package\Common\Response;
+/**
+ * 日志信息处理
+ * @package Admin\Package\Log
+ * @author hongzhou@meilishuo.com
+ * @since 2015-11-16
+ */
+
+class Log extends \Admin\Package\Common\BasePackage {
+
+    private static $instance = null;
+    private function __construct() {}
+
+    public static function getInstance()
+    {
+        if(is_null(self::$instance)){
+            self::$instance = new self();
+
+        }
+        return self::$instance;
+    }
+
+    public  function createLogs($params = array()){
+       //插入 当前用户名 当前用户user_id handle_type  handle_id  before_data  after_data
+        $ret = self::getClient()->call('atom', 'log/create_admin_log', $params);
+        $ret = self::parseRemoteData($ret);
+        return $ret;
+    }
+}

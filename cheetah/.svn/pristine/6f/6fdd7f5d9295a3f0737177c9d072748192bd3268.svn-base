@@ -1,0 +1,45 @@
+fml.define('component/menu', ['jquery','plugin/cookie'], function (require, exports) {
+    "use strict";
+    var $ = require('jquery');
+    var Cookies = require('plugin/cookie');
+
+    /**
+     * 初始化主菜单
+     */
+    function initMainNav() {
+        var thinNav = Cookies.get('thin');
+        if (!!thinNav) {
+            $('.effect').addClass("mainnav-sm").removeClass('mainnav-lg');
+            $('.mainnav-toggle').addClass('thin');
+        } else {
+            $('.effect').removeClass("mainnav-sm").addClass('mainnav-lg');
+            $('.mainnav-toggle').removeClass('thin');
+        }
+    }
+
+    /**
+     * 高亮当前菜单项
+     */
+    function highlightMenu() {
+        var currentUrl = window.location.pathname + window.location.search;
+        var activeMenu = $("#mainnav-menu a[href='" + currentUrl + "']");
+        activeMenu.parent().addClass('active-link');
+        activeMenu.parents("ul.collapse").addClass('in');
+    }
+
+    // 左侧导航展开隐藏
+    $('.mainnav-toggle').on('click', function () {
+        if ($(this).hasClass('thin')) {
+            $(this).removeClass('thin');
+            //30天
+            Cookies.remove('thin');
+        } else {
+            // 点击时候没有class,添加class,并加cookie；
+            Cookies.set('thin', true, {expires: 30});
+            $(this).addClass('thin');
+        }
+    });
+
+    exports.init = initMainNav;
+    exports.highlight = highlightMenu;
+});

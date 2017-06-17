@@ -1,0 +1,55 @@
+function myapproval() {
+    return this;
+}
+var controlFns = {
+	'index':function(){
+		var php = {
+            'tasklistJson':'/contract/tasklistJson',
+            'overlistJson':'/contract/overlistJson'
+        };
+		this.bindDefault(php);
+		this.bridgeMuch(php);
+		this.listenOver(function (data) {
+            // data.tasklistJson=[{"amount":"1,027,306.68",
+            //                     "applydate":"2015-07-15",
+            //                     "applyno":"HTSP2015070031",
+            //                     "approveprogress":"部门领导逐级审批-吴与",
+            //                     "btype":"BILLTYPE",
+            //                     "btypename":"合同申请单单据类型",
+            //                     "cabid":"69",
+            //                     "formkey":"\/contract\/dealTask\/defaultapprove",
+            //                     "processid":"7501",
+            //                     "taskDefinitionKey":"deptleaderaudit",
+            //                     "taskid":"7515"}];
+            // data.overlistJson=[{"amount":"1,027,306.68",
+            //                     "applydate":"2015-07-15",
+            //                     "applyno":"HTSP2015070031",
+            //                     "approveprogress":"部门领导逐级审批-巨本举",
+            //                     "btype":"BILLTYPE",
+            //                     "btypename":"合同申请单单据类型",
+            //                     "cabid":"69",
+            //                     "formkey":null,
+            //                     "processid":null,
+            //                     "taskDefinitionKey":null,
+            //                     "taskid":null}];
+
+			data._CSSLinks = ['plugin/dataTables.bootstrap','plugin/jquery.dataTables','fms/myapproval/myapproval'];
+			this.render('myapproval/myApproval.html',data)
+		})
+
+	}
+	,'vipView':function(){
+		//var id = this.req.__get.id,
+		//	type = 'CA';
+		var php = {
+			'conInfo':'/userbillrequest/showContractApplicationInformationJson'
+		};
+		this.bindDefault(php);
+		this.bridgeMuch(php);
+		this.listenOver(function (data) {
+			data._CSSLinks = ['fms/contract/contract'];
+			this.render('myapproval/vipView.html', data);
+		});
+	}
+};
+exports.__create = controller.__create(myapproval, controlFns);

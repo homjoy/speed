@@ -1,0 +1,120 @@
+<%#head.html%>
+<div id="container" class="effect mainnav-lg">
+    <%#navbar.html%>
+    <div class="boxed">
+        <div id="content-container">
+            <div class="row">
+             <div class="panel panel_right" id="bus-time-table">
+                 <div class="panel_body">
+                     <ul class="line-toggle">
+                         <li class="active " data-target="line1"><span>线路一</span></li>
+                         <div class="line-split"></div>
+                         <li  data-target="line2"><span>线路二</span></li>
+                         <div class="line-split"></div>
+                         <li class="" data-target="line3"><span>线路三</span></li>
+                     </ul>
+                     <div class="line-pics">
+                         <div id="line1" class="pic active">
+                           <!-- <img src="<%= this.PICTURE_URL  %>img/speed/home/line1.png" />-->
+                             <% if(this.get_bus_info.code==200){%>
+                             <div class="title">
+                                 <h4>10号线太阳宫站&#45;&#45; <span>浦项中心</span></h4>
+                                 <h6>（公司班车 凭工卡上车）</h6>
+                             </div>
+                             <ul class="ul-right">
+                                 <li><span class="list-icon"></span><span class="begin-time puxiang">浦项中心</span><span class="point">→</span><span class="arrive-time">太阳宫</span><span class="car-icon"></span></li>
+                                 <li class="font-grey"><span class="list-icon"></span><span class="begin-time">发车时间</span><span class="point"></span><span class="arrive-time">到达时间</span><span class="car-icon"></span></li>
+                                 <% this.get_bus_info.data[4].time.forEach(function(value,index){%>
+                                 <li><span class="list-icon <%if(index<9){%>in<%}else{%>out<%}%> <% if(!!value.night){%>night<%}else{%>days<%}%>"><%=index+1 %></span><span class="begin-time"><%= value.start_time%></span><span class="point"></span><span class="arrive-time"><%=value.end_time%></span><span class="car-icon <%if(value.is_crowd){%>hot<%}else{%>nor<%}%>">1</span></li>
+                                 <%})%>
+                             </ul>
+                             <ul class="ul-left">
+                                 <li><span class="list-icon"></span><span class="begin-time">太阳宫</span><span class="point">→</span><span class="arrive-time puxiang">浦项中心</span><span class="car-icon"></span></li>
+                                 <li class="font-grey"><span class="list-icon"></span><span class="begin-time">发车时间</span><span class="point"></span><span class="arrive-time">到达时间</span><span class="car-icon"></span></li>
+                                 <% this.get_bus_info.data[1].time.forEach(function(value,index){%>
+                                 <li><span class="list-icon <%if(index<9){%>in<%}else{%>out<%}%> <% if(!!value.night){%>night<%}else{%>days<%}%>"><%=index+1 %></span><span class="begin-time"><%= value.start_time%></span><span class="point"></span><span class="arrive-time"><%=value.end_time%></span><span class="car-icon <%if(value.is_crowd){%>hot<%}else{%>nor<%}%>">1</span></li>
+                                 <%})%>
+                             </ul>
+                             <%}%>
+                             <p class="car">班车停靠点：太阳宫站B口出，往东80米，夏家园车站处</p>
+                             <p class="red">* 红色为乘坐高峰期，请自行安排出行时间</p>
+                         </div>
+                         <div id="line2" class="pic">
+<!--
+                            <img src="<%= this.PICTURE_URL  %>img/speed/home/line2.png" />
+-->
+                             <% if(this.get_bus_info.code==200){%>
+                             <div class="title">
+                                 <h4>13、15号线望京西站&#45;&#45;14、15号线望京站&#45;&#45; <span>浦项中心</span></h4>
+                                 <h6>（公司班车 凭工卡上车）</h6>
+                             </div>
+                             <ul class="ul-right">
+                                 <li><span class="list-icon"></span><span class="begin-time puxiang">浦项中心</span><span class="point">→</span><span class="arrive-time">望京</span><span class="point">→</span><span class="arrive-time">望京西</span><span class="car-icon"></span></li>
+                                 <li class="font-grey"><span class="list-icon"></span><span class="begin-time">发车时间</span><span class="point"></span><span class="arrive-time">经停时间</span><span class="point"></span><span class="arrive-time">到达时间</span><span class="car-icon"></span></li>
+                                 <% this.get_bus_info.data[5].time.forEach(function(value,index){%>
+                                 <li><span class="list-icon <%if(index<9){%>in<%}else{%>out<%}%> <% if(!!value.night){%>night<%}else{%>days<%}%>"><%=index+1 %></span><span class="begin-time"><%= value.start_time%></span><span class="point"></span><span class="arrive-time"><%=value.stop_time%></span><span class="point"></span><span class="arrive-time"><%=value.end_time%></span><span class="car-icon <%if(value.is_crowd){%>hot<%}else{%>nor<%}%>">1</span></li>
+                                 <%})%>
+                             </ul>
+                             <ul class="ul-left">
+                                 <li><span class="list-icon"></span><span class="begin-time">望京西</span><span class="point">→</span><span class="arrive-time">望京</span><span class="point">→</span><span class="arrive-time puxiang">浦项中心</span><span class="car-icon"></span></li>
+                                 <li class="font-grey"><span class="list-icon"></span><span class="begin-time">发车时间</span><span class="point"></span><span class="arrive-time">经停时间</span><span class="point"></span><span class="arrive-time">到达时间</span><span class="car-icon"></span></li>
+                                 <% this.get_bus_info.data[2].time.forEach(function(value,index){%>
+                                 <li><span class="list-icon <%if(index<9){%>in<%}else{%>out<%}%> <% if(!!value.night){%>night<%}else{%>days<%}%>"><%=index+1 %></span><span class="begin-time"><%= value.start_time%></span><span class="point"></span><span class="arrive-time"><%=value.stop_time%></span><span class="point"></span><span class="arrive-time"><%=value.end_time%></span><span class="car-icon <%if(value.is_crowd){%>hot<%}else{%>nor<%}%>">1</span></li>
+                                 <%})%>
+                             </ul>
+                             <%}%>
+                             <dl>
+                                 <dt>
+                                     <p class="car">班车停靠点:</p>
+                                 </dt>
+                                 <dd style="height: 25px;"></dd>
+                                 <dt>望京西站</dt>
+                                 <dd>
+                                     <p> 13号线B口出，往东北步行80米</p>
+                                     <p>15号线C口出，过马路往西步行60米</p>
+                                 </dd>
+                                 <dt>望京站</dt>
+                                 <dd><p>15号线A口出，公交站往东50米</p></dd>
+                             </dl>
+                         </div>
+                         <div id="line3" class="pic">
+                             <!--<img src="<%= this.PICTURE_URL  %>img/speed/home/line3.png" />-->
+                             <% if(this.get_bus_info.code==200){%>
+                             <div class="title">
+                                 <h4>14、15号线望京站&#45;&#45; <span>浦项中心</span></h4>
+                                 <h6>（物业提供班车 凭工卡上车）</h6>
+                             </div>
+                             <ul class="ul-right">
+                                 <li><span class="list-icon"></span><span class="begin-time puxiang">浦项中心</span><span class="point">→</span><span class="arrive-time">望京</span><span class="car-icon"></span></li>
+                                 <li class="font-grey"><span class="list-icon"></span><span class="begin-time">发车时间</span><span class="point"></span><span class="arrive-time">到达时间</span><span class="car-icon"></span></li>
+                                 <% this.get_bus_info.data[6].time.forEach(function(value,index){%>
+                                 <li><span class="list-icon <%if(index<9){%>in<%}else{%>out<%}%> <% if(!!value.night){%>night<%}else{%>days<%}%>"><%=index+1 %></span><span class="begin-time"><%= value.start_time%></span><span class="point"></span><span class="arrive-time"><%=value.end_time%></span><span class="car-icon <%if(value.is_crowd){%>hot<%}else{%>nor<%}%>">1</span></li>
+                                 <%})%>
+                             </ul>
+                             <ul class="ul-left">
+                                 <li><span class="list-icon"></span><span class="begin-time">望京</span><span class="point">→</span><span class="arrive-time puxiang">浦项中心</span><span class="car-icon"></span></li>
+                                 <li class="font-grey"><span class="list-icon"></span><span class="begin-time">发车时间</span><span class="point"></span><span class="arrive-time">到达时间</span><span class="car-icon"></span></li>
+                                 <% this.get_bus_info.data[3].time.forEach(function(value,index){%>
+                                 <li><span class="list-icon <%if(index<9){%>in<%}else{%>out<%}%> <% if(!!value.night){%>night<%}else{%>days<%}%>"><%=index+1 %></span><span class="begin-time"><%= value.start_time%></span><span class="point"></span><span class="arrive-time"><%=value.end_time%></span><span class="car-icon <%if(value.is_crowd){%>hot<%}else{%>nor<%}%>">1</span></li>
+                                 <%})%>
+                             </ul>
+                             <%}%>
+                             <p class="car">班车停靠点：15号线望京站C口出,过马路步行20米，望京西园四区A门处</p>
+                         </div>
+                     </div>
+                 </div>
+             </div>
+         </div>
+        </div>
+
+        <%#mainnav.html%>
+    </div>
+</div>
+<!-- END SETTINGS -->
+
+
+<%! $_ENGINE_SELF.callFn("useModule")("<<<_use:
+        fml.use('speed/common/base');
+_use:", this._JSstack , this._JSmods); %>
+
+<%#foot.html%>

@@ -1,0 +1,319 @@
+<!--MAIN NAVIGATION-->
+			<!--===================================================-->
+			<nav id="mainnav-container">
+				<div id="mainnav">
+
+					<!--Shortcut buttons-->
+					<!--================================-->
+					<div id="mainnav-shortcut">
+						<ul class="list-unstyled">
+							<li class="col-xs-4" data-content="Additional Sidebar">
+								<a id="demo-toggle-aside" class="shortcut-grid" href="#">
+									<i class="fa fa-magic"></i>
+								</a>
+							</li>
+							<li class="col-xs-4" data-content="Notification">
+								<a id="demo-alert" class="shortcut-grid" href="#">
+									<i class="fa fa-bullhorn"></i>
+								</a>
+							</li>
+							<li class="col-xs-4" data-content="Page Alerts">
+								<a id="demo-page-alert" class="shortcut-grid" href="#">
+									<i class="fa fa-bell"></i>
+								</a>
+							</li>
+						</ul>
+					</div>
+					<!--================================-->
+					<!--End shortcut buttons-->
+
+
+					<!--Menu-->
+					<!--================================-->
+					<div id="mainnav-menu-wrap">
+						<div class="nano">
+							<div class="nano-content">
+								<ul id="mainnav-menu" class="list-group">
+						
+									<!--Category name-->
+									<li class="list-header">Navigation</li>
+						
+									<!--Menu list item-->
+									<li>
+										<a href="/home">
+											<i class="fa fa-dashboard"></i>
+											<span class="menu-title">
+												<strong>Dashboard</strong>
+												<span class="label label-success pull-right">Top</span>
+											</span>
+										</a>
+									</li>
+						
+									<!--Menu list item-->
+									<li>
+										<a href="#">
+											<i class="fa fa-th"></i>
+											<span class="menu-title">
+												<strong>Layouts</strong>
+											</span>
+											<i class="arrow"></i>
+										</a>
+						
+										<!--Submenu-->
+										<ul class="collapse">
+											<li><a href="/index/home/layouts-collapsed-navigation">Collapsed Navigation</a></li>
+											<li><a href="/index/home/layouts-offcanvas-navigation">Off-Canvas Navigation</a></li>
+											<li><a href="/index/home/layouts-offcanvas-slide-in-navigation">Slide-in Navigation</a></li>
+											<li><a href="/index/home/layouts-offcanvas-revealing-navigation">Revealing Navigation</a></li>
+											<li class="list-divider"></li>
+											<li><a href="/layouts_aside_right_side">Aside on the right side</a></li>
+											<li><a href="/layouts_aside_left_side">Aside on the left side</a></li>
+											<li><a href="/layouts_aside_bright_theme">Bright aside theme</a></li>
+											<li class="list_divider"></li>
+											<li><a href="/layouts_fixed_navbar">Fixed Navbar</a></li>
+											<li><a href="/layouts_fixed_footer">Fixed Footer</a></li>
+											
+										</ul>
+									</li>
+						
+									<!--Menu list item-->
+									<li>
+										<a href="/widgets">
+											<i class="fa fa-flask"></i>
+											<span class="menu-title">
+												<strong>Widgets</strong>
+												<span class="pull-right badge badge-warning">9</span>
+											</span>
+										</a>
+									</li>
+						
+									<li class="list-divider"></li>
+						
+									<!--Category name-->
+									<li class="list-header">Components</li>
+						
+									<!--Menu list item-->
+									<li>
+										<a href="#">
+											<i class="fa fa-briefcase"></i>
+											<span class="menu-title">UI Elements</span>
+											<i class="arrow"></i>
+										</a>
+						
+										<!--Submenu-->
+										<ul class="collapse">
+											<li><a href="/ui_buttons">Buttons</a></li>
+											<li><a href="/ui_checkboxes_radio">Checkboxes &amp; Radio</a></li>
+											<li><a href="/ui_panels">Panels</a></li>
+											<li><a href="/ui_modals">Modals</a></li>
+											<li><a href="/ui_progress_bars">Progress bars</a></li>
+											<li><a href="/ui_components">Components</a></li>
+											<li><a href="/ui_typography">Typography</a></li>
+											<li><a href="/ui_list_group">List Group</a></li>
+											<li><a href="/ui_tabs_accordions">Tabs &amp; Accordions</a></li>
+											<li><a href="/ui_alerts_tooltips">Alerts &amp; Tooltips</a></li>
+											<li><a href="/ui_helper_classes">Helper Classes</a></li>
+											
+										</ul>
+									</li>
+						
+									<!--Menu list item-->
+									<li>
+										<a href="#">
+											<i class="fa fa-edit"></i>
+											<span class="menu-title">Forms</span>
+											<i class="arrow"></i>
+										</a>
+						
+										<!--Submenu-->
+										<ul class="collapse">
+											<li><a href="/index/home/forms-general">General</a></li>
+											<li><a href="/index/home/forms-components">Components</a></li>
+											<li><a href="/index/home/forms-validation">Validation</a></li>
+											<li><a href="/index/home/forms-wizard">Wizard</a></li>
+											
+										</ul>
+									</li>
+						
+									<!--Menu list item-->
+									<li>
+										<a href="#">
+											<i class="fa fa-table"></i>
+											<span class="menu-title">Tables</span>
+											<i class="arrow"></i>
+										</a>
+						
+										<!--Submenu-->
+										<ul class="collapse">
+											<li><a href="/tables_static">Static Tables</a></li>
+											<li><a href="/tables_bootstrap">Bootstrap Tables</a></li>
+											<li><a href="/tables_datatable">Data Tables<span class="label label-info pull-right">New</span></a></li>
+											<li><a href="/tables_footable">Foo Tables<span class="label label-info pull-right">New</span></a></li>
+											
+										</ul>
+									</li>
+						
+									<!--Menu list item-->
+									<li>
+										<a href="/charts">
+											<i class="fa fa-line-chart"></i>
+											<span class="menu-title">Charts</span>
+										</a>
+									</li>
+						
+									<li class="list-divider"></li>
+						
+									<!--Category name-->
+									<li class="list-header">Extra</li>
+						
+									<!--Menu list item-->
+									<li>
+										<a href="#">
+											<i class="fa fa-plug"></i>
+											<span class="menu-title">
+												Miscellaneous
+												<span class="label label-mint pull-right">New</span>
+											</span>
+										</a>
+						
+										<!--Submenu-->
+										<ul class="collapse">
+											<li><a href="/misc_calendar">Calendar</a></li>
+											<li><a href="/misc_maps">Google Maps</a></li>
+											
+										</ul>
+									</li>
+						
+									<!--Menu list item-->
+									<li>
+										<a href="#">
+											<i class="fa fa-envelope"></i>
+											<span class="menu-title">Email</span>
+											<i class="arrow"></i>
+										</a>
+						
+										<!--Submenu-->
+										<ul class="collapse">
+											<li><a href="/mailbox">Inbox</a></li>
+											<li><a href="/mailbox_message">View Message</a></li>
+											<li><a href="/mailbox_compose">Compose Message</a></li>
+											
+										</ul>
+									</li>
+						
+									<!--Menu list item-->
+									<li>
+										<a href="#">
+											<i class="fa fa-file"></i>
+											<span class="menu-title">Pages</span>
+											<i class="arrow"></i>
+										</a>
+						
+										<!--Submenu-->
+										<ul class="collapse">
+											<li><a href="/pages_blank">Blank Page</a></li>
+											<li><a href="/pages_profile">Profile</a></li>
+											<li><a href="/pages_search_results">Search Results</a></li>
+											<li><a href="/pages_timeline">Timeline<span class="label label_info pull_right">New</span></a></li>
+											<li><a href="/pages_faq">FAQ</a></li>
+											<li class="list_divider"></li>
+											<li><a href="/error_404">404 Error</a></li>
+											<li class="list_divider"></li>
+											<li><a href="/login">Login</a></li>											
+										</ul>
+									</li>
+
+									<!--Menu list item-->
+									<li>
+										<a href="#">
+											<i class="fa fa-plus-square"></i>
+											<span class="menu-title">Menu Level</span>
+											<i class="arrow"></i>
+										</a>
+
+										<!--Submenu-->
+										<ul class="collapse">
+											<li><a href="#">Second Level Item</a></li>
+											<li><a href="#">Second Level Item</a></li>
+											<li><a href="#">Second Level Item</a></li>
+											<li class="list-divider"></li>
+											<li>
+												<a href="#">Third Level<i class="arrow"></i></a>
+
+												<!--Submenu-->
+												<ul class="collapse">
+													<li><a href="#">Third Level Item</a></li>
+													<li><a href="#">Third Level Item</a></li>
+													<li><a href="#">Third Level Item</a></li>
+													<li><a href="#">Third Level Item</a></li>
+												</ul>
+											</li>
+											<li>
+												<a href="#">Third Level<i class="arrow"></i></a>
+
+												<!--Submenu-->
+												<ul class="collapse">
+													<li><a href="#">Third Level Item</a></li>
+													<li><a href="#">Third Level Item</a></li>
+													<li><a href="#">Third Level Item</a></li>
+													<li class="list-divider"></li>
+													<li><a href="#">Third Level Item</a></li>
+													<li><a href="#">Third Level Item</a></li>
+												</ul>
+											</li>
+										</ul>
+									</li>
+
+								</ul>
+
+
+								<!--Widget-->
+								<!--================================-->
+								<div class="mainnav-widget">
+
+									<!-- Show the button on collapsed navigation -->
+									<div class="show-small">
+										<a href="#" data-toggle="menu-widget" data-target="#demo-wg-server">
+											<i class="fa fa-desktop"></i>
+										</a>
+									</div>
+
+									<!-- Hide the content on collapsed navigation -->
+									<div id="demo-wg-server" class="hide-small mainnav-widget-content">
+										<ul class="list-group">
+											<li class="list-header pad-no pad-ver">Server Status</li>
+											<li class="mar-btm">
+												<span class="label label-primary pull-right">15%</span>
+												<p>CPU Usage</p>
+												<div class="progress progress-sm">
+													<div class="progress-bar progress-bar-primary" style="width: 15%;">
+														<span class="sr-only">15%</span>
+													</div>
+												</div>
+											</li>
+											<li class="mar-btm">
+												<span class="label label-purple pull-right">75%</span>
+												<p>Bandwidth</p>
+												<div class="progress progress-sm">
+													<div class="progress-bar progress-bar-purple" style="width: 75%;">
+														<span class="sr-only">75%</span>
+													</div>
+												</div>
+											</li>
+											<li class="pad-ver"><a href="#" class="btn btn-success btn-bock">View Details</a></li>
+										</ul>
+									</div>
+								</div>
+								<!--================================-->
+								<!--End widget-->
+
+							</div>
+						</div>
+					</div>
+					<!--================================-->
+					<!--End menu-->
+
+				</div>
+			</nav>
+			<!--===================================================-->
+			<!--END MAIN NAVIGATION-->

@@ -1,0 +1,217 @@
+fml.define('fms/contract/contract-filing', ['jquery','plugin/bootstrap/datepicker','fms/common/common','fms/common/notify','plugin/bootstrap/dataTables','plugin/bootstrap/validator'], function (require, exports) {
+
+    var $ = require('jquery');
+    var common = require('fms/common/common');
+    var notify = require('fms/common/notify');
+
+    common.panelClick('filling_cookie','a[href="#over"]','a[href="#waiting"]');
+
+    var selector = {
+        form1: $('#form-filing'),
+        form2: $('#form-filing-edit')
+    };
+    var fillingUrl = {
+        overSave: '/aj/filing/overSave',
+        waitSave: '/aj/filing/waitSave'
+    };
+    $('#tb-filing').dataTable({
+        // "sDom": "<'row'<'col-md-6'l><'col-md-6'f>r>t<'row-fluid'<'col-md-6'i><'col-md-6'p>>", //定义DataTable布局的一个强大属性
+        "oLanguage": { //语言设置
+            "sLengthMenu": "每页显示  _MENU_ 条记录",
+            "sInfo": "从 _START_ 到 _END_ /共 _TOTAL_ 条数据",
+            "oPaginate": {
+                "sFirst": "首页",
+                "sPrevious": "前一页",
+                "sNext": "后一页",
+                "sLast": "尾页"
+            },
+            "sZeroRecords": "抱歉， 没有找到",
+            "sInfoEmpty": "没有数据",
+            "sInfoFiltered":"(从_MAX_条记录中搜索)"
+        },
+        // "columns":[
+        //     { "width": "100px"},
+        //     { "width": "200px"},
+        //     { "width": "100px"},
+        //     { "width": "100px"},
+        //     { "width": "100px"},
+        //     { "width": "10px"},
+        //     { "width": "10px"}
+        // ],
+        //"columnDefs": [{
+        //    "targets": [3],
+        //    "visible": false,
+        //    "searchable": false
+        //}],
+        "aaSorting": [
+            [1, 'desc']
+        ],
+        "bWidth": false,
+        "bProcessing": true,
+        // "bStateSave": true,
+        "bDestroy": true
+    });
+    $('#tb-over-filing').dataTable({
+        // "sDom": "<'row'<'col-md-6'l><'col-md-6'f>r>t<'row-fluid'<'col-md-6'i><'col-md-6'p>>", //定义DataTable布局的一个强大属性
+        "oLanguage": { //语言设置
+            "sLengthMenu": "每页显示  _MENU_ 条记录",
+            "sInfo": "从 _START_ 到 _END_ /共 _TOTAL_ 条数据",
+            "oPaginate": {
+                "sFirst": "首页",
+                "sPrevious": "前一页",
+                "sNext": "后一页",
+                "sLast": "尾页"
+            },
+            "sZeroRecords": "抱歉， 没有找到",
+            "sInfoEmpty": "没有数据",
+            "sInfoFiltered":"(从_MAX_条记录中搜索)"
+        },
+        // "columns":[
+        // 	{ "width": "100px"},
+        // 	{ "width": "200px"},
+        // 	{ "width": "200px"},
+        // 	{ "width": "100px"},
+        // 	{ "width": "100px"},
+        // 	{ "width": "10px"},
+        // 	{ "width": "10px"}
+        // ],
+        "columnDefs": [{
+            "render": function ( data, type, row,meta ) {
+                if(type == 'sort'){
+                    return $(data).find('input').val();
+                }
+                return data;
+            },
+            "targets": [3,4,5]//合同编号、签订日期、文件状态的排序.
+        }],
+        "aaSorting": [
+            [1, 'desc']
+        ],
+        "bWidth": false,
+        "bProcessing": true,
+        // "bStateSave": true,
+        "bDestroy": true
+    });
+    /* 待归档*/
+    // 单击上传文件转移点击
+    $('.click-input').click(function(){
+        $(this).parent().next().click();
+    });
+    // 上传文件
+    $('.input').on('change', function () {
+        var _this = this;
+        // selectImage($('#input')[0].files[0]);
+        var xhr = new XMLHttpRequest();
+        xhr.onreadystatechange = function (e) {
+            if (xhr.readyState == 4) {
+                if (xhr.status == 200) {
+                    var ret = $.parseJSON(xhr.responseText);
+                    var span = $(_this).prev().find('span');
+                    if(ret.rcode == 200){
+                        $('.cabFilePath').val(ret.filePath);
+                        var file = $(_this).get(0).files[0];
+                        $(span).html(file.name);
+                        notify.info('info',ret.rmessage);
+                    }else{
+                        notify.error(ret.rmessage);
+                    }
+                }
+            }
+        };
+        xhr.open("post", "/upload/file", true);
+        var formData = new FormData(document.getElementById('form-filing'));
+        xhr.send(formData); //提交表单
+    });
+    // 点击归档 input框可输入
+    $('body').on('click', '.btn-filing', function (e) {
+        var curid = $(this).getId();
+        var isSave = $(this).hasClass('btn-filing-save');
+        if (!isSave) {
+            $(this).parents('tr').addClass('css').find('input').removeAttr('disabled');
+            $(this).addClass('btn-filing-save').html('保存');
+        }
+    });
+    selector.form1.bootstrapValidator({
+        container: '#cc'
+    }).on('success.form.bv', function (e) {
+        e.preventDefault();
+
+        // 防止二次点击
+        $('.btn-filing-save').button('loading');
+        var info = $('#form-filing').serialize();
+        console.log(info, '表单值已经发送');
+        $.post(fillingUrl.waitSave, info, function (data) {
+            if (data.rcode == 200) {
+                notify.info('归档成功');
+                $('.btn-filing-save').button('reset');
+                window.location.reload();
+            } else {
+                notify.info(data.rmessage);
+            }
+            $('.btn-filing-save').button('reset');
+        }, 'json')
+    });
+
+    // 解决验证事件的bug
+    $('.signDate,.overSignDate').datepicker({
+        'format': 'yyyy-mm-dd',
+        'autoclose': true,
+        'todayHighlight': true
+    }).on('changeDate', function () {
+        $(this).trigger('input')
+    });
+    //$('body').on('input', '#signDate', function() {})
+
+    /*已归档*/
+
+    // 点击修改
+    $('body').on('click', '.btn-filing-edit', function (e) {
+        var isSave = $(this).hasClass('btn-edit-save');
+        if (!isSave) {
+            // console.log($(this).parents('tr').find('input').length)
+            $(this).parents('tr').addClass('css').find('.can-edit').removeAttr('disabled');
+            $(this).addClass('btn-edit-save').html('保存');
+        }
+    });
+    // 点击保存，验证
+    $('body').on('click', '.btn-edit-save', function(e) {
+        var _this = e.target,
+            curTr = $(_this).parents('tr');
+        $(_this).attr('type', 'submit');
+//});
+        selector.form2.bootstrapValidator({
+            container: '#cc',
+        }).on('success.form.bv', function(e) {
+            e.preventDefault();
+            // 防止2次点击
+            $('.btn-edit-save').button('loading')
+            //var info = $('#form-filing-edit').serialize();
+            var requestId = $(curTr).find('input[name=requestId]').val(),
+                conId = $(curTr).find('input[name=conId]').val(),
+                signDate = $(curTr).find('input[name=signDate]').val(),
+                state = $(curTr).find('input[name=state]').val();
+            var info = {'requestId':requestId,'signDate':signDate,'conId':conId,'state':state};
+            $.post(fillingUrl.overSave, info, function(data) {
+                if (data.rcode == 200) {
+                    $.niftyNoty({
+                        type: 'info',
+                        container: 'floating',
+                        message: '归档成功',
+                        timer: 2000
+                    });
+                    console.log("保存成功", data);
+                    $(_this).button('reset');
+                    window.location.reload();
+                }else{
+                    $.niftyNoty({
+                        type: 'info',
+                        container: 'floating',
+                        message: data.rmessage,
+                        timer: 2000
+                    });
+                }
+                $('.btn-edit-save').button('reset')
+            }, "json")
+        })
+    })
+});

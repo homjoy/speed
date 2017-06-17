@@ -1,0 +1,60 @@
+/**
+ * 描    述：个人中心->帐户设置里修改头像上传样式
+ */
+
+.uploadify {
+	position: relative;
+	border: 2px solid #E1E1E1;
+	background-color: #F5F5F5;
+}
+.swfupload {
+	left: 0;
+}
+.uploadify-button  {
+	line-height: 120px!important;
+	font-size: 16px;
+	font-family: "微软雅黑";
+	color: #666;
+	text-align: center;
+}
+.uploadify-button .userup-icon {
+	display: inline-block;
+	margin-right: 3px;
+	width: 16px;
+	height: 16px;
+	vertical-align: -2px;
+	background: url(../images/icon_bg.png) no-repeat -50px -150px;
+}
+.uploadify-queue {
+	position: absolute;
+	top: 2px;
+	left: 2px;
+	width: 204px;
+	height: 204px;
+}
+.uploadify-queue-item {
+	position: relative;
+	padding: 90px 15px 0;
+	z-index: 9;
+	width: 170px;
+	height: 110px;
+	background-color: #FFF;
+}
+.uploadify-queue .fileName,
+.uploadify-queue .data {
+	display: none;
+}
+.uploadify-queue .uploadify-progress {
+	float: left;
+	margin-top: 2px;
+	width: 150px;
+}
+.uploadify-queue .cancel {
+	float: right;
+}
+.uploadify-queue .uploadify-progress-bar {
+	height: 10px;
+	line-height: 10px;
+	font-size: 0;
+	background-color: #72B939;
+}

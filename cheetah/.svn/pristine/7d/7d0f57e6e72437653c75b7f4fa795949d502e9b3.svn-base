@@ -1,0 +1,19 @@
+<div class="row">
+    <div class="list-group list-group-nav col-lg-8 col-sm-8 col-xs-8">
+        <a class="list-group-item " href="/home/window/?f=document&s=all">查看全部申请</a>
+        <a class="list-group-item active" href="/document/">请假</a>
+        <a class="list-group-item " href="/home/window/?f=document&s=requestDimission">离职</a>
+        <a class="list-group-item " href="/home/window/?f=document&s=requestChange">岗位调动</a>
+        <a class="list-group-item " href="/home/window/?f=document&s=Positive_approve_list">转正</a>
+        <a class="list-group-item " href="http://speed.meilishuo.com/home/dayee/" target="_Blank">简历推荐</a>
+    </div>
+</div>
+<style>
+    .list-group-nav .list-group-item {display: inline-block;border-radius: 5px;margin-top: 5px;font-size: 14px;}
+    .list-group-item.active, .list-group-item.active:hover, .list-group-item.active:focus {
+        z-index: 2;
+        color: #fff;
+        background-color: #428bca;
+        border-color: #428bca;
+    }
+</style>

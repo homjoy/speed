@@ -1,0 +1,40 @@
+<%#head.html%>
+<div id="container" class="effect mainnav-lg">
+    <%#navbar.html%>
+    <div class="boxed">
+        <div id="content-container">
+            <div id="page-content">
+                <%if(this.detail && this.detail.rcode != 200){%>
+                <div class="alert alert-danger fade in"><%= this.detail ? (this.detail.rmessage || '获取付款信息出错.') : ''%></div>
+                <%}else{%>
+                <div class="panel">
+                        <% var payInfo = this.detail.contractPay;%>
+                    <div class="panel-body">
+                        <div class="panel-footer text-right">
+                            <% if(this.detail.canApproveFlag == 1){ %>
+                            <a href="javascript:;" class="btn btn-agree btn-pay-confirm" data-id="<%=this.detail.contractPay.cpbId%>" data-taskId="<%=this.detail.taskid%>" data-formkey="<%=this.detail.formkey%>">同意</a>
+                            <a href="javascript:;" class="btn btn-reject"  data-id="<%=this.detail.contractPay.cpbId%>" data-taskId="<%=this.detail.taskid%>" data-formkey="<%=this.detail.formkey%>">驳回</a>
+                            <% } %>
+                            <% if(this.detail.canModifyFlag == 1){ %>
+                            <a class="btn btn-primary btn-edit"
+                               href="/pay/edit/?cpbId=<%=this.detail.contractPay.cpbId%>">修改</a>
+                            <% } %>
+                            <a href="/pay/print/?cpbId=<%=this.detail.contractPay.cpbId%>" target="_blank" class="btn btn-default con-export">打印</a>
+                        </div>
+                        <script>var TPL_DETAIL = <%= JSON.stringify(this.detail) %>;</script>
+                        <div class="table-template-container" data-tpl="pay-detail-tpl" data-class="table-printed"></div>
+                        <%#pay/detail.tpl.html %>
+                        <%#partial/approval_history.html%>
+                    </div>
+                </div>
+                <%}%>
+            </div>
+        </div>
+        <%#sidebar.html%>
+    </div>
+    <%#footer.html%>
+</div>
+<%! $_ENGINE_SELF.callFn("useModule")("<<<_use:
+        fml.use('fms/pay/view');
+_use:", this._JSstack , this._JSmods); %>
+<%#foot.html%>

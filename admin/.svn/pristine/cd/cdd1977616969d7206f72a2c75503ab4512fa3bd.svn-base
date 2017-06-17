@@ -1,0 +1,114 @@
+<?php
+namespace Admin\Package\Helper;
+
+/**
+* 
+*/
+class AuthCheckHelper {
+
+	public static function getCheckList() {
+        return array(
+            // 工作流管理
+            'workflow/process/ajax_task_type_edit'      => array(1,3),
+            'workflow/process/ajax_porcess_rule_edit'   => array(1,3),
+            'workflow/process/ajax_porcess_node_edit'   => array(1,3),
+            'workflow/process/ajax_porcess_action_edit' => array(1,3),
+            'workflow/process/process_info'             => array(1,3),
+
+            'workflow/task/show_task_detail'          => array(1,3),
+            'workflow/task/manual_transfer'           => array(1,3),
+            'workflow/task/ajax_task_manual_transfer' => array(1,3),
+            'workflow/task/ajax_get_task_list'        => array(1,3),
+
+            'workflow/user/role_info_edit'                   => array(1,3),
+            'workflow/user/user_role_map_edit'               => array(1,3),
+            'workflow/user/ajax_user_search'                 => array(1,3),
+            'workflow/user/ajax_user_depart_relation_save'   => array(1,3),
+            'workflow/user/ajax_search_user_role_map'        => array(1,3),
+            'workflow/user/ajax_search_user_depart_relation' => array(1,3),
+
+            // 权限管理
+            'auth/role/ajax_role_add'             => array(1),
+            'auth/role/ajax_user_role_add'        => array(1, 3),
+            'auth/tree/ajax_tree_add'             => array(1, 3),
+            'auth/tree/ajax_tree_permissions_add' => array(1, 3),
+
+            // speed后台管理
+            'structure/department/add_title'            => array(1,3,21),
+            'structure/department/ajax_add_title'       => array(1,3,21),
+            'structure/department/application_edit'     => array(1,3,21),
+            'structure/department/depart_home_backup'   => array(1,3,21),
+            'structure/department/ajax_add_depart'      => array(1,3,21),
+            'structure/department/ajax_delete_depart'   => array(1,3,21),
+            'structure/department/ajax_get_depart'      => array(1,3,21),
+            'structure/department/ajax_get_depart_backup' => array(1,3,21),
+            'structure/department/ajax_push_db'         => array(1,3,21),
+            'structure/department/ajax_request_db'      => array(1,3,21),
+            'structure/department/ajax_search_depart'   => array(1,3,21),
+            'structure/department/ajax_search_name'     => array(1,3,21,23),
+            'structure/department/ajax_update_depart'   => array(1,3,21),
+            'structure/department/depart_leader_home'   => array(1,3,21),
+            'structure/department/ajax_update_leader'   => array(1,3,21),
+
+            'structure/user/ajax_get_all_auth'         => array(1,3,21),
+            'structure/user/ajax_recover_all_auth'     => array(1,3,27),
+            'structure/user/ajax_delete_user'          => array(3,21),
+            'structure/user/update_add_user'           => array(1,3,21),
+            'structure/user/ajax_update_mail_pwd'      => array(1,3,21,23),
+            'structure/user/ajax_add_user'             => array(3,21),
+            'structure/user/ajax_search_user'          => array(1,3,21,23),
+            'structure/user/ajax_update_personal_info' => array(1,3,21),
+            'structure/user/ajax_update_user_info'     => array(1,3,21),
+            'structure/user/ajax_update_privacy_info'  => array(1,3,21),
+            'structure/user/ajax_update_work_info'     => array(1,3,21),
+            'structure/user/export_info'               => array(1,3,21),
+
+            'structure/outer/update_add_user'            => array(1,3,21),
+            'structure/outer/ajax_add_user'              => array(1,3,21),
+            'structure/outer/ajax_delete_user'           => array(1,3,21),
+            'structure/outer/ajax_update_user_info'      => array(1,3,21),
+
+            'hr/leave/leave_update'                    => array(1,3,21),
+            'hr/leave/personal_leave'                  => array(1,3,21),
+            'hr/leave/ajax_leave_update'               => array(1,3,21),
+            'hr/leave/ajax_personal_leave'             => array(1,3,21),
+            'hr/leave/export_leave_list'             => array(1,3,21),
+            //邮件管理
+            'mail/ajax_mail_group_add'               => array(1,3,21,23),
+            'mail/ajax_mail_group_del'               => array(1,3,21,23),
+            'mail/ajax_mail_user_edit'               => array(1,3,21,23),
+            'mail/mail_user_list'                    => array(1,3,21,23),
+
+            //会议室
+            'meeting/ajax_meeting_cancel'            => array(1,3,25),
+            'meeting/meeting_book'                   => array(1,3,25),
+            'meeting/meeting_edit'                   => array(1,3,25),
+            'meeting/service_list'                   => array(1,3,25),
+            'meeting/ajax_room_info'                 => array(1,3,25),
+            'meeting/ajax_meeting_upsert'            => array(1,3,25),
+            'meeting/ajax_service_upsert'            => array(1,3,25),
+            'meeting/service_upsert'                 => array(1,3,25),
+
+            'stationery/ajax_add'                    => array(1,3),
+            'stationery/ajax_get'                    => array(1,3),
+            'stationery/ajax_update_delete'          => array(1,3),
+            'stationery/apply'                       => array(1,3),
+            'stationery/export_apply'                => array(1,3),
+            'prompt/ajax_update_add'                 => array(1,3),
+            'prompt/update_add_prompt'               => array(1,3),
+
+             //考勤相关
+            'hr/attendance/ajax_attendance_statistics'               => array(1,3,21),
+            'hr/attendance/ajax_attendance_update_add'               => array(1,3,21),
+            'hr/attendance/ajax_attendance_user_del'                 => array(1,3,21),
+            'hr/attendance/ajax_attendance_user_update_add'          => array(1,3,21),
+            'hr/attendance/attendance_group'                         => array(1,3,21),
+            'hr/attendance/attendance_home'                          => array(1,3,21),
+            'hr/attendance/attendance_user'                          => array(1,3,21),
+            'hr/attendance/export_attendance'                        => array(1,3,21),
+            'hr/attendance/export_month_attendance'                  => array(1,3,21),
+            'hr/attendance/update_add_group'                         => array(1,3,21),
+            'hr/attendance/update_add_user'                         => array(1,3,21),
+        );
+    }
+}

@@ -1,0 +1,10 @@
+/*--/Users/MLS/svn/finance/fms-1.2-bugfix/apps/fms/views/footer.html--*/ 
+     var est = require(config.path.lib + 'est/est.js'); 
+     var _extFn = require('/Users/MLS/svn/finance/fms-1.2-bugfix/nest/server/lib/est/extFn.js'); 
+     function requireFn(tpl) { return est.renderFile('/Users/MLS/svn/finance/fms-1.2-bugfix/apps/fms/views/' ,tpl , null , null ,'fms' ,true); } ; 
+     function __getHtml (_data) { 
+       function jsRender(tpl , id) { return est.jsRender(requireFn(tpl)(_data), id  ); } ; 
+       var __htm ='';
+__htm += '<footer id="footer">\n    <div class="hide-fixed pull-right pad-rgt">v2.0</div>\n    <div class=" pull-right">\n        <ul class="footer-list list-inline">\n            <li>\n                <a class="fmenu_list fmenu_list_help" href="mailto:junliu@meilishuo.com?subject=意见反馈&amp;cc=binzhou@meilishuo.com&amp;body=什么意见，请大胆的写出来？">意见反馈</a>\n            </li>\n        </ul>\n    </div>\n    <p class="pad-lft"> © MEILISHUO 2013-2015</p>\n</footer>\n<!-- <div id="floating-top-right" class="floating-container"></div> -->\n';
+return __htm;} 
+ exports.html = __getHtml; 

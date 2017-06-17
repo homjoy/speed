@@ -1,0 +1,142 @@
+@import "base";
+
+
+form>.row{
+  margin: 5px 0 15px;
+  .info_more{
+    color:#9f9f9f;
+    text-align: center;
+  }
+}
+
+@media (min-width: 1200px){
+  #form-userinfo .row > .form-group:first-child > .col-lg-8 {
+    width: 63.666667%;
+  }
+}
+
+@media (min-width: 768px){
+  #form-userinfo .row > .form-group:first-child > .col-sm-8 {
+    width: 63.666667%;
+  }
+}
+
+.basic_info,.password_fix{
+  margin-top: 35px;
+  position: relative;
+  left: 20px;
+}
+.more{
+  position: relative;
+  left: 20px;
+}
+
+.save_basic_info,.save_password,{
+
+  font-size: 16px;
+  width: 75px;
+  height: 33px;
+  display: block;
+  text-align: center;
+  line-height: 20px;
+  margin: 0 auto;
+
+}
+
+.btn_line{text-align: center;margin-top: 40px;}
+
+.separate-line{
+  margin: 10px 0 30px 0;
+  padding: 0 0 0 38px;
+  .line{
+    display: inline-block;
+    //width:39%;
+    border-bottom:1px solid rgba(0, 0, 0, 0.1);
+    margin-bottom: 10px;
+  }
+  .info_more{
+    display:inline-block;
+    padding:0 20px;
+    color:#9f9f9f;
+    height: 30px;
+    font-size: 12px;
+    line-height: 30px;
+    vertical-align: bottom;
+  }
+}
+@media (min-width: 1200px){
+  .separate-line .line{width:39%;}
+}
+@media (min-width: 768px) and (max-width: 1200px){
+  .separate-line .line{width:36%;}
+}
+
+#coat_size{
+  background-color: white;
+  cursor: pointer;
+}
+
+.how-to-get{
+  display: inline-block;
+  height: 40px;
+  line-height: 40px;
+  color:#f58fb5;
+  &:hover{
+    color:#ff6379;
+  }
+}
+.how-to-get-tips{
+  box-shadow:none;
+  padding:0;
+  background-color: transparent;
+  border:none;
+  max-width: 424px;
+  top: -150px;
+  left: -282.5px;
+  display: none;
+  .popover-content{
+    padding:0;
+    //display: inline-block;
+    //width: 424px;
+    //height: 172px;
+    a{
+      display: inline-block;
+      width: 424px;
+      height: 172px;
+      text-indent: -9999px;
+      background: url('../../../img/speed/user/xiugaitankuang.png');
+    }
+  }
+}
+
+
+.mls-avatar{
+  position: absolute;
+  left: 150px;
+  top: 10px;
+  span{
+    float: left;
+    margin: 8px 20px 0 0;
+  }
+
+  img{
+    background-color: #eee;
+  }
+}
+.submit-confirm{
+  .modal-dialog{
+    width:360px;
+  }
+
+  .text-thin{
+    margin-top:0;
+  }
+
+  .media-left, .media>.pull-left{
+    padding-right: 20px;
+  }
+
+  .media-object{
+    background-color: #eee;
+  }
+}

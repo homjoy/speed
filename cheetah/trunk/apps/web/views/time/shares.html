@@ -1,0 +1,23 @@
+<% if (this.user_share_list){%>
+<% if(this.user_share_list.code==200){ %>
+<div class="row">
+    <ul class="share-users">
+        <% var link = this.shareLink.slice(-1) == '/' ? this.shareLink + '?' : this.shareLink + '&' ;%>
+        <% if(this.userInfo.code==200){ %>
+        <li <% if(!this.params.userId || this.params.userId == this.userInfo.data.user.user_id ) {%>class="current"<% } %>>
+        <a href="<%=link%>"><img src="<%= this.userInfo.data.user.avatar.avatar_small %>"></a><span>我的时间</span></li>
+        <% } %>
+        <% this.user_share_list.data.forEach(function(bannar, index){ %>
+        <li
+        <% if(this.params.userId == bannar.user_id ) {%>class="current"<% } %>>
+        <a user-id="<%= bannar.user_id%>"
+           href="<%=link %>user_id=<%= bannar.user_id%>&iw=<%= bannar.is_write%>"><img
+                src="<%= bannar.avatar%>"></a>
+        <span><%= bannar.name_cn %></span>
+        </li>
+        <% }); %>
+
+    </ul>
+</div>
+<% } %>
+<% } %>

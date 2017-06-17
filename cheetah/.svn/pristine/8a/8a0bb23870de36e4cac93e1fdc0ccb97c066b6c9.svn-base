@@ -1,0 +1,145 @@
+<header id="navbar">
+    <div id="navbar-container" class="boxed">
+
+        <!--Brand logo & name-->
+        <!--================================-->
+        <div class="navbar-header-fyc">
+            <a href="/home">
+                <img src="<%= this.PICTURE_URL  %>img/speed/logo.png" alt="Speed Logo" class="brand-icon-fyc">
+
+            </a>
+        </div>
+        <!--================================-->
+        <!--End brand logo & name-->
+
+
+        <!--Navbar Dropdown-->
+        <!--================================-->
+        <div class="navbar-content clearfix" style="margin-left:200px">
+
+            <ul class="nav navbar-top-links pull-right">
+
+
+                <!-- messages -->
+                <li class="dropdown">
+                    <a href="#" data-toggle="dropdown" class="dropdown-toggle">
+                        <img src="<%= this.PICTURE_URL  %>img/speed/notification-bell.png" style="width:20px;height:25px">
+                        <span class="badge badge-header badge-warning"></span>
+                    </a>
+
+                    <div class="dropdown-menu dropdown-menu-right with-arrow panel-default">
+                        <ul class="head-list head-list-append "></ul>
+                    </div>
+                </li>
+
+
+                <!--User dropdown-->
+                <!--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
+                <li id="dropdown-user" class="dropdown">
+                    <a href="#" data-toggle="dropdown" class="dropdown-toggle text-right">
+								<span class="pull-right">
+									<img class="img-circle img-user media-object"
+                                         src="<%= this.userInfo.data.user.avatar.avatar_small%>" alt="Profile Picture">
+								</span>
+
+                        <div class="username ">
+                            <%= this.userInfo.data.user.name_cn%>
+                            <input type="hidden" class="mail_name" value="<%= this.userInfo.data.user.mail%>">
+                            <input type="hidden" class="user_id_user" value="<%= this.userInfo.data.user.user_id%>">
+                        </div>
+                    </a>
+
+
+                    <div class="dropdown-menu dropdown-menu-right with-arrow panel-default">
+                        <ul class="head-list head-list-user">
+                            <li>
+                                <a href="/user">
+                                    <img src="<%= this.PICTURE_URL  %>img/speed/home/gerenzhongxin.png">
+                                    <!-- <span class="badge badge-danger pull-right">9</span> -->
+                                    <span>个人中心</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="http://speed.meilishuo.com/uploads/words/15/03/661_20150319161503.pdf"
+                                   target="_Blank">
+                                    <img src="<%= this.PICTURE_URL  %>img/speed/home/shubao.png">
+                                    <span>我的小书包</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="/user/logout/">
+                                    <img src="<%= this.PICTURE_URL  %>img/speed/home/exit.png">
+                                    <span>退出登录</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </li>
+                <!--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
+                <!--End user dropdown-->
+                <li id="download-client" class="dropdown">
+                    <a href="#" data-toggle="dropdown" class="dropdown-toggle ">
+                        <div class="username hidden-xs">
+                            客户端下载
+                        </div>
+                    </a>
+
+
+                    <div class=" dropdown-menu dropdown-menu-right with-arrow panel-default">
+                        <ul class="head-list">
+                            <li style="text-align:center">
+                                <a href="#">
+                                    <img src="<%= this.PICTURE_URL  %>img/speed/home/app.png">
+                                </a>
+                            </li>
+                            <li>
+                                <a class="iosBug" target="_blank" href="http://speed.meilishuo.com/uploads/words/15/10/14_20151020202251.pdf?_from_3081">
+                                    IOS 安装遇到问题？
+                                </a>
+                            </li>
+                            <li class="down_load">
+                                <a href="http://m.com/speed/speedIM_v0.0.3_for_mac.zip">
+                                    <img src="<%= this.PICTURE_URL  %>img/speed/home/mac.png">
+                                </a>
+                            </li>
+                            <li class="down_load">
+                                <a href="http://m.com/speed/speedIM_setup_v0.0.3.exe">
+                                    <img src="<%= this.PICTURE_URL  %>img/speed/home/win.png">
+                                </a>
+                            </li>
+                        </ul>
+
+                    </div>
+                </li>
+                <!--客服-->
+                <li class="dropdown">
+                    <a href="#" data-toggle="dropdown" class="dropdown-toggle">
+                        <div class="username hidden-xs">
+                        在线客服
+                        </div>
+                    </a>
+                    <div class="dropdown-menu dropdown-menu-right with-arrow panel-default">
+                        <ul class="head-list head-list-user">
+                            <li>
+                                <a href="/contacts/speedim/?u=MTQ=" target="_blank">
+                                    <span class="speedim-nav">刘隽</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="/contacts/speedim/?u=MTUyNw==" target="_Blank">
+                                    <span class="speedim-nav">耿明</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </li>
+            </ul>
+        </div>
+    </div>
+</header>
+
+<div id="message-container" style=" ">
+    <div class="text-center container" style="">
+        <div class="alert alert-danger" id="message-alert"></div>
+    </div>
+</div>

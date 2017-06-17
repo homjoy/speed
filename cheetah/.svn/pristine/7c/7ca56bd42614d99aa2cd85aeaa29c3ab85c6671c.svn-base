@@ -1,0 +1,20 @@
+function demo() {
+	return this;
+}
+var controlFns = {
+	'index' : function(){
+		this.demo()
+	}
+	,'demo' : function(){
+		var php = {}
+        this.bindDefault(php);
+		this.bridgeMuch(php);
+		this.listenOver(function(data){
+			console.log(data)
+
+			data._CSSLinks = ['base'];
+			this.render('demo.html' , data);
+		})
+	}
+};
+exports.__create = controller.__create(demo, controlFns);

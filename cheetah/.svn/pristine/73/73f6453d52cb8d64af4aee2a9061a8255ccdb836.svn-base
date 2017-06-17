@@ -1,0 +1,22 @@
+function ui_helper_classes() {
+	return this;
+}
+var controlFns = {
+	'index' : function(){
+		this.ui_helper_classes()
+	},
+	'ui_helper_classes' : function(){
+		var php = {
+			
+		}
+        this.bindDefault(php);
+		this.bridgeMuch(php);
+		this.listenOver(function(data){
+			console.log(data)
+
+			data._CSSLinks = ['fontfamily','bootstrap','nifty.min','font-awesome.min','switchery.min','bootstrap-select.min','nifty-demo.min','pace.min'];
+			this.render('ui_helper_classes.html' , data);
+		})
+	}
+};
+exports.__create = controller.__create(ui_helper_classes, controlFns);

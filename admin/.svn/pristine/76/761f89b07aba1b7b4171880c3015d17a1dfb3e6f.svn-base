@@ -1,0 +1,69 @@
+<?php
+namespace Admin\Modules\Config;
+use Libs\Util\Format;
+use Admin\Modules\Common\BaseModule;
+use Admin\Package\Common\Response;
+use Admin\Package\Core\Config;
+/**
+ * Created by hongzhou@meilishuo.com
+ * User: MLS  AjaxAddUpdateConfig
+ * Date: 15/11/25
+ * Time: 下午12:18
+ */
+class AjaxAddUpdateConfig extends BaseModule {
+    protected $errors = NULL;
+    private $params = NULL;
+    public static $VIEW_SWITCH_JSON = TRUE;
+    public function run() {
+        $this->_init();
+        if(empty($this->params['id'])){
+            $result = Config::getInstance()->createConfig($this->params);
+        }else{
+            $result = Config::getInstance()->updateConfig($this->params);
+        }
+        if($result === FALSE) {
+            $return = Response::gen_error(50001,'添加或修改信息失败');
+        }else{
+            $return = Response::gen_success($result);
+        }
+        $this->app->response->setBody($return);
+
+    }
+
+    private function _init() {
+
+            $this->rules = array(
+                'id'			=> array(
+                    'type'		=> 'integer',
+                    'maxLength'	=> 9,
+                ),
+                'path'			=> array(
+                    'required'	=> true,
+                    'type'		=> 'string',
+                    'maxLength'	=> 100,
+                ),
+                'key'		=> array(
+                    'type'		=> 'string',
+                    'maxLength'	=> 50,
+                ),
+                'value'			=> array(
+                    'type'		=> 'string',
+                ),
+                'memo'			=> array(
+                    'type'		=> 'string',
+                    'maxLength'	=> 255,
+                ),
+                'father_id'		=> array(
+                    'type'		=> 'integer',
+                    'maxLength'	=> 9,
+                ),
+                'status'		=> array(
+                    'type'		=> 'integer',
+                    'default'	=> 1,
+                ),
+            );
+        $this->params = $this->post()->safe();
+        $this->errors = $this->post()->getErrors();
+    }
+
+}

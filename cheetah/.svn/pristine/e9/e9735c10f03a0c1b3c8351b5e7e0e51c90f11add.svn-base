@@ -1,0 +1,49 @@
+function contract() {
+    return this;
+}
+var controlFns = {
+	'index':function(){
+        return this.redirectTo('/contract/approval/');
+	}
+    ,'approval': function () {
+        var php = {
+            'curInfo':'fms::/contractapplication/newContractApplicationJson'
+        };
+        this.bindDefault(php);
+        this.bridgeMuch(php);
+        this.listenOver(function (data) {
+            data._CSSLinks = ['fms/contract/contract','plugin/dropzone','s/ueditor/themes/default/css/ueditor.min'];
+            data._JSLinks = ['s/ueditor/ueditor.config','s/ueditor/ueditor.all'];
+            this.render('contract/approval.html', data);
+        });
+    }
+    ,'view':function(){
+        var id = this.req.__get.id,
+            type = 'CA';
+    	var php = {
+            'conInfo':'/userbillrequest/showContractApplicationInformationJson'
+        };
+        this.bindDefault(php);
+        this.bridgeMuch(php);
+        this.listenOver(function (data) {
+            data._CSSLinks = ['fms/contract/contract'];
+            data._JSLinks = ['s/ueditor/ueditor.parse.min'];
+            this.render('contract/approvalView.html', data);
+        });
+    }
+    ,'edit':function(){
+        // var type = this.req.__get.type,
+        var id = this.req.__get.id;
+    	var php = {
+            'conInfo':'/userbillrequest/showContractApplicationInformationJson?id='+id
+        };
+        this.bindDefault(php);
+        this.bridgeMuch(php);
+        this.listenOver(function (data) {
+            data._CSSLinks = ['fms/contract/contract','plugin/dropzone','s/ueditor/themes/default/css/ueditor.min'];
+            data._JSLinks = ['s/ueditor/ueditor.config','s/ueditor/ueditor.all'];
+            this.render('contract/approvalEdit.html', data);
+        });
+    }
+};
+exports.__create = controller.__create(contract, controlFns);

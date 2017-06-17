@@ -1,0 +1,1 @@
+Hi! {{invite_user}}：{{username}}拒绝了{{meeting_time}}的“{{meeting_topic}}”邀请，别难过，下次再约吧！

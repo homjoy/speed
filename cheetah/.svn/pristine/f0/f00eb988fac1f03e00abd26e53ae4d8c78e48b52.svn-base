@@ -1,0 +1,27 @@
+function query() {
+    return this;
+}
+var controlFns = {
+	'index':function(){
+        return this.redirectTo('/query/contract/');
+	}
+    ,'contract':function(){
+        var php = {};
+        this.bindDefault(php);
+        this.bridgeMuch(php);
+        this.listenOver(function (data) {
+            data._CSSLinks = ['plugin/dataTables.bootstrap','plugin/jquery.dataTables','plugin/zTree','fms/common/common','fms/query/base'];
+            this.render('query/contract.html', data);
+        });
+	}
+    ,'pay':function(){
+		var php = {};
+		this.bindDefault(php);
+        this.bridgeMuch(php);
+        this.listenOver(function (data) {
+            data._CSSLinks = ['plugin/dataTables.bootstrap','plugin/jquery.dataTables','plugin/zTree','fms/common/common','fms/query/base'];
+            this.render('query/pay.html', data);
+        });
+	}
+};
+exports.__create = controller.__create(query, controlFns);

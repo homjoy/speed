@@ -1,0 +1,20 @@
+function reimburse() {
+    return this;
+}
+var controlFns = {
+    'index': function () {
+        return this.redirectTo('/reimburse/general/');
+    },
+    'general': {
+        'index':function () {
+            var php = {};
+            this.bindDefault(php);
+            this.bridgeMuch(php);
+            this.listenOver(function (data) {
+                data._CSSLinks = ['fms/reimburse/base'];
+                this.render('reimburse/general/apply.html', data);
+            });
+        }
+    }
+};
+exports.__create = controller.__create(reimburse, controlFns);

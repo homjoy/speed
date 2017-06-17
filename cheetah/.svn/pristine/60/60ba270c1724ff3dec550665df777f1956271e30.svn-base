@@ -1,0 +1,198 @@
+.speedSearch-head{
+  text-align: left;
+  padding-left: 13px;
+  margin-bottom: 20px;
+  font-size: 12px !important;//edit by liuji
+  .check-all{
+    margin-right: 7px;
+  }
+  .approval-btn-div{
+    display: inline;
+    padding-right: 10px;
+    margin-right: 10px;
+    border-right: dotted #eee;
+  }
+  .btn{//edit by liuji
+    margin-left: 5px;
+    min-width: 50px;
+    font-size: 12px !important;
+    width: 54px;
+    height: 22px;
+    line-height: 22px;
+  }
+  input.search-fyc{
+    width: 162px;
+    margin-left: 8px;
+    margin-right: 8px;
+    cursor: pointer;
+  }
+  .usernameSearch-div{
+    display: inline-block;
+    min-width: 124px;//edit by liuji
+    position: relative;
+    top: 10px;
+    margin:0 8px;
+  }
+  .applyDepart, .approvalState{//edit by liuji
+    margin-right: 8px;
+  }
+
+
+  .token-input-list{ //edit by liuji
+        position: relative;
+        top: 2px;
+        height: 31px !important;
+  }
+
+  select{
+    margin-left: 8px;
+  }
+}
+.btn-group>.btn:first-child:not(:last-child):not(.dropdown-toggle) {
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+}
+
+//左侧样式
+.left-list{
+  float: left;
+  position: relative;
+  min-height: 400px;
+  .control-hide{
+    height: 100%;width: 5px;cursor: pointer;position: absolute;right: 0;
+    .control-table{
+      margin-right: 5px;
+    }
+  }
+  .pagination{margin-right: 5px;}
+  tr{
+    cursor: pointer;
+  }
+}
+
+//左侧列表统一样式
+.control-hide{
+  background: url("../../img/queen/approval/pushbar.png") no-repeat;
+  background-size: contain;
+  &.fat{
+    background: url("../../img/queen/approval/pushbarBack.png") no-repeat;
+    background-size: contain;
+  }
+}
+.hide-td-narrow .hidden-narrow,.hide-td-fat .hidden-fat{display: none}
+td{
+  vertical-align: middle !important;
+  text-align: center;
+}
+th{
+  text-align: center;
+}
+.text-left{text-align: left;}
+.avatar{
+  height: 48px;
+  width: 48px;
+  border-radius: 24px;
+  border: 1px solid #eee;
+  display: block;
+  margin: 0 auto;
+}
+//左侧内容根据状态的颜色变化
+.tr-submit,.tr-waiting,.approvaling{
+  //color: #c8c8c8;
+  //background-color: #f3f3f3;
+  //&:hover{
+  //  background-color: #e4e4e4;
+  //}
+}
+.tr-repeal{
+  color: #c8c8c8;
+  background-color: #f3f3f3;
+  &:hover{
+    background-color: #e4e4e4;
+  }
+}
+.tr-pass{
+  background-color: #ecffe5;
+  .deep-color{color:#93b76b}
+  &:hover{
+    background-color: #d8f8cc;
+  }
+}
+.tr-reject{
+  background-color: #ffdfdf;
+  .deep-color{color:#dd8274}
+  &:hover{
+    background-color: #ffd1d1;
+  }
+}
+
+//右侧具体内容
+.right-info{
+  border: solid 1px #cbd9e2;
+  min-height: 500px;
+  .null-picture{
+    background: url("../../img/queen/approval/kong.png") no-repeat;
+    height: 130px;
+    width: 175px;
+    margin: 120px auto 0;
+    h4{padding-top: 125px}
+  }
+  .panel-heading{
+    padding: 10px 10px 0 10px;
+    height: 40px;
+    background-color: #fbfbfb;
+    color: black;
+    border: none;
+    .btn{
+      float: right;
+      margin-left:8px;
+    }
+  }
+  .history-icon,.application-history{
+    display: inline-block;
+    width: 103px;
+    height: 20px;
+    line-height: 20px;
+    text-indent: 24px;
+    color: #a0a0a0;
+  }
+  .history-icon{
+    background: url("../../img/queen/approval/shenpi.png") no-repeat;
+    &.active{
+      background: url("../../img/queen/approval/shenpiactive.png") no-repeat;
+      color: #FF80A9;
+    }
+  }
+  .application-history{
+    background: url("../../img/queen/approval/lishi.png") no-repeat;
+    &.active{
+      background: url("../../img/queen/approval/lishiactive.png") no-repeat;
+      color: #FF80A9;
+    }
+  }
+}
+.token-input-list{
+      position: relative;
+      top: 2px;
+      height: 31px !important;
+    }
+
+#container .info-head .table{
+  .tt{
+    width:120px;
+  }
+  .ct{
+    font-weight: normal;
+
+    .ueditor-content{
+      max-width:100%;
+      overflow: scroll;
+    }
+  }
+}
+
+.show-info{
+  .text-muted{
+    color:#a0a0a0;
+  }
+}

@@ -1,0 +1,115 @@
+fml.define("fms/my/approval/reimburse",['jquery','component/notify','component/approval'],function(require,exports){
+    var $ = require('jquery');
+    var approval = require('component/approval');
+    var notify = require('component/notify');
+
+    var option={
+        btns:[
+            {
+                title:'批量同意',
+                class:'btn btn-agree list-agree2 btn-xs'
+            },
+            {
+                title:'驳回',
+                class:'btn btn-danger list-reject btn-xs'
+            }
+        ],
+        showLoading:false, //不显示loading
+        btnfunction:[{tar:'.list-agree2',boxremove:false,url:'/aj/reimburse/approval',dowhat:'agree',notice:'审批意见',placehold:'同意'}],
+        contractdealTaskcheckapprove:'<form class="form-horizontal form-agree">'
+        +'<div class="form-group"><label class="col-lg-3 col-sm-3 col-xs-3 control-label">转移给</label><div class="col-lg-8 col-sm-8 col-xs-8"><select name="transfer" class="form-control" style="height:33px"><option value="YL">优璃</option><option value="SM">速美</option><option value="HD">花钿</option><option value="MLS">美丽说</option></select></div></div>'
+        +'<div class="form-group"><label class="col-lg-3 col-sm-3 col-xs-3 control-label">理由</label><div class="col-lg-8 col-sm-8 col-xs-8"><textarea class="form-control reason" rows="3"></textarea> </div></div>'
+        +'</form>',
+        isStruss2:true,
+        timeSearch:true,
+        departSearch:false,
+        usernameSearch:true,
+        approveStatusSearch:true,
+        approveStatusTitle:false,
+        identifierSearch:true,
+        headercheckOthers:'',
+        leftwidth:'366px',
+        urlLeft: '/aj/my_approval/reimburse',
+        urlRight :'/aj/reimburse/detail',
+        url1:'/aj/reimburse/complete',
+        url2:'/aj/reimburse/approval',
+        tokeninputurl:'/aj/user/search',
+        nav:[
+            {title:'待审批',val:'1'},
+            {title:'已审批',val:'2,3,4,6',addclass:'btn-remove',data:"[{title:'全部',v:'2,3,4,6'},{title:'审批中',v:'2'},{title:'审批通过',v:'3'},{title:'驳回',v:'4'},{title:'撤销',v:'6'}]"}],
+        statusOptionVal:"1",
+        searchbtn:true,
+        clearbtn:true
+    };
+    approval.approval(option);
+
+
+    $(document).on('keyup','[name=identifier]',function(e){
+        var input = $(this);
+        if (e.which === 13 /*&& input.val()*/) {
+            input.next('.search-component').click();
+        }
+    });
+    $('.right-info').delegate('.activation','click',function(){
+        $('.needfill').find('span').addClass('hide').next().removeClass('hide');
+        $(this).hide();
+        $('.save').removeClass('hide');
+        $('.list-agree').attr('disabled','disabled');
+    });
+    $('.right-info').delegate('.save','click',function(){
+        $('.list-agree').removeAttr('disabled');
+
+        var _this = this;
+        var url = $(this).data().url;
+        var data=[];
+        $.each($('.needforech'),function(a,b){
+            $.each($(b).find('.needfillDetails'),function(k,v){
+                $(v).find('input').each(function(key,val){
+                    data.push({
+                        name:$(val).attr('name1')+'['+k+'].'+$(val).attr('name2'),
+                        value:$(val).val()
+                    });
+                });
+            });
+        });
+
+        if($('.attribution').length!=0){
+            data.push({
+                name:$('.attribution').attr('name')+'.attribution',
+                value:$('.attribution').val()
+            });
+        }
+        data.push({
+            name:$('#billid').attr('name')+'.id',
+            value:$('#billid').val()
+        });
+        data.push({
+            name:'flag',
+            value:'upd'
+        })
+
+        $.post(url,data,function(ret){
+            var ret = JSON.parse(ret);
+            console.log(ret);
+            if(ret.rcode=='200'){
+                $(_this).addClass('hide');
+                $('.activation').show();
+                $('.list-reject,.list-agree').removeClass('hide');
+                $('.needfill').find('span').removeClass('hide').next().addClass('hide');
+                $.each($('.needfill'),function(k,v){
+                    var a = $(v).find('span').next().val();
+                    $(v).find('span').html(a);
+                });
+
+                var a = $('.attribution').val();
+                var b = $('option[value="'+a+'"]').html();
+                $('.attribution').prev('span').html(b);
+                notify.success('操作成功');
+            }else{
+                notify.error(ret.rmessage || '操作失败');
+            }
+        });
+
+
+    });
+});

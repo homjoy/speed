@@ -1,0 +1,718 @@
+<%#head.html %>
+<div id="container" class="effect mainnav-lg">
+    <%#navbar.html %>
+
+
+    <div class="boxed">
+
+        <!--CONTENT style=""CONTAINER-->
+        <!--===================================================-->
+        <div id="content-container">
+            <div id="message-container" style=" ">
+                <div class="text-center container" style="">
+                    <div class="alert alert-danger" id="message-alert"></div>
+                </div>
+            </div>
+            <ol class="breadcrumb">
+                <li><a href="/home">首页</a></li>
+                <li class="active"><a href="javascript:void(0);">我的时间</a></li>
+            </ol>
+            <div id="page-content">
+                <div class="panel">
+                    <%#time/shares.html%>
+                    <input type="hidden" id="room_id" value="<%= this.room_id%>">
+
+
+                    <div id='calendar' style=""></div>
+                    <input type="hidden" id="book_time">
+                    <input type="hidden" id="share_user_id" value="<%= this.user_id%>">
+                    <input type="hidden" id="iw" value="<%= this.iw%>">
+                    <% if(this.userInfo.code==200){%>
+                    <input type="hidden" class="do_user_id" value="<%= this.userInfo.data.user.user_id%>">
+                    <%}%>
+                    <div id="message-container" style=" ">
+                        <div class="text-center container" style="">
+                            <div class="alert alert-danger" id="message-alert"></div>
+                        </div>
+                    </div>
+                    <!-- add Modal -->
+                    <div class="modal fade" id="eventModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+                         aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <button type="button" class="close" data-dismiss="modal"
+                                            aria-hidden="true">&times;</button>
+                                    <h4 class="modal-title">请输入时间安排内容</h4>
+                                </div>
+
+                                <div class="alert" style="display:none;">
+                                    <h4>Notice!</h4>
+
+                                    <p></p>
+                                </div>
+
+                                <div class="modal-body">
+
+                                    <div class="form-group tab-head">
+                                        <ul class="nav nav-tabs" id="myTab">
+                                            <li class="active"><a href="#time" data-id="form_time"
+                                                                  data-url="/aj/meeting/mytime_ajax_add">个人时间</a></li>
+                                            <li><a href="#meeting" data-id="form_meeting"
+                                                   data-url="/aj/meeting/ajax_book_add">预定会议室</a></li>
+                                        </ul>
+                                    </div>
+
+
+                                    <div class="tab-content">
+                                        <div class="tab-pane active" id="time">
+                                            <form class="form-horizontal form_time" role="form" action="">
+                                                <input type="hidden" class="form-control form_datetime" id="inputId"
+                                                       name="id">
+
+                                                <div class="form-group">
+                                                    <label for="title"
+                                                           class="col-lg-2 col-md-2 col-sm-2 control-label">事件名称</label>
+
+                                                    <div class="col-lg-10 col-md-10 col-sm-10">
+                                                        <input class="form-control input-title" id="title" name="title"
+                                                               placeholder="输入事件名称"/>
+                                                    </div>
+                                                </div>
+
+                                                <div class="form-group">
+                                                    <label for="inputDepartment"
+                                                           class="col-lg-2 col-md-2 col-sm-2 control-label">参加人员</label>
+
+                                                    <div class="col-lg-10 col-md-10 col-sm-10" id="inputUserBox_mytime">
+                                                        <input type="text" class="form-control" id="relation_user_id"
+                                                               name="relation_user_id"/>
+                                                    </div>
+                                                </div>
+
+                                                <div class="form-group time-span">
+                                                    <label class="col-lg-2 col-md-2 col-sm-2 control-label">时间区间</label>
+
+                                                    <div class="col-lg-4 col-md-4 col-sm-4 time-choose">
+                                                        <input type="text" class="form-control form_datetime date_start"
+                                                               name="start_time">
+                                                    </div>
+                                                    <div class="col-lg-4 col-md-4 col-sm-4 duration">
+                                                        持续时长 <select class="form-control">
+                                                        <option value="m30">30分钟</option>
+                                                        <option value="m45">45分钟</option>
+                                                        <option value="m60">1小时</option>
+                                                        <option value="m90">1.5小时</option>
+                                                        <option value="h2">2小时</option>
+                                                        <option value="h3">3小时</option>
+                                                        <option value="h4">4小时</option>
+                                                        <option value="h5">5小时</option>
+                                                        <option value="h6">6小时</option>
+                                                        <option value="h7">7小时</option>
+                                                        <option value="h8">8小时</option>
+                                                        <option value="d1">1天</option>
+                                                        <option value="d2">2天</option>
+                                                        <option value="d3">3天</option>
+                                                    </select>
+                                                    </div>
+                                                </div>
+                                                <div class="form-group time-span">
+                                                    <label class="col-lg-2 col-md-2 col-sm-2 control-label">至</label>
+
+                                                    <div class="col-lg-4 col-md-4 col-sm-4 time-choose">
+                                                        <input type="text" class="form-control form_datetime date_end"
+                                                               name="end_time">
+                                                    </div>
+                                                </div>
+                                                <div class="form-group notice-setting">
+                                                    <label class="col-lg-2 col-md-2 col-sm-2 control-label">提醒时间</label>
+                                                    <div class="col-lg-4 col-md-4 col-sm-4 notice-time">
+                                                        <select class="form-control" name="remind_time">
+                                                            <option value="">无</option>
+                                                            <option value="5">5分钟</option>
+                                                            <option value="10">10分钟</option>
+                                                            <option value="15">15分钟</option>
+                                                            <option value="30">30分钟</option>
+                                                            <option value="60">1小时</option>
+                                                            <option value="120">2小时</option>
+                                                            <option value="1440">1天</option>
+                                                        </select>
+                                                    </div>
+                                                    <div class="col-lg-4 col-md-4 col-sm-4 notice-type">
+                                                        提醒方式
+                                                        <select class="form-control" name="remind_type">
+                                                            <option value="sms">短信</option>
+                                                            <option value="im">IM</option>
+                                                        </select>
+                                                    </div>
+                                                </div>
+
+                                                <div class="form-group">
+                                                    <label for="title"
+                                                           class="col-lg-2 col-md-2 col-sm-2 control-label">地点</label>
+
+                                                    <div class="col-lg-10 col-md-10 col-sm-10">
+                                                        <input class="form-control input-title" id="position"
+                                                               name="position" placeholder="地点"/>
+                                                    </div>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label for="inputColor"
+                                                           class="col-lg-2 col-md-2 col-sm-2 control-label">日历颜色</label>
+
+                                                    <div class="col-lg-3 col-md-3 col-sm-3">
+                                                        <select class="form-control" id="selectColor" name="color">
+                                                            <option value="">请选择</option>
+                                                            <option value="#d9534f">红色</option>
+                                                            <option value="#f0ad4e">橙色</option>
+                                                            <option value="#5cb85c">绿色</option>
+                                                            <option value="#428bca">蓝色</option>
+                                                            <option value="#463265">紫色</option>
+                                                            <option value="#cccccc">灰色</option>
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label for="title"
+                                                           class="col-lg-2 col-md-2 col-sm-2 control-label">备注</label>
+
+                                                    <div class="col-lg-10 col-md-10 col-sm-10">
+                                                        <input class="form-control input-title" id="memo" name="memo"
+                                                               placeholder="备注"/>
+                                                    </div>
+                                                </div>
+
+                                                <!-- <div class="form-group">
+                                                  <label for="title" class="col-lg-2 control-label">是否提醒</label>
+                                                  <div class="col-lg-10">
+                                                      <span class="content_padding fontColor" id="">
+                                                        <input type="checkbox"  name="notice" value="" id="">
+                                                        <label for="tele_conferencin">是</label>
+                                                      </span>
+                                                  </div>
+                                                </div> -->
+                                                <input type="hidden" class="time_id" name="time_id">
+                                                <input type="hidden" class="is_check" name="is_check" value="1">
+                                                <input type="hidden" class="share_user_id" name="user_id"
+                                                       value="<%if(this.user_id!=undefined){%><%= this.user_id%><%}%>">
+
+                                            </form>
+                                        </div>
+
+
+                                        <div class="tab-pane" id="meeting">
+                                            <form class="form-horizontal form_meeting" id="" role="form">
+                                                <div class="form-group">
+                                                    <label for="meeting_topic"
+                                                           class="col-lg-2 col-md-2 col-sm-2 control-label">会议主题</label>
+
+                                                    <div class="col-lg-10 col-md-10 col-sm-10">
+                                                        <input type="text" class="form-control" id="meeting_topic"
+                                                               name="meeting_topic" placeholder="会议主题">
+                                                    </div>
+                                                </div>
+
+                                                <div class="form-group time-span">
+                                                    <label class="col-lg-2 col-md-2 col-sm-2 control-label">时间区间</label>
+
+                                                    <div class="col-lg-4 col-md-4 col-sm-4 time-choose">
+                                                        <input type="text" class="form-control form_datetime"
+                                                               name="book_start" id="start">
+                                                    </div>
+                                                    <div class="col-lg-4 col-md-4 col-sm-4 duration">
+                                                        持续时长 <select class="form-control">
+                                                        <option value="m30">30分钟</option>
+                                                        <option value="m45">45分钟</option>
+                                                        <option value="m60">1小时</option>
+                                                        <option value="m90">1.5小时</option>
+                                                        <option value="m120">2小时</option>
+                                                    </select>
+                                                    </div>
+                                                </div>
+                                                <div class="form-group time-span">
+                                                    <label class="col-lg-2 col-md-2 col-sm-2 control-label">至</label>
+
+                                                    <div class="col-lg-4 col-md-4 col-sm-4 time-choose">
+                                                        <input type="text" class="form-control form_datetime"
+                                                               name="book_end"
+                                                               id="end">
+                                                    </div>
+                                                </div>
+
+                                                <div id="time_alert" style="display:none;padding: 0;">
+                                                    <p class="fontC" style="color:red"></p>
+                                                </div>
+
+                                                <div class="form-group">
+                                                    <div class=" col-lg-8 col-md-8 col-sm-8" style="margin:0 16%">
+                                                        <label class=" col-lg-4 control-label ">
+                                                            <input type="radio" name="meeting_type" value="1" checked>
+                                                            普通会议
+                                                        </label>
+                                                        <label class=" col-lg-4 control-label">
+                                                            <input type="radio" name="meeting_type" value="2"> 视频会议
+                                                        </label>
+                                                        <label class=" col-lg-4 control-label">
+                                                            <input type="radio" name="meeting_type" value="3"> 电话会议
+                                                        </label>
+                                                    </div>
+                                                </div>
+
+                                                <div class="form-group">
+                                                    <label for="inputEnd"
+                                                           class="col-lg-2 col-md-2 col-sm-2 control-label">会议室</label>
+
+                                                    <div class="col-lg-5 col-md-5 col-sm-5">
+                                                        <select class="form-control" id="available_room_id"
+                                                                name="room_id">
+                                                            <option value="0">请选择</option>
+
+                                                            <% if(this.xinzhongguan.code==200){%>
+                                                            <optgroup class="option_title" label="北京-新中关">
+                                                                <% this.xinzhongguan.data.forEach(function(bannar,
+                                                                index){
+                                                                %>
+                                                                <option value="<%=bannar.room_id%>" class="contry_room"
+                                                                        room-name="<%=bannar.room_name%>"
+                                                                        room-id="<%=bannar.room_id%>"><%=
+                                                                    bannar.room_name%>
+                                                                    <% for(var i=4;bannar.room_name.length<i;i--){%>
+                                                                    &nbsp;&nbsp;
+                                                                    <%}%>
+                                                                    <%= bannar.extension%>层，可容纳<%=
+                                                                    bannar.room_capacity%>人
+                                                                </option>
+                                                                <% }); %>
+                                                            </optgroup>
+                                                            <% } %>
+
+                                                            <% if(this.yuanzhongyuelai.code==200){%>
+                                                            <optgroup class="option_title" label="北京-远中悦莱">
+                                                                <% this.yuanzhongyuelai.data.forEach(function(bannar,
+                                                                index){ %>
+                                                                <option value="<%=bannar.room_id%>" class="contry_room"
+                                                                        room-name="<%=bannar.room_name%>"
+                                                                        room-id="<%=bannar.room_id%>"><%=
+                                                                    bannar.room_name%>
+                                                                    <% for(var i=4;bannar.room_name.length<i;i--){%>
+                                                                    &nbsp;&nbsp;
+                                                                    <%}%>
+                                                                    <%= bannar.extension%>层，可容纳<%=
+                                                                    bannar.room_capacity%>人
+                                                                </option>
+                                                                <% }); %>
+                                                            </optgroup>
+                                                            <% } %>
+
+                                                            <% if(this.shanghai.code==200){%>
+                                                            <optgroup class="option_title" label="上海-金虹桥">
+                                                                <% this.shanghai.data.forEach(function(bannar, index){
+                                                                %>
+                                                                <option value="<%=bannar.room_id%>" class="contry_room"
+                                                                        room-name="<%=bannar.room_name%>"
+                                                                        room-id="<%=bannar.room_id%>"><%=
+                                                                    bannar.room_name%>
+                                                                    <% for(var i=4;bannar.room_name.length<i;i--){%>
+                                                                    &nbsp;&nbsp;
+                                                                    <%}%>
+                                                                    <%= bannar.extension%>层，可容纳<%=
+                                                                    bannar.room_capacity%>人
+                                                                </option>
+                                                                <% }); %>
+                                                            </optgroup>
+                                                            <% } %>
+
+                                                            <% if(this.hangzhou.code==200){%>
+                                                            <optgroup class="option_title" label="杭州-浙商财富中心">
+                                                                <% this.hangzhou.data.forEach(function(bannar, index){
+                                                                %>
+                                                                <option value="<%=bannar.room_id%>" class="contry_room"
+                                                                        room-name="<%=bannar.room_name%>"
+                                                                        room-id="<%=bannar.room_id%>"><%=
+                                                                    bannar.room_name%>
+                                                                    <% for(var i=4;bannar.room_name.length<i;i--){%>
+                                                                    &nbsp;&nbsp;
+                                                                    <%}%>
+                                                                    <%= bannar.extension%>层，可容纳<%=
+                                                                    bannar.room_capacity%>人
+                                                                </option>
+                                                                <% }); %>
+                                                            </optgroup>
+                                                            <% } %>
+
+                                                            <% if(this.guangzhou.code==200){%>
+                                                            <optgroup class="option_title" label="广州-保利威座">
+                                                                <% this.guangzhou.data.forEach(function(bannar, index){
+                                                                %>
+                                                                <option value="<%=bannar.room_id%>" class="contry_room"
+                                                                        room-name="<%=bannar.room_name%>"
+                                                                        room-id="<%=bannar.room_id%>"><%=
+                                                                    bannar.room_name%><% for(var
+                                                                    i=4;bannar.room_name.length<i;i--){%>
+                                                                    &nbsp;&nbsp;
+                                                                    <%}%>
+                                                                    <%= bannar.extension%>层，可容纳<%=
+                                                                    bannar.room_capacity%>人
+                                                                </option>
+                                                                <% }); %>
+                                                            </optgroup>
+                                                            <% } %>
+
+                                                            <% if(this.guangzhoucangku.code==200){%>
+                                                            <optgroup class="option_title" label="广州-黄埔仓库">
+                                                                <% this.guangzhoucangku.data.forEach(function(bannar,
+                                                                index){ %>
+                                                                <option value="<%=bannar.room_id%>" class="contry_room"
+                                                                        room-name="<%=bannar.room_name%>"
+                                                                        room-id="<%=bannar.room_id%>"><%=
+                                                                    bannar.room_name%><% for(var
+                                                                    i=4;bannar.room_name.length<i;i--){%>
+                                                                    &nbsp;&nbsp;
+                                                                    <%}%>
+                                                                    <%= bannar.extension%>层，可容纳<%=
+                                                                    bannar.room_capacity%>人
+                                                                </option>
+                                                                <% }); %>
+                                                            </optgroup>
+                                                            <% } %>
+                                                        </select>
+                                                    </div>
+                                                </div>
+
+                                                <div class="form-group ">
+                                                    <label for="inputDepartment"
+                                                           class="user_lable col-lg-2 col-md-2 col-sm-2 control-label">参加人员</label>
+
+                                                    <div class="col-lg-8 col-md-8 col-sm-8" id="inputUserBox">
+                                                    </div>
+                                                </div>
+
+                                                <div class="form-group add_meeting_button_div hide">
+                                                    <label class="col-lg-2 col-md-2 col-sm-2">
+                                                        <a class="btn btn-primary add_meeting_button">添加会场</a>
+                                                    </label>
+                                                    <select class="meeting_rooms hide" style="font-size:18px">
+                                                        <option value="0">请选择</option>
+                                                        <% if(this.part_div.code==200){%>
+                                                        <optgroup class="option_title" label="北京-新中关">
+                                                            <% this.part_div.data.forEach(function(bannar, index){ %>
+                                                            <% if(bannar.room_id != this.room_id&&bannar.office_id==1){
+                                                            %>
+                                                            <option class="part_select_choose"
+                                                                    value="<%= bannar.room_id%>">
+                                                                <%= bannar.room_name%>
+                                                            </option>
+                                                            <% } %>
+                                                            <% }); %>
+                                                        </optgroup>
+                                                        <optgroup class="option_title" label="北京-远中悦莱">
+                                                            <% this.part_div.data.forEach(function(bannar, index){ %>
+                                                            <% if(bannar.room_id != this.room_id&&bannar.office_id==3){
+                                                            %>
+                                                            <option class="part_select_choose"
+                                                                    value="<%= bannar.room_id%>">
+                                                                <%= bannar.room_name%>
+                                                            </option>
+                                                            <% } %>
+                                                            <% }); %>
+                                                        </optgroup>
+                                                        <optgroup class="option_title" label="上海-金虹桥">
+                                                            <% this.part_div.data.forEach(function(bannar, index){ %>
+                                                            <% if(bannar.room_id != this.room_id&&bannar.office_id==5){
+                                                            %>
+                                                            <option class="part_select_choose"
+                                                                    value="<%= bannar.room_id%>">
+                                                                <%= bannar.room_name%>
+                                                            </option>
+                                                            <% } %>
+                                                            <% }); %>
+                                                        </optgroup>
+                                                        <optgroup class="option_title" label="杭州-浙商财富中心">
+                                                            <% this.part_div.data.forEach(function(bannar, index){ %>
+                                                            <% if(bannar.room_id != this.room_id&&bannar.office_id==7){
+                                                            %>
+                                                            <option class="part_select_choose"
+                                                                    value="<%= bannar.room_id%>">
+                                                                <%= bannar.room_name%>
+                                                            </option>
+                                                            <% } %>
+                                                            <% }); %>
+                                                        </optgroup>
+                                                        <optgroup class="option_title" label="广州-保利威座">
+                                                            <% this.part_div.data.forEach(function(bannar, index){ %>
+                                                            <% if(bannar.room_id != this.room_id&&bannar.office_id==9){
+                                                            %>
+                                                            <option class="part_select_choose"
+                                                                    value="<%= bannar.room_id%>">
+                                                                <%= bannar.room_name%>
+                                                            </option>
+                                                            <% } %>
+                                                            <% }); %>
+                                                        </optgroup>
+                                                        <optgroup class="option_title" label="广州-黄埔仓库">
+                                                            <% this.part_div.data.forEach(function(bannar, index){
+                                                            %>
+                                                            <% if(bannar.room_id != this.room_id&&bannar.office_id==11){
+                                                            %>
+                                                            <option class="part_select_choose"
+                                                                    value="<%= bannar.room_id%>">
+                                                                <%= bannar.room_name%>
+                                                            </option>
+                                                            <% } %>
+                                                            <% }); %>
+                                                        </optgroup>
+                                                        <% } %>
+                                                    </select>
+
+
+                                                    <select class="telephone hide" style="font-size:18px">
+                                                        <option value="0">请选择</option>
+                                                        <% if(this.part_div_telephone.code==200){%>
+                                                        <optgroup class="option_title" label="北京-新中关">
+                                                            <% this.part_div_telephone.data.forEach(function(bannar,
+                                                            index){
+                                                            %>
+                                                            <% if(bannar.room_id != this.room_id&&bannar.office_id==1){
+                                                            %>
+                                                            <option class="part_select_choose"
+                                                                    value="<%= bannar.room_id%>">
+                                                                <%= bannar.room_name%>
+                                                            </option>
+                                                            <% } %>
+                                                            <% }); %>
+                                                        </optgroup>
+                                                        <optgroup class="option_title" label="北京-远中悦莱">
+                                                            <% this.part_div_telephone.data.forEach(function(bannar,
+                                                            index){
+                                                            %>
+                                                            <% if(bannar.room_id != this.room_id&&bannar.office_id==3){
+                                                            %>
+                                                            <option class="part_select_choose"
+                                                                    value="<%= bannar.room_id%>">
+                                                                <%= bannar.room_name%>
+                                                            </option>
+                                                            <% } %>
+                                                            <% }); %>
+                                                        </optgroup>
+                                                        <optgroup class="option_title" label="上海-金虹桥">
+                                                            <% this.part_div_telephone.data.forEach(function(bannar,
+                                                            index){
+                                                            %>
+                                                            <% if(bannar.room_id != this.room_id&&bannar.office_id==5){
+                                                            %>
+                                                            <option class="part_select_choose"
+                                                                    value="<%= bannar.room_id%>">
+                                                                <%= bannar.room_name%>
+                                                            </option>
+                                                            <% } %>
+                                                            <% }); %>
+                                                        </optgroup>
+                                                        <optgroup class="option_title" label="杭州-浙商财富中心">
+                                                            <% this.part_div_telephone.data.forEach(function(bannar,
+                                                            index){
+                                                            %>
+                                                            <% if(bannar.room_id != this.room_id&&bannar.office_id==7){
+                                                            %>
+                                                            <option class="part_select_choose"
+                                                                    value="<%= bannar.room_id%>">
+                                                                <%= bannar.room_name%>
+                                                            </option>
+                                                            <% } %>
+                                                            <% }); %>
+                                                        </optgroup>
+                                                        <optgroup class="option_title" label="广州-保利威座">
+                                                            <% this.part_div_telephone.data.forEach(function(bannar,
+                                                            index){
+                                                            %>
+                                                            <% if(bannar.room_id != this.room_id&&bannar.office_id==9){
+                                                            %>
+                                                            <option class="part_select_choose"
+                                                                    value="<%= bannar.room_id%>">
+                                                                <%= bannar.room_name%>
+                                                            </option>
+                                                            <% } %>
+                                                            <% }); %>
+                                                        </optgroup>
+                                                        <optgroup class="option_title" label="广州-黄埔仓库">
+                                                            <% this.part_div_telephone.data.forEach(function(bannar,
+                                                            index){
+                                                            %>
+                                                            <% if(bannar.room_id != this.room_id&&bannar.office_id==11){
+                                                            %>
+                                                            <option class="part_select_choose"
+                                                                    value="<%= bannar.room_id%>">
+                                                                <%= bannar.room_name%>
+                                                            </option>
+                                                            <% } %>
+                                                            <% }); %>
+                                                        </optgroup>
+                                                        <% } %>
+                                                    </select>
+                                                </div>
+                                                <!-- 需求，支持 -->
+
+                                                <div class="form-group">
+
+
+                                                    <label class="col-lg-2 col-md-2 col-sm-2"
+                                                           style="padding:7px 12px 0 12px;text-align:right"><input
+                                                            type="checkbox" class="father_service_input"
+                                                            name="service_id[]"
+                                                            value="1" style="float:left"> 待客服务</label>
+
+                                                    <div class="service_input hide col-lg-8 col-md-8 col-sm-8">
+                                                        <input type="text" class="form-control memo" name="memo"
+                                                               placeholder="备注">
+                                                    </div>
+                                                </div>
+
+                                                <div class="form-group ">
+                                                    <label for="repeat_type"
+                                                           class="col-lg-2 col-md-2 col-sm-2 control-label">重复</label>
+
+                                                    <div class="col-lg-5 col-md-5 col-sm-5">
+                                                        <select class="form-control" id="repeat_type"
+                                                                name="repeat_type">
+                                                            <option value="0">永不</option>
+                                                            <option value="1">每天(周一~周五)</option>
+                                                            <option value="7">每周</option>
+                                                            <option value="30">每月</option>
+                                                        </select>
+                                                    </div>
+                                                </div>
+
+
+                                                <input type="hidden" class="book_id" name="book_id">
+                                                <!--reply 拒绝时候添加的参数 -->
+                                                <input type="hidden" class="reply" name="reply" value="3">
+                                                <!-- 发现冲突继续提交，更改的参数 -->
+                                                <input type="hidden" class="is_check" name="is_check" value="1">
+                                                <input type="hidden" class="notice_1" value="1">
+                                                <input type="hidden" class="share_user_id" name="user_id"
+                                                       value="<%if(this.user_id!=undefined){%><%= this.user_id%><%}%>">
+                                            </form>
+                                        </div>
+
+
+                                    </div>
+                                    <p class="modal-message"></p>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-danger pull-left <%if(this.iw==0){%>hide<%}%>"
+                                            id="data_delete">删除该事件
+                                    </button>
+                                    <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+
+                                    <button type="button" class="btn btn-primary <%if(this.iw==0){%>hide<%}%>"
+                                            id="btn_submit" submit-url="/aj/meeting/mytime_ajax_add"> 确认
+                                    </button>
+                                </div>
+                            </div>
+                            <!-- /.modal-content -->
+                        </div>
+                        <!-- /.modal-dialog -->
+                    </div>
+                    <!-- /.modal -->
+                    <!-- Modal -->
+                    <div class="modal fade" id="notice_again" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+                         aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+
+                                <div class="modal-header">
+                                    <button type="button" class="close" data-dismiss="modal"
+                                            aria-hidden="true">&times;</button>
+                                    <h4 class="modal-title">提示</h4>
+                                </div>
+
+                                <div class="modal-body">
+                                    <p class="notice_again_text"></p>
+
+                                    <form class="form_again">
+                                        <input type="hidden" class="id_again">
+                                        <input type="hidden" class="start_time_again"/>
+                                        <input type="hidden" class="end_time_again">
+                                        <input type="hidden" class="is_check_again" name="is_check" value="1">
+                                        <% if(this.userInfo.code==200){%>
+                                        <input type="hidden" class="do_user_id" name="user_id"
+                                               value="<%= this.userInfo.data.user.user_id%>">
+                                        <%}%>
+                                    </form>
+                                </div>
+
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-default btn_return" data-dismiss="modal"> 关 闭
+                                    </button>
+                                    <button type="button" class="btn btn-primary <%if(this.iw==0){%>hide<%}%>"
+                                            id="btn_submit_again"> 确认
+                                    </button>
+                                </div>
+                            </div>
+                            <!-- /.modal-content -->
+                        </div>
+                        <!-- /.modal-dialog -->
+                    </div>
+                    <!-- /.modal -->
+                    <div class="modal fade" id="notice_time" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+                         aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+
+                                <div class="modal-header">
+                                    <button type="button" class="close" data-dismiss="modal"
+                                            aria-hidden="true">&times;</button>
+                                    <h4 class="modal-title">提示</h4>
+                                </div>
+
+                                <div class="modal-body">
+                                    <p class="">亲，本系统不支持穿越回过去，请选择其他时间</p>
+
+                                </div>
+
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-default btn-primary" data-dismiss="modal"> 确定
+                                    </button>
+
+                                </div>
+                            </div>
+                            <!-- /.modal-content -->
+                        </div>
+                        <!-- /.modal-dialog -->
+                    </div>
+                    <!-- /.modal -->
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <% if(this.user_time_manage.code==200){ %>
+                            <blockquote>
+                                <a href='/time/share_time/'><img src="<%= this.PICTURE_URL  %>img/speed/gongxiang.png"> 共享我的时间</a>
+                                <a href='webcal://<%= this.host %>/time/subscribe/?token=<%=this.user_time_manage.data.token %>'><img
+                                        src="<%= this.PICTURE_URL  %>img/speed/xiazai.png">订阅日历
+                                </a>
+                                <br/>或者通过下面的地址手动订阅 <abbr style="">http://<%= this.host
+                                %>/time/subscribe/?token=<%=this.user_time_manage.data.token
+                                %></abbr>
+                            </blockquote>
+                            <%}%>
+
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+            <%#footer.html%>
+        </div>
+        <%#mainnav.html%>
+    </div>
+</div>
+
+<script id="switch-view" type="text/html">
+    <a class="fc-button btn-calendar active" href="javascript:void(0);">日历</a>
+    <span class="line"></span>
+    <a class="fc-button btn-list" href="/time/my/?user_id=<%=this.params.userId || '' %>&iw=<%=this.params.iw || 0%>">列表</a>
+</script>
+<%! $_ENGINE_SELF.callFn("useModule")("<<<_use:
+        fml.use('speed/common/base');
+        fml.use('speed/time/duration');
+        fml.use('speed/time/index');
+_use:", this._JSstack , this._JSmods); %>
+<%#foot.html%>

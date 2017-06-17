@@ -1,0 +1,68 @@
+#floating-top-right{
+  top:60px;
+
+  .alert-check-in{
+    //top:50px;
+    //right:10px;
+    display: block;
+    width: 290px;
+    height: 88px;
+    -webkit-border-radius: 3px;
+    -moz-border-radius: 3px;
+    border-radius: 3px;
+    padding:18px 8px 18px 10px;
+    background: rgba(170, 208, 113, 0.94);
+    border:1px solid #a0c16f;
+
+    &,&:hover{
+      cursor: pointer;
+    }
+    &:hover{
+      .alert .icon-checkin{
+        background: url('../../../img/speed/meeting/yiqian.png') no-repeat center center;
+      }
+    }
+
+    .alert{
+      padding:0;
+      -webkit-box-shadow: none;
+      -moz-box-shadow: none;
+      box-shadow: none;
+      .media-left{
+        padding-right: 12px;
+      }
+
+      .icon-checkin{
+        display: block;
+        width: 50px;
+        height: 51px;
+        background: url('../../../img/speed/meeting/qiandao.png') no-repeat center center;
+      }
+
+      .alert-title{
+        font-size: 16px;
+        color:#fff;
+        line-height: 1.0;
+        padding-right:0;
+        padding-bottom: 10px;
+      }
+
+      .time-remain,.alert-message{
+        font-size: 12px;
+      }
+      .time-remain{
+        margin-left:30px;
+        letter-spacing:0;
+        //float:right;
+        em{
+          font-style: normal;
+          padding:0 8px;
+        }
+      }
+      .alert-message{
+        color:#609611;
+      }
+    }
+
+  }
+}

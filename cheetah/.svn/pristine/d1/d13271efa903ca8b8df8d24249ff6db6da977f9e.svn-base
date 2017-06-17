@@ -1,0 +1,11 @@
+#page-content {
+  padding: 20px 62px;
+}
+td{
+  vertical-align: middle !important;
+  text-align: center;
+}
+th{
+  text-align: center;
+}
+.text-left{text-align: left;}

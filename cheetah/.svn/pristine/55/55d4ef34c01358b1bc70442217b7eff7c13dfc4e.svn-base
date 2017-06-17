@@ -1,0 +1,98 @@
+<%#head.html%>
+<div id="container" class="effect mainnav-lg">
+    <%#navbar.html%>
+    <div class="boxed">
+        <div id="content-container">
+            <div id="page-content">
+                <div class="panel panel-nav">
+                    <div class="panel-heading">
+                        <ul class="nav nav-tabs slope">
+                            <li><a href="/query/">合同</a></li>
+                            <li><a href="/query/pay/">付款</a></li>
+                            <li class="active"><a href="javascript:void(0);">预算</a></li>
+                        </ul>
+                    </div>
+                    <div class="panel-body">
+                        <form class="form-horizontal query-form" method="post" action="">
+                            <table class="table owntable">
+                                <tbody>
+                                <tr>
+                                    <td class="text-right">部门</td>
+                                    <td id="department" class="text-left">
+                                        <input type="text" name="departmentId" class="form-control" value=""/>
+                                    </td>
+                                    <td class="text-right">预算项目</td>
+                                    <td class="text-left">
+                                        <input type="text" name="budgetItem" class="form-control" value=""/>
+                                    </td>
+                                    <td class="text-right">日期范围</td>
+                                    <td class="text-left">
+                                        <div class="form-inline">
+                                            <input type="text" class="form-control" id="sTime" name="sTime">
+                                            &nbsp;&nbsp;至&nbsp;&nbsp;
+                                            <input type="text" id="eTime" class="form-control" name="eTime">
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="text-right">预算年度</td>
+                                    <td class="text-left">
+                                        <input type="text" class="form-control" name="budgetYear">
+                                    </td>
+                                    <td class="text-right">单据编号</td>
+                                    <td class="text-left">
+                                        <div class="form-inline">
+                                            <input type="text" class="form-control ow4" name="conId">
+                                        </div>
+                                    </td>
+                                    <td class="text-right">编制期间</td>
+                                    <td class="text-left">
+                                        <select name="draftTerm" class="form-control">
+                                            <option value="">全部</option>
+                                            <option value="Q1">Q1</option>
+                                            <option value="Q2">Q2</option>
+                                            <option value="Q3">Q3</option>
+                                            <option value="Q4">Q4</option>
+                                        </select>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="text-right">单据状态</td>
+                                    <td class="text-left">
+                                        <select name="state" class="form-control">
+                                            <option value="">查询全部</option>
+                                            <option value="0">草稿</option>
+                                            <option value="2">审批中</option>
+                                            <option value="3">审批通过</option>
+                                            <option value="4">驳回</option>
+                                            <option value="5">已归档</option>
+                                        </select>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="6">
+                                        <button type="submit" class="btn btn-success ow2 btn-query"
+                                                data-loading-text="查询中">查询</button>
+                                        <!--<a href="javascript:;" class="btn btn-default ow2 btn-export">导出</a>-->
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </form>
+                        <div class="table-container"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <%#sidebar.html%>
+    </div>
+    <%#footer.html%>
+
+</div>
+
+
+<%! $_ENGINE_SELF.callFn( "useModule")( "<<<_use:
+        fml.use('fms/query/budget');
+_use:", this._JSstack , this._JSmods); %>
+
+<%#foot.html%>

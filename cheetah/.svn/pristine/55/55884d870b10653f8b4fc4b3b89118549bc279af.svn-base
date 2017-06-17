@@ -1,0 +1,58 @@
+/*见http://redmine.meilishuo.com/projects/oa/wiki/7%E5%BC%B9%E6%A1%86*/
+
+
+.modal-header{
+  padding: 12.5px 30px;
+  border-bottom: 1px solid #f6f5f6;
+  .modal-title{
+    font-size: 16px;
+    color:#515151;
+  }
+  &:after{
+    content:none;
+  }
+}
+.modal-body{
+  padding:25px 30px;
+}
+.modal-footer{
+  border-top: 1px solid #f6f5f6;
+  padding: 9px 30px;
+  background-color: #f8f8f8;
+
+  .btn{
+    font-size: 16px;
+  }
+}
+
+
+.queen-msg-container{
+  width: 100%;
+  height: 48px;
+  position: fixed;
+  top: 50px;
+  right: 0;
+  z-index: 3000;
+  display: none;
+  text-align: center;
+  .message {
+    margin:0 auto;
+    width: 370px;
+    //max-width: 500px;
+    line-height: 48px;
+    height: 48px;
+    color:#fff;
+    font-size: 14px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.21);
+
+    &.success{
+      background-color: #A5CE78;
+    }
+    &.warning{
+      background-color: #f4bf4f;
+    }
+    &.error{
+      background-color: #F47B5B;
+    }
+  }
+}

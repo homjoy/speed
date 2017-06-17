@@ -1,0 +1,99 @@
+<%#head.html%>
+<div id="container" class="effect mainnav-lg">
+    <%#navbar.html%>
+    <div class="boxed">
+        <div id="content-container">
+            <div id="page-content">
+                <div class="panel panel-nav">
+                    <div class="panel-heading">
+                        <ul class="nav nav-tabs slope ul-template-container" data-tpl="slope-tab-tpl" data-name="预算" data-json="<%==JSON.stringify(this.userInfo.label.my_approval)%>">
+                        </ul>
+                        <%#partial/slope_tab.html%>
+                    </div>
+                    <div class="panel-body">
+                        <div id="slope-home">
+                            <div class="row search-head"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <%#sidebar.html%>
+    </div>
+    <%#footer.html%>
+</div>
+
+
+<script type="text/html" id="left-table">
+    <table class="table">
+        <tr>
+            <th></th>
+            <th class="hidden-narrow"></th>
+            <th class="hidden-narrow">申请人</th>
+            <th class="hidden-narrow">单据编号</th>
+            <th>编制期间</th>
+            <th>申请部门</th>
+            <th class="hidden-narrow">日期</th>
+        </tr>
+        {{each data as info}}
+        <tr class="show-info tr-{{info.approveState}}" data-budget-id="{{info.cabid}}" data-budget-type="{{info.btype}}" dbl-open="{{if info.btype == 'CB'}}/budget/view/?budgetId={{info.cabid}}{{else}}/budget/adjust/view?budgetId={{info.cabid}}{{/if}}">
+            <td>
+                {{if info.approveState == 'wait'}}
+                <input type="checkbox" data-task_id="{{info.taskid}}" data-budget-type="{{info.btype}}" data-budget-id="{{info.cabid}}" value="{{info.cabId}}"/>
+                {{else}}
+                <i class="icon icon-{{info.approveState}}"></i>
+                {{/if}}
+            </td>
+            <td class="hidden-narrow"><img class="avatar" src="{{info.applyuseravatar}}"/></td>
+            <td class="hidden-narrow">
+                <div>{{info.applyusername}}</div>
+                <div >{{info.applydeptname}}</div>
+            </td>
+            <td class="hidden-narrow">{{info.applyno}}</td>
+            <td>
+                <div>{{info.budgetyear}}年{{info.draftTerm}}{{info.btypename}}</div>
+                <div class="hidden-fat bottom-word"><span>{{info.applydate}}</span></div>
+            </td>
+            <td>
+                <div>{{info.applydeptname}}</div>
+                <div class="hidden-fat bottom-word">{{info.applyusername}}</div>
+            </td>
+            <td class="hidden-narrow bottom-word">{{info.applydate}}</td>
+        </tr>
+        {{/each}}
+    </table>
+</script>
+
+<%#my/apply/budgetDetail.tpl.html %>
+<%#budget/adjust/detail.tpl.html %>
+
+
+
+<script type="text/html" id="right-show">
+    {{if budgetApplication.budgetAdjustFormEntity && budgetApplication.budgetAdjustFormEntity.budgetType =='BA' }}
+    <div class="panel-heading ">
+        <span>申请详情</span>
+        {{if canApproveFlag == 1}}
+        <a href="javascript:void(0);" data-budget-id="{{budgetApplication.budgetAdjustFormEntity.id}}" data-task_id="{{taskid}}" class="btn btn-xs btn-danger single list-reject">驳回</a>
+        <a href="javascript:void(0);" data-budget-id="{{budgetApplication.budgetAdjustFormEntity.id}}" data-task_id="{{taskid}}" data-formkey="{{formkey}}" class="btn btn-xs btn-success single list-agree">同意</a>
+        {{/if}}
+    </div>
+    {{ include 'adjustDetail'}}
+    {{else}}
+    <div class="panel-heading ">
+        <span>申请详情</span>
+        {{if canApproveFlag == 1}}
+        <a href="javascript:void(0);" data-budget-id="{{budgetApplication.BudgetApplicationFormEntity.id}}" data-task_id="{{taskid}}" class="btn btn-xs btn-danger single list-reject">驳回</a>
+        <a href="javascript:void(0);" data-budget-id="{{budgetApplication.BudgetApplicationFormEntity.id}}" data-task_id="{{taskid}}" data-formkey="{{formkey}}" class="btn btn-xs btn-success single list-agree">同意</a>
+        {{/if}}
+    </div>
+    {{ include 'budgetDetail'}}
+    {{/if}}
+</script>
+
+
+<%! $_ENGINE_SELF.callFn( "useModule")( "<<<_use:
+        fml.use('fms/my/approval/common');
+        fml.use('fms/my/approval/budget');
+_use:", this._JSstack , this._JSmods); %>
+<%#foot.html%>

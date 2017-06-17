@@ -1,0 +1,102 @@
+<?php
+namespace Joint\Modules\Itserver;
+use Frame\Speed\Lib\Api;
+use Joint\Modules\Common\BaseModule;
+use Joint\Package\Common\Response;
+use Joint\Package\Utils\VisitorWifi;
+
+/**
+ * wifi 登陆陆权限
+ * @author hongzhou@meilishuo.com
+ * @date 2015-9-02
+ */
+class VisitorWifiApprove  extends BaseModule{
+    protected $errors = NULL;
+    private   $params = NULL;
+    private  $url = 'http://172.17.30.6/apis/sendMsg.php?';
+    protected  $sharedkey ='Pmlsit2015wifivisItor';
+    public function run() {
+
+        $this->_init();
+        // 胜男接口数据组装
+        $queryParams['ttl'] =$this->params['expire_time']*3600;
+        if($this->params['handle_status']==1){
+            $queryParams['status'] ='pass';
+        }elseif($this->params['handle_status']==2){
+            $queryParams['status']='reject';
+        }
+        $return=$ret=array();
+        $queryParams['id'] =   $this->params['id'];
+        $queryParams['act'] =  'setvwifi';
+        $queryParams['mobile'] =   $this->params['visitor_mobile'];
+        $queryParams['op'] =   $this->params['op'];
+        $queryParams['seckey'] =md5($this->sharedkey.$queryParams['op']);
+        $this->url = $this->url.http_build_query($queryParams);
+        $curl_obj = new \Libs\Sphinx\curl;
+        $ret = $curl_obj->get($this->url);
+        //返回值处理
+        $body = $ret['body'];
+        $body = json_decode($body,TRUE);
+        $temp = time();
+        $time =@date('Y-m-d H:i:s',$temp);
+        $ttl  =@date('Y-m-d H:i:s',$temp+$queryParams['ttl']);
+        switch ($body['__STATUS__']) {
+            case 'OK': //创建成功 或者驳回成功
+                $return = Response::gen_success($body['__MSG__']);
+                $return =  Api::atom('itserver/visitor_wifi_update',array(
+                    'create_time'=>$time,
+                    'expire_time'=>$ttl,
+                    'id'=>$this->params['id'],
+                    'handle_status'=>$this->params['handle_status'],
+
+                ),true);
+                break;
+            case 'ERROR'://创建失败 或者驳回失败
+                $return = Response::gen_error(30001,'', $body['__MSG__']);
+                break;
+            default:
+                $return = Response::gen_error(50004,'','操作访客wifi失败');
+                break;
+        }
+        $this->app->response->setBody($return);
+
+
+    }
+    private function _init() {
+
+        $this->rules = array(
+            'visitor_mobile' => array(
+                'required' => TRUE,
+                'allowEmpty' => FALSE,
+                'type'=>'integer',
+                'maxLength'=> 30
+            ),
+            'handle_status' => array(
+                'type'=>'integer',
+                'default'=>0,
+            ),
+            'expire_time' => array(
+                'required' => TRUE,
+                'allowEmpty' => FALSE,
+                'type'=>'integer',
+                'maxLength'=> 30
+            ),
+            'id' => array(
+                'type'=>'integer',
+                'required' => TRUE,
+                'allowEmpty' => FALSE,
+            ),
+            'op' => array(
+                'type'=>'string',
+                'required' => TRUE,
+                'allowEmpty' => FALSE,
+            ),
+        );
+        $this->params = $this->post()->safe();
+        $this->errors = $this->post()->getErrors();
+        return TRUE;
+    }
+
+
+
+}

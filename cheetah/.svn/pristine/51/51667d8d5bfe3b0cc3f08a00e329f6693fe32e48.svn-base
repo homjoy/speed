@@ -1,0 +1,44 @@
+fml.define("fms/myapply/payApproval",['jquery','component/approval'],function(require,exports){
+    var $ = require('jquery');
+    var approval = require('component/approval');
+
+    var option={
+        btns:[
+            {
+                title:'同意',
+                class:'btn btn-agree list-agree btn-xs'
+            },
+            {
+                title:'驳回',
+                class:'btn btn-danger list-reject btn-xs'
+            }
+        ],
+        contractdealTaskneedapprove:'<form class="form-horizontal form-agree">' +
+        '<textarea class="form-control reason" rows="3">同意</textarea>' +
+        '<label class="checkbox-inline control-label">' +
+        '<input type="checkbox" name="is_check" class="checkbox ischecked" value="1" checked>是否进一步审批</label>' +
+        '</form>',
+        isStruss2:true,
+        timeSearch:true,
+        departSearch:false,
+        usernameSearch:true,
+        approveStatusSearch:true,
+        identifierSearch:true,
+        headercheckOthers:'',
+        leftwidth:'366px',
+        urlLeft: '/aj/myApproval/payList',
+        urlRight :'/aj/myApproval/payInfo',
+        url1:'/aj/myApproval/approvalPay',
+        url2:'/aj/myApproval/approvalPay',
+        urlApproval:'/aj/myapply/approvalRecord',
+        urlApplicationHistory:'/aj/myApproval/history_leave_list',
+        tokeninputurl:'/aj/user/search',
+        approveStatusTitle:"单据状态",
+        statusOption:[
+            {title:"待审批",v:"2"},
+            {title:"审批通过",v:"3"},
+            {title:"驳回",v:"4"}
+        ]
+    };
+    approval.approval(option);
+});

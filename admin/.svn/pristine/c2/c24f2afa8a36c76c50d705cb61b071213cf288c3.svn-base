@@ -1,0 +1,55 @@
+<?php
+namespace Admin\Modules\Itserver;
+use Admin\Package\Itserver\Itserver;
+use Libs\Util\Format;
+use Admin\Modules\Common\BaseModule;
+use Admin\Package\Common\Response;
+/**
+ *
+ * hongzhou@meilishuo.com
+ * 2015-12-08
+ */
+
+class AjaxCheckMail extends  BaseModule {
+    protected $errors = NULL;
+    private   $params = NULL;
+    public static $VIEW_SWITCH_JSON = TRUE;
+    public function run() {
+       $this->_init();
+        if($this->post()->hasError()){
+            $return = Response::gen_error(10001, '', $this->post()->getErrors());
+            return $this->app->response->setBody($return);
+        }
+       $result = Itserver::getInstance()->checkMail(
+           array(
+            'email'=>$this->params['mail'],
+            'depart_id'=>$this->params['depart_id']
+            )
+       );
+       if($result){
+           $result = Response::gen_success($result);
+       }else{
+           $result = Response::gen_error(50001,'邮箱不可用请替换');
+       }
+       return $this->app->response->setBody($result);
+    }
+    private function _init() {
+
+        $this->rules  = array(
+
+            'mail' => array(
+                'required' => TRUE,
+                'allowEmpty' => FALSE,
+                'type'=>'string',
+            ),
+            'depart_id' => array(//校验时
+                 'type'=>'integer',
+                 'default'=>10000,
+            )
+        );
+
+        $this->params   = $this->post()->safe();
+        $this->errors   = $this->post()->getErrors();
+
+    }
+}

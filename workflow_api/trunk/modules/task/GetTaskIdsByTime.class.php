@@ -1,0 +1,129 @@
+<?php 
+namespace WorkFlowApi\Modules\Task;
+
+/**
+ * 获取一定时间段内审批完成的任务ID
+ * @author jingjingzhang@meilishuo.com
+ * @since 2015-11-24
+ */
+
+use WorkFlowApi\Modules\Common\BaseModule;
+use WorkFlowApi\Package\Common\Response;
+use Libs\Util\ArrayUtilities;
+
+class GetTaskIdsByTime extends BaseModule {
+
+	private $params;
+
+	public function run() {
+
+		$this->_init();
+
+		// 参数校验
+		if($this->post()->hasError()){
+			$return = Response::gen_error(10001, '', $this->post()->getErrors());
+			return $this->app->response->setBody($return);
+		}
+
+		$queryParams = array();
+		if (!empty($this->params['tasktype_id'])) {
+			$queryParams['tasktype_id'] = $this->params['tasktype_id'];
+		}
+		if (!empty($this->params['start_time'])) {
+			$queryParams['start_create_time'] = $this->params['start_time'];
+		}
+		if (!empty($this->params['end_time'])) {
+			$queryParams['end_create_time'] = $this->params['end_time'];
+		}
+		if (!empty($this->params['status'])) {
+			$queryParams['status'] = $this->params['status'];
+		}
+
+		$taskInfo = $this->getClient()->call('workflowatom', 'process/task_list', $queryParams);
+		$taskInfo = $this->parseApiData($taskInfo);
+
+		if (empty($taskInfo) && is_array($taskInfo)) {
+			$this->app->response->setBody(Response::gen_success($taskInfo));
+		} else if (!empty($taskInfo)) {
+
+			// 获取群组审批节点
+			$currentNodeIds = array();
+			foreach ($taskInfo as $k => $v) {
+				if ($v['current_user_id'] == 0) {
+					$currentNodeIds[] = $v['current_node_id'];
+				}
+			}
+
+			$process_user_map = array();
+			if (!empty($currentNodeIds)) {
+
+				$currentNodeIds = array_unique($currentNodeIds);
+
+				$multiClient = $this->getMultiClient();
+				$multiClient->call('workflowatom', 'process/process_node_list', array('process_id' => $currentNodeIds), 'processInfo');
+				$multiClient->call('workflowatom', 'user/user_role_map_list', array(), 'userRoleList');
+				$multiClient->callData();
+
+				$processInfo = $this->parseApiData($multiClient->processInfo);
+				$userRoleList = $this->parseApiData($multiClient->userRoleList);
+
+				$role_user_map = array();
+				if (!empty($userRoleList)) {
+					foreach ($userRoleList as $k => $v) {
+						$role_user_map[$v['role_id']][] = $v['user_id'];
+					}
+				}
+
+				if (!empty($processInfo)) {
+					foreach($processInfo as $k => $v) {
+						if (strstr($v['role_id'], 'wf_')) {
+							$role_id = str_replace('wf_', '', $v['role_id']);
+							$process_user_map[$v['process_id']] = isset($role_user_map[$role_id]) ? $role_user_map[$role_id] : array();
+						}
+					}
+				}
+			}
+
+			$result = array();
+			foreach ($taskInfo as $k => $v) {
+				$result[$k]['task_id'] = $v['task_id'];
+				$result[$k]['status'] = $v['status'];
+
+				if (!empty($v['current_user_id'])) {
+					$result[$k]['current_user_id'] = $v['current_user_id'];
+				} else {
+					$result[$k]['current_user_id'] = !empty($process_user_map[$v['current_node_id']]) ? $process_user_map[$v['current_node_id']] : array();
+				}
+			}
+			
+			$this->app->response->setBody(Response::gen_success($result));
+		} 
+	}
+
+	private function _init() {
+
+		$this->rules = array(
+			'tasktype_id' => array(
+				'required'  => TRUE, 
+				'type'      => 'integer',
+			),
+			'start_time'  => array(
+				'required'   => TRUE, 
+				'type'       => 'datetime',
+				'allowEmpty' => FALSE,
+			),
+			'end_time'    => array(
+				'required'   => TRUE, 
+				'type'       => 'datetime',
+				'allowEmpty' => FALSE,
+			),
+			'status'      => array(
+				'required' => TRUE,
+				'type'     => 'multiId',
+				'default'  => 0,
+			),
+		);
+
+		$this->params = $this->post()->safe();
+	}
+}

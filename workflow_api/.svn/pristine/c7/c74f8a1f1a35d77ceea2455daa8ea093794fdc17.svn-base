@@ -1,0 +1,33 @@
+<?php
+
+namespace WorkFlowApi\Config\Web;
+
+//require_once '/home/work/conf/api/MySQLConfigApi.php';
+
+class MySQL extends \Frame\Config {
+
+    const MYSQL_KEY = 'speed';
+
+    public static function config() {
+    	$config = array(
+            'dolphin' => array(
+                'MASTER' => array('HOST' => '192.168.128.18', 'PORT' => '3306', 'USER' => 'dolphin', 'PASS' => 'dolphin', 'DB' => 'dolphin'),
+                'SLAVES' => array(
+                    array('HOST' => '192.168.128.18', 'PORT' => '3306', 'USER' => 'dolphin', 'PASS' => 'dolphin', 'DB' => 'dolphin'),
+                    array('HOST' => '192.168.128.18', 'PORT' => '3306', 'USER' => 'dolphin', 'PASS' => 'dolphin', 'DB' => 'dolphin'),
+                )
+            ),
+            'workflow' => array(
+                'MASTER' => array('HOST' => '192.168.128.18', 'PORT' => '3306', 'USER' => 'dolphin', 'PASS' => 'dolphin', 'DB' => 'workflow'),
+                'SLAVES' => array(
+                    array('HOST' => '192.168.128.18', 'PORT' => '3306', 'USER' => 'dolphin', 'PASS' => 'dolphin', 'DB' => 'workflow'),
+                )
+            ),
+        );
+
+    	return $config;
+ //       return \MySQLConfigApi::GetCfgByServKey(self::MYSQL_KEY);
+    }
+
+}
+

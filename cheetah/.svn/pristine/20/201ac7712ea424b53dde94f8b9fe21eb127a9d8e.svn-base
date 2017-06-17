@@ -1,0 +1,118 @@
+// header信息
+var mail =$('.mail_name').val();
+$.getJSON('/aj/check/check_all',{mail:mail},function(ret) {    
+    if(ret.code==200){
+      var data = ret.data;
+      var total =data.total;
+      if(total!=0){
+        $('.badge').html(total);
+        var str = '';
+        for(var i=0; i < data.data.length; i++) {
+          str +=        '<li>'+
+                          '<a href="'+data.data[i].href+'" class="media" target="_Blank'+i+'">'+
+                            '<span class="media-left left" >'+
+                              data.data[i].name+
+                            '</span>'+
+                            '<span class=" label-success message_to_do right">'+data.data[i].count+'</span>'+
+                            // '<div class="media-body">'+
+                            //   '<div class="text-nowrap">Jackson sent you a message</div>'
+                            //   <small class="text-muted">Yesterday</small>
+                            // </div>
+                          '</a>'+
+                        '</li>'; 
+          
+        }
+        $('.head-list-append').append(str).parent();
+      }else{
+        $('.head-list-append').parent().hide();
+      }
+    }
+});
+
+//退出
+$('#logout').click(function() {
+	console.log('======click======');
+	var ck = getCookie('speed_token');
+	$.get('/aj/logout/do_logout', {'speed_token':ck}, function(ret) {
+		if(ret.code == 200) {
+			setcookie('speed_token', '', -1);
+			self.location = '/login';
+		}else {
+			$('#logout_error').text(ret.error_msg);
+			return;
+		}
+	}, 'json');
+});
+
+// cookie
+function setcookie(name,value,day){  
+
+  var Days = 7;  
+  if(day){
+    Days = day;
+  }
+  var exp  = new Date();  
+  exp.setTime(exp.getTime() + Days*24*60*60*1000);  
+  // domain=meilishuo.com;
+  document.cookie = name + "="+ escape (value) + ";expires=" + exp.toGMTString();
+}
+function getCookie(name) 
+{ 
+    var arr,reg=new RegExp("(^| )"+name+"=([^;]*)(;|$)");
+ 
+    if(arr=document.cookie.match(reg))
+ 
+        return unescape(arr[2]); 
+    else 
+        return null; 
+} 
+// 输入框提交，show_message
+function show_message(code, message){
+  // console.log('comein show_message');
+  if (message == '') {
+    
+    return false;
+  };
+  // console.log(message);
+  $('#message-alert').html("<strong>"+message+"</strong>");
+  if (code == 400) {
+    // console.log(400);
+    $('#message-alert').removeClass("alert-success");
+    $('#message-alert').addClass("alert-danger");
+  }else if (code == 200) {
+    // console.log($('#message-alert').val());
+    $('#message-alert').removeClass("alert-danger");
+    $('#message-alert').addClass("alert-success");
+  };
+  $('#message-container').slideDown();
+  setTimeout(hide_message, 2000);
+}
+
+function hide_message(){
+  $('#message-container').slideUp();
+}
+// 左侧导航展开隐藏
+
+$('.mainnav-toggle').click(function(){
+  if($(this).hasClass('thin')){
+    $(this).removeClass('thin');
+    setcookie('thin','false',30);
+    // console.log('fyc1');
+  }else{
+    // 点击时候没有class,添加class,并加cookie；
+    setcookie('thin','true',30);
+    $(this).addClass('thin');
+    // console.log('fyc2');
+  }
+});
+var nav_style = getCookie('thin'); 
+console.log('nav_style'+nav_style);
+if(nav_style!=null&&nav_style!='false'){
+    $('.effect').addClass("mainnav-sm").removeClass('mainnav-lg');
+    $('.mainnav-toggle').addClass('thin');
+}
+
+
+
+
+

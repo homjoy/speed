@@ -1,0 +1,135 @@
+<?php
+namespace Joint\Modules\Itserver;
+use Joint\Modules\Common\BaseModule;
+use Joint\Package\Common\Response;
+/**
+ * Redmine
+ * @author hongzhou@meilishuo.com
+ * @since 2015-12-13 下午3:53:13
+ */
+defined('REDMINE_HOST') || define("REDMINE_HOST", 'http://redmine.meilishuo.com/');
+class CheckRedmine extends BaseModule {
+
+    protected $errors = NULL;
+    private   $params = NULL;
+    private   $url    = 'extend_api/user/creatable';
+
+    public function run() {
+        $this->_init();
+        //参数处理
+        if ($this->query()->hasError()) {
+            $return = Response::gen_error(10001, '', $this->errors);
+            return $this->app->response->setBody($return);
+        }
+        $is_mail = preg_match('/@/', $this->params['mail']);
+        if (!$is_mail) { // 邮箱
+            $this->params['mail'].='@meilishuo.com';
+        }
+
+        $is_mail = preg_match('/@/', $this->params['login']);
+        if ($is_mail) { // 邮箱
+            $is_mail = explode("@",$this->params['login']);
+            $is_mail = $is_mail[0];
+        }else{
+            $is_mail =  $this->params['login'];
+        }//得到前缀 拼接curl 准备参数
+        $url = REDMINE_HOST;
+        $url .=$this->url;
+        $postfields['login'] = $is_mail;
+        $postfields['mail'] = $this->params['mail'];
+        $headers[] = "X-Redmine-API-Key:cfed0d997ff7152038b8795e9bbf0f34698e6658";
+        $method = 'POST';
+
+        $ret = $this->http($url,$method,$postfields, $headers);
+
+        $ret = json_decode($ret, TRUE);
+
+        $return =array();
+        if(isset($ret['code'])){
+            switch($ret['code']){
+                case 1:
+                    $return = Response::gen_error(50001,$ret['msg']);
+                    break;
+                case 2:
+                    $return = Response::gen_error(50001,$ret['msg']);
+                    break;
+                case 3:
+                    $return = Response::gen_success(
+                        array(
+                            'message' =>'update',
+                            'status'=>3
+                        )
+                    );
+                    break;
+                case 4:
+                    $return = Response::gen_error(50001,$ret['msg']);
+                    break;
+                case 5:
+                    $return = Response::gen_success(
+                        array(
+                            'message' =>'create',
+                            'status'=>5
+                        )
+                    );
+                    break;
+                case 0://线上兼容
+                    $return = Response::gen_success(
+                        array(
+                            'message' =>'create',
+                            'status'=>5
+                        )
+                    );
+                    break;
+                default:
+                    $return = Response::gen_error(10001,'未检测到的错误');
+                    break;
+            }
+        }else{
+            $return = Response::gen_error(10004,'链接出错');
+        }
+
+        $this->app->response->setBody($return);
+
+    }
+
+    private function http($url=array(), $method=array(), $postfields = array(), $headers = array()) {
+        $ci = curl_init();
+        curl_setopt($ci, CURLOPT_HTTP_VERSION, CURL_HTTP_VERSION_1_0);
+        curl_setopt($ci, CURLOPT_URL, $url );
+        curl_setopt($ci, CURLOPT_POST, TRUE);
+        curl_setopt($ci, CURLOPT_RETURNTRANSFER, TRUE);
+        curl_setopt($ci, CURLOPT_HEADER, FALSE);
+        if (!empty($postfields)) {
+            curl_setopt($ci, CURLOPT_POSTFIELDS, $postfields);
+        }
+        curl_setopt($ci, CURLOPT_HTTPHEADER, $headers );
+        curl_setopt($ci, CURLINFO_HEADER_OUT, TRUE );
+        curl_setopt($ci, CURLOPT_CONNECTTIMEOUT, 500);
+        curl_setopt($ci, CURLOPT_TIMEOUT, 500);
+        $response = curl_exec($ci);
+        curl_close ($ci);
+        return $response;
+    }
+    private function _init() {
+
+        $this->rules = array(
+            'mail' => array(//全程
+                'required' => TRUE,
+                'allowEmpty' => FALSE,
+                'type'=>'string',
+                'maxLength'=> 30
+            ),
+            'login' => array(
+                'required' => TRUE,
+                'allowEmpty' => FALSE,
+                'type'=>'string',
+                'maxLength'=> 30
+            )
+        );
+
+        $this->params = $this->query()->safe();
+        $this->errors = $this->query()->getErrors();
+        return TRUE;
+    }
+
+}

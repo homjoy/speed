@@ -1,0 +1,115 @@
+<?php 
+namespace WorkFlowAtom\Modules\Process;
+
+use WorkFlowAtom\Modules\Common\BaseModule;
+use WorkFlowAtom\Package\Common\Response;
+use WorkFlowAtom\Package\Process\Task;
+use Libs\Util\Format;
+
+/**
+ * 任务列表
+ * @author jingjingzhang@meilishuo.com
+ * @date 2015-7-22
+ */
+
+class TaskList extends BaseModule {
+
+	protected $task;
+	protected $errors = array();
+	private $sample;
+
+	public function run() {
+
+		$this->_init();
+
+		$this->sample = Task::getInstance()->getFields();
+		$this->sample['create_time'] = '';
+
+		//参数校验
+		if ($this->post()->hasError()) {
+			$return = Response::gen_error(10001, '', $this->errors);
+        	return $this->app->response->setBody($return);
+		}
+
+		$queryParams = array();
+		if (!empty($this->task['task_id'])) {
+			$queryParams['task_id'] = $this->task['task_id'];
+		}
+		if (!empty($this->task['tasktype_id'])) {
+			$queryParams['tasktype_id'] = $this->task['tasktype_id'];
+		}
+		if (!empty($this->task['user_id'])) {
+			$queryParams['user_id'] = $this->task['user_id'];
+		}
+		if (!empty($this->task['task_name'])) {
+			$queryParams['task_name'] = $this->task['task_name'];
+		}
+		if (!empty($this->task['task_content'])) {
+			$queryParams['task_content'] = $this->task['task_content'];
+		}
+		if (!empty($this->task['current_user_id'])) {
+			$queryParams['current_user_id'] = $this->task['current_user_id'];
+		} else if (isset($this->task['flag']) && $this->task['flag'] == 1) {
+			$queryParams['current_user_id'] = 0;
+		}
+		if (!empty($this->task['status'])) {
+			$queryParams['status'] = $this->task['status'];
+		}
+		if (!empty($this->task['current_node_id'])) {
+			$queryParams['current_node_id'] = $this->task['current_node_id'];
+		} 
+
+		$result = Task::getInstance()->getDataList($queryParams);
+
+		if ($result === FALSE) {
+        	$return = Response::gen_error(50001);
+        }elseif (empty($result)) {
+        	$return = Response::gen_error(50002);
+        }else{
+        	$return = Response::gen_success(Format::outputData($result, $this->sample, TRUE));
+        }
+
+        $this->app->response->setBody($return);
+	}
+
+	/**
+     * 参数初始化
+     */
+	private function _init() {
+
+		$this->rules = array(
+			'task_id'         => array(
+				'type' => 'integer',
+			),
+			'tasktype_id'     => array(
+				'type' => 'integer',
+			),
+			'user_id'         => array(
+				'type' => 'integer',
+			),
+			'task_name'       => array(
+				'type' => 'string',
+			),
+			'task_content'    => array(
+				'type' => 'string',
+			),
+			'current_user_id' => array(
+				'type'    => 'integer',
+				'default' => 0,
+			),
+			'status' => array(
+				'type' => 'integer',
+			),
+			'current_node_id' => array(
+				'type' => 'integer',
+			),
+			'flag' => array(
+				'type'    => 'integer',
+				'default' => 0,
+			),
+		);
+
+		$this->task = $this->post()->safe();
+		$this->errors = $this->post()->getErrors();
+	}
+}

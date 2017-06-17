@@ -1,0 +1,51 @@
+<?php
+namespace Admin\Modules\Common;
+
+class BaseUtil {
+    
+	public static function getGenTree($data, $pid = 0) {
+       
+        if (empty($data)) {
+            return false;
+        }
+
+        $tree = array();
+        foreach ($data as $k => $v) {
+
+            if ($v['parent_id'] == $pid) {
+
+                //父亲找到儿子
+                $v['child_info'] = self::getGenTree($data, $v['tree_id']);
+                $tree[] = $v;
+            }
+        }
+        
+        return $tree;
+	}
+
+    public static function getParentTree($all, $data) {
+
+        //统一全部Tree格式
+        foreach ($all as $k => $v) {
+            
+            if (isset($v['parent_info'])) {
+                unset($v['parent_info']);
+                $all[$k] = $v;
+            }
+        }
+
+        $tree = array();
+        foreach ($data as $k => $v) {
+
+            $tree[$v['tree_id']] = $all[$v['tree_id']];
+
+            //如果当前节点的父亲节点不为0，且其父亲节点不在数组中
+            if ($v['parent_id'] != 0 && !isset($data[$v['parent_id']])) {
+
+                $tree[$v['parent_id']] = $all[$v['parent_id']];
+            }
+        }
+
+        return $tree;
+    }
+}

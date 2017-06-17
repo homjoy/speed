@@ -1,0 +1,52 @@
+<?php
+
+namespace Worker\Scripts\Notification;
+
+use Worker\Package\Notification\Notification;
+use Worker\Package\Notification\Mailer;
+use Worker\Package\Notification\RequestFactory;
+
+/**
+ * 邮件通知推送脚本.
+ * Class MailSender
+ * @package Worker\Scripts\Notification
+ */
+class MailSender extends \Frame\Script
+{
+    /**
+     * @throws \Exception
+     */
+    public function run()
+    {
+        //记录发送时间.
+        $start = microtime(true);
+        //开始发送，获取到的脚本会自动标记为发送中.
+        $notifications = Notification::model()->pop(20,Notification::CHANNEL_MAIL);
+        if(empty($notifications)){
+            $this->app->response->setBody(date('Y-m-d H:i:s')."没有需要发送的邮件通知.\n");
+            return ;
+        }
+
+        do {
+            foreach($notifications as $notify){
+                try{
+                    $mail = RequestFactory::buildLocalMail($notify);
+                    //以本地 mail 方式发送通知邮件.
+                    Mailer::notification($mail);
+                    //修改通知状态.
+                    Notification::model()->statusChanged($notify['notify_id'], Notification::STATUS_SUCCESS);
+                }catch (\Exception $e){
+                    $this->app->log->log('worker/notification/mail_error', array(
+                        'message' => $e->getMessage() . PHP_EOL,
+                    ));
+                    Notification::model()->statusChanged($notify['notify_id'], Notification::STATUS_FAILED);
+                }
+            }
+            $notifications = Notification::model()->pop(20,Notification::CHANNEL_MAIL);
+        } while (!empty($notifications));
+
+        $end = microtime(true);
+        $total = $end - $start;
+        $this->app->response->setBody(date('Y-m-d H:i:s')."发送结束.总用时：{$total}秒\n");
+    }
+}

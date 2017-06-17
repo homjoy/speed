@@ -1,0 +1,193 @@
+function reimburse() {
+    return this;
+}
+var controlFns = {
+    'index': function () {
+        return this.redirectTo('/reimburse/general/');
+    },
+
+    //通用报销
+    'general': {
+        'index': function () {
+            var php = {
+                'constant': 'fms::/dictionary/getexpensedictionaryjson',
+                'projects': 'fms::/budgetrequest/showbudgetitembydepartjson',
+            };
+            this.bindDefault(php);
+            this.bridgeMuch(php);
+            this.listenOver(function (data) {
+                console.log(data);
+                data._CSSLinks = ['nifty/bootstrap-select.min','plugin/zTree','queen/tree-select','fms/reimburse/base'];
+                data._JSLinks = ['nifty/bootstrap-select.min'];
+                this.render('reimburse/general/apply.html', data);
+            });
+        },
+
+        'edit': function () {
+            var php = {
+                'detail': 'fms::/expensecommon/showexpensealljson?type=EA',
+                'constant': 'fms::/dictionary/getexpensedictionaryjson',
+                'projects': 'fms::/budgetrequest/showbudgetitembydepartjson'
+            };
+            this.bindDefault(php);
+            this.bridgeMuch(php);
+            this.listenOver(function (data) {
+                data._CSSLinks = ['nifty/bootstrap-select.min', 'plugin/zTree', 'queen/tree-select', 'fms/reimburse/base'];
+                data._JSLinks = ['nifty/bootstrap-select.min'];
+                this.render('reimburse/general/apply.html', data);
+            });
+        },
+
+
+        'view': function () {
+            var php = {
+                'addresses': 'fms::/dictionary/getattributionjson',
+
+                'detail': 'fms::/expensecommon/showexpensealljson?type=EA'
+            };
+            this.bindDefault(php);
+            this.bridgeMuch(php);
+            this.listenOver(function (data) {
+                data._CSSLinks = ['fms/reimburse/view'];
+                this.render('reimburse/general/view.html', data);
+            });
+        }
+    },
+
+    //交通及餐费
+    'traffic': {
+        'index': function () {
+            var php = {
+                'constant': 'fms::/dictionary/getexpensedictionaryjson',
+                'projects': 'fms::/budgetrequest/showbudgetitembydepartjson',
+            };
+            this.bindDefault(php);
+            this.bridgeMuch(php);
+            this.listenOver(function (data) {
+                data._CSSLinks = ['nifty/bootstrap-select.min','plugin/zTree','queen/tree-select','fms/reimburse/base'];
+                data._JSLinks = ['nifty/bootstrap-select.min'];
+                this.render('reimburse/traffic/apply.html', data);
+            });
+        },
+
+
+        'edit': function () {
+            var php = {
+                'detail': 'fms::/expensecommon/showexpensealljson?type=ET',
+                'constant': 'fms::/dictionary/getexpensedictionaryjson',
+                'projects': 'fms::/budgetrequest/showbudgetitembydepartjson'
+            };
+            this.bindDefault(php);
+            this.bridgeMuch(php);
+            this.listenOver(function (data) {
+                data._CSSLinks = ['nifty/bootstrap-select.min', 'plugin/zTree', 'queen/tree-select', 'fms/reimburse/base'];
+                data._JSLinks = ['nifty/bootstrap-select.min'];
+                this.render('reimburse/traffic/apply.html', data);
+            });
+        },
+
+        'view': function () {
+            var php = {
+                'addresses': 'fms::/dictionary/getattributionjson',
+                'detail': 'fms::/expensecommon/showexpensealljson?type=ET'
+            };
+            this.bindDefault(php);
+            this.bridgeMuch(php);
+            this.listenOver(function (data) {
+                data._CSSLinks = ['fms/reimburse/view','fms/reimburse/view'];
+                this.render('reimburse/traffic/view.html', data);
+            });
+        }
+    },
+
+    //差旅费
+    'travel': {
+        'index': function () {
+            var php = {
+                'constant': 'fms::/dictionary/getexpensedictionaryjson',
+                'projects': 'fms::/budgetrequest/showbudgetitembydepartjson'
+            };
+            this.bindDefault(php);
+            this.bridgeMuch(php);
+            this.listenOver(function (data) {
+                data._CSSLinks = ['nifty/bootstrap-select.min', 'plugin/zTree', 'queen/tree-select', 'fms/reimburse/base'];
+                data._JSLinks = ['nifty/bootstrap-select.min'];
+                this.render('reimburse/travel/apply.html', data);
+            });
+        },
+
+        'edit': function () {
+            var php = {
+                'detail': 'fms::/expensecommon/showexpensealljson?type=EC', //差旅报销.
+                'constant': 'fms::/dictionary/getexpensedictionaryjson',
+                'projects': 'fms::/budgetrequest/showbudgetitembydepartjson'
+            };
+            this.bindDefault(php);
+            this.bridgeMuch(php);
+            this.listenOver(function (data) {
+                data._CSSLinks = ['nifty/bootstrap-select.min', 'plugin/zTree', 'queen/tree-select', 'fms/reimburse/base'];
+                data._JSLinks = ['nifty/bootstrap-select.min'];
+                this.render('reimburse/travel/apply.html', data);
+            });
+        },
+
+        'view': function () {
+            var php = {
+                'addresses': 'fms::/dictionary/getattributionjson',
+
+                'detail': 'fms::/expensecommon/showexpensealljson?type=EC'
+            };
+            this.bindDefault(php);
+            this.bridgeMuch(php);
+            this.listenOver(function (data) {
+                data._CSSLinks = ['fms/reimburse/view'];
+                this.render('reimburse/travel/view.html', data);
+            });
+        }
+    },
+
+    //借款单
+    'loan': {
+        'index': function () {
+            var php = {
+                'constant': 'fms::/dictionary/getexpensedictionaryjson',
+                'projects': 'fms::/budgetrequest/showbudgetitembydepartjson'
+            };
+            this.bindDefault(php);
+            this.bridgeMuch(php);
+            this.listenOver(function (data) {
+                data._CSSLinks = ['nifty/bootstrap-select.min', 'plugin/zTree', 'queen/upload', 'queen/tree-select', 'fms/reimburse/base'];
+                data._JSLinks = ['nifty/bootstrap-select.min'];
+                this.render('reimburse/loan/apply.html', data);
+            });
+        },
+        'edit': function(){
+            var php = {
+                'detail': 'fms::/loanrequest/showloanrequestdetailinfo?type=LA',
+                'constant': 'fms::/dictionary/getexpensedictionaryjson',
+                'projects': 'fms::/budgetrequest/showbudgetitembydepartjson'
+            };
+            this.bindDefault(php);
+            this.bridgeMuch(php);
+            this.listenOver(function (data) {
+                data._CSSLinks = ['nifty/bootstrap-select.min', 'plugin/zTree', 'queen/upload', 'queen/tree-select', 'fms/reimburse/base'];
+                data._JSLinks = ['nifty/bootstrap-select.min'];
+                this.render('reimburse/loan/apply.html', data);
+            });
+        },
+        'view': function () {
+            var php = {
+                'addresses': 'fms::/dictionary/getattributionjson',
+
+                'detail': 'fms::/loanrequest/showloanrequestdetailinfo?type=LA'
+            };
+            this.bindDefault(php);
+            this.bridgeMuch(php);
+            this.listenOver(function (data) {
+                data._CSSLinks = ['fms/reimburse/view'];
+                this.render('reimburse/loan/view.html', data);
+            });
+        }
+    }
+};
+exports.__create = controller.__create(reimburse, controlFns);

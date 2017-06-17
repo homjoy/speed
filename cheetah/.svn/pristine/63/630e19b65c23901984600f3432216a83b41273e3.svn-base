@@ -1,0 +1,19 @@
+function budget() {
+    return this;
+}
+var controlFns = {
+    'index': function () {
+        return this.redirectTo('/budget/apply/');
+    },
+    'apply': function () {
+        var php = {};
+        this.bindDefault(php);
+        this.bridgeMuch(php);
+        this.listenOver(function (data) {
+            data._CSSLinks = ['plugin/dropzone', 's/ueditor/themes/default/css/ueditor.min', 'fms/budget/apply'];
+            data._JSLinks = ['s/ueditor/ueditor.config', 's/ueditor/ueditor.all'];
+            this.render('budget/apply.html', data);
+        });
+    }
+};
+exports.__create = controller.__create(budget, controlFns);

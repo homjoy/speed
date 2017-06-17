@@ -1,0 +1,1 @@
+会议提醒：{{meeting_type}}“{{meeting_topic}}”将于{{meeting_start_time}}在{{place}}举行，记得准时参加哦！

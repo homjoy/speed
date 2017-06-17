@@ -1,0 +1,96 @@
+@import "base";
+
+// 上传头像
+.head_fix {
+  margin-top: 35px;
+  position: relative;
+  left: 50px
+}
+
+.example {
+  float: left;
+  margin-left: 50px
+}
+
+.avatar_preview {
+  position: relative;
+  left: 450px;
+}
+
+.fl {
+  float: left;
+  display: inline;
+}
+
+.fr {
+  float: right;
+  display: inline;
+}
+
+.cf {
+  zoom: 1;
+}
+
+.cf:after {
+  display: block;
+  visibility: hidden;
+  width: 0;
+  height: 0;
+  line-height: 0;
+  font-size: 0;
+  clear: both;
+  content: ".";
+}
+
+/*头像修改*/
+.preview {
+  border: 1px solid #ccc;
+}
+
+#cropper {
+  position: absolute;
+  left: 140px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+#preview100 {
+  position: absolute;
+  left: 380px;
+  border-radius: 5px;
+  top: 40px;
+  border: 1px solid #ccc;
+  background-color: #f5f5f5;
+}
+
+#preview50 {
+  position: absolute;
+  left: 520px;
+  border-radius: 5px;
+  top: 40px;
+  border: 1px solid #ccc;
+  background-color: #f5f5f5;
+}
+
+#buttons {
+  position: absolute;
+  left: 430px;
+  top: 170px;
+}
+
+#errors {
+  position: absolute;
+  left: 355px;
+  top: 140px;
+  width: 250px;
+  text-align: center;
+}
+
+#upRemind {
+  position: absolute;
+  left: 150px;
+  top: 80px;
+  width: 180px;
+  height: 150px;
+  font-weight: bold;
+}

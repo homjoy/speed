@@ -1,0 +1,170 @@
+@extends('layouts.master')
+
+@section('content')
+<div class="panel panel-default">
+	<!-- Default panel contents -->
+	<div class="panel-heading" style="overflow: hidden; line-height: 32px;">
+		<button style="float: right;" class="btn btn-primary add_new edit_btn" type="button" data-toggle="modal" data-target="#cateModal">添加</button>
+			
+		菜单列表
+	</div>
+	<!-- Table -->
+	<table class="table table-striped">
+		<thead>
+			<tr>
+				<th>菜单名称</th>
+				<th>菜单URL</th>
+				<th>菜单父级名称</th>
+				<th>菜单状态</th>
+				<th style="width: 100px;">操作</th>
+			</tr>
+		</thead>
+		<tbody>
+			@if($data)
+			@foreach ($data as $t)
+			<tr>
+				<td style="display:none;">{{ $t['tree_id'] }}</td>
+				<td>{{ $t['tree_name'] }}</td>
+				<td>{{ $t['tree_url'] }}</td>
+				<td>
+					@if ($t['parent_id'] > 0)
+					{{ $t['parent_info']['tree_name'] }}
+					@else
+					父级菜单
+					@endif
+				</td>
+				<td>
+					@if ($t['status'] == 1)
+					<button treeid="{{ $t['tree_id'] }}" class="btn btn-success btn-xs" type="button">
+						<span aria-hidden="true" class="glyphicon glyphicon-eye-open"></span> 有效
+					</button>
+					@else
+					<button treeid="{{ $t['tree_id'] }}" class="btn btn-default btn-xs" type="button">
+						<span aria-hidden="true" class="glyphicon glyphicon-eye-close"></span> 无效
+					</button>
+					@endif
+				</td>
+				<td><a href="#" pid="{{ $t['parent_id'] }}" class="edit_btn" data-toggle="modal" data-target="#cateModal">编辑</a></td>
+			</tr>
+			
+			@endforeach
+			@endif
+		</tbody>
+    </table>
+	
+	<!-- 添加/编辑 分类 -->
+	<div class="modal fade" id="cateModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+					<h4 class="modal-title" id="myModalLabel">添加</h4>
+				</div>
+				<div class="modal-body">
+					<form action="/auth/tree/ajax_tree_add" class="edit_form" id="myForm">
+						<input type="hidden" name="tree_id" value="0" />
+						<div class="input-group">
+							<span class="input-group-addon" id="sizing-addon2">菜单名称</span>
+							<input type="text" name="tree_name" class="form-control" placeholder="菜单名称" aria-describedby="sizing-addon2">
+						</div>
+						<br />
+						<div class="input-group">
+							<span class="input-group-addon" id="sizing-addon2">菜单URL</span>
+							<input type="text" name="tree_url" class="form-control" placeholder="菜单url" aria-describedby="sizing-addon2">
+						</div>
+						<br />
+						
+						<div class="input-group select_input">
+							<span class="input-group-addon">上级菜单选择</span>
+							<div class="btn-group btn_group_select_input_widget">
+								<input type="hidden" class="form-control" name="parent_id" value="0" />
+								<button type="button" style="border-radius: 0; border-left: none; text-align: left; width: 200px;" class="btn btn-default form-control">父级菜单</button>
+								<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+									<span class="caret"></span>
+									<span class="sr-only">Toggle Dropdown</span>
+								</button>
+								<ul class="dropdown-menu" role="menu">
+									<a class="select_item" data="0" href="#"> 父级菜单</a>
+									@if($tree)
+									@foreach ($tree as $t)
+										@if ($t['display_position'] == 1)
+											<li><a class="select_item" data="{{ $t['tree_id'] }}" href="#"> {{ $t['tree_name'] }}</a></li>
+										@endif
+									@endforeach
+									@endif
+									<li class="divider"></li>
+								</ul>
+							</div>
+						</div>
+						<br />
+
+						<div class="input-group">
+							<div class="btn-group" data-toggle="buttons">
+								<label class="btn btn-default active">
+									<input type="radio" name="status" value="1" id="option1" autocomplete="off" checked="checked" class="form-control">
+									<span aria-hidden="true" class="glyphicon glyphicon-record"></span> 
+									有效
+								</label>
+								<label class="btn btn-default">
+									<input type="radio" name="status" value="0" id="option2" autocomplete="off" class="form-control">
+									<span aria-hidden="true" class="glyphicon glyphicon-record"></span> 
+									无效
+								</label>
+							</div>
+						</div>
+						<br />
+						<div class="input-group">
+							<div class="btn-group" data-toggle="buttons">
+								<label class="btn btn-default active">
+									<input type="radio" name="display_position" value="1" id="option1" autocomplete="off"  class="form-control">
+									<span aria-hidden="true" class="glyphicon glyphicon-record"></span>
+									首页
+								</label>
+								<label class="btn btn-default">
+									<input type="radio" name="display_position" value="0" id="option2" autocomplete="off" checked="checked" class="form-control">
+									<span aria-hidden="true" class="glyphicon glyphicon-record"></span>
+									不显示
+								</label>
+							</div>
+						</div>
+					</form>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-default" data-dismiss="modal" id="cate_cancel">取消</button>
+					<button type="button" class="btn btn-success form-control" id="btn_submit" style="width: auto;">保存</button>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<script>
+	$('.edit_btn').click(function(){
+		if ($(this).hasClass('add_new')) {
+			$('input[name=tree_id]').val(0);
+			$('input[name=tree_name]').val('');
+			$('input[name=tree_url]').val('');
+			$('.select_item[data=0]').click();
+			$(':radio[name=status][value=1]').parents('label').click();
+			$(':radio[name=display_position][value=1]').parents('label').click();
+			return;
+		}
+		
+		var tds = $(this).parents('tr').children('td');
+		var tree_id = parseInt(tds.eq(0).text());
+		var tree_name = $.trim(tds.eq(1).text());
+		var tree_url = $.trim(tds.eq(2).text());
+		var pid = $(this).attr('pid');
+		var status = $.trim(tds.eq(4).text());
+		status = status == '有效' ? 1 : 0;
+		var display_position = $.trim(tds.eq(5).text());
+		display_position = display_position == '首页' ? 1 : 0;
+		$('input[name=tree_id]').val(tree_id);
+		$('input[name=tree_url]').val(tree_url);
+		$('input[name=tree_name]').val(tree_name);
+
+		$('.select_item[data=' + pid + ']').click();
+		$(':radio[name=status][value=' + status + ']').parents('label').click();
+		$(':radio[name=display_position][value=' + display_position + ']').parents('label').click();
+	});
+</script>
+@endsection

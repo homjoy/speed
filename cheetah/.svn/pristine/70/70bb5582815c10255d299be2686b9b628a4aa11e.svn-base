@@ -1,0 +1,13 @@
+fml.define('fms/budget/apply', ['jquery','plugin/bootstrap/validator', 'plugin/dropzone', 'fms/contract/validate','component/notify', 'fms/common/utils','fms/query/selectTree'], function (require, exports) {
+    var $ = require('jquery');
+    var validate = require('fms/contract/validate');
+    var dropzone = require('plugin/dropzone');
+    var notify = require('component/notify');
+    var utils = require('fms/common/utils');
+
+
+
+
+});
+
+

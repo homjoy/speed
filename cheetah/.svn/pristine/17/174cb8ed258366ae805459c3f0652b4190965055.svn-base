@@ -1,0 +1,121 @@
+<%#head.html%>
+<div id="container" class="effect mainnav-lg">
+    <%#navbar.html%>
+    <div class="boxed">
+        <div id="content-container">
+            <div id="page-content">
+                <div class="panel panel-nav">
+                    <div class="panel-heading">
+                        <ul class="nav nav-tabs slope" role="tablist">
+                            <li role="presentation"><a href="/my/approval/contract">合同</a></li>
+                            <li role="presentation"><a href="/my/approval/pay">付款</a></li>
+                            <li role="presentation"><a href="/my/approval/budget">预算</a></li>
+                            <li role="presentation" class="active"><a href="javascript:void(0);">报销</a></li>
+                            <li role="presentation"><a href="/my/approval/loan">借款</a></li>
+                        </ul>
+                    </div>
+                    <div class="panel-body">
+                        <div id="slope-home">
+                            <div class="row search-head"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <%#sidebar.html%>
+    </div>
+    <%#footer.html%>
+</div>
+
+
+<script type="text/html" id="left-table">
+    <table class="table">
+        <tr>
+            <th></th>
+            <th class="hidden-narrow"></th>
+            <th class="hidden-narrow">单据编号</th>
+            <th>预算项目</th>
+            <th class="hidden-narrow">申请日期</th>
+            <th>金额(￥)</th>
+            <th class="hidden-narrow">申请部门</th>
+            <th class="hidden-narrow">审批进度</th>
+        </tr>
+        {{each data as info}}
+        <tr class="show-info tr-{{info.approveState}}"  data-id="{{info.cabid}}" data-type="{{info.btype}}" dbl-open="/reimburse/{{if info.btype=='EA'}}general{{else if info.btype =='ET'}}traffic{{else if info.btype =='EC'}}travel{{/if}}/view?id={{info.cabid}}">
+            <td>
+                {{if info.approveState == 'wait' }}
+                <input type="checkbox" data-task_id="{{info.taskid}}" data-id="{{info.cabid}}" value="{{info.cabid}}"/>
+                {{else}}
+                <i class="icon icon-{{info.approveState}}"></i>
+                {{/if}}
+            </td>
+            <td class="hidden-narrow"><img class="avatar" src="{{info.applyuseravatar}}"/></td>
+            <td class="hidden-narrow">{{info.applyno}}</td>
+            <td>
+                <div class="name-limited">{{info.budgetItemName}}</div>
+                <div class="hidden-fat bottom-word">
+                    <span>{{info.applydate}}</span>
+                    <span>{{info.applyusername}}</span>
+                </div>
+            </td>
+            <td class="hidden-narrow">{{info.applydate}}</td>
+
+            <td>
+                <div>{{info.amount | currencyFormat }}</div>
+                <div class="hidden-fat bottom-word">{{info.applydeptname}}</div>
+            </td>
+            <td class="hidden-narrow">{{info.applydeptname}}</td>
+            <td class="hidden-narrow">{{info.approveprogress}}</td>
+        </tr>
+        {{/each}}
+    </table>
+</script>
+
+<%#reimburse/general/detail.tpl.html %>
+<%#reimburse/traffic/detail.tpl.html %>
+<%#reimburse/travel/detail.tpl.html %>
+<%#partial/approval_history_timeline.html %>
+
+<script type="text/html" id="right-show">
+    <div class="panel-heading ">
+        <span>申请详情</span>
+        <a href="javascript:void(0);"  class="btn btn-xs btn-dark single list-claim" data-task_id="{{taskid}}">加签</a>
+        {{if canApproveFlag == 1}}
+            {{if formkey!='/contract/dealTask/defaultapprove'}}
+        <a href="javascript:void(0);" class="btn btn-xs btn-danger single activation">修改</a>
+        <a href="javascript:void(0);" data-task_id="{{taskid}}"
+           data-url="{{if ExpenseCommon.MlsExpenseCommon.billType =='EA' }}/aj/reimburse/general_save_draft{{else if ExpenseCommon.MlsExpenseCommon.billType  =='ET'}}/aj/reimburse/traffic_save_draft{{else if ExpenseCommon.MlsExpenseCommon.billType  =='EC'}}/aj/reimburse/travel_save_draft{{/if}}"
+           class="btn btn-xs btn-danger single save hide">保存</a>
+        <a href="javascript:void(0);" data-task_id="{{taskid}}" class="btn btn-xs btn-danger single list-reject ">驳回</a>
+        <a href="javascript:void(0);" data-task_id="{{taskid}}" data-formkey_type="{{formkey}}" class="btn btn-xs btn-success single list-agree ">同意</a>
+            {{else}}
+        <a href="javascript:void(0);" data-task_id="{{taskid}}" class="btn btn-xs btn-danger single list-reject">驳回</a>
+        <a href="javascript:void(0);" data-task_id="{{taskid}}" data-formkey_type="{{formkey}}" class="btn btn-xs btn-success single list-agree">同意</a>
+            {{/if}}
+        {{/if}}
+    </div>
+    <div class="panel-body">
+        <div class="info-head">
+            <form id="checkform">
+            {{if ExpenseCommon.MlsExpenseCommon.billType =='EA' }}
+            {{ include 'general-table-tpl'}}
+            {{else if ExpenseCommon.MlsExpenseCommon.billType  =='ET'}}
+            {{ include 'traffic-table-tpl'}}
+            {{else if ExpenseCommon.MlsExpenseCommon.billType  =='EC'}}
+            {{ include 'travel-table-tpl'}}
+            {{/if}}
+            </form>
+        </div>
+        <div class="info-body">
+            <hr class="line-horizontal"/>
+            <a href="javascript:void(0);" class="approval-history history-icon active" data-cpb-id="{{listAppHis.cpbId}}">审批记录</a>
+            {{include 'approval-history-timeline'}}
+        </div>
+    </div>
+</script>
+
+
+<%! $_ENGINE_SELF.callFn( "useModule")( "<<<_use:
+        fml.use('fms/my/approval/reimburse');
+_use:", this._JSstack , this._JSmods); %>
+<%#foot.html%>

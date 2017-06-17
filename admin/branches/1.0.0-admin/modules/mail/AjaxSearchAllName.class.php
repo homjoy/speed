@@ -1,0 +1,146 @@
+<?php
+namespace Admin\Modules\Mail;
+use Admin\Package\Account\UserInfo;
+use Libs\Util\Format;
+use Admin\Modules\Common\BaseModule;
+use Admin\Package\Common\Response;
+use Admin\Package\Department\Department;
+use Admin\Package\Account\UserOutsourcingInfo;
+
+/**
+ * 搜索所有的用户,内容部员工和外部员工
+ * @author guojiezhu
+ * @since 2015-12-07 下午12:53:13
+ *
+ */
+class AjaxSearchAllName extends BaseModule {
+
+    protected $errors = NULL;
+    private $params = NULL;
+    public static $VIEW_SWITCH_JSON = TRUE;
+
+    public function run() {
+
+        $this->_init();
+        if( $this->query()->hasError()){
+            $return = Response::gen_error(10001, '', $this->query()->getErrors());
+            return $this->app->response->setBody($return);
+        }
+        //参数校验
+
+        if(empty($this->params['search'])){
+            $return = Response::gen_error(30001,  '没有要搜索信息');
+            return $this->app->response->setBody($return);
+        }
+        //获取
+        $queryParams = $user_info =$userIds = $departIds = array();
+        $queryParams['all'] = $this->params['all'];
+        $queryParams['status'] = $this->params['status'];
+        $queryParams['match'] = 'like';
+
+        if (ord($this->params['search']) <= 122) {
+           $this->params['search'] = explode("@",$this->params['search']);
+           $queryParams['mail']  = $this->params['search'][0];
+        } else { // 中文名
+            $queryParams['name_cn'] = $this->params['search'];
+        }
+        //获取用户ID
+        $user_info = UserInfo::getInstance()->searchUserInfo($queryParams);
+        if (is_array($user_info)) {
+            foreach ($user_info as $k => $v) {
+                $userIds[] = isset($v['user_id'])?$v['user_id']:'';
+                $departIds[] = isset($v['depart_id'])?$v['depart_id']:'';
+            }
+            $departIds = array_unique($departIds);
+        }
+        $res = $result = array();
+        if (!empty($userIds) && !empty($departIds)) {
+
+            $depart_info = $this->getDepartInfo(array('depart_id' => implode(',', $departIds),
+                'all'=>1,'type'=>$this->params['type']));
+            
+            foreach ($user_info as $k => $v) { //拼接
+                $result['user_id'] = isset($v['user_id'])?$v['user_id']:'';
+                $result['mail'] = isset($v['mail'])?$v['mail']:'';
+                $result['name_cn'] = isset($v['name_cn'])?$v['name_cn']:'';
+                $result['depart_name'] = isset($depart_info[$v['depart_id']]['depart_name'])?$depart_info[$v['depart_id']]['depart_name']:'';
+                $result['name'] = NULL;
+                $result['name'] .= $result['depart_name'];
+                if($result['mail']){
+                    if($result['name']){
+                        $result['name'] .='-';
+                    }
+                    $result['name'] .=$result['mail'];
+                }
+                if($result['name_cn']){
+                    if( $result['name']){
+                        $result['name'] .='-';
+                    }
+                    $result['name'] .=$result['name_cn'];
+                }
+                $result['mail'] = $result['mail'].'@meilishuo.com';
+                unset($result['name_cn']);
+                unset( $result['depart_name']);
+                $res[] = $result;
+            }
+
+
+        }
+        //查询外包用户表
+
+        $out_user_info = UserOutsourcingInfo::getInstance()->searchUserOutsourcingInfo($queryParams);
+        if(!empty($out_user_info)) {
+            foreach ($out_user_info as $value){
+                if(empty($value['mail']))          
+                    continue;
+                $res[] = array(
+                    'name'      => '外包员工-'.$value['mail'].'@'.$value['mail_suffix'],
+                    'mail'         => $value['mail'].'@'.$value['mail_suffix'],
+                    'user_id'      => $value['out_user_id'],
+                );
+            }
+        }
+        $this->app->response->setBody(Response::gen_success($res));
+    }
+
+
+    private function getDepartInfo($param) {
+        if($param['type']==1){//从表
+            $ret = Department::getInstance()->getDepartTemp($param);
+        }else{//主表
+            $ret = Department::getInstance()->getDepart( $param);
+        }
+
+
+        return $ret;
+    }
+
+
+    private function _init() {
+
+        $this->rules = array(
+            'search' => array(// 邮箱 姓名 拼音
+                'required'   => TRUE,
+                'allowEmpty' => FALSE,
+                'type' => 'string',
+            ),
+            'status'  => array(
+                'type'    => 'multiID',
+                'default' => array(1,2,3),
+            ),
+            'all'  => array(
+                'type'    => 'integer',
+                'default' =>1,
+            ),
+            'type'  => array(
+                'type'    => 'integer',
+                'enum' =>array(1,2),
+                'default' =>2,//搜索主表
+            ),
+
+        );
+
+        $this->params = $this->query()->safe();
+        $this->errors = $this->query()->getErrors();
+    }
+}

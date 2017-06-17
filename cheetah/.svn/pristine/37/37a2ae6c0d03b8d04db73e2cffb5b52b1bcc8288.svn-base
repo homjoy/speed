@@ -1,0 +1,199 @@
+fml.define('fms/myapproval/index', ['jquery', 'plugin/bootbox', 'fms/common/common', 'fms/common/notify', 'fms/common/contract', 'plugin/bootstrap/dataTables', 'plugin/bootstrap/validator', 'plugin/cookie'], function (require, exports) {
+
+    var $ = require('jquery');
+    var bootbox = require('plugin/bootbox');
+    var common = require('fms/common/common');
+    var notify = require('fms/common/notify');
+    var contract = require('fms/common/contract');
+    common.panelClick('panel_type_cookie', 'a[href="#over"]', 'a[href="#waiting"]');
+
+
+    if (window.location.hash) {
+        var tab = $("a[href='" + window.location.hash + "']");
+        if (tab.length) {
+            setTimeout(function () {
+                tab.trigger('click');
+            }, 200);
+        }
+    }
+
+    $('#tb-waitlist').dataTable({
+        "sDom": "<'row'<'col-md-3'l><'btn-group col-md-3'><'col-md-6'f>r>t<'row-fluid'<'col-md-6'i><'col-md-6'p>>", //定义DataTable布局的一个强大属性
+        "oLanguage": { //语言设置
+            "sLengthMenu": "每页显示  _MENU_ 条记录",
+            "sInfo": "从 _START_ 到 _END_ /共 _TOTAL_ 条数据",
+            "oPaginate": {
+                "sFirst": "首页",
+                "sPrevious": "前一页",
+                "sNext": "后一页",
+                "sLast": "尾页"
+            },
+            "sZeroRecords": "抱歉， 没有找到",
+            "sInfoEmpty": "没有数据",
+            "sInfoFiltered": "(从_MAX_条记录中搜索)"
+        },
+        "aaSorting": [
+            [2, 'desc']
+        ],
+        "aoColumnDefs": [{
+            "sWidth": "80px",
+            "aTargets": [5]
+        }, {
+            "bSortable": false,
+            "aTargets": [0]
+        }],
+        // "bAutoWidth": true,
+        "bProcessing": true //当datatable获取数据时候是否显示正在处理提示信息。
+        // "bServerSide": true, //客户端处理分页 与ajax选项一起使用
+        // "sAjaxSource": "/rule/list", //ajax请求地址
+        // 'bStateSave': true //开关，是否打开客户端状态记录功能。这个数据是记录在cookies中的，打开了这个记录后，即使刷新一次页面，或重新打开浏览器，之前的状态都是保存下来的
+    });
+    // 保证btn-group的位置 必须放在table初始化之后执行
+    $('#tb-overlist').dataTable({
+        "sDom": "<'row'<'col-md-6'l><'col-md-6'f>r>t<'row-fluid'<'col-md-6'i><'col-md-6'p>>", //定义DataTable布局的一个强大属性
+        "oLanguage": { //语言设置
+            "sLengthMenu": "每页显示  _MENU_ 条记录",
+            "sInfo": "从 _START_ 到 _END_ /共 _TOTAL_ 条数据",
+            "oPaginate": {
+                "sFirst": "首页",
+                "sPrevious": "前一页",
+                "sNext": "后一页",
+                "sLast": "尾页"
+            },
+            "sZeroRecords": "抱歉， 没有找到",
+            "sInfoEmpty": "没有数据",
+            "sInfoFiltered": "(从_MAX_条记录中搜索)"
+        },
+        // "aoColumnDefs": [{
+        //     "sWidth": "80px",
+        //     "aTargets": [5]
+        // }],
+        // "bAutoWidth": true,
+        "bProcessing": true, //当datatable获取数据时候是否显示正在处理提示信息。
+        // "bServerSide": true, //客户端处理分页 与ajax选项一起使用
+        // "sAjaxSource": "/rule/list", //ajax请求地址
+        'bStateSave': true //开关，是否打开客户端状态记录功能。这个数据是记录在cookies中的，打开了这个记录后，即使刷新一次页面，或重新打开浏览器，之前的状态都是保存下来的
+    });
+
+
+    var $btns = {
+        group: $('.btn-group'), //通过驳回 的div
+        allPass: $('.btn-all-pass'), //一键通过
+        allReject: $('.btn-all-reject') //一键驳回
+    };
+    var $tables = {
+        wait: $('#tb-waitlist'), //待审批
+        over: $('#tb-overlist') //已审批
+    };
+    var $pageDom = {
+        tabcnt: $('#myTabContent')
+    };
+
+    // 把按钮组添加到表头
+    function initBtnGroup() {
+        $btns.group.append($btns.allPass);
+        $btns.group.append($btns.allReject);
+    }
+
+    initBtnGroup();
+    // 批量获取选中的id
+    function getCheckedIds() {
+        var ids = $tables.wait.find('tbody input[type=checkbox]:checked').map(function () {
+            return $(this).val();
+        }).get();
+        console.log(ids);
+        return ids;
+    }
+
+    // 批量选中
+    $pageDom.tabcnt.on('click', '.getall', function () {
+        var _this = this,
+            isChecked = $(_this).prop('checked');
+        var cboxs = $tables.wait.find('tbody input[type="checkbox"]');
+        $.each(cboxs, function (i, v) {
+            $(v).prop('checked', isChecked);
+        });
+    });
+
+    // 一键通过
+    $pageDom.tabcnt.on('click', '.btn-all-pass', function () {
+        var ids = getCheckedIds();
+        if (ids.length > 0) {
+            notify.formDialog('确认框', '您确认要通过所有选中项吗？', function () {
+                console.log('发送请求');
+                var param = [{
+                    key: 'approvedState',
+                    value: true,
+                    type: 'B'
+                }, {
+                    key: 'approveMessage',
+                    value: '同意',
+                    type: 'S'
+                },
+                    {
+                        key: 'isChecked',
+                        value: false,
+                        type: 'B'
+                    }
+                ];
+                contract.taskComplete(ids, param);
+            });
+        } else {
+            notify.error('您没有选中任何记录');
+            //common.notice('danger','.panel','您没有选中任何记录',null);
+        }
+    });
+
+    // 一键驳回
+    $pageDom.tabcnt.on('click', '.btn-all-reject', function () {
+        var ids = getCheckedIds();
+        console.log(ids);
+        if (ids.length > 0) {
+            notify.formDialog('确认框', '您确认要驳回所有选中项吗？', function () {
+                console.log('发送请求');
+                var param = [{
+                    key: 'approvedState',
+                    value: false,
+                    type: 'B'
+                }, {
+                    key: 'approveMessage',
+                    value: '驳回',
+                    type: 'S'
+                },
+                    {
+                        key: 'isChecked',
+                        value: false,
+                        type: 'B'
+                    }
+                ];
+                contract.taskComplete(ids, param);
+            });
+        } else {
+            notify.error('您没有选中任何记录');
+        }
+    });
+
+
+    // 同意
+    $pageDom.tabcnt.on('click', '.btn-agree', function (e) {
+        e.stopPropagation();
+        var id = $(this).getId();
+        var taskid = $(this).parents('tr').attr('taskid');
+        var formkey = $(this).parents('tr').attr('formkey');
+
+        var index = 1;
+        contract.approval(taskid, formkey);
+    });
+
+
+    // })
+
+    //驳回
+    $pageDom.tabcnt.on('click', '.btn-reject', function (e) {
+        e.stopPropagation();
+        var id = $(this).getId();
+        var taskid = $(this).parents('tr').attr('taskid');
+        contract.reject(taskid);
+    })
+
+});

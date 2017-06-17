@@ -1,0 +1,54 @@
+@import "base";
+
+
+form>.row{
+  margin: 5px 0 15px;
+  .info_more{
+	color:#9f9f9f;
+	text-align: center;
+  }
+
+}
+.basic_info,.password_fix{
+  margin-top: 35px;
+  position: relative;
+  left: 20px;
+}
+.more{
+  position: relative;
+  left: 20px;
+}
+
+.save_basic_info,.save_password,{
+
+    font-size: 16px;
+    width: 75px;
+    height: 33px;
+    display: block;
+    text-align: center;
+    line-height: 20px;
+    margin: 0 auto;
+
+}
+
+.btn_line{text-align: center;margin-top: 40px;}
+
+.separate-line{
+  margin: 10px 0 30px 0;
+  padding: 0 0 0 38px;
+  .line{
+    display: inline-block;
+    width:40%;
+    border-bottom:1px solid rgba(0, 0, 0, 0.1);
+    margin-bottom: 10px;
+  }
+  .info_more{
+    display:inline-block;
+    padding:0 20px;
+    color:#9f9f9f;
+    height: 30px;
+    font-size: 12px;
+    line-height: 30px;
+    vertical-align: bottom;
+  }
+}

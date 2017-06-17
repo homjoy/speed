@@ -1,0 +1,33 @@
+tbody{
+  font-size: 15px;
+  font-weight: 600;
+
+  >tr {
+    >td:nth-child(2n),
+    .needforech >tr{
+      font-size: 14px;
+      font-weight:400;
+      opacity: 0.9;
+    }
+  }
+}
+
+
+tfoot, .approval-history tbody>tr{
+  font-size: 14px;
+  font-weight:400;
+  opacity: 0.9;
+}
+
+.span-highlight{
+  display: inline-block;
+  min-width: 60px;
+
+  border-radius: 5px;
+  background-color: orange;
+
+  color: #fff;
+  text-align: center;
+  line-height: 20px;
+  font-size:13px;
+}

@@ -1,0 +1,141 @@
+<%#head.html%>
+
+
+
+<header class="feature">
+    <div class="container wide">
+        <h1 class="title">提醒、通知、弹框</h1>
+        <p class="subtitle">各种优秀的提醒组件，提供各种场景</p>
+    </div>
+</header>
+<div id="floating-top-right" class="floating-container"></div>
+
+
+<div class="container block main" role="main">
+
+    <section>
+        <h2>依赖：</h2>
+        <p>less 模块: <span class="label label-dark">queen/modal</span></p>
+        <p>文件路径: <span class="label label-dark">apps/static/less/queen/modal.less</span></p>
+    </section>
+
+    <section>
+    <h2>操作反馈.</h2>
+    <p><a href="javascript:void(0);" class="btn btn-success feedback-message" data-type="success">操作成功</a></p>
+    <p><a href="javascript:void(0);" class="btn btn-yellow feedback-message" data-type="warning">警告提示</a></p>
+    <p><a href="javascript:void(0);" class="btn btn-danger feedback-message" data-type="error">操作失败</a></p>
+<pre class="language-javascript">
+<code>var notify = require('component/notify');
+notify.success("恭喜恭喜，你要干的事成功了。");
+notify.warning("桥到嘛太！好像有什么东西不对~");
+notify.error("悲剧了，服务出错了。");
+</code></pre>
+    </section>
+
+
+    <section>
+    <h2>回调方法</h2>
+<pre class="language-javascript">
+<code>var notify = require('component/notify');
+notify.success("恭喜恭喜，你要干的事成功了。",function(){
+    //消息消息以后可以继续处理.
+    window.location.reload();
+});
+notify.warning("桥到嘛太！好像有什么东西不对~",function(){
+    //消息消息以后可以继续处理.
+    window.location.reload();
+});
+notify.error("悲剧了，服务出错了。",function(){
+    //消息消息以后可以继续处理.
+    window.location.reload();
+});</code></pre>
+    </section>
+
+
+
+    <section>
+    <h2>nitify右上角提醒</h2>
+    <p><a href="javascript:void(0);" class="btn btn-dark" id="demo-nifty-noty">点击查看效果</a></p>
+<pre class="language-javascript"><code>
+$.niftyNoty({
+    type: k[t].type,
+    icon: k[t].icon,
+    title: k[t].title,
+    message: "Lorem ipsum dolor sit amet.",
+    container: "floating",
+    timer: 3500
+})
+</code></pre>
+    </section>
+
+
+    <section>
+    <h2>页面内的提醒</h2>
+    <div id="page-alert"></div>
+    <p><a href="javascript:void(0);" class="btn btn-dark mar-top" id="demo-page-alert">点击查看效果</a></p>
+<pre class="language-markup"><code>&lt;div id="page-alert"&gt;&lt;/div&gt;</code></pre>
+<pre class="language-javascript"><code>
+$.niftyNoty({
+    type: '提醒类型',
+    icon: '图标',
+    title: '标题',
+    message: "提醒内容",
+    timer: 停留时间,
+    container: '#page-alert'  //出现的容器
+});
+</code></pre>
+    </section>
+
+
+
+
+    <section>
+        <h2>操作反馈弹窗</h2>
+        <p>
+            <a href="javascript:void(0);" class="btn btn-dark mar-top" id="feedback-cancel-modal">取消反馈弹窗</a>
+
+            <a href="javascript:void(0);" class="btn btn-dark mar-top" id="feedback-decline-modal">拒绝反馈弹窗</a>
+        </p>
+<pre class="language-javascript"><code>notify.cancel(function(result){
+    if(result){
+        notify.success('点击了确定.');
+    }else{
+        notify.warning('点击了取消.');
+    }
+});
+notify.decline(function(result){
+    if(result){
+        notify.warning('不要拒绝我好吗....');
+    }else{
+        notify.success('没有拒绝我真的是太好了~~');
+    }
+});
+</code></pre>
+    </section>
+
+
+    <section>
+        <h2>审批意见</h2>
+        <p>
+            <a href="javascript:void(0);" class="btn btn-dark mar-top" id="approval-modal">进入审批</a>
+        </p>
+<pre class="language-javascript"><code>notify.cancel(function(result){
+    if(result){
+        notify.success('点击了确定.');
+    }else{
+        notify.warning('点击了取消.');
+    }
+});
+notify.decline(function(result){
+    if(result){
+        notify.warning('不要拒绝我好吗....');
+    }else{
+        notify.success('没有拒绝我真的是太好了~~');
+    }
+});
+</code></pre>
+    </section>
+
+
+<%! $_ENGINE_SELF.callFn("useModule")("fml.use('fex/doc/notify');", this._JSstack , this._JSmods); %>
+<%#foot.html%>

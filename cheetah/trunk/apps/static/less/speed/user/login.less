@@ -1,0 +1,498 @@
+@import "../../queen/mixins/preboot.less";
+@import "../../queen/variables.less";
+@import "../base.less";
+
+/* IE9+ */
+@-webkit-keyframes dot {
+  25% {
+    border-color: transparent;
+    background-color: transparent;
+  }
+  50% {
+    border-right-color: transparent;
+    background-color: transparent;
+  }
+  75% {
+    border-right-color: transparent;
+  }
+}
+
+@keyframes dot {
+  25% {
+    border-color: transparent;
+    background-color: transparent;
+  }
+  50% {
+    border-right-color: transparent;
+    background-color: transparent;
+  }
+  75% {
+    border-right-color: transparent;
+  }
+}
+
+//html {
+//  position: fixed;
+//  bottom: 0;
+//  width: 100%;
+//  height: 100%;
+//}
+
+body {
+  height: 100%;
+  overflow: hidden;
+  background-color: #CF3969;
+  background-image: -moz-radial-gradient(#ff4d87, #cf3969);
+  background-image: -webkit-gradient(radial, center center, 0, center center, 220, from(#ff4d87), to(#cf3969)); /* old */
+  background-image: -webkit-radial-gradient(#ff4d87, #cf3969); /* new syntax */
+  background-image: radial-gradient(#ff4d87, #cf3969);
+  // background: -webkit-radial-gradient(white 9%, #D03A6A 29%, #D03F6A 60%,white 80%) no-repeat;
+}
+
+.page-hd {
+  width: 385px;
+  margin: 0 auto;
+  padding: 4% 0 30px 0;
+  text-align: center;
+}
+
+@main-color: #87bd4b;
+@background-color: #f7f7f7;
+
+.triangle {
+  display: block;
+  overflow: hidden;
+  width: 0;
+  height: 0;
+  border: 385px solid @background-color;
+  border-color: @background-color transparent;
+  border-width: 94px 193px 0 193px;
+}
+
+.shadow-border {
+  position: relative;
+  z-index: 10;
+  width: 342px;
+  margin: 0 auto;
+  height: 22px;
+  background-repeat: no-repeat;
+  background-image: url("../../../img/speed/bg-img/qiegetiao.png");
+
+  &.left {
+    left: -101px;
+    top: -166px;
+    -webkit-transform-origin: 0 0;
+    -moz-transform-origin: 0 0;
+    -o-transform-origin: 0 0;
+    -webkit-transform: rotate(26deg);
+    -moz-transform: rotate(26deg);
+    -o-transform: rotate(26deg);
+  }
+
+  &.right {
+    //position: relative;
+    left: 88px;
+    top: -182px;
+    -webkit-transform-origin: 342px 0;
+    -moz-transform-origin: 342px 0;
+    -o-transform-origin: 342px 0;
+    -webkit-transform: rotate(-26deg);
+    -moz-transform: rotate(-26deg);
+    -o-transform: rotate(-26deg);
+  }
+}
+
+.card-container {
+  width: 385px;
+  margin: 0 auto;
+  padding: 0;
+  position: relative;
+  border-radius: 0;
+  border: none;
+  box-shadow: 5px -5px 10px -4px rgba(0, 0, 0, 0.17);
+
+  .card-corner {
+    width: 83px;
+    height: 64px;
+    position: absolute;
+    right: 0;
+    top: 0;
+    cursor: pointer;
+    z-index: 15;
+    background: transparent url("../../../img/speed/bg-img/qiehuan1.png") center no-repeat;
+    &.corner-pc {
+      background: transparent url("../../../img/speed/bg-img/qiege.png") center no-repeat;
+    }
+  }
+
+  .container-bd {
+    background-color: @background-color;
+    height: 235px;
+    z-index: 2;
+    //overflow: hidden;
+    //padding: 0 60px;
+  }
+  .container-bottom {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    background-color: transparent;
+  }
+}
+
+
+//登陆页
+.card-container.login{
+  width: 340px;
+  .container-bd{
+    height:205px;
+  }
+
+
+  .card-login{
+    .second-show{
+      &.active{display: block}
+        display: none
+      }
+    position: absolute;
+    top:0;
+    padding:4px 58px 0 52px;
+  }
+  .card-download{
+    .download-title{
+      height: 64px;
+      line-height: 64px;
+    }
+  }
+
+  .triangle{
+    border: 340px solid #f7f7f7;
+    border-color: #f7f7f7 rgba(0, 0, 0, 0);
+    border-width: 82px 170px 0 170px;
+  }
+
+  .shadow-border.left{
+    left: -124px;
+  }
+  .shadow-border.right{
+    left: 112px;
+  }
+}
+
+.card-container.expire{
+
+  .card-expire{
+    position:absolute;
+    top:0;
+    left:0;
+    padding:58px 45px 0;
+  }
+
+  .btn-sign-in{
+    width:85px;
+    height:35px;
+    line-height:35px;
+  }
+}
+
+
+.card {
+  z-index: 10;
+  width:100%;
+  height:100%;
+  padding: 0 45px;
+  background-color: @background-color;
+  display: none;
+  transition: all .1s;
+  .clearfix();
+
+  &.active {
+    display: block;
+  }
+
+  .card-title {
+    margin: 0 0 20px 0;
+    color: #535353;
+    text-align: center;
+    font-size: 15px;
+  }
+}
+
+
+.btn-sign-in {
+  background-color: @main-color;
+  border-color: @main-color;
+  -webkit-border-radius: 0;
+  -moz-border-radius: 0;
+  border-radius: 0;
+  font-size: 16px;
+  color: #ffffff;
+  width: 75px;
+  height:30px;
+  line-height: 30px;
+  text-align: center;
+  padding:0;
+  &:hover, &:focus, &:active:focus {
+    outline: none;
+    color: white;
+    background-color: darken(@main-color, 5%);
+  }
+}
+
+//登陆
+.card-login {
+  padding: 4px 0 0;
+  .error-message {
+    color: red;
+    text-align: center;
+    font-weight: bold;
+    line-height: 38px;
+  }
+
+  .input-row {
+    position: relative;
+    height: 32px;
+    line-height: 32px;
+    margin: 0 0 8px 0;
+
+    &:before{
+      position:absolute;
+      top: 6px;
+      left: 10px;
+      content: '';
+      width: 18px;
+      height:18px;
+    }
+
+  }
+  .first-show,.second-show{
+    position: relative;
+    height: 32px;
+    line-height: 32px;
+    margin: 0 0 8px 0;
+  }
+
+  .addon-user:before{
+    background: transparent url("../../../img/speed/icon/user.png") 0 0 no-repeat;
+  }
+  .addon-lock:before{
+    background: transparent url("../../../img/speed/icon/key.png") 0 0 no-repeat;
+  }
+  .addon-dongtaimiyao:before{
+    background: transparent url("../../../img/speed/icon/dongtaimiyao.png") 0 0 no-repeat;
+  }
+  .addon-message:before{
+    background: transparent url("../../../img/speed/icon/message.png") 0 0 no-repeat;
+  }
+
+  .form-control {
+    padding-left: 35px;
+    font-size: 14px;
+  }
+
+
+  input:-webkit-autofill{
+    transition:none;
+    -webkit-box-shadow: 0 0 0 1000px white inset;
+  }
+  #verify-code {
+    width: 132px;
+  }
+
+  #send-verify-code {
+    position: absolute;
+    top: 0;
+    right: 0;
+    border-radius: 0;
+    width:120px;
+    height: 32px;
+    text-align: center;
+    color: @main-color;
+    border: 1.5px solid @main-color;
+  }
+
+  #link-forget-password,#returnmiyao,.link-no-miyao,.howtoget-miyao{
+    color: @text-unimportant;
+  }
+}
+
+.card-download {
+
+  .download-title {
+    font-size: 16px;
+    color: #535353;
+    text-align: left;
+    margin: 0;
+    height: 80px;
+    line-height: 80px;
+  }
+
+  .download-tips {
+    font-size: 16px;
+    color: #C9C9C9;
+    top: 30px;
+    position: relative;
+    float: left;
+  }
+}
+
+.card-forget {
+  .forget-title {
+    margin: 0;
+    padding: 32px 0 18px;
+    text-align: left;
+    font-size: 14px;
+    color: #515151;
+  }
+
+  dl {
+    font-size: 14px;
+    dt {
+      width: 30%;
+      float: left;
+      color: #eb447a;
+    }
+    dd {
+      span {
+        display: inline-block;
+        width: 65px;
+        text-align: left;
+        color: #515151;
+      }
+      div:first-child {
+        margin-bottom: 8px;
+      }
+      padding-bottom: 19px;
+      color: #a0a0a0;
+      width: 70%;
+      float: left;
+    }
+  }
+}
+
+
+//SPEED im页面
+.dotting {
+  display: inline-block;
+  width: 10px;
+  min-height: 2px;
+  padding-right: 2px;
+  border-left: 2px solid currentColor;
+  border-right: 2px solid currentColor;
+  background-color: currentColor;
+  background-clip: content-box;
+  box-sizing: border-box;
+  -webkit-animation: dot 1s infinite step-start both;
+  animation: dot 1s infinite step-start both;
+  // *zoom: expression(this.innerHTML = '...'); /* IE7 */
+  &:before {
+    content: '...';
+  }
+  /* IE8 */
+  &::before {
+    content: '';
+  }
+}
+
+:root .dotting {
+  margin-left: 2px;
+  padding-left: 2px;
+}
+
+
+.page-hd > .im-opening {
+  img {
+    display: block;
+    margin: 0 auto 15px;
+    border-radius: 30px;
+    border: 2px solid rgba(252, 180, 202, 0.5);
+  }
+  p {
+    margin: 0 0 15px 0;
+    color: #fff;
+    font-size: 14px;
+    &.brand-title-word {
+      font-size: 18px;
+      margin-bottom:0;
+    }
+  }
+}
+
+.card-im {
+  padding-top: 50px;
+
+  //IM客户端下载.
+  .row-im-client {
+    .orange {
+      display: inline-block;
+      width: 8px;
+      height: 8px;
+      border-radius: 4px;
+      background-color: #F8B451;
+      margin-right: 5px
+    }
+    span {
+      color: #999999
+    }
+    a {
+      font-size: 14px;
+      display: inline-block;
+      height: 36px;
+      width: 116px;
+      margin-top: 18px;
+      border-radius: 5px
+    }
+    img {
+      margin: 18px 0 0 20px;
+      width: 90px;
+      height: 90px
+    }
+  }
+}
+
+.card-expire{
+  padding-top:35px;
+  #nickname{
+    color: @main-color;
+    font-size:18px;
+  }
+
+  #expire-tips{
+    font-size:14px;
+    color:@text-important;
+  }
+
+  .form-control{
+    padding: 0;
+    height: 45px;
+    line-height: 45px;
+    font-size: 18px;
+    text-indent: 32px;
+    letter-spacing: 32px;
+    color:@main-color;
+  }
+
+  .help-links{
+    padding: 10px 0 45px;
+    a{
+      cursor: pointer;
+      color:@text-unimportant;
+    }
+  }
+
+}
+
+#how-to-get-tips{
+  display: none;
+  position:fixed;
+  top:0;
+  left:0;
+  width:100%;
+  height:100%;
+  z-index:30;
+  cursor: pointer;
+  background: rgba(0,0,0,0.6) url("../../../img/speed/user/how_to_get_mfa.jpg") center center no-repeat;
+  &.active{
+    display: block;
+  }
+}

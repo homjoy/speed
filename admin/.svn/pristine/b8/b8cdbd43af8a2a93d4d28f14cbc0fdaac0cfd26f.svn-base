@@ -1,0 +1,86 @@
+<?php
+namespace Admin\Modules\Itserver;
+use Admin\Package\Log\Log;
+use Admin\Package\Itserver\Itserver;
+use Libs\Util\Format;
+use Admin\Modules\Common\BaseModule;
+use Admin\Package\Common\Response;
+/**
+ *
+ * hongzhou@meilishuo.com
+ * 2015-01-19
+ */
+
+class AjaxCreateOfficialMail extends  BaseModule {
+    protected $errors = NULL;
+    private   $params = NULL;
+    public static $VIEW_SWITCH_JSON = TRUE;
+    const IT =8;
+    public function run() {
+       $this->_init();
+        if($this->post()->hasError()){
+            $return = Response::gen_error(10001, '', $this->post()->getErrors());
+            return $this->app->response->setBody($return);
+        }
+
+       $result = Itserver::getInstance()->checkMail(
+           array(
+               'mail'=>$this->params['mail_name'],
+               'depart_id'=>$this->params['depart_id'],
+            )
+       );
+       if(empty($result)){
+           $return = Response::gen_error(50001,'','邮箱不可用请替换');
+           return $this->app->response->setBody($return);
+       }
+
+        $result = Itserver::getInstance()->createMail(
+            array(
+                'email' => $this->params['mail_name'],
+                'depart_id' => 0,
+                'truename' => '官方邮件',
+            )
+        );
+        if(empty($result)){
+            $return = Response::gen_error(50005,'','it邮箱创建失败');
+            return $this->app->response->setBody($return);
+        }
+
+        $result = Itserver::getInstance()->createOfficialMail(
+            $this->params
+        );
+        if(empty($result)){
+            $return = Response::gen_error(50005,'','SPEED邮箱创建失败');
+            return $this->app->response->setBody($return);
+        }
+        $this->doLog($this->params);
+        $this->app->response->setBody(Response::gen_success($result));
+    }
+    protected function doLog($new_param=array(),$old_param='create'){
+        $ret = Log::getInstance()->createLogs(array(
+                'user_id'=>$this->user['id'],
+                'handle_id'=>100000,
+                'operation_type'=>$old_param,
+                'after_data'=>json_encode($new_param),
+                'handle_type'=>self::IT
+            )
+        );
+        return $ret;
+    }
+    private function _init() {
+
+        $this->rules  = array(
+
+            'mail_name' => array(
+                'required' => TRUE,
+                'allowEmpty' => FALSE,
+                'type'=>'integer',
+            ),
+
+        );
+
+        $this->params   = $this->post()->safe();
+        $this->errors   = $this->post()->getErrors();
+
+    }
+}

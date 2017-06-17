@@ -1,0 +1,224 @@
+@import "../../queen/mixins/preboot.less";
+
+//placeholder居中显示
+input::-webkit-input-placeholder {
+  //text-align: center;
+}
+
+.panel{
+  > .panel-heading{
+    height:auto;
+    padding:45px 0 0 0;
+    text-align: center;
+
+    &:after{
+      content:none;
+    }
+
+    .panel-title{
+      line-height: 1;
+    }
+  }
+  .panel-body{
+    padding-top:50px;
+  }
+}
+
+
+.form-horizontal{
+  fieldset+fieldset{
+    margin-top:40px;
+  }
+  legend{
+    padding:0 0 0 10px;
+    line-height: 1;
+    border:0;
+    font-size:16px;
+    border-left:3px solid #fdac39;
+  }
+
+  .line{
+    display: block;
+    width:100%;
+    margin-top:50%;
+    height: 2px;
+    border-bottom: 2px solid #ccc;
+  }
+
+  //.bootstrap-select>.btn{
+  //  border-radius: 0;
+  //}
+
+  .queen-select-container .queen-selected-content{
+    padding: 4px 16px;
+  }
+}
+
+
+.project-add,
+.project-remove {
+  display: inline-block;
+  height: 22px;
+  line-height: 22px;
+  color:#a0a0a0;
+  i {
+    display: inline-block;
+    margin-right:10px;
+    font-size: 16px;
+    width: 24px;
+    height: 22px;
+    line-height: 22px;
+    text-align: center;
+    color: #fff;
+    border-radius: 5px;
+  }
+}
+
+.project-add {
+  i {
+    background-color: #96c662;
+  }
+}
+.project-remove {
+  opacity: 0;
+  position:absolute;
+  top: 12px;
+  right: 0px;
+  margin-left:50px;
+  i {
+    background-color: #d9544f;
+  }
+}
+
+
+.budget-detail{
+
+  border:1px solid #eee;
+
+  .detail-head{
+
+  }
+
+  .detail-body{
+
+
+    > .row-columns{
+
+    }
+
+
+    .empty-column{
+
+
+      width:100%;
+      height: 80px;
+      line-height: 80px;
+      font-size:16px;
+      color:#515151;
+      text-align: center;
+    }
+  }
+
+  .detail-footer{
+    .detail-btn-group{
+      padding:12px 0 25px 70px;
+    }
+  }
+}
+
+
+.row-columns{
+  font-size:0;
+  //min-width:960px;
+  border:1px solid #fff;
+  //清除每一列的浮动.
+
+  .row-columns-inner{
+    .clearfix();
+  }
+
+  &:not(.row-title):hover{
+    background: #f7f8fc;
+    border-top-color:#e5e6e8;
+    border-bottom-color:#e5e6e8;
+
+    .project-remove{
+      opacity: 1;
+      transition: opacity .5s ease 100ms;
+    }
+  }
+
+  &.row-title{
+    //padding-bottom: 8px;
+    background-color: #eee;
+    border:none;
+    border-bottom: 1px solid #b8b8b8;
+    .column{
+      font-weight: bold;
+    }
+  }
+
+  .column{
+    float:left;
+    display: inline-block;
+    font-size:12px;
+    text-align: center;
+    width: 12%;
+    padding:8px 10px;
+    //overflow: hidden;
+
+    .cell(){
+      display: block;
+      width:100%;
+      height:30px;
+      line-height: 30px;
+      padding-left: 8px;
+    }
+
+    .project-name,.money,.total{
+      .cell();
+    }
+    &:not(.column-project){
+      input,input:focus{
+        outline:0;
+        .cell();
+      }
+    }
+
+    //&.column-q1,
+    //&.column-q2,
+    //&.column-q3,
+    //&.column-q4{
+    //  display: none;
+    //}
+  }
+
+  .column-project{
+    width: 20%;
+  }
+
+  .column-remark{
+    position:relative;
+    width: 20%;
+    //input,input:focus{
+    //  width:60%;
+    //}
+  }
+
+  input[name=budgetRemark]{
+    width:70% !important;
+  }
+
+
+  .bootstrap-select:not([class*=col-]):not([class*=form-control]):not(.input-group-btn){
+    width:100%;
+  }
+
+  .tree-select-container{
+    border-radius: 0;
+  }
+  .tree-select-container .tree-select-dropdown{
+    width:auto;
+    min-width: 101%;
+  }
+}

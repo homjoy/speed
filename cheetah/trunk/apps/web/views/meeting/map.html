@@ -1,0 +1,49 @@
+<%#head.html %>
+<div id="container" class="effect mainnav-lg">
+    <%#navbar.html %>
+
+
+    <div class="boxed">
+        <div id="content-container">
+            <ol class="breadcrumb">
+                <li><a href="/home">首页</a></li>
+                <li><a href="/meeting/">会议室预定</a></li>
+                <li class="active">会议室分布图</li>
+            </ol>
+            <div id="page-content">
+                <ul class="nav nav-tabs" role="tablist">
+                    <li role="presentation" class="active"><a href="#floor-21"role="tab" data-toggle="tab">二十一层</a></li>
+                    <li role="presentation"><a href="#floor-22"role="tab" data-toggle="tab">二十二层</a></li>
+                    <li role="presentation"><a href="#floor-23"role="tab" data-toggle="tab">二十三层</a></li>
+                    <li role="presentation"><a href="#floor-25"role="tab" data-toggle="tab">二十五层</a></li>
+                    <li role="presentation"><a href="#floor-26"role="tab" data-toggle="tab">二十六层</a></li>
+                    <li role="presentation"><a href="#floor-27"role="tab" data-toggle="tab">二十七层</a></li>
+                    <li role="presentation"><a href="#floor-28"role="tab" data-toggle="tab">二十八层</a></li>
+                </ul>
+                <style>
+                    #room-maps .tab-pane{
+                        padding:0 12.5%;
+                    }
+                </style>
+                <div class="tab-content" id="room-maps">
+                    <% for(var i =21; i <= 28;i++ ) { if(i == 24) continue;%>
+                    <div role="tabpanel" class="tab-pane center-block <%if(i==21){%> active<%}%>" id="floor-<%=i%>">
+                        <a href="<%= this.PICTURE_URL  %>img/speed/meeting/<%=i%>f.jpg?v=20160301" target="_blank" title="点击图片查看原始高清大图">
+                            <img src="<%= this.PICTURE_URL  %>img/speed/meeting/<%=i%>f.jpg?v=20160301" class="img-responsive" alt="<%=i%>层会议室分布图">
+                        </a>
+                    </div>
+                    <% } %>
+                </div>
+            </div>
+            <%#footer.html%>
+        </div>
+        <%#mainnav.html%>
+    </div>
+</div>
+
+<!--===================================================-->
+<!-- END OF CONTAINER -->
+<%! $_ENGINE_SELF.callFn("useModule")("<<<_use:
+        fml.use('speed/common/base');
+_use:", this._JSstack , this._JSmods); %>
+<%#foot.html%>

@@ -1,0 +1,256 @@
+function administration() {
+    return this;
+}
+var controlFns = {
+    'index' : function(){
+        return this.redirectTo('/administration/businesscard/apply');
+    },
+    'businesscard' : {
+        'index' : function(){
+            return this.redirectTo('/administration/businesscard/apply');
+        }
+        ,'apply' : function(){
+            var php = {
+                'card_request':'/executive_card/card_request',
+                'apply_card_get':'/approval/order_apply_get?type=2',
+                'permission_control':'/executive_card/permission_control'
+            };
+            this.bindDefault(php);
+            this.bridgeMuch(php);
+            this.listenOver(function(data){
+                data._CSSLinks = ['speed/administration/businesscard/apply'];
+                this.render('administration/businesscard/apply.html' , data);
+            })
+        }
+        ,'approval' : function(){
+            var php = {
+                'permission_control':'/executive_card/permission_control'
+            };
+
+            var date = new Date();
+            this.bindDefault(php);
+            this.bridgeMuch(php);
+            this.listenOver(function(data){
+                data._CSSLinks = ['plugin/bootstrap/daterangepicker','plugin/tokeninput','queen/approval','speed/administration/businesscard/approval'];
+                data.date = date;
+                this.render('administration/businesscard/approval.html' , data);
+            })
+        }
+        ,'my' : function(){
+            var php = {
+                'permission_control':'/executive_card/permission_control'
+            };
+            var date = new Date();
+            this.bindDefault(php);
+            this.bridgeMuch(php);
+            this.listenOver(function(data){
+                data._CSSLinks = ['plugin/bootstrap/daterangepicker','plugin/tokeninput','queen/approval','speed/administration/businesscard/approval'];
+                data.date = date;
+                this.render('administration/businesscard/my.html' , data);
+            })
+        }
+        ,'manage' : function(){
+            var php = {
+                'permission_control':'/executive_card/permission_control',
+                'apply_card_get':'/approval/order_apply_get?type=2'
+            };
+            var date = new Date();
+            this.bindDefault(php);
+            this.bridgeMuch(php);
+            this.listenOver(function(data){
+                data._CSSLinks = ['plugin/bootstrap/daterangepicker','plugin/tokeninput','queen/approval','speed/administration/businesscard/approval'];
+                data.date = date;
+                this.render('administration/businesscard/manage.html' , data);
+            })
+        }
+    },
+    'fastmail' : {
+        'index' : function(){
+            return this.redirectTo('/administration/fastmail/apply');
+        }
+        ,'apply' : function(){
+            var php = {
+                'express_request_place':'/executive_express/express_request_place',
+                'apply_num_get':'/approval/order_apply_get?type=3',
+                'permission_control':'/executive_express/permission_control'
+            };
+            this.bindDefault(php);
+            this.bridgeMuch(php);
+            this.listenOver(function(data){
+                data._CSSLinks = ['speed/administration/fastmail/apply'];
+                this.render('administration/fastmail/apply.html' , data);
+            })
+        }
+        ,'approval' : function(){
+            var php = {
+                'apply_num_get':'/approval/order_apply_get?type=3',
+                'permission_control':'/executive_express/permission_control'
+            };
+
+            var date = new Date();
+            this.bindDefault(php);
+            this.bridgeMuch(php);
+            this.listenOver(function(data){
+                data._CSSLinks = ['plugin/bootstrap/daterangepicker','plugin/tokeninput','queen/approval','speed/administration/fastmail/approval'];
+                data.date = date;
+                this.render('administration/fastmail/approval.html' , data);
+            })
+        }
+        ,'my' : function(){
+            var php = {
+                'apply_num_get':'/approval/order_apply_get?type=3',
+                'permission_control':'/executive_express/permission_control'
+            };
+            var date = new Date();
+            this.bindDefault(php);
+            this.bridgeMuch(php);
+            this.listenOver(function(data){
+                data._CSSLinks = ['plugin/bootstrap/daterangepicker','plugin/tokeninput','queen/approval','speed/administration/fastmail/approval'];
+                data.date = date;
+                this.render('administration/fastmail/my.html' , data);
+            })
+        }
+        ,'manage' : function(){
+            var php = {
+                'apply_num_get':'/approval/order_apply_get?type=3',
+                'permission_control':'/executive_express/permission_control'
+            };
+            var date = new Date();
+            this.bindDefault(php);
+            this.bridgeMuch(php);
+            this.listenOver(function(data){
+                data._CSSLinks = ['plugin/bootstrap/daterangepicker','plugin/tokeninput','queen/approval','speed/administration/fastmail/approval'];
+                data.date = date;
+                this.render('administration/fastmail/manage.html' , data);
+            })
+        }
+    },
+    'officesupply' : {
+        'index' : function(){
+            return this.redirectTo('/administration/officesupply/apply');
+        }
+        ,'apply' : function(){
+            var php = {
+                'apply_num_get':'/approval/order_apply_get?type=4',
+                'supply_request_place':'/executive_supply/supply_request_place',
+                'permission_control':'/executive_supply/permission_control'
+            };
+            this.bindDefault(php);
+            this.bridgeMuch(php);
+            this.listenOver(function(data){
+                data._CSSLinks = ['speed/administration/officesupply/apply'];
+                this.render('administration/officesupply/apply.html' , data);
+            })
+        }
+        ,'approval' : function(){
+            var php = {
+                'apply_num_get':'/approval/order_apply_get?type=4',
+                'permission_control':'/executive_supply/permission_control'
+            };
+
+            var date = new Date();
+            this.bindDefault(php);
+            this.bridgeMuch(php);
+            this.listenOver(function(data){
+                data._CSSLinks = ['plugin/bootstrap/daterangepicker','plugin/tokeninput','queen/approval','speed/administration/officesupply/approval'];
+                data.date = date;
+                this.render('administration/officesupply/approval.html' , data);
+            })
+        }
+        ,'my' : function(){
+            var php = {
+                'apply_num_get':'/approval/order_apply_get?type=4',
+                'permission_control':'/executive_supply/permission_control'
+            };
+            var date = new Date();
+            this.bindDefault(php);
+            this.bridgeMuch(php);
+            this.listenOver(function(data){
+                data._CSSLinks = ['plugin/bootstrap/daterangepicker','plugin/tokeninput','queen/approval','speed/administration/officesupply/approval'];
+                data.date = date;
+                this.render('administration/officesupply/my.html' , data);
+            })
+        }
+        ,'manage' : function(){
+            var php = {
+                'apply_num_get':'/approval/order_apply_get?type=4',
+                'permission_control':'/executive_supply/permission_control'
+            };
+            var date = new Date();
+            this.bindDefault(php);
+            this.bridgeMuch(php);
+            this.listenOver(function(data){
+                data._CSSLinks = ['plugin/bootstrap/daterangepicker','plugin/tokeninput','queen/approval','speed/administration/officesupply/approval'];
+                data.date = date;
+                this.render('administration/officesupply/manage.html' , data);
+            })
+        }
+    },
+    'fixedassets' : {
+        'index' : function(){
+            return this.redirectTo('/administration/fixedassets/apply');
+        }
+        ,'apply' : function(){
+            var php = {
+                'assets_request':'/executive_assets/assets_request',
+                'apply_num_get':'/approval/order_apply_get?type=5',
+                'supply_request_place':'/executive_supply/supply_request_place',
+                'permission_control':'/executive_assets/permission_control'
+            };
+            this.bindDefault(php);
+            this.bridgeMuch(php);
+            this.listenOver(function(data){
+                data._CSSLinks = ['speed/administration/fixedassets/apply'];
+                this.render('administration/fixedassets/apply.html' , data);
+            })
+        }
+        ,'approval' : function(){
+            var php = {
+                'apply_num_get':'/approval/order_apply_get?type=5',
+                'manager_edit_request':'/executive_assets/manager_edit_request',
+
+                'permission_control':'/executive_assets/permission_control'
+            };
+
+            var date = new Date();
+            this.bindDefault(php);
+            this.bridgeMuch(php);
+            this.listenOver(function(data){
+                data._CSSLinks = ['plugin/bootstrap/daterangepicker','plugin/tokeninput','queen/approval','speed/administration/fixedassets/approval'];
+                data.date = date;
+                this.render('administration/fixedassets/approval.html' , data);
+            })
+        }
+        ,'my' : function(){
+            var php = {
+                'apply_num_get':'/approval/order_apply_get?type=5',
+                'permission_control':'/executive_assets/permission_control'
+            };
+            var date = new Date();
+            this.bindDefault(php);
+            this.bridgeMuch(php);
+            this.listenOver(function(data){
+                data._CSSLinks = ['plugin/bootstrap/daterangepicker','plugin/tokeninput','queen/approval','speed/administration/fixedassets/approval'];
+                data.date = date;
+                this.render('administration/fixedassets/my.html' , data);
+            })
+        }
+        ,'manage' : function(){
+            var php = {
+                'apply_num_get':'/approval/order_apply_get?type=5',
+                'manager_edit_request':'/executive_assets/manager_edit_request',
+
+                'permission_control':'/executive_assets/permission_control'
+            };
+            var date = new Date();
+            this.bindDefault(php);
+            this.bridgeMuch(php);
+            this.listenOver(function(data){
+                data._CSSLinks = ['plugin/bootstrap/daterangepicker','plugin/tokeninput','queen/approval','speed/administration/fixedassets/approval'];
+                data.date = date;
+                this.render('administration/fixedassets/manage.html' , data);
+            })
+        }
+    }
+};
+exports.__create = controller.__create(administration, controlFns);

@@ -1,0 +1,14 @@
+<?php
+namespace Admin\Package\Helper;
+
+class UrlCheckHelper {
+
+	public static function getUrlList() {
+		// key：访问的url；value：归属的菜单url
+		return array(
+			'/workflow/process/process_info'  => '/workflow/process/index',
+			'/workflow/task/show_task_detail' => '/workflow/task/manage',
+			'/workflow/task/manual_transfer'  => '/workflow/task/manage',
+		);
+	}
+}

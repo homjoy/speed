@@ -1,0 +1,104 @@
+function meeting() {
+	return this;
+}
+var controlFns = {
+	'index' : function(){
+		this.get_room_list()
+	}
+	,'get_room_list' : function(){
+		// 所有会议室展示
+		var php = {
+			'users' : '/user/user_info_get?username=wulianglong',
+			'get_room' : '/meeting/get_room',
+			'city' : '/company/city_info'
+		}
+		var nextday = this.req.__get.nextday;
+
+		var today_date = new Date();
+		var date = today_date.valueOf();
+		var next_date = new Date(date +(24*60*60*1000));
+		var pre_date = new Date(date -(24*60*60*1000));
+		date = new Date(date);
+		var next_date = next_date.getFullYear()+'-'+next_date.getMonth()+'-'+next_date.getDate();
+		var date = date.getFullYear()+'-'+date.getMonth()+'-'+date.getDate();
+		var pre_date = pre_date.getFullYear()+'-'+pre_date.getMonth()+'-'+pre_date.getDate();
+		var today_date = today_date.getFullYear()+'-'+today_date.getMonth()+'-'+today_date.getDate();
+		// console.log(date);
+        this.bindDefault(php);
+		this.bridgeMuch(php);
+		this.listenOver(function(data){
+			data.today_date = today_date;
+			data.next_date = next_date;
+			data.pre_date = pre_date;
+			data.date = date;
+			data._CSSLinks = ['fontfamily','bootstrap','nifty.min','font-awesome.min','animate.min','morris.min','switchery.min','bootstrap-select.min','nifty-demo.min','pace.min','meeting/meet_get_room','bootstrap-datetimepicker.min'];
+			this.render('meeting/meet_get_room.html' , data);
+		})
+	}
+	,'get_book_list' : function(){
+		// 预定，查看某会议室，携带会议室id，ifram的url
+		var room_id = this.req.__get.room_id;
+		var url = '/meeting/get_meeting_show/?room_id='+room_id;
+		var php = {
+			'users' : '/user/user_info_get?username=wulianglong',
+		}
+        this.bindDefault(php);
+		this.bridgeMuch(php);
+		this.listenOver(function(data){
+			data.room_id=room_id;
+			data.url=url;
+			data._CSSLinks = ['fontfamily','bootstrap','font-awesome.min','animate.min','morris.min','switchery.min','bootstrap-select.min','nifty-demo.min','pace.min','nifty.min'];
+			this.render('meeting/meet_get_book.html' , data);
+		})
+	}
+	,'get_meeting_show' : function(){
+		// 通过iframe调用插件，会议室的预定，查看页面，
+		var room_id = this.req.__get.room_id;
+		var php = {
+			'users' : '/user/user_info_get?username=wulianglong',
+			'get_room_inform' : '/meeting/get_room_service?room_id='+room_id,
+			'part_div' : '/meeting/get_room?service_id=1',
+		}
+        this.bindDefault(php);
+		this.bridgeMuch(php);
+		this.listenOver(function(data){
+			data.room_id = room_id;
+			console.log('room_id'+room_id);
+			console.log(data.get_room_inform);
+			data._CSSLinks = ['meeting/fullcalendar','tokeninput','bootstrap','bootstrap-datetimepicker.min'];
+			this.render('meeting/meet_meeting_show.html' , data);
+		})
+	}
+	,'mytime_book_list' : function(){
+		// 预定，查看我的时间，携带用户信息，url
+		var url = '/meeting/mytime_meeting_show/';
+		var php = {
+			'users' : '/user/user_info_get?username=minggeng',
+			
+		}
+
+        this.bindDefault(php);
+		this.bridgeMuch(php);
+		this.listenOver(function(data){
+			data.url=url;
+			data._CSSLinks = ['fontfamily','bootstrap','font-awesome.min','animate.min','morris.min','switchery.min','bootstrap-select.min','nifty-demo.min','pace.min','nifty.min'];
+			this.render('meeting/meet_get_book.html' , data);
+		})
+	}
+	,'mytime_meeting_show' : function(){
+		// 通过iframe调用插件，我的时间的预定，查看页面，
+		var php = {
+			'users' : '/user/user_info_get?username=minggeng',
+			'city' : '/company/city_info',
+			'part_div' : '/meeting/get_room?service_id=1',
+			'get_room' : '/meeting/get_room'
+		}
+        this.bindDefault(php);
+		this.bridgeMuch(php);
+		this.listenOver(function(data){
+			data._CSSLinks = ['meeting/fullcalendar','tokeninput','bootstrap','bootstrap-datetimepicker.min','meeting/meet_get_book'];
+			this.render('meeting/mytime_time_show.html' , data);
+		})
+	}
+};
+exports.__create = controller.__create(meeting, controlFns);

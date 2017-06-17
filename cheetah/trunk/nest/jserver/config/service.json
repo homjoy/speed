@@ -1,0 +1,7 @@
+{"max_time":3000,
+"onPort":9010,
+"isDebug":true,
+"pic_url":"http://127.0.0.1:9010/",
+"less":"../node_modules/less",
+"root":"../../apps/static/",
+"jspath":"script-ss/"}

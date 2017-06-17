@@ -1,0 +1,12 @@
+{"SVERSION":1.0013,
+"JCSTATIC_BASE":"http://static.speedlocal.meilishuo.com/",
+"SERVER_BASE":"/",
+"SCRIPT_BASE":"script-ss/",
+"JS_Defer":false,
+"PICTURE_URL":"http://static.speedlocal.meilishuo.com/",
+"CSSEXT":".css",
+"defaultTitle":"speed",
+"OLD_SPEED_URL":"http://speedold.speeddev.meilishuo.com/",
+"domain":{"speed":"http://speedlocal.meilishuo.com",
+"fms":"http://fms.speedlocal.meilishuo.com"},
+"PUBDAY":"1502181126"}

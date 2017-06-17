@@ -1,0 +1,17 @@
+@extends('layouts.master')
+@section('content')
+<div class="panel-heading"style="overflow: hidden; line-height: 32px">
+    <ol class="breadcrumb">
+        <li class="active">办公用品管理</li>
+    </ol>
+    <div id="page-content" class="panel">
+        <ul class="nav nav-tabs slope col-lg-12 col-sm-12 col-xs-12" style="margin-bottom: 30px">
+            <li   class="item" role="presentation"><a href="/stationery/home" class="application_num">用品管理</a></li>
+            <li  class="active" role="presentation"><a href="/stationery/apply" class="application_num">申请查看</a></li>
+        </ul>
+    </div>
+
+</div>
+<script type="text/javascript">
+</script>
+@endsection

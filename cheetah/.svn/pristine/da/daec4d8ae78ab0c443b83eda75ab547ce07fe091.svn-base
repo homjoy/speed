@@ -1,0 +1,84 @@
+<%#head.html%>
+<div id="container" class="effect mainnav-lg">
+    <%#navbar.html%>
+    <div class="boxed">
+        <div id="content-container">
+            <div id="page-content">
+                <div class="panel panel-nav">
+                    <div class="panel-heading">
+                        <ul class="nav nav-tabs slope">
+                            <li class="active"><a href="javascript:void(0);">合同</a></li>
+                            <li><a href="/my/apply/pay">付款</a></li>
+                            <!-- <li><a href="/my/apply/budget">预算</a></li> -->
+                        </ul>
+                    </div>
+                    <div class="panel-body">
+                        <div id="slope-home">
+                            <div class="row search-head"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <%#sidebar.html%>
+    </div>
+    <%#footer.html%>
+</div>
+
+
+
+
+<script type="text/html" id="left-table">
+    <table class="table">
+        <tr>
+            <th></th>
+            <th class="hidden-narrow">单据编号</th>
+            <th>收款单位</th>
+            <th>金额(￥)</th>
+            <th class="hidden-narrow">审批进度</th>
+            <th class="hidden-narrow">日期</th>
+        </tr>
+        {{each data as info}}
+        <tr class="show-info tr-{{info.approveState}}" data-id="{{info.cabId}}" data-type="CA" dbl-open="/contract/view/?id={{info.cabId}}&type=CA">
+            <td>
+                {{if info.cabApprovelState == '审批中' }}
+                    <input type="checkbox" data-task_id="{{info.taskid}}" data-cabid="{{info.cabId}}" value="{{info.cabId}}"/>
+                {{else}}
+                    <i class="icon icon-{{info.approveState}}"></i>
+                {{/if}}
+            </td>
+            <td class="hidden-narrow">{{info.cabCode}}</td>
+            <td>
+                <div class="name-limited">{{info.cabCustomerCompany}}</div>
+                <div class="hidden-fat bottom-word"><span>{{info.cabCurrentDate}}</span></div>
+            </td>
+            <td>
+                <div>{{info.cabAmonunt | currencyFormat}}</div>
+                <div class="hidden-fat bottom-word approvalState"><span>{{info.cabApprovelProcess}}</span></div>
+            </td>
+            <td class="hidden-narrow bottom-word approvalState"><span>{{info.cabApprovelProcess}}</span></td>
+            <td class="hidden-narrow bottom-word">{{info.cabCurrentDate}}</td>
+        </tr>
+        {{/each}}
+    </table>
+</script>
+
+<%#my/apply/contractDetail.tpl.html %>
+<script type="text/html" id="right-show">
+    <div class="panel-heading ">
+        <span>申请详情</span>
+        {{if contractApplication.cabApprovalState == 2 }}
+        <a href="javascript:void(0);" data-cabid="{{contractApplication.cabId}}" class="btn btn-xs btn-danger single list-undo">撤销</a>
+        <a href="javascript:void(0);" data-cabid="{{contractApplication.cabId}}" data-task_id="{{taskid}}" class="btn btn-xs btn-warning single list-pushon">催审</a>
+        {{else if canModifyFlag == 1}}
+        <a href="/contract/edit/?id={{contractApplication.cabId}}&type=CA" target="_blank" class="btn btn-xs btn-success">修改</a>
+        {{/if}}
+    </div>
+    {{include 'contractDetail'}}
+</script>
+
+
+<%! $_ENGINE_SELF.callFn( "useModule")( "<<<_use:
+        fml.use('fms/my/apply/contract');
+_use:", this._JSstack , this._JSmods); %>
+<%#foot.html%>

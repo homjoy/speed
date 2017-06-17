@@ -1,0 +1,105 @@
+fml.define("speed/administration/officesupply/apply", ['jquery','plugin/artTemplate','plugin/bootstrap/select','component/notify','plugin/bootbox' ], function (require, exports) {
+    var $ = require('jquery');
+    var notify = require('component/notify');
+    var bootbox = require('plugin/bootbox');
+    var Template = require('plugin/artTemplate');
+
+    //加载方法
+    var supplyrequest =function(){
+        $.getJSON('/aj/administration/supply_request', {supply_name:$('.supplyname').val()}, function (ret) {
+            if (ret.code == 200) {
+                var listTemplate = Template('supply-request',ret);
+                console.warn(ret.data);
+                $('.inside').html(listTemplate);
+                var listTemplate2 = Template('office-menu-detail',ret);
+                $('.office-menu-detail').html(listTemplate2);
+            } else if (ret.code == 400 || ret.code == 500) {
+                notify.success('操作失败');
+            }
+        });
+    }
+    supplyrequest();
+    $('.supplyname').click(function(){
+        supplyrequest();
+    });
+    //类目加载
+    var choosed = [];
+    //左侧物品点击，右侧添加
+    $('.left').delegate('.officesupply','click',function(){
+        var data = $(this).data();
+        var id =data.id;
+        $(this).addClass('active');
+        console.log(choosed.indexOf(id),choosed);
+        if(choosed.indexOf(id)!=-1){
+            //console.log(choosed.indexOf(data.id));
+            //$('')
+        }else{
+            console.warn(data);
+            choosed.push(id);
+            var listTemplate = Template('supply-sth',data);
+            $('.right .chooseul').append(listTemplate);
+            $('.choosenum').html(choosed.length);
+        }
+    });
+
+    //加减
+    $('.right').delegate('.minus','click',function(){
+        var a = parseInt($(this).next().val())-1;
+        if (a !=0){
+            $(this).next().val(a);
+        }else{
+            notify.error('数量最少是一个哦，如需删除，请点右面删除按钮');
+        }
+    });
+
+    $('.right').delegate('.plus','click',function(){
+        var a = parseInt($(this).prev().val())+1;
+        $(this).prev().val(a);
+    });
+
+    //删除
+    $('.right').delegate('li','mouseover',function(){
+        $(this).find('.garbage').removeClass('hide');
+    });
+    $('.right').delegate('li','mouseleave',function(){
+        $(this).find('.garbage').addClass('hide');
+    });
+    $('.right').delegate('.garbage','click',function(){
+        var a = choosed.indexOf($(this).data().id);
+        choosed.splice(a,1);
+        $(this).parents('li').remove();
+        $('.choosenum').html(choosed.length);
+    });
+
+    //提交功能
+    $('.submit').click(function(){
+        var datatotal = [];
+        $.each($('.chooseul li'),function(k,v){
+            var data = $(v).data();
+            data.number=$(v).find('input').val();
+            datatotal.push(data);
+        });
+        var floornum = $('.floornum').val();
+
+        if(datatotal.length>0){
+            if($('.floornum').hasClass('hide')||!!floornum){
+                console.log('fyc')
+                $.post('/aj/administration/supply_submit',{data:datatotal,floor:floornum}, function (ret) {
+                    console.log(ret);
+                    if (ret.code == 200) {
+                        console.log(1);
+                        notify.success('操作成功');
+                        window.location.href='/administration/officesupply/my?autuloadlast';
+                    } else if (ret.code == 400 || ret.code == 500) {
+                        notify.error('操作失败');
+                    }
+                },'json');
+            }else{
+                notify.error('亲，选下楼层哈，O(∩_∩)O~');
+            }
+        }else{
+            notify.error('没有选中的物品呢');
+        }
+    });
+
+});

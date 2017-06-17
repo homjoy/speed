@@ -1,0 +1,27 @@
+<%#head.html %>
+<div id="container" class="effect mainnav-lg">
+	<%#navbar.html %>
+	<div class="boxed">
+		<!--CONTENT CONTAINER-->
+		<!--===================================================-->
+		<div id="content-container">
+
+			<div id="page-content">
+				<div class="row">
+					<div class="col-lg-8"></div>
+
+					<div class="col-lg-4"></div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+	<!--===================================================-->
+	<!-- END OF CONTAINER -->
+<%! $_ENGINE_SELF.callFn("useModule")("<<<_use:
+		fml.use('speed/common/base');
+		fml.use('nifty/skycons.min');
+		fml.use('speed/home/index');
+_use:", this._JSstack , this._JSmods); %>
+<%#foot.html%>

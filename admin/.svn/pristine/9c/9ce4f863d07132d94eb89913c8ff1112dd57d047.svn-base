@@ -1,0 +1,280 @@
+@extends('layouts.master')
+@section('content')
+<style type="text/css">
+    .online_btn{
+        margin-left: 10px;
+        float: right;
+    }
+    .token-input-token,.token-input-input-token{line-height: 23px !important;}
+</style>
+<link rel="stylesheet" href="/static/css/easyTree.css">
+<script src="/static/js/easyTree.js"></script>
+
+<link rel="stylesheet" href="/static/css/tokeninput.css">
+<script src="/static/js/tokeninputspeed.js"></script>
+
+<div class="panel-heading"style="overflow: hidden; line-height: 32px">
+        <ol class="breadcrumb">
+            <li class="active">固定资产管理</li>
+        </ol>
+        <div id="page-content" class="panel">
+            <ul class="nav nav-tabs slope col-lg-12 col-sm-12 col-xs-12" style="margin-bottom: 30px">
+                <li class="active" role="presentation"><a  class="application_num">信息</a></li>
+                <li role="presentation"> <a href="/assets/assets_company_home">供应商</a></li>
+            </ul>
+        </div>
+           <div class="easy-tree">
+               <?php
+               if(empty($data)) {
+                   echo  '<ul><li></li></ul>';
+               }else{
+                   $dept = $data;
+                   function dept_ul_li($dept) {
+                       $dept_str = '<ul >';
+                       foreach ($dept as $key => $val) {
+                           @$dept_str .= "<li data-type='". $val['type'] ."' data-pid='". $val['pid'] ."' data-status='". $val['status'] ."'data-memo='". $val['memo'] ."'data-id='". $val['id'] ."'data-name='". $val['name'] ."'>" . $val['name'];
+                           if ($val['child']) {
+                               $dept_str .= dept_ul_li($val['child']);
+                           }
+                       }
+                       $dept_str .= '</li></ul>';
+                       return $dept_str;
+                   }
+                   $ul_li = dept_ul_li($dept);
+                   echo $ul_li;
+               }
+               ?>
+
+           </div>
+
+       </div>
+
+
+<!-- 添加模版 -->
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="myModalLabel">添加子信息</h4>
+            </div>
+            <div class="modal-body">
+                <form  id="addForm" class="form-horizontal">
+                    <div class="form-group">
+                        <label for="depart_id" class="col-sm-2 control-label">名称</label>
+                        <div class="col-sm-10">
+                            <input type="text"  class="form-control" name ='name' id="name" placeholder="名称">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="memo" class="col-sm-2 control-label">备注</label>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" name ='memo' id="memo" placeholder="备注">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="type" class="col-sm-2 control-label">类型</label>
+                        <div class="col-sm-10">
+                        <select     class="form-control" name="type" id="type" >
+                            <option value="1" >类别</option>
+                            <option value="2" >设备</option>
+                            <option value="3" >品牌</option>
+                            <option value="4" >型号</option>
+                        </select>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                <button type="button" class="btn btn-primary" id="add_btn">保存</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- 添加模版 -->
+<!-- 编辑模版 -->
+<div  class="modal fade" id="myEditModal" tabindex="-1" role="dialog" aria-labelledby="myEditModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="myEditModalLabel">修改</h4>
+            </div>
+            <div class="modal-body">
+                <form  id="editForm" class="form-horizontal">
+                    <div class="form-group">
+                        <label for="e_id" class="col-sm-2 control-label">ID</label>
+                        <div class="col-sm-10">
+                            <input readonly type="text" class="form-control" name ='id' id="e_id" placeholder="id" >
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="e_pid" class="col-sm-2 control-label">父亲ID</label>
+                        <div class="col-sm-10">
+                            <input  type="text" class="form-control" name ='pid' id="e_pid" placeholder="pid" >
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="e_name" class="col-sm-2 control-label">名称</label>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" name ='name' id="e_name" placeholder="名称" >
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="e_memo" class="col-sm-2 control-label">备注</label>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" name ='memo' id="e_memo" placeholder="备注">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="e_type" class="col-sm-2 control-label">类型</label>
+                        <div class="col-sm-10">
+                            <select     class="form-control" name="type" id="e_type" >
+                                <option value="1" >类别</option>
+                                <option value="2" >设备</option>
+                                <option value="3" >品牌</option>
+                                <option value="4" >型号</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="e_status" class="col-sm-2 control-label">类型</label>
+                        <div class="col-sm-10">
+                            <select     class="form-control" name="status" id="e_status" >
+                                <option value="1" >有效</option>
+                                <option value="0" >无效</option>
+                            </select>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                <button type="button" class="btn btn-primary" id="edit_btn">保存</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- 编辑模版 -->
+<!-- 删除 -->
+<div class="modal fade" id="myDeleteModal" tabindex="-1" role="dialog" aria-labelledby="myDeleteModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="myDeleteModalLabel">删除</h4>
+            </div>
+            <form  id="deleteForm" class="form-horizontal">
+                <div class="modal-body">
+                    <h6 class="modal-title" >亲，真的要删除吗？</h6>
+                </div>
+             </form>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                <button type="button" class="btn btn-primary" id="delete_btn">保存</button>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    (function ($) {
+        function init() {
+            $('.easy-tree').EasyTree({
+                addable: true,
+                editable: true,
+                deletable: true,
+                selectable: false,
+                speed_show_btn: false,
+                speed_edit_btn: true,
+                speed_delete_btn: true
+            });
+        }
+        window.onload = init();
+    })(jQuery);
+
+    //添加
+    var applyId;
+    $('.speed_add_model').click(function(e) {
+        e.stopPropagation();
+
+        applyId  = $(this).parent().parent().attr('data-id');
+        var  departName  = $(this).parent().parent().attr('data-name');
+        $('#myModalLabel').html('添加:上级节点'+departName);
+        $('#myModal').modal('show');
+    });
+    //保存
+    $('#add_btn').click(function() {
+
+        $('#myModal').modal('hide');
+        var myForm = $('#addForm').serializeArray();
+        myForm.push({name:'pid',value:applyId});
+        $.post('assets/ajax_update_add_supply',myForm, function(ret) {
+            if (ret.code == 200) {
+                show_message(ret.code,ret);
+                setTimeout("window.location.href = '/assets/assets_supply_home'",1500);
+            } else {
+                show_message(ret.code,ret);
+            }
+        }, 'json');
+    });
+
+    //编辑
+    var N, M, T, S,P;
+    $('.speed_edit_model').click(function(e) {
+        e.stopPropagation();
+
+        applyId= $(this).parent().parent().attr('data-id');
+        P= $(this).parent().parent().attr('data-pid');
+        S= $(this).parent().parent().attr('data-status');
+        T= $(this).parent().parent().attr('data-type');
+        M= $(this).parent().parent().attr('data-memo');
+        N= $(this).parent().parent().attr('data-name');
+        $('#e_memo').val(M);
+        $('#e_name').val(N);
+        $('#e_type').val(T);
+        $('#e_status').val(S);
+        $('#e_pid').val(P);
+        $('#e_id').val(applyId);
+         $('#myEditModal').modal('show');
+
+    });
+
+    $('#edit_btn').click(function() {
+
+        $('#myEditModal').modal('hide');
+        var myForm = $('#editForm').serializeArray();
+
+        $.post('assets/ajax_update_add_supply',myForm, function(ret) {
+            if (ret.code == 200) {
+                show_message(ret.code,ret);
+                setTimeout("window.location.href = '/assets/assets_supply_home'",1500);
+            } else {
+                show_message(ret.code,ret);
+            }
+        }, 'json');
+
+    });
+
+    //删除
+    $('.speed_delete_model').click(function(e) {
+        e.stopPropagation();
+        applyId = $(this).parent().parent().attr('data-id');
+        $('#myDeleteModal').modal('show');
+
+    });
+    $('#delete_btn').click(function() {
+        $('#myDeleteModal').modal('hide');
+        $.post('assets/ajax_update_add_supply',{id:applyId}, function(ret) {
+            if (ret.code == 200) {
+                show_message(ret.code,ret);
+                setTimeout("window.location.href = '/assets/assets_supply_home'",1500);
+            } else {
+                show_message(ret.code,ret);
+            }
+        }, 'json');
+    });
+
+</script>
+@endsection
+

@@ -1,0 +1,13 @@
+.nav-tabs>li.active>a, .nav-tabs>li.active>a:hover, .nav-tabs>li.active>a:focus{color: #555;
+  cursor: default;
+  background-color: #fff;
+  border: 1px solid #ddd;
+  border-bottom-color: transparent;
+  margin-top: 0;
+  border-top: 1px solid #ddd !important;
+
+}
+.nav-tabs>li>a{
+  font-size: 14px;
+  border-radius: 5px 5px 0 0;
+}

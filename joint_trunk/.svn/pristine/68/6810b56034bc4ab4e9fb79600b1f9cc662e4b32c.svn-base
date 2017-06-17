@@ -1,0 +1,71 @@
+<?php
+namespace Joint\Modules\Itserver;
+
+use Joint\Modules\Common\BaseModule;
+use Joint\Package\Common\Response;
+use Joint\Package\Utils\VisitorWifi;
+/**
+ * wifi 登陆陆权限
+ * @author hongzhou@meilishuo.com
+ * @date 2015-9-02
+ */
+class VisitorWifiCreate  extends BaseModule{
+    protected $errors = NULL;
+    private   $params = NULL;
+    public function run() {
+
+        $this->_init();
+
+        $ret =  VisitorWifi::create($this->params['uname'], $this->params['visitor_name'],
+           $this->params['visitor_mobile'], $this->params['expire_time'], $this->params['channel']);
+        if (empty($ret)) {
+            $return = Response::gen_error(30001,'','创建失败');
+        }else{
+            $return = $ret;
+        }
+        $this->app->response->setBody($return);
+
+
+    }
+    private function _init() {
+
+        $this->rules = array(
+            'uname' => array(
+                'required' => TRUE,
+                'allowEmpty' => FALSE,
+                'type'=>'string',
+                'maxLength'=> 30
+            ),
+            'visitor_name' => array(
+                'required' => TRUE,
+                'allowEmpty' => FALSE,
+                'type'=>'string',
+                'maxLength'=> 30
+            ),
+            'visitor_mobile' => array(
+                'required' => TRUE,
+                'allowEmpty' => FALSE,
+                'type'=>'string',
+                'maxLength'=> 30
+            ),
+            'expire_time' => array(
+                'required' => TRUE,
+                'allowEmpty' => FALSE,
+                'type'=>'integer',
+                'maxLength'=> 30
+            ),
+            'channel' => array(
+                'type'=>'integer',
+                'default'=> 0,
+                'maxLength'=> 30
+            ),
+        );
+
+        $this->params = $this->post()->safe();
+        $this->errors = $this->post()->getErrors();
+        return TRUE;
+    }
+
+
+
+}

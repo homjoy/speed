@@ -1,0 +1,46 @@
+fml.define('fms/myapproval/contractApproval', ['jquery','component/notify','component/approval','fms/common/contract'], function (require, exports) {
+
+    var $ = require('jquery');
+    var notify = require('component/notify');
+    var contract = require('fms/common/contract');
+    var approval = require('component/approval');
+
+    var option={
+        btns:[
+            {
+                title:'同意',
+                class:'btn btn-agree list-agree btn-xs'
+            },
+            {
+                title:'驳回',
+                class:'btn btn-danger list-reject btn-xs'
+            }
+        ],
+        isStruss2:true,
+        timeSearch:true,
+        departSearch:false,
+        usernameSearch:true,
+        approveStatusSearch:true,
+        identifierSearch:true,
+        headercheckOthers:'',
+        leftwidth:'366px',
+        urlLeft: '/aj/myApproval/contractList',
+        urlRight :'/aj/myApproval/contractInfo',
+        url1:'/aj/myApproval/batch',
+        url2:'/aj/myApproval/batch',
+        urlApproval:'/aj/myApproval/contractInfo',
+        //urlApplicationHistory:'/aj/myapply/payHistory',
+        tokeninputurl:'/aj/user/search',
+        "contractdealTaskneedapprove":'<form class="form-horizontal form-agree">'
+        +'<textarea placeholder="不超过200字" class="form-control approval-info" style="min-height:80px" name="reason"></textarea>'
+        + '<div class="checkbox"><label><input type="checkbox" id="isChecked" name="is_check" value="1" checked/>是否需要进一步审批</label>' +
+        '</form>',
+        statusOption:[
+            {title:"待审批",v:"2"},
+            {title:"审批通过",v:"3"},
+            {title:"驳回",v:"4"}
+        ]
+    };
+    approval.approval(option);
+
+});

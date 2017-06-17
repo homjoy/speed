@@ -1,0 +1,155 @@
+<%#head.html%>
+    <%#header.html%>
+        <div class="boxed">
+            <div id="content-container">
+                <div id="page-content">
+                    <div class="col-lg-12">
+                        <div class="panel">
+                            <div class="panel-body">
+                            <form role="form" id="formPay">
+                                <table class="table owntable">
+                                    <thead>
+                                        <th colspan="6">
+                                            <h3>付款申请单</h3></th>
+                                    </thead>
+                                    <tbody>
+                                    <tr>
+                                        <td>单据编号</td>
+                                        <td class="form-group"><input type="text" class="form-control text-center" readonly></td>
+                                        <td>填报日期</td>
+                                        <td class="form-group"><input type="text" class="form-control text-center writeDay" readonly></td>
+                                        <td>合同编号</td>
+                                        <td class="form-group">
+                                            <input type="text" class="form-control text-center" name="conid" id="conId">
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>申请人姓名</td>
+                                        <td class="form-group">
+                                            <input type="text" class="form-control text-center" name="name" value="D大调" readonly data-bv-notempty>
+                                        </td>
+                                        <td>部门</td>
+                                        <td class="form-group">
+                                            <input type="text" class="form-control text-center" name="depart" value="D大调" readonly data-bv-notempty>
+                                        </td>
+                                        <td>合同签订时间</td>
+                                        <td class="form-group">
+                                            <input type="text" class="form-control text-center" name="time" data-bv-notempty id="signDate" readonly>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>合同名称</td>
+                                        <td colspan="5" class="form-group">
+                                             <textarea type="text" class="form-control" name="content" placeholder="合同名称" data-bv-notempty id="nameContent"></textarea>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>合同付款条款</td>
+                                        <td colspan="5" class="form-group">
+                                            <textarea type="text" class="form-control" rows="4" name="payTips" placeholder="合同付款条款" data-bv-notempty id="payTips" readonly></textarea>
+                                        </td>
+                                    </tr>
+                                    <tr class="view-con">
+                                        <td colspan="6" class="text-right"><a href="#" class="btn btn-default" style="margin-right:50px" target="_blank">查看合同</a></td>
+                                    </tr>
+                                    <tr>
+                                        <td>预算项目</td>
+                                        <td colspan="5" class="form-group">
+                                            <textarea class="form-control" name="preProject" placeholder="预算项目" data-bv-notempty></textarea>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>付款单位</td>
+                                        <td colspan="2" class="form-group">
+                                            <input type="text" class="form-control" name="payCompany" placeholder="合同中约定的付款单位" data-bv-notempty id="payCompany" readonly>
+                                        </td>
+                                        <td>付款金额</td>
+                                        <td colspan="2" class="form-group">
+                                            <div class="input-group">
+                                                <span class="input-group-addon">￥</span>
+                                                <input class="form-control" type="input" name="payMoney" placeholder="付款金额" value="" id="payMoney">
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>收款方式</td>
+                                        <td colspan="2" class="form-group">
+                                            <select name="takeWay" id="takeWay" class="form-control" data-bv-notempty>
+                                                <option value="0">电汇</option>
+                                                <option value="1">现金</option>
+                                            </select>
+                                        </td>
+                                        <td>收款公司</td>
+                                        <td colspan="2" class="form-group">
+                                            <input type="text" class="form-control" name="takeCompany" placeholder="收款公司" data-bv-notempty id="takeCompany" readonly>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>收款银行</td>
+                                        <td colspan="2" class="form-group">
+                                            <input type="text" class="form-control" name="takeBank" placeholder="收款银行" data-bv-notempty> 
+                                        </td>
+                                        <td>收款支行</td>
+                                        <td colspan="2" class="form-group">
+                                            <input type="text" class="form-control" name="takeBranchBank" placeholder="收款支行" data-bv-notempty>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>收款账号</td>
+                                        <td colspan="2" class="form-group">
+                                            <input type="text" class="form-control" name="takeAccount" placeholder="收款账号" data-bv-notempty>
+                                        </td>
+                                        <td>付款对应服务周期</td>
+                                        <td colspan="2" class="form-group">
+                                            <input type="text" class="form-control" name="payLife" placeholder="付款对应服务周期" data-bv-notempty>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>预计付款日期</td>
+                                        <td colspan="2" class="form-group">
+                                            <input type="text" class="form-control" name="maybePayDate" id="payDay" data-bv-notempty readonly>
+                                        </td>
+                                        <td>收款单位组织机构代码</td>
+                                        <td colspan="2" class="form-group">
+                                            <input type="text" class="form-control" name="takeOrgCode" placeholder="收款单位组织机构代码(5万及5万以上)" data-bv-notempty>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>备注</td>
+                                        <td colspan="5" class="form-group">
+                                            <textarea class="form-control" rows="4" name="notes" placeholder="备注"></textarea>
+                                        </td>
+                                    </tr>
+                                    <input type="hidden" value="" id="fileName">
+                                    <input type="hidden" value="" id="fileSize">
+                                    <input type="hidden" value="" id="fileType">
+                                </form>
+                                    <tr>
+                                        <td>上传附件</td>
+                                        <td colspan="5" class="relative">
+                                            <form action="" method="post" class="col-xs-8 dropzone file-zone" id="fileZone">
+                                            </form>
+                                            <button type="button" class="btn btn-default file-button-pos" id="submit-all">上传</button>
+
+                                        </td> 
+                                    </tr>
+                                    </tbody>
+                                </table>
+                            
+                                <div class="panel-footer text-right">
+                                    <button class="btn btn-info btn-submit" type="submit" form="formPay">提交</button>
+                                    <button class="btn btn-info btn-save-drafts" type="button">保存草稿</button>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+           <%#sidebar.html%>
+    </div>
+<%#footer.html%>
+<%! $_ENGINE_SELF.callFn( "useModule")( "<<<_use:
+        fml.use('fms/pay/payApplycation');
+_use:", this._JSstack , this._JSmods); %>
+<%#foot.html%>

@@ -1,0 +1,1 @@
+Hi! {{receive_name}}：{{username}}的申请被{{approve_name}}驳回了。{{order_explains}}申请类型：{{order_type}}

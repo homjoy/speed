@@ -1,0 +1,113 @@
+<%#head.html%>
+	<div id="container" class="cls-container">
+		<div class="speed_logo">
+			<div class="cls-brand">
+				<span class="brand-title-flower" ><img class="" src="<%= this.PICTURE_URL  %>img/speed/bg-img/icon.png" ></span>
+				<span class="brand-title-word"><img class="" src="<%= this.PICTURE_URL  %>img/speed/bg-img/speed.png" ></span>
+			</div>
+		</div>
+		<!--===================================================-->
+		
+		
+		<!-- LOGIN FORM -->
+		<!--===================================================-->
+		<div class="cls-content" id="login-form">
+			<div class="cls-content-sm center_part panel">
+				<div class="panel-wrapper">
+					<div class="panel-body flip">
+						<div style="text-aline:center">
+							<label class="notice">
+								 	
+							</label>
+						</div>
+						
+						<div class="form-group">
+							<div class="input-group">
+								<div class="input-group-addon">
+									<img src="<%= this.PICTURE_URL  %>img/speed/bg-img/adimin.png">
+								</div>
+								<input type="text" name="username" class="form-control userName" id="userName" placeholder="公司邮箱前缀" autofocus="autofocus">
+								<input type="hidden" value="true" name="resubmit "/>
+							</div>
+						</div>
+						<div class="form-group">
+							<div class="input-group">
+								<div class="input-group-addon">
+									<img src="<%= this.PICTURE_URL  %>img/speed/bg-img/key.png">
+								</div>
+								<input type="password" name="password" id="passWord" class="form-control passWord" placeholder="邮箱密码">
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-xs-4 ">
+								<!-- <label style="float:left">
+								<input type="checkbox"> 记住密码
+								</label> -->
+							</div>
+							<div class="col-xs-4 " style="">
+								
+							</div>
+							<div class="col-xs-4 ">
+								<a id="forget_password" class="forget_password" href="javascript:void(0);">
+								忘记密码
+								</a>
+							</div>
+							
+						</div>
+						<div class="row" style="margin-bottom:40px;">
+							<div class="col-xs-12 login_button">
+								<div class="form-group ">
+								<button class="btn signIn">登录</button>
+								</div>
+							</div>
+						</div>
+
+						<div class="form-group">
+							<span class="download_title">下载APP</span>
+						</div>
+						
+						<div class="row" style="margin-top:80px">
+							<div class="col-xs-5 ">
+								<span class="download_notice" style="">
+								  请扫描右侧<br>客户端二维码
+								</span>
+							</div>
+							<div class="col-xs-6 " style="width:140px;height:140px">
+								<img src="<%= this.PICTURE_URL  %>img/speed/bg-img/ma.png">
+							</div>
+						</div>
+					</div>
+					<div class="panel-body flip out ">
+						<span class="foget_contract">忘记密码，请联系</span>
+						<dl>
+							<dt>北京</dt>
+							<dd>
+								<div><span>李冠良</span>13041180216</div>
+								<div><span>张新新</span>18146501751</div>
+							</dd>
+							<dt>上海</dt><dd><span>陶淳</span>13564156610</dd>
+							<dt>杭州</dt><dd><span>陶淳</span>13564156610</dd>
+							<dt>广州</dt><dd><span>黄岳鹏</span>13560036718</dd>
+						</dl>
+					</div>
+				</div>
+
+				<div class="change top" style="">
+					<img src="<%= this.PICTURE_URL  %>img/speed/bg-img/qiehuan1.png" class="up ">
+					<img src="<%= this.PICTURE_URL  %>img/speed/bg-img/qiege.png" class="down hide">
+				</div>
+
+				<div class="triangle"></div>
+			</div>
+			<div class="shadow_left">
+				<img src="<%= this.PICTURE_URL  %>img/speed/bg-img/qiegetiao.png" style="">
+			</div>
+			<div class="shadow_right">
+				<img src="<%= this.PICTURE_URL  %>img/speed/bg-img/qiegetiao.png" style="">
+			</div>
+		</div>
+	</div>
+<%! $_ENGINE_SELF.callFn("useModule")("<<<_use:
+		fml.use('speed/user/login');
+_use:", this._JSstack , this._JSmods); %>
+<%#foot.html%>

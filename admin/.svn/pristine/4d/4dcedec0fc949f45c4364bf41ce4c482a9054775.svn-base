@@ -1,0 +1,59 @@
+<?php
+namespace Admin\Modules\Itserver;
+use Admin\Package\Itserver\Itserver;
+use Libs\Util\Format;
+use Admin\Modules\Common\BaseModule;
+use Admin\Package\Common\Response;
+/**
+ *
+ * hongzhou@meilishuo.com
+ * 2015-01-19
+ */
+
+class AjaxDeleteOfficialMail extends  BaseModule {
+    protected $errors = NULL;
+    private   $params = NULL;
+    public static $VIEW_SWITCH_JSON = TRUE;
+    public function run() {
+       $this->_init();
+
+       $ret = Itserver::getInstance()->deleteMail(
+           array(
+                'mail'=>$this->params['mail_name']
+             )
+       );
+       if($ret){
+           $result = Itserver::getInstance()->updateOfficialMail($this->params);
+           if($result){
+               $result = Response::gen_success($result);
+           }else{
+               $result = Response::gen_error(50004,'speed删除失败');
+           }
+
+       }else{
+           $result = Response::gen_error(50004,'IT删除失败');
+       }
+        $this->app->response->setBody($result);
+    }
+    private function _init() {
+
+        $this->rules  = array(
+
+            'mail_name' => array(
+                'required' => TRUE,
+                'allowEmpty' => FALSE,
+                'type'=>'integer',
+            ),
+
+            'status' => array(
+                'type'=>'integer',
+                'default'=>0,
+            ),
+
+        );
+
+        $this->params   = $this->post()->safe();
+        $this->errors   = $this->post()->getErrors();
+
+    }
+}

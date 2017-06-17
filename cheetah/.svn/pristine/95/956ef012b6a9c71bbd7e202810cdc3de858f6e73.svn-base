@@ -1,0 +1,314 @@
+<script id="time-form" type="text/html">
+    <form class="form-horizontal form-in-time-modal {{formType}} {{isUpdate ? 'update':'add'}}" role="form" action="">
+        <input type="hidden" name="formType" value="{{formType === 'meeting' ? 'meeting':'time' }}">
+        <input type="hidden" name="user_id" value="{{user_id || '' }}">
+        <input type="hidden" name="is_check" value="{{ !is_check ? 0 : 1 }}">
+        <div class="row">
+            <div class="column">
+                <div class="form-group">
+                    <label class="control-label">主题</label>
+                    <input type="text" name="meeting_topic" class="form-control" placeholder="" value="{{meeting_topic}}">
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="column column-one">
+                <div class="form-group">
+                    <label class="control-label">开始时间</label>
+                    <input type="text" name="book_start" class="form-control" placeholder="" value="{{book_start}}">
+                </div>
+            </div>
+            <div class="column column-two">
+                <div class="form-group duration">
+                    <label class="control-label">持续时长</label>
+                    <select class="form-control">
+                        {{if formType != 'time' }}
+                        {{include 'duration-meeting'}}
+                        {{else}}
+                        {{include 'duration-time'}}
+                        {{/if}}
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="column column-one">
+                <div class="form-group">
+                    <label class="control-label">结束时间</label>
+                    <input type="text" name="book_end" class="form-control" placeholder="" value="{{book_end}}">
+                </div>
+            </div>
+            {{if formType != 'time' }}
+            <div class="column column-two" {{if formType == 'both' }}style="display:none;"{{/if}}>
+                <div class="form-group">
+                    <label class="control-label">重复</label>
+                    <select class="form-control" name="repeat_type" data-selected="{{repeat_type}}">
+                        <option value="0">永不</option>
+                        <option value="1">每天(周一~周五)</option>
+                        <option value="7">每周</option>
+                        <option value="30">每月</option>
+                    </select>
+                </div>
+            </div>
+            {{/if}}
+        </div>
+
+        {{if formType == 'both' }}
+        <div class="row">
+            <div class="column">
+                <div class="form-group">
+                    <label class="control-label">会议室预定</label>
+                    <label class="radio-inline">
+                        <input type="radio" name="need_meeting_room" value="meeting">需要
+                    </label>
+                    <label class="radio-inline">
+                        <input type="radio" name="need_meeting_room" value="time" checked>不需要
+                    </label>
+                </div>
+            </div>
+        </div>
+        {{/if}}
+
+        <div class="tab-content">
+            {{if formType != 'time' }}
+            <div class="tab-pane meeting fade {{if formType == 'meeting'}}in active{{/if}}">
+                <div class="row">
+                    <div class="column">
+                        <div class="form-group">
+                            <label class="control-label">会议类型</label>
+                            <label class="radio-inline">
+                                <input type="radio" name="meeting_type" value="1" {{if !meeting_type || meeting_type == 1}}checked{{/if}}>普通会议
+                            </label>
+                            <label class="radio-inline" {{if rooms && rooms[0] && !inArray('1',rooms[0].services) }}style="display:none;"{{/if}}>
+                                <input type="radio" name="meeting_type" value="2" {{if meeting_type == 2}}checked{{/if}}>视频会议
+                            </label>
+
+                            <label class="radio-inline" {{if rooms && rooms[0] && !inArray('5',rooms[0].services) }}style="display:none;"{{/if}}>
+                                <input type="radio" name="meeting_type" value="3" {{if meeting_type == 3}}checked{{/if}}>电话会议
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row branch-zones">
+                    <!-- 主会场 -->
+                    <div class="column zone main">
+                        {{if book_id}}
+                        <input type="hidden" name="book_id" value="{{book_id || ''}}">
+                        {{/if}}
+                        <div class="form-group">
+                            <div class="control-label">
+                                {{if formType == 'meeting' && rooms && rooms.length == 1 }}
+                                <input type="hidden" name="room_id" value="{{rooms[0].id}}" >
+                                参加人员
+                                {{else}}
+                                <select class="form-control" name="room_id" data-selected="{{room_id}}">
+                                    <option value="">请选择</option>
+                                </select>
+                                {{/if}}
+                            </div>
+                            <input type="text" name="invite_users" class="form-control" placeholder="请输入参会人员" data-users="{{invite_users | json }}">
+                        </div>
+                    </div>
+                    {{ each zones as zone index}}
+                        {{include 'branch-zone' zone,index}}
+                    {{/each }}
+
+
+                    <div class="column zone add" {{if meeting_type != 2 && meeting_type != 3 }}style="display:none;"{{/if}}>
+                        <div class="form-group">
+                            <div class="control-label">&nbsp;</div>
+                            <a href="javascript:void(0);" class="add-zone"><i class="fa fa-plus"></i><span>添加会场</span></a>
+                        </div>
+                    </div>
+                </div>
+
+
+
+                <div class="row devices">
+                    <div class="column">
+                        <div class="form-group">
+                            <label class="control-label">设备需求</label>
+                            <label class="checkbox-inline" {{if !meeting_type || meeting_type == 1 }}style="display:none;"{{/if}}>
+                                <input type="checkbox" name="service_id[]" value="1" {{if inArray('1',services)}}checked{{/if}}>视频设备
+                            </label>
+                            <label class="checkbox-inline">
+                                <input type="checkbox" name="service_id[]" value="3" {{if inArray('3',services)}}checked{{/if}}>投影设备
+                            </label>
+                            <label class="checkbox-inline" {{if !meeting_type || meeting_type == 1 }}style="display:none;"{{/if}}>
+                                <input type="checkbox" name="service_id[]" value="5" {{if inArray('5',services)}}checked{{/if}}>电话设备
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+
+                <div class="row">
+                    <div class="column">
+                        <div class="form-group">
+                            <input type="checkbox" name="service_id[]" class="hide" value="7" {{if inArray('7',services) }}checked{{/if}}>
+                            <label class="control-label">待客服务</label>
+                            <label class="radio-inline">
+                                <input type="radio" name="service" value="0" {{if !inArray('7',services) }}checked{{/if}}>不需要
+                            </label>
+                            <label class="radio-inline nmr"><input type="radio" name="service" value="1" {{if inArray('7',services) }}checked{{/if}}>需要</label><input type="text" name="service_memo" class="form-control additional" value="{{service_memo || ''}}" placeholder="茶水？饮料？or？"{{if !inArray('7',services) }}style="display:none;"{{/if}}>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {{/if}}
+
+            {{if formType != 'meeting' }}
+            <div class="tab-pane fade time {{if formType != 'meeting' }}in active{{/if}}">
+                <input type="hidden" name="time_id" value="{{time_id || ''}}" class="hide">
+                <div class="row">
+                    <div class="column">
+                        <div class="form-group">
+                            <label class="control-label">地点</label>
+                            <input type="text" name="position" class="form-control" placeholder="" value="{{position || ''}}">
+                        </div>
+                    </div>
+                </div>
+
+
+                <div class="row">
+                    <div class="column">
+                        <div class="form-group">
+                            <label class="control-label">参加人员</label>
+                            <input type="text" name="time_users" class="form-control" placeholder="请输入参加人员" data-users="{{invite_users | json}}">
+                        </div>
+                    </div>
+                </div>
+
+
+                <div class="row">
+                    <div class="column column-one">
+                        <div class="form-group">
+                            <label class="control-label">提醒时间</label>
+                            <select class="form-control" name="remind_time" data-selected="{{remind_time || ''}}">
+                                <option value="0">无</option>
+                                <option value="5">5分钟前</option>
+                                <option value="10">10分钟前</option>
+                                <option value="15">15分钟前</option>
+                                <option value="30">30分钟前</option>
+                                <option value="60">1小时前</option>
+                                <option value="120">2小时前</option>
+                                <option value="1440">1天前</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="column column-two {{if !remind_type}}hide{{/if}}">
+                        <div class="form-group">
+                            <label class="control-label">提醒方式</label>
+                            <select class="form-control" name="remind_type" data-selected="{{remind_type || ''}}">
+                                <option value="sms">短信</option>
+                                <option value="im">IM</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+
+
+                <div class="row">
+                    <div class="column column-one">
+                        <div class="form-group">
+                            <label class="control-label">日历颜色</label>
+                            <select class="form-control" name="color" data-selected="{{color}}">
+                                <option value="">请选择</option>
+                                <option value="#d9534f">红色</option>
+                                <option value="#f0ad4e">橙色</option>
+                                <option value="#5cb85c">绿色</option>
+                                <option value="#428bca">蓝色</option>
+                                <option value="#463265">紫色</option>
+                                <option value="#cccccc">灰色</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {{/if}}
+        </div>
+
+
+        <div class="row">
+            <div class="column">
+                <div class="form-group">
+                    <label class="control-label">备注</label>
+                    <input type="text" name="memo" class="form-control" placeholder="" value="{{memo || ''}}">
+                </div>
+            </div>
+        </div>
+    </form>
+</script>
+
+<script id="branch-zone" type="text/html">
+    <div class="column zone">
+        {{if book_id}}
+        <input type="hidden" name="zones[{{index || 0}}][book_id]" value="{{book_id || ''}}">
+        {{/if}}
+        <div class="form-group">
+            <div class="control-label">
+                <select class="form-control" name="zones[{{index || 0}}][room_id]" data-selected="{{room_id}}"></select>
+            </div>
+            <input type="text" name="zones[{{index || 0}}][users]" class="form-control" placeholder="请输入参会人员" data-users="{{invite_users | json }}">
+            <a href="javascript:void(0);" class="remove-zone"><i class="fa fa-minus"></i></a>
+        </div>
+    </div>
+</script>
+
+
+
+<script id="duration-meeting" type="text/html">
+    <option value="m30">30分钟</option>
+    <option value="m45">45分钟</option>
+    <option value="m60">1小时</option>
+    <option value="m90">1.5小时</option>
+    <option value="m120">2小时</option>
+</script>
+
+<script id="duration-time" type="text/html">
+    <option value="m30">30分钟</option>
+    <option value="m45">45分钟</option>
+    <option value="m60">1小时</option>
+    <option value="m90">1.5小时</option>
+    <option value="h2">2小时</option>
+    <option value="h3">3小时</option>
+    <option value="h4">4小时</option>
+    <option value="h5">5小时</option>
+    <option value="h6">6小时</option>
+    <option value="h7">7小时</option>
+    <option value="h8">8小时</option>
+    <option value="d1">1天</option>
+    <option value="d2">2天</option>
+    <option value="d3">3天</option>
+</script>
+
+<script id="event-tips" type="text/html">
+    <div id="tip" class="bs-callout bs-callout-danger tip" style="display:none;"><ul>
+        {{if time_id }}
+        <li class="message">事件名称：{{title}}<br/></li>
+        {{else}}
+        <li class="message">会议主题：{{title}}<br/></li>
+        <li class="message">会议室：{{room_name}}（{{room_position}}）<br/> </li>
+        {{/if}}
+        <li class="clock">{{start | dateFormat:'YYYY-MM-DD HH:mm' }} - {{end | dateFormat:'HH:mm'}}</li>
+        <li>发起人：{{name_cn}}</li>
+    </ul></div>
+</script>
+<script id="rooms-options" type="text/html">
+    <option value="">请选择</option>
+
+    {{each offices as office index }}
+    <optgroup label="{{office.name}}">
+        {{each office.rooms as room index2 }}
+        {{if !inArray(''+room.room_id,exclude) }}
+            <option value="{{room.room_id}}" {{if selected && room.room_id == selected}}selected{{/if}}>{{#room.formattedText}}</option>
+        {{/if}}
+        {{/each}}
+    </optgroup>
+    {{/each}}
+</script>

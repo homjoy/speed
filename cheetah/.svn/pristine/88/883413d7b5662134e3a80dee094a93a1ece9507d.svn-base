@@ -1,0 +1,83 @@
+fml.define('fms/query/reimburse', ['jquery', 'plugin/bootstrap/datepicker','plugin/tokeninput', 'component/notify', 'component/TreeSelect', 'fms/common/SearchTable'], function (require, exports) {
+    var $ = require('jquery');
+    var notify = require('component/notify');
+    var SearchTable = require('fms/common/SearchTable');
+
+
+    /**
+     * 加载部门树.
+     */
+    $.post('/aj/query/depart', function (data) {
+        $("input[name=departmentId]").TreeSelect({
+            multiple: true,
+            data: data
+        });
+    }, 'json');
+    /**
+     * 日期控件.
+     */
+    $("#sTime,#eTime").datepicker({
+        'format': 'yyyy-mm-dd',
+        'autoclose': true,
+        'todayHighlight': true
+    });
+
+
+    $('[name=approId],[name=handleId]').tokenInput("/aj/user/search",{
+        tokenLimit: 1
+    });
+
+
+    /**
+     * 数据导出.
+     */
+    //$('.btn-export').on('click', function () {
+    //    var queryParams = $('form').serialize();
+    //    $(this).attr('href', '/export/reimburse?' + queryParams);
+    //});
+
+
+    var table = new SearchTable({
+        container: ".table-container",
+        searchForm: ".query-form",
+        ajax: {
+            url: '/aj/query/search_reimburse'
+        },
+        headers: [
+            '单据编号',
+            '单据类型',
+            '报销项目',
+            '申请部门',
+            '报销人',
+            '经办人',
+            '金额',
+            '申请日期',
+            '单据状态'
+        ],
+        columns: [
+            'billNo',
+            'billTypeName',
+            'expenseItemName',
+            'applyDeptName',
+            'applyPersonName',
+            'handlePersonName',
+            'applyAmount',
+            'applyDate',
+            'approvalState'
+        ],
+        rowFormatter: function (columns, obj) {
+            var id = obj['billId'] || 0;
+            var urlMap = {
+                'EA' : '/reimburse/general/view?id=',
+                'ET' : '/reimburse/traffic/view?id=',
+                'EC' : '/reimburse/travel/view?id='
+            };
+            var url = urlMap[obj['billType']];
+            if(!url){
+                return'<tr>' + columns + '</tr>';
+            }
+
+            return '<tr dbl-open="'+ url + id + '">' + columns + '</tr>';
+        }
+    });
+});

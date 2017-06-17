@@ -1,0 +1,90 @@
+<%#head.html%>
+
+
+
+<header class="feature">
+    <div class="container wide">
+        <h1 class="title">NavTab</h1>
+        <p class="subtitle">扩展自bootstrap</p>
+    </div>
+</header>
+
+<div class="block main" role="main">
+    <section>
+        <h2>依赖：</h2>
+        <p>less 模块: <span class="label label-dark">queen/navs</span></p>
+        <p>文件路径: <span class="label label-dark">apps/static/less/queen/navs.less</span></p>
+    </section>
+
+
+    <section>
+    <h2>普通版</h2>
+    <ul class="nav nav-tabs" role="tablist">
+        <li role="presentation" class="active"><a href="#home" aria-controls="home" role="tab" data-toggle="tab">面板1</a></li>
+        <li role="presentation"><a href="#profile" aria-controls="profile" role="tab" data-toggle="tab">面板2</a></li>
+        <li role="presentation"><a href="#messages" aria-controls="messages" role="tab" data-toggle="tab">面板3</a></li>
+        <li role="presentation"><a href="#settings" aria-controls="settings" role="tab" data-toggle="tab">面板4</a></li>
+    </ul>
+    <div class="tab-content">
+        <div role="tabpanel" class="tab-pane active" id="home">面板1</div>
+        <div role="tabpanel" class="tab-pane" id="profile">面板2</div>
+        <div role="tabpanel" class="tab-pane" id="messages">面板3</div>
+        <div role="tabpanel" class="tab-pane" id="settings">面板4</div>
+    </div>
+
+
+
+<pre class="language-markup"><code>
+&lt;ul class="nav nav-tabs" role="tablist"&gt;
+    &lt;li role="presentation" class="active"&gt;&lt;a href="#home" aria-controls="home" role="tab" data-toggle="tab"&gt;面板1&lt;/a&gt;&lt;/li&gt;
+    &lt;li role="presentation"&gt;&lt;a href="#profile" aria-controls="profile" role="tab" data-toggle="tab"&gt;面板2&lt;/a&gt;&lt;/li&gt;
+    &lt;li role="presentation"&gt;&lt;a href="#messages" aria-controls="messages" role="tab" data-toggle="tab"&gt;面板3&lt;/a&gt;&lt;/li&gt;
+    &lt;li role="presentation"&gt;&lt;a href="#settings" aria-controls="settings" role="tab" data-toggle="tab"&gt;面板4&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;div class="tab-content"&gt;
+    &lt;div role="tabpanel" class="tab-pane active" id="home"&gt;面板1&lt;/div&gt;
+    &lt;div role="tabpanel" class="tab-pane" id="profile"&gt;面板2&lt;/div&gt;
+    &lt;div role="tabpanel" class="tab-pane" id="messages"&gt;面板3&lt;/div&gt;
+    &lt;div role="tabpanel" class="tab-pane" id="settings"&gt;面板4&lt;/div&gt;
+&lt;/div&gt;
+</code></pre>
+    </section>
+
+
+
+    <section>
+    <h2>多边形版本</h2>
+
+        <ul class="nav nav-tabs slope" role="tablist">
+            <li role="presentation" class="active"><a href="#slope-home" aria-controls="home" role="tab" data-toggle="tab">面板1</a></li>
+            <li role="presentation"><a href="#slope-profile" aria-controls="profile" role="tab" data-toggle="tab">面板2</a></li>
+            <li role="presentation"><a href="#slope-messages" aria-controls="messages" role="tab" data-toggle="tab">面板3</a></li>
+            <li role="presentation"><a href="#slope-settings" aria-controls="settings" role="tab" data-toggle="tab">面板4</a></li>
+        </ul>
+        <div class="tab-content">
+            <div role="tabpanel" class="tab-pane active" id="slope-home">面板1</div>
+            <div role="tabpanel" class="tab-pane" id="slope-profile">面板2</div>
+            <div role="tabpanel" class="tab-pane" id="slope-messages">面板3</div>
+            <div role="tabpanel" class="tab-pane" id="slope-settings">面板4</div>
+        </div>
+
+<pre class="language-markup"><code>
+&lt;ul class="nav nav-tabs slope" role="tablist"&gt;
+    &lt;li role="presentation" class="active"&gt;&lt;a href="#slope-home" aria-controls="home" role="tab" data-toggle="tab"&gt;面板1&lt;/a&gt;&lt;/li&gt;
+    &lt;li role="presentation"&gt;&lt;a href="#slope-profile" aria-controls="profile" role="tab" data-toggle="tab"&gt;面板2&lt;/a&gt;&lt;/li&gt;
+    &lt;li role="presentation"&gt;&lt;a href="#slope-messages" aria-controls="messages" role="tab" data-toggle="tab"&gt;面板3&lt;/a&gt;&lt;/li&gt;
+    &lt;li role="presentation"&gt;&lt;a href="#slope-settings" aria-controls="settings" role="tab" data-toggle="tab"&gt;面板4&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;div class="tab-content"&gt;
+    &lt;div role="tabpanel" class="tab-pane active" id="slope-home"&gt;面板1&lt;/div&gt;
+    &lt;div role="tabpanel" class="tab-pane" id="slope-profile"&gt;面板2&lt;/div&gt;
+    &lt;div role="tabpanel" class="tab-pane" id="slope-messages"&gt;面板3&lt;/div&gt;
+    &lt;div role="tabpanel" class="tab-pane" id="slope-settings"&gt;面板4&lt;/div&gt;
+&lt;/div&gt;
+</code></pre>
+    </section>
+
+
+
+
+<%#foot.html%>

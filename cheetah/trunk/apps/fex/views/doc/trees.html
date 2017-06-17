@@ -1,0 +1,172 @@
+<%#head.html%>
+
+
+
+<header class="feature">
+    <div class="container wide">
+        <h1 class="title">树形数据展现</h1>
+        <p class="subtitle">方便灵活的树形数据查找</p>
+    </div>
+</header>
+
+<div class="container block main" role="main">
+
+    <section>
+        <h2>依赖：</h2>
+        <p>less 模块: <span class="label label-dark">queen/trees</span></p>
+        <p>文件路径: <span class="label label-dark">apps/static/less/queen/trees.less</span></p>
+    </section>
+
+    <section>
+    <h2>基本使用.</h2>
+
+
+
+        <!--<div class="queen-trees">-->
+            <!--<div class="queen-trees-toggle">-->
+                <!--<a href="javascript:void(0);" class="btn btn-default">申请部门</a>-->
+                <!--<i class="toggle-caret caret-down"></i>-->
+            <!--</div>-->
+            <!--&lt;!&ndash;<div class="queen-trees-toggle">&ndash;&gt;-->
+                <!--&lt;!&ndash;<input type="text" value="" placeholder="请选择"/>&ndash;&gt;-->
+            <!--&lt;!&ndash;</div>&ndash;&gt;-->
+            <!--<div class="queen-trees-dropdown">-->
+                <!--&lt;!&ndash; 搜索框 &ndash;&gt;-->
+                <!--<div class="queen-trees-dropdown-head">-->
+                    <!--<div class="queen-trees-searchbox">-->
+                        <!--<ul class="queen-token-list">-->
+                            <!--&lt;!&ndash;<li class="queen-token-placeholder">时尚运营</li>&ndash;&gt;-->
+                            <!--<li class="queen-token-item">-->
+                                <!--<span>内容</span>-->
+                                <!--<span class="queen-token-remove-item">x</span>-->
+                            <!--</li>-->
+                            <!--<li class="queen-token-item searchbox-input">-->
+                                <!--<input type="text" autocomplete="off">-->
+                            <!--</li>-->
+                        <!--</ul>-->
+                        <!--<div class="matched-items">-->
+                            <!--<ul>-->
+                                <!--<li><a href="javascript:void(0);">时尚运营——HIGO——商家运营</a></li>-->
+                                <!--<li><a href="javascript:void(0);">时尚运营——HIGO——商家运营</a></li>-->
+                                <!--<li><a href="javascript:void(0);">时尚运营——HIGO——商家运营</a></li>-->
+                                <!--<li><a href="javascript:void(0);">时尚运营——HIGO——商家运营</a></li>-->
+                                <!--<li><a href="javascript:void(0);">时尚运营——HIGO——商家运营</a></li>-->
+                                <!--<li><a href="javascript:void(0);">时尚运营——HIGO——商家运营</a></li>-->
+                            <!--</ul>-->
+                        <!--</div>-->
+                    <!--</div>-->
+                    <!--<p class="current-selected-text">时尚运营——HIGO——商家运营</p>-->
+                <!--</div>-->
+                <!--&lt;!&ndash; 部门列表 &ndash;&gt;-->
+                <!--<div class="queen-trees-dropdown-body">-->
+                    <!--<div class="queen-trees-column-wrap">-->
+                        <!--<div class="dropdown-column">-->
+                            <!--<h4 class="column-level">一级部门</h4>-->
+                            <!--<ul class="nodes-list">-->
+                                <!--<li><a href="javascript:void(0);" class="trees-node">时尚运营</a></li>-->
+                                <!--<li><a href="javascript:void(0);" class="trees-node">时尚运营</a></li>-->
+                                <!--<li><a href="javascript:void(0);" class="trees-node">时尚运营</a></li>-->
+                                <!--<li><a href="javascript:void(0);" class="trees-node">时尚运营</a></li>-->
+                                <!--<li><a href="javascript:void(0);" class="trees-node">时尚运营</a></li>-->
+                                <!--<li><a href="javascript:void(0);" class="trees-node">时尚运营</a></li>-->
+                                <!--<li><a href="javascript:void(0);" class="trees-node">时尚运营</a></li>-->
+                                <!--<li><a href="javascript:void(0);" class="trees-node">时尚运营</a></li>-->
+                                <!--<li><a href="javascript:void(0);" class="trees-node">时尚运营</a></li>-->
+                                <!--<li><a href="javascript:void(0);" class="trees-node">时尚运营</a></li>-->
+                                <!--<li><a href="javascript:void(0);" class="trees-node">时尚运营</a></li>-->
+                                <!--<li><a href="javascript:void(0);" class="trees-node">时尚运营</a></li>-->
+                                <!--<li><a href="javascript:void(0);" class="trees-node">时尚运营</a></li>-->
+                                <!--<li><a href="javascript:void(0);" class="trees-node">时尚运营</a></li>-->
+                                <!--<li><a href="javascript:void(0);" class="trees-node">时尚运营</a></li>-->
+                            <!--</ul>-->
+                        <!--</div>-->
+                        <!--<div class="dropdown-column">-->
+                            <!--<h4 class="column-level">一级部门</h4>-->
+                            <!--<ul class="nodes-list">-->
+                                <!--<li><a href="javascript:void(0);" class="trees-node">时尚运营</a></li>-->
+                                <!--<li><a href="javascript:void(0);" class="trees-node">时尚运营</a></li>-->
+                                <!--<li><a href="javascript:void(0);" class="trees-node">时尚运营</a></li>-->
+                                <!--<li><a href="javascript:void(0);" class="trees-node">时尚运营</a></li>-->
+                                <!--<li><a href="javascript:void(0);" class="trees-node">时尚运营</a></li>-->
+                                <!--<li><a href="javascript:void(0);" class="trees-node">时尚运营</a></li>-->
+                                <!--<li><a href="javascript:void(0);" class="trees-node">时尚运营</a></li>-->
+                                <!--<li><a href="javascript:void(0);" class="trees-node">时尚运营</a></li>-->
+                                <!--<li><a href="javascript:void(0);" class="trees-node">时尚运营</a></li>-->
+                                <!--<li><a href="javascript:void(0);" class="trees-node">时尚运营</a></li>-->
+                                <!--<li><a href="javascript:void(0);" class="trees-node">时尚运营</a></li>-->
+                                <!--<li><a href="javascript:void(0);" class="trees-node">时尚运营</a></li>-->
+                                <!--<li><a href="javascript:void(0);" class="trees-node">时尚运营</a></li>-->
+                                <!--<li><a href="javascript:void(0);" class="trees-node">时尚运营</a></li>-->
+                                <!--<li><a href="javascript:void(0);" class="trees-node">时尚运营</a></li>-->
+                            <!--</ul>-->
+                        <!--</div>-->
+                        <!--<div class="dropdown-column">-->
+                            <!--<h4 class="column-level">一级部门</h4>-->
+                            <!--<ul class="nodes-list">-->
+                                <!--<li><a href="javascript:void(0);" class="trees-node">时尚运营</a></li>-->
+                                <!--<li><a href="javascript:void(0);" class="trees-node">时尚运营</a></li>-->
+                                <!--<li><a href="javascript:void(0);" class="trees-node">时尚运营</a></li>-->
+                                <!--<li><a href="javascript:void(0);" class="trees-node">时尚运营</a></li>-->
+                                <!--<li><a href="javascript:void(0);" class="trees-node">时尚运营</a></li>-->
+                                <!--<li><a href="javascript:void(0);" class="trees-node">时尚运营</a></li>-->
+                                <!--<li><a href="javascript:void(0);" class="trees-node">时尚运营</a></li>-->
+                                <!--<li><a href="javascript:void(0);" class="trees-node">时尚运营</a></li>-->
+                                <!--<li><a href="javascript:void(0);" class="trees-node">时尚运营</a></li>-->
+                                <!--<li><a href="javascript:void(0);" class="trees-node">时尚运营</a></li>-->
+                                <!--<li><a href="javascript:void(0);" class="trees-node">时尚运营</a></li>-->
+                                <!--<li><a href="javascript:void(0);" class="trees-node">时尚运营</a></li>-->
+                                <!--<li><a href="javascript:void(0);" class="trees-node">时尚运营</a></li>-->
+                                <!--<li><a href="javascript:void(0);" class="trees-node">时尚运营</a></li>-->
+                                <!--<li><a href="javascript:void(0);" class="trees-node">时尚运营</a></li>-->
+                            <!--</ul>-->
+                        <!--</div>-->
+                        <!--<div class="dropdown-column">-->
+                            <!--<h4 class="column-level">一级部门</h4>-->
+                            <!--<ul class="nodes-list">-->
+                                <!--<li><a href="javascript:void(0);" class="trees-node">时尚运营</a></li>-->
+                                <!--<li><a href="javascript:void(0);" class="trees-node">时尚运营</a></li>-->
+                                <!--<li><a href="javascript:void(0);" class="trees-node">时尚运营</a></li>-->
+                                <!--<li><a href="javascript:void(0);" class="trees-node">时尚运营</a></li>-->
+                                <!--<li><a href="javascript:void(0);" class="trees-node">时尚运营</a></li>-->
+                                <!--<li><a href="javascript:void(0);" class="trees-node">时尚运营</a></li>-->
+                                <!--<li><a href="javascript:void(0);" class="trees-node">时尚运营</a></li>-->
+                                <!--<li><a href="javascript:void(0);" class="trees-node">时尚运营</a></li>-->
+                                <!--<li><a href="javascript:void(0);" class="trees-node">时尚运营</a></li>-->
+                                <!--<li><a href="javascript:void(0);" class="trees-node">时尚运营</a></li>-->
+                                <!--<li><a href="javascript:void(0);" class="trees-node">时尚运营</a></li>-->
+                                <!--<li><a href="javascript:void(0);" class="trees-node">时尚运营</a></li>-->
+                                <!--<li><a href="javascript:void(0);" class="trees-node">时尚运营</a></li>-->
+                                <!--<li><a href="javascript:void(0);" class="trees-node">时尚运营</a></li>-->
+                                <!--<li><a href="javascript:void(0);" class="trees-node">时尚运营</a></li>-->
+                            <!--</ul>-->
+                        <!--</div>-->
+                    <!--</div>-->
+                <!--</div>-->
+
+                <!--<div class="queen-trees-dropdown-footer">-->
+                    <!--<div class="footer-buttons">-->
+                        <!--<a class="btn-complete">完成</a>-->
+                    <!--</div>-->
+                <!--</div>-->
+            <!--</div>-->
+        <!--</div>-->
+
+
+
+        <!--<a class="btn btn-default btn-xs " id="tree-select" href="javascript:void(0)">选择部门</a>-->
+        <input type="text" name="departmentId" id="tree-select" >
+<pre class="language-javascript">
+    <code>$("#tree-select").QueenTrees({
+        multiple:true,
+        placeholder:'申请部门',
+        data:departments
+    }).on("change",function(event,nodes){
+        console.log($(this).val(),nodes);
+    });
+</code></pre>
+    </section>
+
+
+
+<%! $_ENGINE_SELF.callFn("useModule")("fml.use('fex/doc/trees');", this._JSstack , this._JSmods); %>
+<%#foot.html%>

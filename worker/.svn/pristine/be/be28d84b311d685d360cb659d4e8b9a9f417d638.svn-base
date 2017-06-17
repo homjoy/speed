@@ -1,0 +1,331 @@
+<?php
+namespace Worker\Package\Notification;
+
+/**
+ * 相当简单的一个模板
+ * @see https://github.com/adamtomecek/Template/blob/master/Template.php
+ * Class TemplateEngine
+ */
+class TemplateEngine
+{
+    /**
+     * 编译后的模板内容
+     * @var string
+     */
+    protected static $compiled = array();
+
+    public static $templateMap = array(
+        101 => 'common/meeting_cancel_servicer.tpl',
+        102 => 'common/meeting_cancel_user.tpl',
+        103 => 'common/meeting_create_servicer.tpl',
+        104 => 'common/meeting_create_user.tpl',
+        105 => 'common/meeting_end_servicer.tpl',
+        106 => 'common/meeting_end_user.tpl',
+        107 => 'common/meeting_start_servicer.tpl',
+        108 => 'common/meeting_start_user.tpl',
+        109 => 'common/meeting_start_initiator.tpl',
+//        109 => 'common/meeting_update_change_service.tpl',
+        110 => 'common/meeting_update_change_to_servicer.tpl',
+        111 => 'common/meeting_update_change_to_user.tpl',
+//        112 => 'common/meeting_update_change_user_to_servicer.tpl',
+        113 => 'common/meeting_update_change_user_to_user.tpl',
+        114 => 'common/meeting_update_cancel_service.tpl',
+        116 => 'common/change_password_verifycode.tpl',
+        117 => 'common/user_time_start_user.tpl',
+        118 => 'common/visitor_wifi_create.tpl',
+        119 => 'common/process_agree.tpl',
+        120 => 'common/process_cancel.tpl',
+        121 => 'common/process_reject.tpl',
+        122 => 'common/process_reminder.tpl',
+        123 => 'common/process_submit.tpl',
+        124 => 'common/register_all_auth.tpl',
+        125 => 'common/process_receive.tpl',
+        126 => 'common/vpn_verify_code.tpl',
+
+        201 => 'mail/meeting_cancel_sender.tpl',
+        202 => 'mail/meeting_cancel_servicer.tpl',
+        203 => 'mail/meeting_cancel_user.tpl',
+        204 => 'mail/meeting_create_initiator.tpl',
+        205 => 'mail/meeting_create_servicer.tpl',
+        206 => 'mail/meeting_create_user.tpl',
+        207 => 'mail/meeting_end_servicer.tpl',
+        208 => 'mail/meeting_end_user.tpl',
+        209 => 'mail/meeting_reply_decline.tpl',
+        210 => 'mail/meeting_start_user.tpl',
+        211 => 'mail/meeting_start_servicer.tpl',
+        212 => 'mail/meeting_update_sender.tpl',
+        213 => 'mail/meeting_update_servicer.tpl',
+        214 => 'mail/meeting_update_change_user_to_user.tpl',
+        215 => 'mail/meeting_start_initiator.tpl',
+//        215 => 'mail/meeting_update_change_user_to_servicer.tpl',
+        216 => 'mail/meeting_update_cancel_service.tpl',
+        217 => 'mail/user_password_out_warn.tpl',
+        218 => 'mail/survey_notificate_admin.tpl',
+        219 => 'mail/process_agree.tpl',
+        220 => 'mail/process_cancel.tpl',
+        221 => 'mail/process_reject.tpl',
+        222 => 'mail/process_reminder.tpl',
+        223 => 'mail/process_submit.tpl',
+        224 => 'mail/vpn_password_out_warn.tpl',
+        225 => 'mail/process_receive.tpl',
+        226 => 'mail/mls_volume_remind.tpl',
+
+//        301 => 'sms/meeting_update_servicer.tpl',
+        
+        401 => 'im/meeting_reply_decline.tpl',
+//        402 => 'im/meeting_update_servicer.tpl',
+
+		//财务系统
+        501 => 'mail/meeting_fms_submit.tpl',
+        502 => 'mail/meeting_fms_agree_contract.tpl',
+        503 => 'mail/meeting_fms_agree_payment.tpl',
+        504 => 'mail/meeting_fms_reject.tpl',
+        505 => 'mail/meeting_fms_paid.tpl',
+        506 => 'mail/meeting_fms_reminder.tpl',
+        507 => 'mail/meeting_fms_contract_receive.tpl',
+    );
+
+    private function __construct(){}
+
+    /**
+     * 生成指定类型的通知内容
+     * @param $notify
+     * @param string $type
+     * @return mixed
+     * @throws \Exception
+     */
+    public static function build($notify, $type = 'mail')
+    {
+        if (empty($notify)) {
+            throw new \Exception("通知内容为空，无法生成模板内容!");
+        }
+        $templateId = !empty($notify['template_id']) ? $notify['template_id'] :
+            (isset($notify['content'][$type]['template_id']) ? $notify['content'][$type]['template_id'] : 0);
+
+        if (empty($templateId)) {
+            throw new \Exception("通知消息未指定模板！");
+        }
+
+        $templateFile = APP_PATH.'/template/'.static::$templateMap[$templateId];
+        if(!isset(static::$templateMap[$templateId]) || !file_exists($templateFile)){
+            throw new \Exception("模板{$templateId}对应的文件不存在！");
+        }
+//
+//        $template = Template::model()->getById($templateId);
+        $template = array(
+            'template_id' => $templateId ,
+            'content'=> file_get_contents($templateFile),
+        );
+        //static::$templates[$template['template_id']] = $template;
+        if(empty($template) || empty($template['content'])){
+            throw new \Exception("模板内容为空！");
+        }
+
+        switch($type){
+            case 'mail':
+                return static::render($template, $notify['content'][$type]);
+            case 'im':
+            case 'sms':
+                //短信内容不需要HTML 格式
+                return static::interpolate($template['content'],$notify['content'][$type]);
+            default:
+                throw new \Exception("不支持的模板类型.");
+        }
+    }
+
+    /**
+     * 模板渲染
+     * @param $template
+     * @param $data
+     * @return mixed|string
+     * @throws \Exception
+     */
+    protected static function render($template, $data)
+    {
+        $templateId = $template['template_id'];
+        //检测缓存的模板
+        if (!isset(static::$compiled[$templateId])) {
+            $code = static::compile($template['content']);
+            //检查代码是否合法
+            if(static::checkCode($code)){
+                static::$compiled[$templateId] = $code;
+            }else{
+                static::$compiled[$templateId] = '';
+            }
+        }else{
+            $code = static::$compiled[$templateId];
+        }
+        if(empty($code)){
+            throw new \Exception("模板错误!");
+        }
+        //执行编译后的模板
+        return static::evaluate($code, $data, $templateId);
+    }
+
+    /**
+     * 渲染文件
+     * @param $filename
+     * @param $data
+     * @param string $type
+     * @return mixed|string
+     * @throws \Exception
+     */
+    public static function renderFile($filename,$data,$type = 'mail')
+    {
+        $typeMap = array('1'=>'mail','2'=>'sms','3'=>'im');
+        $dir = is_int($type) ? $typeMap[$type] : $type;
+        $file = APP_PATH.'/template/'.$dir.'/'.$filename;
+        if(!file_exists($file)){
+            throw new \Exception("找不到指定的模板文件:".$file);
+        }
+        $tpl = file_get_contents($file);
+        $code = static::compile($tpl);
+        if(empty($code)){
+            return '';
+        }
+
+        return static::evaluate($code, $data);
+    }
+
+    /**
+     * 直接渲染字符串模板
+     * @param $tpl
+     * @param $data
+     * @return mixed|string
+     */
+    public static function renderString($tpl,$data)
+    {
+        $tpl .= $tpl;
+        $code = static::compile($tpl);
+        if(empty($code)){
+            return '';
+        }
+        return static::evaluate($code, $data);
+    }
+
+    /**
+     * 将模板编译成PHP 代码
+     * @return mixed
+     */
+    protected static function compile($tpl)
+    {
+        $keys = array(
+            '{if %%}' => '<?php if (\1): ?>',
+            '{elseif %%}' => '<?php ; elseif (\1): ?>',
+            '{for %%}' => '<?php for (\1): ?>',
+            '{foreach %%}' => '<?php foreach (\1): ?>',
+            '{while %%}' => '<?php while (\1): ?>',
+            '{/if}' => '<?php endif; ?>',
+            '{/for}' => '<?php endfor; ?>',
+            '{/foreach}' => '<?php endforeach; ?>',
+            '{/while}' => '<?php endwhile; ?>',
+            '{else}' => '<?php ; else: ?>',
+            '{continue}' => '<?php continue; ?>',
+            '{break}' => '<?php break; ?>',
+            '{$%% = %%}' => '<?php $\1 = \2; ?>',
+            '{$%%++}' => '<?php $\1++; ?>',
+            '{$%%--}' => '<?php $\1--; ?>',
+            '{{$%%}}' => '<?php echo isset($\1) ? $\1 : ""; ?>',
+            '{{%%}}' => '<?php echo isset($\1) ? $\1 : ""; ?>',
+            '{comment}' => '<?php /*',
+            '{/comment}' => '*/ ?>',
+            '{/*}' => '<?php /*',
+            '{*/}' => '*/ ?>',
+            '{*%%*}' => '<?php /* \1 */ ?>',
+        );
+
+        $patterns = array();
+        $replace = array();
+        foreach ($keys as $key => $val) {
+            $patterns[] = '#' . str_replace('%%', '(.+)',
+                    preg_quote($key, '#')) . '#U';
+            $replace[] = $val;
+        }
+
+        /*replace our pseudo language in template with php code*/
+        return preg_replace($patterns, $replace, $tpl);
+    }
+
+    /**
+     * 模板执行
+     * @param $code
+     * @param array $variables
+     * @param int $templateId
+     * @return mixed
+     */
+    private static function evaluate($code, array $variables = NULL, $templateId = 0)
+    {
+        //get variables from template so we can call them only $variable onstead of $this->variable
+        if (!empty($variables)) {
+            extract($variables,EXTR_SKIP);
+        }
+        ob_start();
+		//speed
+		if($templateId < 500){
+			include(APP_PATH . '/template/layout.html');
+		}else if($templateId > 500 && $templateId < 600){
+			//fms
+			include(APP_PATH . '/template/layout_fms.html');
+		}elseif($templateId > 600){
+            //open
+            include(APP_PATH . '/template/layout_open.html');
+        }
+        eval('?>' . $code);
+        return ob_get_clean();
+        /*return eval('?>' . $code);*/
+    }
+
+    /**
+     * @see http://php.net/manual/zh/function.eval.php
+     * @param $code
+     * @return mixed
+     * @throws \Exception
+     */
+    private static function checkCode($code)
+    {
+        $whiteList = explode(',', 'isset,echo,foreach,if,endif,in_array');
+
+        $tokens = token_get_all($code);
+        $validCall = '';
+        foreach ($tokens as $token) {
+            if (!is_array($token)) {
+                $validCall .= $token;
+                continue;
+            }
+
+            switch ($token[0]) {
+                case(T_VARIABLE): { $validCall .= 'v'; break; }
+                case(T_STRING): { $validCall .= 's';}
+                case(T_REQUIRE_ONCE): case(T_REQUIRE): case(T_NEW): case(T_RETURN):
+                case(T_BREAK): case(T_CATCH): case(T_CLONE): case(T_EXIT):
+                case(T_PRINT): case(T_GLOBAL): case(T_ECHO): case(T_INCLUDE_ONCE):
+                case(T_INCLUDE): case(T_EVAL): case(T_FUNCTION): {
+                    if (array_search($token[1], $whiteList) === false){
+                        throw new \Exception('不允许的方法: '.$token[1]);
+                    }
+                }
+            }
+        }
+        if (stristr($validCall, 'v(') != '')
+            throw new \Exception('不允许的函数调用.');
+        return true;
+    }
+
+
+    /**
+     * 字符串模板生成
+     * @return string
+     */
+    public static function interpolate($content, $values)
+    {
+        // build a replacement array with braces around the context keys
+        $replace = array();
+        foreach ($values as $key => $val) {
+            if (!is_array($val) && (!is_object($val) || method_exists($val, '__toString'))) {
+                $replace[sprintf('{{%s}}', $key)] = $val;
+            }
+        }
+        // interpolate replacement values into the message and return
+        return strtr($content, $replace);
+    }
+}

@@ -1,0 +1,3 @@
+@import "navs";
+@import "pagination";
+@import "modal";

@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>出错了</title>
+    <!--#include file="head.html"-->
+</head>
+
+<body>
+    <div class="wrong-body">
+        <img src="../image/error500.png" alt="500页面">
+        <a class="btn btn-info" style="left:728px" href="#">回到首页</a>
+    </div>
+</body>
+
+</html>

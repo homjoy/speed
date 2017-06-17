@@ -1,0 +1,21 @@
+<?php
+
+namespace Libs\Serviceclient\Api;
+
+/**
+ * worker 接口配置.
+ */
+class JointApiList extends \Libs\Serviceclient\Api\ApiList {
+
+    /**
+     * @var array
+     */
+    protected static $apiList = array(
+  	'dayi_recruitment/aes_user_info' => array('service' => 'joint', 'method' => 'GET', 'opt' => array('timeout' => 3)),
+        'releaseauth/alter_msg_remove' => array('service' => 'joint', 'method' => 'POST', 'opt' => array('timeout' => 3)),
+        'releaseauth/online_auth_recover' => array('service' => 'joint', 'method' => 'POST', 'opt' => array('timeout' => 3)),
+        'releaseauth/redmine_auth_recover' => array('service' => 'joint', 'method' => 'POST', 'opt' => array('timeout' => 3)),
+        'releaseauth/vpn_auth_recover' => array('service' => 'joint', 'method' => 'POST', 'opt' => array('timeout' => 3)),
+    );
+
+}

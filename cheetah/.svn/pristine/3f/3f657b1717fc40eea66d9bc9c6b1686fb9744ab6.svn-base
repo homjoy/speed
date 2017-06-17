@@ -1,0 +1,152 @@
+@import "../../queen/mixins/preboot.less";
+@import "../../queen/variables.less";
+
+@image-base: '../../../img/family';
+
+body {
+  position: absolute;
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
+  background: white url("@{image-base}/login/bg.png") repeat-y center top;
+  background-size: 100%;
+}
+//背景图片
+.login-bg{
+  display: none;
+  position: absolute;
+  height: 100%;
+  width: 100%;
+}
+
+@main-color: #fc6e47;
+@background-color: #fded9d;
+
+.card-container {
+  height: 100%;
+  width: 480px;
+  margin: 0 auto;
+  padding: 0;
+  position: relative;
+  border-radius: 0;
+  border: none;
+  text-align: center;
+  .container-bd{
+    height:205px;
+  }
+  .card-login{
+    border-radius: 10px;
+    top: 50%;
+    position: absolute;
+    margin-top: -169px;
+    padding:4px 58px 0 52px;
+  }
+  .card-tittle{
+    left: 50%;
+    margin-left: -90px;
+    position: absolute;
+    top: -23px;
+    display: block;
+    width: 180px;
+    height: 57px;
+    color: white;
+    font-size: 20px;
+    line-height: 57px;
+    background-color: @main-color;
+    letter-spacing:3px;
+  }
+  .pad-noright{
+    padding-right: 0 !important;
+  }
+  .pad-noleft{
+    padding-left: 0 !important;
+  }
+}
+//登陆页
+
+.card {
+  z-index: 10;
+  width:100%;
+  padding: 0 45px;
+  background-color: @background-color;
+  display: none;
+  transition: all .1s;
+  height: 342px;
+
+  &.active {
+    display: block;
+  }
+}
+
+.btn-sign-in {
+  background-color: @main-color;
+  border-color: @main-color;
+  -webkit-border-radius: 0;
+  -moz-border-radius: 0;
+  border-radius: 0;
+  font-size: 16px;
+  color: #ffffff;
+  width: 80px;
+  height:40px;
+  line-height: 40px;
+  text-align: center;
+  padding:0;
+  margin-top: 30px;
+  &:hover, &:focus, &:active:focus {
+    outline: none;
+    color: white;
+    background-color: darken(@main-color, 5%);
+  }
+}
+
+//登陆
+.card-login {
+  padding: 4px 0 0;
+  .error-message {
+    position: relative;
+    top: 10px;
+    margin-top: 30px;
+    color: red;
+    text-align: center;
+    font-weight: bold;
+    line-height: 38px;
+  }
+  .input-row {
+    position: relative;
+    height: 32px;
+    line-height: 32px;
+    margin: 0 0 8px 0;
+  }
+
+  .form-control {
+    font-size: 14px;
+    height: 45px;
+  }
+  .control-label{
+    height: 45px;
+    line-height: 35px;
+    font-size: 13px;
+  }
+
+
+  input:-webkit-autofill{
+    transition:none;
+    -webkit-box-shadow: 0 0 0 1000px white inset;
+  }
+}
+//下拉框
+.queen-select-container{
+  background-color: white;
+  height: 45px;
+}
+.queen-selected-content{
+  color: @main-color !important;
+}
+.form-group{
+  margin-bottom: 20px;
+}
+.dropdown-items{
+  padding: 0;
+}
+
+

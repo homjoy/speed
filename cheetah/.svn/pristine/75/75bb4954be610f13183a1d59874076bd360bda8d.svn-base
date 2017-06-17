@@ -1,0 +1,66 @@
+/* Masthead (docs home)
+------------------------- */
+.masthead {
+  padding: 20px 0 20px;
+  margin-bottom: 0;
+  text-align: center;
+}
+
+.masthead h1 {
+  font-size: 60px;
+  line-height: 1;
+  letter-spacing: -2px;
+  font-weight: bold;
+}
+
+.masthead h2 {
+  font-size: 18px;
+  font-weight: 200;
+  line-height: 1.25;
+}
+
+.masthead p {
+  font-size: 40px;
+  font-weight: 200;
+  line-height: 1.25;
+}
+
+.masthead .masthead-button-links {
+  margin-top: 30px;
+}
+
+.component-header {
+  width: 60%;
+  text-align: center;
+  margin: 10px 0;
+  font-weight: 200;
+  margin-bottom: 40px;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  h2 {
+    font-size: 30px;
+    letter-spacing: -1px;
+  }
+  p {
+    margin: 0;
+    font-size: 14px;
+  }
+}
+
+@media screen and (min-width: 768px) {
+  .component-header h2 {
+    font-size: 42px;
+  }
+}
+
+.widget {
+  .widget-header {
+    text-align: center;
+    height: 125px;
+    padding-bottom: 0;
+    &, & > h3 {
+      font-size: 28px;
+    }
+  }
+}

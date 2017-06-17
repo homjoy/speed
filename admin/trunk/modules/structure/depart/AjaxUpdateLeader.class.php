@@ -1,0 +1,130 @@
+<?php
+namespace Admin\Modules\Structure\Depart;
+use Libs\Util\Format;
+use Admin\Modules\Common\BaseModule;
+use Admin\Package\Common\Response;
+use Admin\Package\Log\Log;
+use Admin\Package\Department\DepartSub;
+use Admin\Package\Department\DepartRelation;
+
+/**
+ * Created by hongzhou@meilishuo.com
+ * User: MLS
+ * Date: 15/11/25
+ * Time: 下午9:52
+ */
+
+class AjaxUpdateLeader extends BaseModule {
+
+    protected $errors = NULL;
+    private $params = NULL;
+    private static $SUB_TYPE = 9;
+    private static $RELATION_TYPE = 10;
+    public static $VIEW_SWITCH_JSON = TRUE;
+
+    public function run() {
+
+        $this->_init();
+        if ($this->post()->hasError()) {
+            $return = Response::gen_error(10001, '', $this->post()->getErrors());
+
+            return $this->app->response->setBody($return);
+        }
+        $return= $old =array();
+        switch($this->params['type']){
+            case 1://boss
+                $return = DepartRelation::getInstance()->updateRelationInfo(array(
+                    'depart_id'=>$this->params['depart_id'],
+                    'user_id'=>$this->params['leader_id']));
+                $this->doLog($this->params,'update',self::$RELATION_TYPE);
+                break;
+            case 2://代理
+                $rel =DepartRelation::getInstance()->getRelationInfo(array('depart_id'=>$this->params['depart_id'],
+                    'is_virtual'=>0));
+                is_array($rel)&&$rel=array_pop($rel);
+                if(isset($rel['relation_id'])){//多代理这有问题 TODO
+                    $get =DepartSub::getInstance()->getSubInfo(array(
+                        'relation_id'=>$rel['relation_id']));
+                    if($get){
+                        $return = DepartSub::getInstance()->updateSubInfo(array('user_id'=>$this->params['leader_id'],
+                            'relation_id'=>$rel['relation_id']));
+                        $this->doLog($this->params,'update',self::$SUB_TYPE);
+                    }else{
+
+                        $return = DepartSub::getInstance()->createSubInfo(array('user_id'=>$this->params['leader_id'],
+                            'relation_id'=>$rel['relation_id']));
+                        $this->doLog($this->params,'add',self::$SUB_TYPE);
+                    }
+
+                }
+                break;
+            case 3://关系这个修改关系 只修改已经有的对没有关系的不进行添加
+                $rel =DepartRelation::getInstance()->getRelationInfo(array('depart_id'=>$this->params['depart_id'],
+                    'is_virtual'=>1));
+                if(is_array($rel)){
+                    $rel = array_pop($rel);
+                    $return = DepartRelation::getInstance()->updateRelationInfo(
+                        array(
+                        'relation_id'=>isset($rel['relation_id'])?$rel['relation_id']:'',
+                        'user_id'=>$this->params['leader_id'])
+                    );
+                    $this->doLog($this->params,'update',self::$RELATION_TYPE);
+                }
+                break;
+
+        }
+
+        if(!$return){
+            $return = Response::gen_error(50001,'修改领导信息失败');
+        }else{
+            $return = Response::gen_success($return);
+        }
+
+        $this->app->response->setBody($return);
+
+
+    }
+
+
+    protected function doLog($new_param=array(),$old_param='update',$t){
+
+        $ret = Log::getInstance()->createLogs(array(
+                'user_id'=>$this->user['id'],
+                'handle_id'=>isset($new_param['leader_id'])?$new_param['leader_id']:'',
+                'operation_type'=>$old_param,
+                'after_data'=>json_encode($new_param),
+                'handle_type'=>$t
+            )
+        );
+        return $ret;
+    }
+
+    private function _init() {
+
+        $this->rules  = array(
+            'depart_id' => array(
+                'required' => TRUE,
+                'allowEmpty' => FALSE,
+                'type'=>'string',
+                'maxLength'=> 30,
+            ),
+            'leader_id' => array(
+                'required' => TRUE,
+                'allowEmpty' => FALSE,
+                'type'=>'integer',
+            ),
+            'type' => array(//类型
+                'required' => TRUE,
+                'allowEmpty' => FALSE,
+                'type'=>'integer',
+                'enum'=>array(1,2,3)
+            )
+
+        );
+
+        $this->params   = $this->post()->safe();
+        $this->errors   = $this->post()->getErrors();
+
+
+    }
+}

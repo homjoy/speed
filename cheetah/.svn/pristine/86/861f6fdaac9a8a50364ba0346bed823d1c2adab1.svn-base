@@ -1,0 +1,285 @@
+<%#head.html %>
+<div id="container">
+	<%#navbar.html %>
+	<div class="boxed">
+		<!--CONTENT CONTAINER-->
+		<!--===================================================-->
+		<div id="content-container">
+			<div id="page-content">
+				<div class="row">
+					<div class="col-lg-8" style="padding-left:20px;padding-right:30px;">
+						<!--BBS论坛信息-->
+						<div class="row BBSListShow">
+							<div class="panel">
+								<div class="panel-body">
+									<ul class="BBS_list">
+										<script type="text/javascript" src="/bbs/api.php?mod=js&bid=13"></script>
+										<!--<li class="clearfix">-->
+											<!--<img class="pull-left" src="<%=this.PICTURE_URL %>img/family/home/bbs_default_header.png">-->
+											<!--<div class="BBS_info pull-left">-->
+												<!--<a href="http://home.meilishuo.com/news/detail/179" target="_blank">-->
+													<!--主APP升级版惊艳首发，Venus项目组欢乐庆功-->
+												<!--</a>-->
+												<!--<span>人力资源中心</span><span>刚刚</span><span>发表</span>-->
+											<!--</div>-->
+										<!--</li>-->
+										<!--<li class="clearfix">-->
+											<!--<img class="pull-left" src="<%=this.PICTURE_URL %>img/family/home/bbs_default_header.png">-->
+											<!--<div class="BBS_info pull-left">-->
+
+												<!--<a href="http://home.meilishuo.com/news/detail/183" target="_blank2" >-->
+													<!--[滚蛋吧，肿瘤君]爱心募款，帮欣儿击退病魔-->
+												<!--</a>-->
+												<!--<span>人力资源中心</span><span>3天前</span><span>发表</span>-->
+											<!--</div>-->
+										<!--</li>-->
+										<!--<li class="clearfix">-->
+											<!--<img class="pull-left" src="<%=this.PICTURE_URL %>img/family/home/bbs_default_header.png">-->
+											<!--<div class="BBS_info pull-left">-->
+												<!--<a href="http://home.meilishuo.com/news/detail/177" target="_blank3" >-->
+													<!--2016美丽说核心商家沟通会－杭州站圆满收官！-->
+												<!--</a>-->
+												<!--<span>人力资源中心</span><span>2016-3-22</span><span>发表</span>-->
+											<!--</div>-->
+									    <!--</li>-->
+										<!--<li class="clearfix">-->
+											<!--<img class="pull-left"  src="<%=this.PICTURE_URL %>img/family/home/bbs_default_header2.png">-->
+											<!--<div class="BBS_info pull-left">-->
+												<!--<a href="http://home.meilishuo.com/news/detail/181" target="_blank4" >-->
+													<!--Speed首页新闻招商啦！-->
+												<!--</a>-->
+												<!--<span class="BBS_source">资讯</span><span>2016-3-11</span><span>发表</span>-->
+											<!--</div>-->
+										<!--</li>-->
+										<!--<li class="clearfix">-->
+											<!--<img class="pull-left"  src="<%=this.PICTURE_URL %>img/family/home/bbs_default_header2.png">-->
+											<!--<div class="BBS_info pull-left">-->
+												<!--<a link="http://home.meilishuo.com/news/detail/175" target="_blank5" >-->
+													<!--首期爱美丽群聊会盛况同步！-->
+												<!--</a>-->
+												<!--<span class="BBS_source">资讯</span><span>2016-3-1</span><span>发表</span>-->
+											<!--</div>-->
+										<!--</li>-->
+									</ul>
+									<div class="BBS_more">
+										<a href="/bbs/forum.php" >
+											去论坛看看，还有啥<img src="<%=this.PICTURE_URL %>img/family/home/icon_forum_next.png "/>
+										</a>
+									</div>
+								</div>
+							</div>
+						</div>
+						<!--友情链接-->
+						<div class="row friendLinkLists hide">
+							<div class="panel">
+								<div class="panel-body">
+									<ul class="frListTitle">
+										<li class="active" data-id="operateClass">运营类</li>
+										<li data-id="RDClass">研发类</li>
+										<li data-id="businessClass">商家类</li>
+										<li data-id="otherClass">其他</li>
+									</ul>
+									<div id="operateClass">
+										<ul class="frlinklist">
+											<li>
+												<a href="http://open.speed.meilishuo.com/" target="_blank">
+													<img src="<%=this.PICTURE_URL %>/img/family/home/friendList/kaifang.png">
+													<p>SPEED开放平台</p>
+												</a>
+											</li>
+											<li>
+												<a href="http://developer.meiliworks.com/apply/index" target="_blank">
+													<img src="<%=this.PICTURE_URL %>/img/family/home/friendList/bei_quanxian.png">
+													<p>权限管理平台</p>
+												</a>
+											</li>
+											<li>
+												<a href="http://interfaces.meiliworks.com/" target="_blank">
+													<img src="<%=this.PICTURE_URL %>/img/family/home/friendList/bei_jiekouguanli.png">
+													<p>接口管理平台</p>
+												</a>
+											</li>
+											<li>
+												<a href="http://redmine.meilishuo.com/welcome" target="_blank">
+													<img src="<%=this.PICTURE_URL %>/img/family/home/friendList/bei_wiki.png">
+													<p>Wiki</p>
+												</a>
+											</li>
+											<li>
+												<a href="http://home.meilishuo.com/index.php?app=homeapi&mod=AutoLogin" target="_blank">
+													<img src="<%=this.PICTURE_URL %>/img/family/home/friendList/bei_home.png">
+													<p>Home</p>
+												</a>
+											</li>
+											<li>
+												<a href="http://yun.meiliworks.com" target="_blank">
+													<img src="<%=this.PICTURE_URL %>/img/family/home/friendList/bei_siyouyun.png">
+													<p>私有云</p>
+												</a>
+											</li>
+											<li>
+												<a href="http://roi.meiliworks.com/main/index " target="_blank">
+													<img src="<%=this.PICTURE_URL %>/img/family/home/friendList/bei_rio.png">
+													<p>RIO</p>
+												</a>
+											</li>
+											<li>
+												<a href="http://brand.meiliworks.com/main/index " target="_blank">
+													<img src="<%=this.PICTURE_URL %>/img/family/home/friendList/bei_brand.png">
+													<p>Brand品牌</p>
+												</a>
+											</li>
+										</ul>
+									</div>
+									<div id="RDClass">
+										<ul class="frlinklist">
+											<p class="empty_link">还没有添加哦，请耐心等待。。。</p>
+										</ul>
+									</div>
+									<div id="businessClass">
+										<ul class="frlinklist">
+											<p class="empty_link">还没有添加哦，请耐心等待。。。</p>
+
+										</ul>
+									</div>
+									<div id="otherClass">
+										<ul class="frlinklist">
+											<p class="empty_link">还没有添加哦，请耐心等待。。。</p>
+										</ul>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+
+					<div class="col-lg-4">
+						<!--用户信息-->
+						<div class="row">
+							<div class="panel userShow">
+								<div class="panel-body">
+									<% if(this.userInfo.code==200){%>
+										<% if(this.userInfo.data.user.avatar.length > 0) {%>
+											<img src="<%= this.userInfo.data.user.avatar %>">
+										<% }else{ %>
+											<img src="<%= this.PICTURE_URL %>/img/family/home/default_head.png" />
+										<% } %>
+									<p><%= this.userInfo.data.user.name_cn%></p>
+									<%}%>
+									<p>为梦想奔跑，we are 伐木累！</p>
+								</div>
+							</div>
+						</div>
+						<!--天气预报-->
+						<div class="row we hide">
+							<% if(this.weather && this.weather.code == 200){%>
+							<div class="panel">
+								<div id="demo-weather-widget" class="text-center">
+									<div class="panel-body">
+
+										<!--Weather widget body-->
+										<div class="row weather-header">
+											<div class="col-xs-7 text-left">
+												<h2 style="color:#6a6a6a;"><%= this.weather.data.today.main.temp %> ℃</h2>
+												<h4 class="text-semibold"><%= this.weather.data.city.city_name %></h4>
+											</div>
+											<div class="col-xs-5">
+												<input type="hidden" id="demo-weather-skycon-today"
+													   value="<%= this.weather.data.today.weather.skycon %>"/>
+												<canvas id="demo-weather-icon-today" width="64" height="64"></canvas>
+											</div>
+										</div>
+										<hr/>
+										<!--Weather widget footer-->
+										<ul class="list-unstyled text-center clearfix">
+
+											<% this.weather.data.forecast.forEach(function(weather, index){ %>
+											<li class="col-xs-4">
+												<input type="hidden" id="demo-weather-skycon-<%= index%>"
+													   value="<%= weather.weather.skycon %>"/>
+												<canvas id="demo-weather-icon-<%= index%>" width="32" height="32"></canvas>
+												<p class="text-sm mar-no" style="margin-bottom: 2px;"><%= weather.date_cn %></p>
+
+												<p><%= weather.temp.min%>-<%= weather.temp.max%> ℃</p>
+											</li>
+											<% }) %>
+										</ul>
+									</div>
+								</div>
+							</div>
+							<%}%>
+						</div>
+						<div class="row we hide">
+							<% if(this.weatherhz && this.weatherhz.code == 200){%>
+							<div class="panel">
+								<div id="demo-weather-widget2" class="text-center">
+									<div class="panel-body">
+
+										<!--Weather widget body-->
+										<div class="row weather-header">
+											<div class="col-xs-7 text-left">
+												<h2 style="color:#6a6a6a;"><%= this.weatherhz.data.today.main.temp %> ℃</h2>
+												<h4 class="text-semibold"><%= this.weatherhz.data.city.city_name %></h4>
+											</div>
+											<div class="col-xs-5">
+												<input type="hidden" id="demo-weather-skycon-today2"
+													   value="<%= this.weather.data.today.weather.skycon %>"/>
+												<canvas id="demo-weather-icon-today2" width="64" height="64"></canvas>
+											</div>
+										</div>
+										<hr/>
+										<!--Weather widget footer-->
+										<ul class="list-unstyled text-center clearfix">
+
+											<% this.weatherhz.data.forecast.forEach(function(weather, index){ %>
+											<li class="col-xs-4">
+												<input type="hidden" id="demo-weather-skycon-<%= index%>2"
+													   value="<%= weather.weather.skycon %>"/>
+												<canvas id="demo-weather-icon-<%= index%>2" width="32" height="32"></canvas>
+												<p class="text-sm mar-no" style="margin-bottom: 2px;"><%= weather.date_cn %></p>
+
+												<p><%= weather.temp.min%>-<%= weather.temp.max%> ℃</p>
+											</li>
+											<% }) %>
+										</ul>
+									</div>
+								</div>
+							</div>
+							<%}%>
+						</div>
+					</div>
+				</div>
+
+			</div>
+			<div class="foot_panel">
+				<div class="panel_head">
+					友情链接
+				</div>
+				<div class="panel_body">
+					<ul>
+						<li>
+							<a href="http://speed.meilishuo.com" target="_blank">
+								<img src="<%=this.PICTURE_URL %>/img/family/home/friendList/speed.png" alt=""/>
+							</a>
+						</li>
+
+						<li>
+							<a href="http://www.mogujie.org" target="_blank1">
+								<img src="<%=this.PICTURE_URL %>/img/family/home/friendList/mogu.png" alt=""/>
+							</a>
+						</li>
+					</ul>
+				</div>
+			</div>
+			<%#footer.html%>
+		</div>
+	</div>
+</div>
+
+	<!--===================================================-->
+	<!-- END OF CONTAINER -->
+<%! $_ENGINE_SELF.callFn("useModule")("<<<_use:
+		fml.use('speed/common/base');
+		fml.use('nifty/skycons.min');
+		fml.use('speed/home/index');
+_use:", this._JSstack , this._JSmods); %>
+<%#foot.html%>

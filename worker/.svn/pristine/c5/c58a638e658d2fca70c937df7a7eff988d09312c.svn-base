@@ -1,0 +1,63 @@
+<?php
+namespace Worker\Package\Notification;
+
+/**
+ *
+ * Class Mailer
+ * @package Worker\Package\Notification
+ */
+class Mailer
+{
+    /**
+     * 通知推送
+     * @param $mail
+     * @return bool
+     * @throws \Exception
+     */
+    public static function notification($mail)
+    {
+        $from = array(
+            'name' => '美丽小秘书',
+            'mail' => 'notification@speed.meilishuo.com',
+        );
+
+        return static::send($from, $mail['to'], $mail['title'],
+            $mail['content']);
+    }
+
+    /**
+     * @param string $from 发送人
+     * @param array $to 邮箱列表
+     * @param string $subject 邮件标题
+     * @param string $content 邮件内容
+     * @return bool
+     * @throws \Exception
+     */
+    private static function send($from, $to, $subject, $content)
+    {
+        if (empty($from) || empty($to) || empty($subject) || empty($content)) {
+            throw new \InvalidArgumentException("邮件发送参数不能为空.");
+        }
+        //$mailList, $subject, $content
+        // 当发送 HTML 电子邮件时，请始终设置 content-type
+        $fromName = "=?UTF-8?B?" . base64_encode($from['name']) . "?=";
+        $headers = "MIME-Version: 1.0" . "\r\n";
+        $headers .= "Content-type:text/html;charset=utf-8" . "\r\n";
+        $headers .= "Content-Transfer-Encoding: 8bit\r\n";
+        $headers .= "Reply-To: {$fromName} <{$from['mail']}>\r\n";
+        $headers .= "Return-Path: {$fromName} <{$from['mail']}>\r\n";
+        $headers .= "From: {$fromName} <{$from['mail']}>\r\n";
+        $headers .= "Organization: Meilishuo Speed\r\n";
+        $headers .= "X-Priority: 3\r\n";
+        $headers .= "X-Mailer: PHP". phpversion() ."\r\n";
+
+        $subject = "=?UTF-8?B?" . base64_encode($subject) . "?=";
+        $success = mail($to, stripslashes($subject), stripslashes($content), $headers);
+        //发送失败，记录请求
+        if (!$success) {
+            throw new \Exception("Mailer:send发送邮件出错，邮件信息：{$to},{$subject},{$content},{$headers}");
+        }
+
+        return $success;
+    }
+}

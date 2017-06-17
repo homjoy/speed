@@ -1,0 +1,76 @@
+@import "mixins/preboot.less";
+
+.nav-tabs {
+  border-bottom: 1px solid #d2d2d2;
+  > li {
+    &.active > a {
+      &,
+      &:hover,
+      &:focus {
+        margin-top: -2px;
+        border-top: 3px solid #ff84aa;
+        border-bottom-color: transparent;
+        cursor: default;
+      }
+    }
+  }
+}
+
+
+//倾斜的平行四边形风格
+//效果见：http://redmine.meilishuo.com/projects/newfinance/wiki/%E6%88%91%E7%9A%84%E7%94%B3%E8%AF%B7
+@degree: 35deg;
+@slope-bg-color: #f4f4f4;
+.nav-tabs.slope {
+  border: none;
+  padding-left: 13px;
+  background-color: @slope-bg-color;
+  > li {
+    position: relative;
+    padding: 0 15px;
+    .skew(@degree, 0);
+    &:hover {
+      .skew(@degree, 0);
+      background-color: #eee;
+    }
+
+    > a {
+      &,
+      &:hover,
+      &:focus {
+        border: none;
+        .skew(0-@degree, 0);
+      }
+    }
+
+    &.active {
+      background-color: #fff;
+      margin-bottom: 0;
+      > a {
+        &,
+        &:hover,
+        &:focus {
+          color: #f8ac3e;
+          margin-top: 0;
+          //border-top:3px solid #ff84aa;
+          border: none;
+          background-color: #fff;
+          cursor: default;
+        }
+      }
+    }
+
+    //如果当前激活的nav 是第一个，填补左下角的空白
+    &:nth-child(1).active:before {
+      position: absolute;
+      content: "";
+      height: 0;
+      width: 0;
+      bottom: 0;
+      left: -13px;
+      border-bottom: 37px solid #fff;
+      border-right: 26px solid transparent;
+      .skew(0-@degree, 0);
+    }
+  }
+}

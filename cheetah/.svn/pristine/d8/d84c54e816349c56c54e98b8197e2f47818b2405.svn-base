@@ -1,0 +1,30 @@
+<script type="text/javascript">
+
+    (function () {
+        var newSpeedFrame = window.parent.parent.document.getElementById("iframepage");
+        var oldWidth = 0;
+        var oldHeight = 0;
+
+        function updateIFrameSize() {
+            var hashUrl = window.location.hash;
+            var params = [0,0];
+            try{
+                params = hashUrl.indexOf("#") >= 0 ? hashUrl.split("#")[1].split("|") : [0,0];
+            }catch(e)
+            {
+                params = [0,0];
+            }
+
+            var hashWidth = params[0];
+            var hashHeight = params[1];
+            if (hashWidth && hashHeight && (oldWidth != hashWidth || oldHeight != hashHeight)) {
+                // newSpeedFrame.style.width = hashWidth + "px";
+                newSpeedFrame.style.height = hashHeight + "px";
+                oldWidth = hashWidth;
+                oldHeight = hashHeight;
+            }
+            setTimeout(updateIFrameSize, 100);
+        }
+        setTimeout(updateIFrameSize, 100);
+    })();
+</script>

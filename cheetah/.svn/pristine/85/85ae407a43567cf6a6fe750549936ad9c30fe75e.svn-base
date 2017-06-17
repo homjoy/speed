@@ -1,0 +1,178 @@
+@import "../../queen/mixins/preboot.less";
+@import "./apply.less";
+
+
+
+.summary-amount{
+  display: inline-block;
+  width:100%;
+  text-align: center;
+  //margin-left: 22px;
+  &+.summary-amount{
+    //margin-left:75px;
+  }
+
+  em{
+    font-style: normal;
+    padding-left:12px;
+  }
+}
+
+#container .table .extra td{
+  border-top:none;
+}
+.adjust-container{
+  overflow-x:scroll;
+  overflow-y: hidden;
+  border:1px solid #e7e8ec;
+
+  &::-webkit-scrollbar{
+    width:5px;
+    height:5px;
+  }
+  &::-webkit-scrollbar-thumb{
+    background-color: #e0e0e0;
+  }
+
+  .tree-select-container{
+    border-radius: 0;
+  }
+  .tree-select-container .tree-select-dropdown{
+    width:auto;
+    min-width: 101%;
+  }
+
+  .table{
+    width: auto;
+    margin-bottom:0;
+    > thead{
+      .hd{
+        border-bottom: 1px solid #eee;
+      }
+      .hd,.bd{
+        display: block;
+        height: 35px;
+        line-height: 35px;
+      }
+    }
+
+
+    >tbody > tr{
+      position:relative;
+    }
+
+    >tbody, > tfoot{
+      .money{
+        float:left;
+        display: inline-block;
+        width:33.33%;
+      }
+
+      .column-remark{
+        //position:relative;
+        input{
+          margin-left: -38px;
+        }
+      }
+
+      > tr > td,
+      > tr > th{
+        .column-wrap{
+          padding:20px 0;
+        }
+      }
+
+      tr.extra > td{
+        border-top:none;
+      }
+
+      .column-project .project-remove{
+        margin-left:0;
+        top:23px;
+        right:-800px;
+      }
+
+      > tr:hover{
+        background-color: #f0f2f6;
+        .column-project .column-wrap,
+        .column-remark .column-wrap{
+          background-color: #f0f2f6;
+        }
+
+        .project-remove{
+          opacity: 1;
+          transition: opacity .5s ease 100ms;
+        }
+      }
+    }
+
+    >thead, > tbody, > tfoot{
+      > tr > td, > tr > th{
+        padding:0;
+        //border-top:1px solid #e7e8ec;
+        border-right:1px solid #e7e8ec;
+
+        .column-wrap{
+          font-size: 12px;
+          min-width:205px;
+          width:455px;
+          min-height:70px;
+          vertical-align: middle;
+
+
+          > span,.bd > span{
+            display: inline-block;
+            width:33.33%;
+            line-height:30px;
+          }
+
+          > input,> input:focus{
+            height: 30px;
+            line-height:30px;
+            outline:0;
+          }
+          > input:not([name=budgetRemark]){
+            text-align: center;
+          }
+        }
+
+
+        &.column-project,&:last-child{
+          width: 205px;
+
+          > .column-wrap{
+            padding:19px 18px;
+            background-color: #fff;
+            width:auto!important;
+          }
+        }
+
+        &.column-project{
+          position:absolute;
+          //top:0;
+          left: 16px;
+          //z-index: 11;
+
+          &+th ,&+td{
+            .column-wrap{
+              //min-width: 172px;
+              //min-width: 205px;
+              width:auto!important;
+            }
+          }
+        }
+      }
+
+    }
+  }
+
+}
+
+.empty-column td{
+  height: 80px;
+  line-height: 80px;
+  font-size:16px;
+  color:#515151;
+  text-align: left;
+  padding-left: 360px !important;
+}

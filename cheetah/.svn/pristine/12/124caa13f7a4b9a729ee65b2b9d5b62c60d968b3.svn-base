@@ -1,0 +1,50 @@
+function user() {
+	return this;
+}
+var controlFns = {
+	'index' : function(){
+		this.user()
+	}
+	, 'login': function () {
+		var php = {}
+		this.bindDefault(php);
+		this.bridgeMuch(php);
+		this.listenOver(function (data) {
+			data._CSSLinks = ['speed/user/login'];
+			this.render('user/login.html', data);
+		})
+	}
+	,'user' : function(){
+		var php = {
+			'userInfoGet':'/user/userInfoGet'
+		};
+        this.bindDefault(php);
+		this.bridgeMuch(php);
+		this.listenOver(function(data){
+			data._CSSLinks = ['plugin/bootstrapValidator','speed/user/index'];
+			this.render('user/index.html' , data);
+		})
+	}
+	,'avatar' : function(){
+		var php = {
+		};
+        this.bindDefault(php);
+		this.bridgeMuch(php);
+		this.listenOver(function(data){
+			data._CSSLinks = ['speed/user/avatar'];
+			this.render('user/avatar.html' , data);
+		})
+	}
+	,'password' : function(){
+		var php = {
+			'userInfoGet':'/user/userInfoGet'
+		};
+        this.bindDefault(php);
+		this.bridgeMuch(php);
+		this.listenOver(function(data){
+			data._CSSLinks = ['plugin/bootstrapValidator','speed/user/password'];
+			this.render('user/password.html' , data);
+		})
+	}
+};
+exports.__create = controller.__create(user, controlFns);

@@ -1,0 +1,80 @@
+<%#head.html%> <div id="container" class="effect mainnav-lg">
+    <%#navbar.html%>
+    <div class="boxed">
+        <div id="content-container">
+            <div id="page-content">
+                <div class="panel">
+                    <div class="panel-body">
+                        <ul id="myApplyTab" class="nav nav-tabs">
+                            <li><a href="/mymanage/">归档</a></li>
+                            <li class="active"><a href="javascript:void (0);">付款</a></li>
+                        </ul>
+                        <div id="myTabContent" class="tab-content">
+                            <div class="tab-pane fade active in" id="tab-pay">
+                                <div class="toolbar">
+                                    <div class="left">
+                                        <input type="checkbox" class="check-all">
+                                        <a href="javascript:void(0);" class="btn btn-success btn-pay">付款</a>
+                                        <a href="javascript:void(0);" class="btn btn-success btn-rej">驳回</a>
+                                    </div>
+                                </div>
+                                <form id="form-pay" method="POST">
+                                    <table id="tb-pay" class="table tr-point-table table-bordered">
+                                        <thead>
+                                        <tr>
+                                            <th></th>
+                                            <th>单据编号</th>
+                                            <th>申请时间</th>
+                                            <th>申请人</th>
+                                            <th>申请部门</th>
+                                            <th>收款单位</th>
+                                            <th>付款金额</th>
+                                            <th>预计付款时间</th>
+                                            <th>付款状态</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+
+                                        </tbody>
+                                    </table>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <%#sidebar.html%>
+    </div>
+
+    <!--我的管理-付款-->
+
+    <script id="payList" type="text/html">
+        {{each pays as pay}}
+        <tr>
+            <td><input type="checkbox" name="cpbId" value="{{pay.cpbId || 0}}"></td>
+            <td>{{pay.cpbPayRequestCode || '' }}</td>
+            <td>{{pay.cpbApplyTime || ''}}</td>
+            <td>{{pay.cpbPersonName || ''}}</td>
+            <td>{{pay.cpbDepartmentName || ''}}</td>
+            <td><div class="min-wd">{{pay.cpbCustomerCompany || ''}}</div></td>
+            <td>{{pay.cpbMoney | currencyFormat }}</td>
+            <td>{{pay.cpbPayTime || ''}}</td>
+            <td>{{pay.cpbStateName || ''}}</td>
+        </tr>
+        {{/each}}
+    </script>
+
+
+    <script id="rejectFormTpl" type="text/html">
+        <form id="rejectForm" method="post" action="">
+            <input type="hidden" name="cpbId" value="{{cpbId}}"/>
+            <textarea name="remark" placeholder="不超过200字" class="form-control" style="min-height:80px"></textarea>
+        </form>
+    </script>
+
+    <%#footer.html%></div>
+<%! $_ENGINE_SELF.callFn( "useModule")( "<<<_use:
+        fml.use('fms/mymanage/contractPay');
+_use:", this._JSstack , this._JSmods); %>
+<%#foot.html%>

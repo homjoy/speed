@@ -1,0 +1,117 @@
+<?php
+namespace Admin\Modules\Structure\User;
+use Libs\Util\Format;
+use Admin\Modules\Common\BaseModule;
+use Admin\Package\Common\Response;
+use Admin\Package\Account\PersonalInfo;
+/**
+ * 添加用户信息
+ * @author hongzhou@meilishuo.com
+ * @since 2015-9-14 下午12:53:13
+ */
+class AjaxUpdatePersonalInfo extends BaseModule {
+
+    protected $errors = NULL;
+    private   $params = NULL;
+    public static $VIEW_SWITCH_JSON = TRUE;
+    
+    public function run() {
+
+        $this->_init();
+        if(empty($this->params['user_id'])|| $this->post()->hasError()){
+            $return = Response::gen_error(10001, '', $this->post()->getErrors());
+            return $this->app->response->setBody($return);
+        }
+        $return_data_personal =$this->updatePersonal($this->params);
+       
+        if($return_data_personal ===FALSE ){
+           return $this->app->response->setBody(Response::gen_error(50001,'失败'));
+        }
+        $this->app->response->setBody(Response::gen_success('成功'));
+
+    }
+    
+    protected function updatePersonal($data_personal){
+
+        $return_data_personal=FALSE;
+
+        if(isset($data_personal['others_pinfo'])){
+            $data_personal['others'] =$data_personal['others_pinfo'];
+            unset($data_personal['others_pinfo']);
+        }
+        if(count($data_personal)>1){
+            //当数据数量大于1时确定有修改
+            $return_data_personal = PersonalInfo::getInstance()->updatePersonalInfo($data_personal);
+        }
+
+        return $return_data_personal;
+    }
+   
+
+
+    private function _init() {
+        $data = $this->request->POST;
+        $data_check  = array(
+
+        'user_id' => array(
+                'required' => TRUE,
+                'allowEmpty' => FALSE,
+                'type'=>'integer',
+            ),
+//user_personal_info
+          'birthday' => array(//需要传过来
+              'type'=>'datetime',
+          ),
+            'mobile' => array(//需要传过来boss两个手机号放一起了
+                'type'=>'string',
+                'maxLength'=> 30,
+            ),
+            'mobile_another' => array(
+                'type'=>'string',
+                'maxLength'=> 30,
+            ),
+          'telephone' => array(
+              'type'=>'string',
+              'maxLength'=> 30,
+          ),
+            'nation' => array(
+             'type'=>'string',
+                'maxLength'=> 30,
+            ),
+            'bank_card_number' => array(
+                'type'=>'string',
+                'maxLength'=> 30,
+            ),
+          'qq' => array(
+              'type'=>'string',
+              'maxLength'=> 15,
+          ),
+          'coat_size' => array(
+              'type'=>'string',
+              'maxLength'=> 5,
+          ),
+            'coat_color' => array(
+                'type'=>'string',
+                'maxLength'=> 5,
+            ),
+            'pants_size' => array(
+                'type'=>'string',
+                'maxLength'=> 5,
+            ),
+            'shoes_size' => array(
+                'type'=>'string',
+                'maxLength'=> 5,
+            ),
+            'others_pinfo' => array(
+                'type'=>'string',
+                'maxLength'=> 300,
+            ),
+
+        );
+
+        $data_check     = array_intersect_key($data_check,$data);
+        $this->rules    =  $data_check;
+        $this->params   = $this->post()->safe();
+    }
+    
+}

@@ -1,0 +1,40 @@
+fml.define('speed/home/wizard', ['jquery', 'plugin/cookie'], function (require, exports) {
+    "use strict";
+    var $ = require('jquery');
+    var Cookies = require('plugin/cookie');
+
+
+    Cookies.remove('passWizard');
+
+    ////无需进行引导
+    if (Cookies.get('passCheckInWizard')) {
+        return;
+    }
+
+    var wizardHTML = '<div class="wizard-container">' +
+        '<div class="wizard wizard-check-in"></div>' +
+        '<a href="javascript:void(0);" class="wizard wizard-close-check-in"></a>' +
+        '</div>';
+
+    var wizard = $(wizardHTML);
+
+    function relocateTips() {
+        wizard.css({
+            height: $('#container').height()
+        });
+    }
+
+    wizard.appendTo("body");
+    wizard.find('.wizard-close-check-in').on('click', function (e) {
+        e.preventDefault();
+
+        wizard.fadeOut(function () {
+            $(this).remove();
+        });
+        Cookies.set('passCheckInWizard', 1,{expires:365});
+        return false;
+    });
+
+    relocateTips();
+    $(window).on('resize', relocateTips);
+});

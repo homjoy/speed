@@ -1,0 +1,11 @@
+{"SVERSION":1.0018,
+"JCSTATIC_BASE":"http://static.dev.meilishuo.com/",
+"SERVER_BASE":"/",
+"SCRIPT_BASE":"script-ss/",
+"JS_Defer":false,
+"PICTURE_URL":"http://static.dev.meilishuo.com/",
+"CSSEXT":".css",
+"defaultTitle":"speed",
+"domain":{"speed":"http://newspeed.meilishuo.com",
+"fms":"http://fmslab.meilishuo.com"},
+"PUBDAY":"1502181126"}

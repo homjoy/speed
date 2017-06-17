@@ -1,0 +1,218 @@
+<%#head.html %>
+<div id="container" class="effect mainnav-lg">
+	<%#navbar.html %>
+
+	<div class="boxed">
+		<!--CONTENT CONTAINER-->
+		<!--===================================================-->
+		<div id="content-container">
+			<ol class="breadcrumb">
+				<li><a href="/home">主页</a></li>
+				<li class="active">个人中心</li>
+			</ol>
+			<div id="page-content">
+
+				<div class="panel row" style="min-width:580px">
+
+					<div class="col-lg-2 col-sm-2 col-xs-2 user_left">
+						<img class="head_img"
+							 src="<%if(this.userInfo.code==200){%><%= this.userInfo.data.user.avatar.avatar_middle %><%}%>">
+						<span class="first-title">个人中心</span>
+						<ul>
+							<li class="active "><a class="second-title" href="/user">基本信息</a></li>
+							<li><a class="second-title" href="/user/avatar/">修改头像</a></li>
+							<li><a class="second-title" href="/user/password/">修改密码</a></li>
+						</ul>
+					</div>
+
+					<div class="col-lg-10 col-sm-10 col-xs-10 user_right">
+						<form class="form-horizontal" id="form-userinfo">
+							<div class="panel_pink">基本信息</div>
+
+							<div class="basic_info tap ">
+
+								<% if(this.userInfoGet.code == 200) {%>
+								<div class="row">
+									<div class="form-group col-lg-6 col-sm-6 col-xs-6 ">
+										<label class="col-lg-4 col-sm-4 col-xs-4 control-label">姓名</label>
+
+										<div class="col-lg-8 col-sm-8 col-xs-8">
+											<input type="text" class="form-control" disabled
+												   value="<%=this.userInfoGet.data.name_cn%>">
+										</div>
+									</div>
+
+
+									<div class="form-group col-lg-6 col-sm-6 col-xs-6">
+										<label class="col-lg-3 col-sm-3 col-xs-3 control-label">性别</label>
+
+										<div class="col-lg-8 col-sm-8 col-xs-8">
+											<input type="text" class="form-control" disabled
+												   value="<% if(this.userInfoGet.data.gender==1){%>男<%}else{%>女<%}%>">
+										</div>
+									</div>
+								</div>
+								<div class="row">
+									<div class="form-group col-lg-6 col-sm-6 col-xs-6 ">
+										<label for="" class="col-lg-4 col-sm-4 col-xs-4 control-label">部门</label>
+
+										<div class="col-lg-8 col-sm-8 col-xs-8">
+											<input type="text" class="form-control" disabled
+												   value="<%=this.userInfoGet.data.depart_name%>">
+										</div>
+									</div>
+
+
+									<div class="form-group col-lg-6 col-sm-6 col-xs-6">
+										<label for="" class="col-lg-3 col-sm-3 col-xs-3 control-label">工号</label>
+
+										<div class="col-lg-8 col-sm-8 col-xs-8">
+											<input type="text" class="form-control" disabled
+												   value="<%= this.userInfoGet.data.staff_id %>">
+										</div>
+									</div>
+								</div>
+								<div class="row">
+									<div class="form-group col-lg-6 col-sm-6 col-xs-6 ">
+										<label for="" class="col-lg-4 col-sm-4 col-xs-4 control-label">入职时间</label>
+
+										<div class="col-lg-8 col-sm-8 col-xs-8">
+											<input type="text" class="form-control" disabled
+												   value="<%=this.userInfoGet.data.hire_time %>">
+										</div>
+									</div>
+
+
+									<div class="form-group col-lg-6 col-sm-6 col-xs-6">
+										<label for="" class="col-lg-3 col-sm-3 col-xs-3 control-label">邮箱</label>
+
+										<div class="col-lg-8 col-sm-8 col-xs-8">
+											<input type="text" class="form-control" disabled
+												   value="<%=this.userInfoGet.data.mail_full %>">
+										</div>
+									</div>
+								</div>
+
+								<div class="row">
+									<div class="form-group col-lg-6 col-sm-6 col-xs-6 ">
+										<label for="" class="col-lg-4 col-sm-4 col-xs-4 control-label">手机</label>
+
+										<div class="col-lg-8 col-sm-8 col-xs-8">
+											<input type="text" name="mobile" class="form-control" data-bv-notempty
+												   value="<%=this.userInfoGet.data.mobile %>">
+										</div>
+									</div>
+
+
+									<div class="form-group col-lg-6 col-sm-6 col-xs-6">
+										<label for="" class="col-lg-3 col-sm-3 col-xs-3 control-label">QQ</label>
+
+										<div class="col-lg-8 col-sm-8 col-xs-8">
+											<input type="text" name="qq" class="form-control" data-bv-notempty
+												   value="<%=this.userInfoGet.data.qq %>">
+										</div>
+									</div>
+								</div>
+								<% }%>
+							</div>
+							<div class="separate-line">
+								<span class="line line1"></span>
+								<span class="info_more">扩展信息</span>
+								<span class="line line2"></span>
+							</div>
+							<div class="extend-info">
+								<% if(this.userInfoGet.code == 200) {%>
+								<div class="row more">
+									<div class="form-group col-lg-6 col-sm-6 col-xs-6">
+										<label for="" class="col-lg-4 col-sm-4 col-xs-4 control-label">美丽说ID</label>
+										<div class="col-lg-8 col-sm-8 col-xs-8">
+											<input type="text" class="form-control"  name="mls_id" value="<%= this.userInfoGet.data.mls_id || '' %>" >
+										</div>
+									</div>
+									<div class="form-group col-lg-6 col-sm-6 col-xs-6">
+										<a href="javascript:void(0)" class="how-to-get">如何获取？</a>
+
+										<div class="popover how-to-get-tips top" role="tooltip">
+											<div class="popover-content">
+												<a href="http://www.meilishuo.com/person/" target="_blank">去获取</a>
+											</div>
+										</div>
+										<div class="mls-avatar">
+											<span>头像</span>
+											<%if(this.userInfoGet.data.meilishuo_info) {%>
+											<img src="<%= (this.userInfoGet.data.meilishuo_info.avatar_o || this.userInfoGet.data.meilishuo_info.avatar_c) || (this.PICTURE_URL+'img/speed/user/logo.png') %>" class="img-md bord-all" />
+											<% }else{%>
+											<img src="<%= this.PICTURE_URL %>img/speed/user/logo.png" class="img-md bord-all" />
+											<% }%>
+										</div>
+									</div>
+								</div>
+								<div class="row more">
+									<div class="form-group col-lg-6 col-sm-6 col-xs-6">
+										<label for="" class="col-lg-4 col-sm-4 col-xs-4 control-label">美丽说昵称</label>
+										<div class="col-lg-8 col-sm-8 col-xs-8">
+											<% if(this.userInfoGet.data.meilishuo_info) { %>
+											<input type="text" class="form-control"  name="mls_nickname" value="<%= this.userInfoGet.data.meilishuo_info.nickname || '' %>" disabled="disabled"/>
+											<% } else{ %>
+											<input type="text" class="form-control"  name="mls_nickname" value="" disabled="disabled"/>
+											<% } %>
+										</div>
+									</div>
+								</div>
+								<div class="row more">
+									<div class="form-group col-lg-6 col-sm-6 col-xs-6">
+										<label for="" class="col-lg-4 col-sm-4 col-xs-4 control-label">工服尺码</label>
+										<div class="col-lg-8 col-sm-8 col-xs-8">
+											<select name="coat_size" id="coatsize">
+												<option value="">请选择</option>
+												<% var sizeList = ['女S','女M','女L','男M','男L','男XL','男XXL','男XXXL'],coatSize = this.userInfoGet.data.coat_size; %>
+												<% if(this.userInfoGet.data.coat_size && this.userInfoGet.data.coat_size[0] != '男' && this.userInfoGet.data.coat_size[0] != '女')  { %>
+													<% coatSize = (this.userInfoGet.data.gender==1 ? '男':'女') + this.userInfoGet.data.coat_size; %>
+												<% } %>
+												<% console.log(coatSize) %>
+												<% sizeList.forEach(function(item,index){ %>
+												<option value="<%=item%>" <%= (item == coatSize) ? 'selected':''%>><%=item%></option>
+												<%})%>
+											</select>
+										</div>
+									</div>
+									<div class="form-group col-lg-6 col-sm-6 col-xs-6">
+										<label for="" class="col-lg-3 col-sm-3 col-xs-4 control-label">工服颜色</label>
+										<div class="col-lg-8 col-sm-8 col-xs-8">
+											<select name="coat_color" id="coatcolor">
+												<option value="">请选择</option>
+												<% ['粉色','电光蓝','黑色','灰色'].forEach(function(item,index){ %>
+												<option value="<%=item%>" <%= (item == this.userInfoGet.data.coat_color) ? 'selected':''%>><%=item%></option>
+												<%})%>
+											</select>
+										</div>
+									</div>
+								</div>
+								<% }%>
+
+								<div class="form-group btn_line">
+									<button type="submit" data-loading-text="提交中"
+											class="btn btn-beauty save_basic_info">保存
+									</button>
+								</div>
+							</div>
+						</form>
+					</div>
+
+				</div>
+			</div>
+
+			<%#footer.html%>
+		</div>
+		<%#mainnav.html%>
+	</div>
+</div>
+
+  
+<%! $_ENGINE_SELF.callFn("useModule")("<<<_use:
+		fml.use('speed/common/base');
+		fml.use('speed/user/index');
+		fml.use('speed/user/wizard');
+_use:", this._JSstack , this._JSmods); %>
+
+<%#foot.html%>

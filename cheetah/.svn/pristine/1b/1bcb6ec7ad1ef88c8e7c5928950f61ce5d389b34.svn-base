@@ -1,0 +1,39 @@
+<%#head.html%>
+<div id="container" class="effect mainnav-lg">
+    <%#navbar.html%>
+    <div class="boxed">
+        <div id="content-container">
+            <div id="page-content">
+                <div class="panel panel-form">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">通用费用报销单</h3>
+                    </div>
+                    <div class="panel-body">
+                        <form class="form-horizontal form-apply">
+                            <div class="form-block" data-tpl="basic-info-tpl" data-json=""></div>
+                            <div class="form-block" data-tpl="receipt-info-tpl" data-json=""></div>
+                            <!--<div class="form-block" data-tpl="general-fee-tpl" data-json=""></div>-->
+                            <div class="form-block" data-tpl="business-trip-tpl" data-json=""></div>
+                            <div class="form-block" data-tpl="transport-fee-tpl" data-json=""></div>
+                        </form>
+                    </div>
+                    <div class="panel-footer text-center">
+                        <a class="btn btn-warning btn-submit" href="javascript:void(0);">提交</a>
+                        <a class="btn btn-success btn-save-draft" href="javascript:void(0);">保存草稿</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <%#sidebar.html%>
+    </div>
+<%#footer.html%>
+</div>
+
+<%#reimburse/form.tpl.html%>
+
+<%! $_ENGINE_SELF.callFn( "useModule")( "<<<_use:
+        fml.use('fms/reimburse/general/form');
+_use:", this._JSstack , this._JSmods); %>
+<%#foot.html%>

@@ -1,0 +1,61 @@
+fml.define('speed/document/wizard', ['jquery', 'plugin/cookie'], function (require, exports) {
+    "use strict";
+    var $ = require('jquery');
+    var Cookies = require('plugin/cookie');
+    //
+    //Cookies.remove('passMyTimeWizard');
+
+    ////无需进行引导
+    if (Cookies.get('leave')) {
+        return;
+    }
+    $('.effect').addClass('mainnav-sm');
+    var wizardHTML = '<div class="wizard-container">' +
+        '</div>' +
+
+    '<div class="wizard wizard-leave-list"></div>' +
+    '<div class="wizard wizard-leave-history hide"></div>';
+
+    var wizard = $(wizardHTML);
+
+    //function relocateTips() {
+    //    wizard.css({
+    //        height: $(document).height()
+    //    });
+    //    wizard.find('.wizard-time-my').css({
+    //        top: $('.switch-group').offset().top - 50
+    //    });
+    //}
+    var a = 0
+    wizard.appendTo("body");
+    wizard.on('click', function (e) {
+        e.preventDefault();
+        if(a==0){
+            $('.wizard-leave-list').addClass('hide');
+            $('.wizard-leave-history').removeClass('hide');
+            a++;
+        }else{
+            $('.wizard-leave-history').addClass('hide');
+            wizard.fadeOut(function () {
+                $(this).remove();
+            });
+            Cookies.set('leave', 1, {expires: 365});
+            return false;
+        }
+
+    });
+
+    //$(function () {
+    //    var count = 10;
+    //
+    //    function update() {
+    //        relocateTips();
+    //        if (count-- > 0) {
+    //            setTimeout(update, 300);
+    //        }
+    //    }
+    //
+    //    setTimeout(update, 300);
+    //    $(window).on('resize', relocateTips);
+    //});
+});

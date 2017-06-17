@@ -1,0 +1,23 @@
+fml.define('fms/common/base',['jquery','component/menu','fms/common/utils'],function(require,exports){
+    var $ = require('jquery');
+    var menu = require('component/menu');
+    var utils = require('fms/common/utils');
+
+
+    menu.init();
+    menu.highlight();
+
+    /**
+     * 处理所有金额显示
+     */
+    $('.show-money').each(function(){
+        var self = $(this);
+        var text = self.text(),
+            val = self.val();
+        if (val) {
+            self.val(utils.formatCurrency(val));
+        } else {
+            self.text(utils.formatCurrency(text));
+        }
+    });
+});

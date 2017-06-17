@@ -1,0 +1,92 @@
+@extends('layouts.master')
+@section('content')
+<link rel="stylesheet" href="/static/css/tokeninput.css">
+<script src="/static/js/tokeninputspeed.js"></script>
+<style type="text/css">
+    .submit_btn,.cancel_btn{
+        margin-left: 10px;
+        float: right;
+    }
+    .token-input-token,.token-input-input-token{line-height: 23px !important;}
+</style>
+<div class="panel-heading" style="overflow: hidden; line-height: 32px">
+    <ol class="breadcrumb">
+        <li><a href="/">主页</a></li>
+        <li class="active">部门架构管理</li>
+    </ol>
+    <div id="page-content" class="panel">
+        <ul class="nav nav-tabs slope col-lg-12 col-sm-12 col-xs-12" style="margin-bottom: 30px">
+            <li role="presentation"><a href="/structure/depart/depart_home" class="application_num">部门首页</a></li>
+            <li  role="presentation"> <a href="/structure/depart/application_edit">申请修改</a></li>
+            <li class="active" role="presentation"><a href="/structure/depart/add_title" class="approval_num">添加职位</a></li>
+            <li role="presentation" ><a href="/structure/depart/depart_leader_home">操作部门leader</a></li>
+        </ul>
+    </div>
+<!--    <div class="panel panel-default">-->
+    <div id="content-container">
+            <form  id="addForm" class="form-horizontal">
+                <div class="row">
+                    <label for="depart_id" class="col-xs-2 ">部门名称</label>
+                    <div class="col-xs-8">
+                        <input type="text" class="form-control" name ='depart_id'   id="depart_id" placeholder="部门名称">
+                    </div>
+                </div>
+                <div class="row">
+                    <label for="title_name" class="col-xs-2 ">职位名称：</label>
+                    <div class="col-xs-8">
+                        <input type="text" class="form-control"  placeholder="请填写职位" id="title_name"  name="title_name">
+                    </div>
+                </div>
+                <div class="row">
+                    <label for="title_info" class="col-xs-2 ">职位信息：</label>
+                    <div class="col-xs-8">
+                        <input type="text"class="form-control"  placeholder="请填写职位信息" id="title_info"  name="title_info">
+                    </div>
+                </div>
+                <div class="row">
+                    <label for="memo" class="col-xs-2 ">职位备注：</label>
+                    <div class="col-xs-8">
+                        <input type="text" class="form-control"  placeholder="请填写职位备注" id="memo"  name="memo">
+                    </div>
+                </div>
+            </form>
+            <div class="row">
+                <button  formId="addForm" class="btn btn-default add_new cancel_btn" id="cancel" type="submit" data-toggle="modal" data-target="#cateModal">取消</button>
+                <button  formId="addForm" class="btn btn-primary add_new submit_btn" id="submit" type="submit" data-toggle="modal" data-target="#cateModal">保存</button>
+            </div>
+        </div>
+    </div>
+<!--</div>-->
+<script>
+    $('#depart_id').tokenInput("/structure/depart/ajax_search_depart",{
+        queryParam:'depart_name' ,tokenLimit: 1,onAdd:function(ret) {
+            $('#depart_id').val(ret['depart_id']);
+        }
+    });
+    $('#submit').click(function () {
+        var url_back = '/structure/depart/ajax_add_title';
+        var myForm = $('#addForm').serializeArray();
+        var titleName = $("#title_name").val();
+        if( titleName ==''){
+            $('#title_name').css('border-color', '#007472');
+            return;
+        }
+        $.post(url_back, myForm, function(ret) {
+            show_message(ret.code,ret);
+        },'json');
+
+    });
+    $('#cancel').click(function () {
+        window.location.href = '/structure/depart/depart_home';
+    });
+    function hide_message() {
+        $('#message-container').slideUp();
+    }
+    var str = window.location.pathname;
+    $.each($('.list-group-item'),function(){
+        if($(this).attr('href')==str){
+            $(this).addClass('active');
+        }
+    })
+</script>
+@endsection

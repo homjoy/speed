@@ -1,0 +1,88 @@
+/*
+ ajax请求转发
+ */
+function aj() {
+    return this;
+}
+var controlFns = {
+    user: function (params) {
+        // 个人中心接口
+        var php = {
+            'login': 'fms::/login',
+            'indexdata':'fms::/contract/tasklistJson'
+        };
+        this.ajaxTo(php[params]);
+    }
+    ,contract: function(params){
+    	// 合同申请单
+    	var php = {
+    		'drafts': 'fms::/contractapplication/saveContractApplicationFirstDraftJson',//保存草稿
+    		'submit': 'fms::/contractapplication/saveContractApplicationCommitJson',//提交
+    		'qCon': 'fms::/contract/passContractInforByCid', //查询主合同相关信息
+    		'qPrimaryCon': 'fms::/contract/queryAllContractByCContractCode'//tokeninput 查询主合同编号
+    	};
+    	this.ajaxTo(php[params]);
+    }
+    ,conedit: function(params){
+    	// 编辑合同
+    	var php = {
+    		'drafts':'fms::/contractapplication/saveContractApplicationDraftNotFirstJson',//保存草稿
+    		'submit': 'fms::/contractapplication/saveContractApplicationCommitOthersJson',//提交
+    		'qCon': 'fms::/contract/passContractInforByCid', //查询主合同相关信息
+    		'qPrimaryCon':'fms::/contract/queryAllContractByCContractCode' //tokeninput 查询主合同编号
+
+    	}
+    	this.ajaxTo(php[params]);
+    }
+    ,query: function(params){
+    	// 查询界面
+    	var php = {
+    		'depart':'fms::/departmentbase/getDepartmentBaseByUserJson',//查询部门
+    		'qcon': 'fms::/contract/queryContractInformationJson', //异步查询合同
+    		'view': 'fms::/contractapplication/showContractInformation' //跳转到-view页面
+    	};
+    	this.ajaxTo(php[params]);
+    }
+    ,filing: function(params){
+    	// 归档界面
+    	var php = {
+	        'view': 'fms::/contractapplication/showContractInformation', //跳转到-view页面
+	        'waitSave': 'fms::/contract/contractFiling', //待归档
+	        'overSave': 'fms::/contract/updateContract' //已归档数据
+		}
+    	this.ajaxTo(php[params]);
+    }
+    ,view: function(params){
+    	// 查看合同界面
+    	var php = {
+	        'agree':'',
+	        'reject':'',
+	        'hurry':'',
+	        'agin':''
+		}
+		this.ajaxTo(php[params]);
+    }
+    ,myApproval: function(params){
+    	var php = {
+    		'operate':'fms::/contract/complete',
+    		// 'agree': 'fms::/contract/complete',
+	        // 'reject': 'fms::/contract/complete',
+	        'allPass': '',
+	        'allReject': '',
+	        'getTmpl': 'fms::/contract/dealTaskJson',
+            'batch':'fms::/contract/batchcomplete'
+    	};
+    	this.ajaxTo(php[params]);
+    }
+    ,myapply:function(params){
+        var  php = {
+            'hurry':'fms::/contract/remindapprove', //催审
+            'del':'fms::/userbillrequest/deleteBillRequestDraft', //删除
+            'view':'fms::/userbillrequest/showContractApplicationInformation' //-view
+        }
+
+    	this.ajaxTo(php[params]);
+    }
+
+}
+exports.__create = controller.__create(aj, controlFns);

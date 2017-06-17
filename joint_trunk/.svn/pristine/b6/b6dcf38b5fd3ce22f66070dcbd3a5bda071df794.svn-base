@@ -1,0 +1,16 @@
+<?php
+
+namespace Joint\Config\Web;
+
+class Memcache extends \Frame\Config {
+
+    public static function config() {
+        return array(
+            'unixsock' => array(
+                array('host' => '172.16.8.99', 'port' => 11211),
+            )
+        );
+    }
+
+}
+

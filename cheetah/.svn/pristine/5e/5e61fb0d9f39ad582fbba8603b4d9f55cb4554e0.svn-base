@@ -1,0 +1,111 @@
+fml.define('speed/it/wifi', ['jquery','plugin/bootstrap/validator','plugin/cookie'], function (require, exports) {
+
+    var $ = require('jquery');
+
+    $(document).on('click', ".event dt", function (e) {
+        console.log( $(e.target));
+        var isBtn = $(e.target).hasClass('.btn');
+        if(!isBtn){
+            var dt = $(e.target).closest('dt');
+            var isShow = dt.next().css('display') == 'none';
+            //dt.next().stop().slideToggle();
+            dt.closest('.event-list').find('.event dd:visible').slideUp();
+            if (isShow) {
+                dt.next().stop().slideDown();
+            } else {
+                dt.next().stop().slideUp();
+            }
+        }
+
+    });
+    //自写下拉框
+
+    function select(function1){
+        $('.select-input').focus(function(){
+            $(this).next().removeClass('hide');
+        }).blur(function(){
+            var _this = this;
+            setTimeout(function(){
+                $(_this).next().addClass('hide');
+            },200);
+        }).next().find('li').click(function(){
+            $(this).parent().prev().val( $(this).html()).trigger('input');
+            function1($(this).html());
+        });
+    }
+    select(function1);
+
+    function function1(v){
+        if(v=='WIFI密码'){
+            $('.wifi-notice').removeClass('hide');
+            $('.vpn_notice').addClass('hide');
+        }else{
+            $('.wifi-notice').addClass('hide');
+            $('.vpn_notice').removeClass('hide');
+        }
+    }
+
+
+    $('#form_password_fix').bootstrapValidator({
+        container: '#cc'
+    }).on('success.form.bv', function (e) {
+        e.preventDefault();
+        if (expand()) {
+            //$('.save_basic_info').button('loading').delay(3000);
+            var myForm = $('#form_password_fix').serializeArray();
+            console.log(myForm);
+            $.post('/aj/it/VisitorWifiCreate', myForm, function (ret) {
+                console.warn(ret);
+                if (ret.code == 200) {
+                    show_message(200, '操作成功');
+                } else if (ret.code == 400 || ret.code == 500) {
+                    show_message(400, ret.error_msg);
+                }
+                $('.save_basic_info').button('reset');
+            }, 'json');
+            return false;
+        }
+
+    });
+
+    function expand() {
+            return true;
+    }
+    //禁用
+    var data;
+    $('.btn-warning').click(function(e){
+        e.stopPropagation();
+        data =$(this).data();
+        $('#notice_bear').modal('show');
+
+    });
+    $('.bear').click(function(){
+        $.post('/aj/it/VisitorWifiDisable', data, function (ret) {
+            console.warn(ret);
+            if (ret.code == 200) {
+                show_message(200, '操作成功');
+                Cookies.set('panel_type_cookie',1,{domain:'meilishuo.com'});
+                window.location.reload();
+            } else if (ret.code == 400 || ret.code == 500) {
+                show_message(400, ret.error_msg);
+            }
+            $('.save_basic_info').button('reset');
+        }, 'json');
+    });
+    function panelClick(cookie_name,element1,element2){
+        var panel_type = Cookies.get(cookie_name);
+        console.log(panel_type);
+
+        if(panel_type){
+            $(element1).click();
+        }
+        $(element1).click(function(){
+            Cookies.set(cookie_name,1,{domain:'meilishuo.com'});
+        });
+        $(element2).click(function(){
+            Cookies.remove(cookie_name,{domain:'meilishuo.com'});
+        });
+    }
+    //var common = require('component/common');
+    panelClick('panel_type_cookie','a[href="#visitor_wifi_list"]','a[href="#wifi"]');
+});

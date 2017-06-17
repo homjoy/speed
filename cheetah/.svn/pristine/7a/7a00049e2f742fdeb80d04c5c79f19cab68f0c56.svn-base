@@ -1,0 +1,92 @@
+function home() {
+	return this;
+}
+var controlFns = {
+	'index' : function(){
+		this.home()
+	}
+	,'home' : function(){
+		var php = {}
+        this.bindDefault(php);
+		this.bridgeMuch(php);
+		this.listenOver(function(data){
+			data._CSSLinks = ['fontfamily','bootstrap','nifty.min','font-awesome.min','animate.min','morris.min','switchery.min','bootstrap-select.min','nifty-demo.min','pace.min'];
+			this.render('home.html' , data);
+		})
+	},
+	'layouts-collapsed-navigation' : function(){
+		var php = {}
+        this.bindDefault(php);
+		this.bridgeMuch(php);
+		this.listenOver(function(data){
+			console.log(data)
+			data._CSSLinks = ['bootstrap','nifty.min','font-awesome.min','switchery.min','bootstrap-select.min','pace.min'];
+			this.render('layouts-collapsed-navigation.html' , data);
+		})
+	},
+	'layouts-offcanvas-navigation' : function(){
+		var php = {}
+        this.bindDefault(php);
+		this.bridgeMuch(php);
+		this.listenOver(function(data){
+			console.log(data)
+			data._CSSLinks = ['bootstrap','nifty.min','font-awesome.min','switchery.min','bootstrap-select.min','pace.min'];
+			this.render('layouts-offcanvas-navigation.html' , data);
+		})
+	},
+	'layouts-offcanvas-revealing-navigation' : function(){
+		var php = {}
+        this.bindDefault(php);
+		this.bridgeMuch(php);
+		this.listenOver(function(data){
+			data._CSSLinks = ['bootstrap','nifty.min','font-awesome.min','switchery.min','bootstrap-select.min','pace.min'];
+			this.render('layouts-offcanvas-revealing-navigation.html' , data);
+		})
+	},
+	'layouts-offcanvas-slide-in-navigation' : function(){
+		var php = {}
+        this.bindDefault(php);
+		this.bridgeMuch(php);
+		this.listenOver(function(data){
+			data._CSSLinks = ['bootstrap','nifty.min','font-awesome.min','switchery.min','bootstrap-select.min','pace.min'];
+			this.render('layouts-offcanvas-slide-in-navigation.html' , data);
+		})
+	},
+	'forms-general' : function(){
+		var php = {}
+        this.bindDefault(php);
+		this.bridgeMuch(php);
+		this.listenOver(function(data){
+			data._CSSLinks = ['bootstrap','nifty.min','font-awesome.min','switchery.min','bootstrap-select.min','pace.min','nifty-demo.min'];
+			this.render('forms-general.html' , data);
+		})
+	}
+	,'forms-components' : function(){
+		var php = {}
+        this.bindDefault(php);
+		this.bridgeMuch(php);
+		this.listenOver(function(data){
+			data._CSSLinks = ['bootstrap','nifty.min','font-awesome.min','switchery.min','bootstrap-select.min','pace.min','nifty-demo.min','bootstrap-tagsinput','chosen.min','jquery.nouislider.min','jquery.nouislider.pips.min','bootstrap-timepicker.min','bootstrap-datepicker','dropzone','summernote.min'];
+			this.render('forms-components.html' , data);
+		})
+	}
+	,'forms-validation' : function(){
+		var php = {}
+        this.bindDefault(php);
+		this.bridgeMuch(php);
+		this.listenOver(function(data){
+			data._CSSLinks = ['bootstrap','nifty.min','font-awesome.min','switchery.min','bootstrap-select.min','pace.min','nifty-demo.min','bootstrapValidator.min'];
+			this.render('forms-validation.html' , data);
+		})
+	}
+	,'forms-wizard' : function(){
+		var php = {}
+        this.bindDefault(php);
+		this.bridgeMuch(php);
+		this.listenOver(function(data){
+			data._CSSLinks = ['bootstrap','nifty.min','font-awesome.min','switchery.min','bootstrap-select.min','pace.min','nifty-demo.min','bootstrapValidator.min'];
+			this.render('forms-wizard.html' , data);
+		})
+	}
+};
+exports.__create = controller.__create(home, controlFns);

@@ -1,0 +1,22 @@
+<div class="row">
+    <div class="col-md-6">
+        <div class="tb-length">
+            <label>每页显示
+                <select name="curLength" class="form-control cur-length">
+                    <option value="10">10</option>
+                    <option value="25">25</option>
+                    <option value="50">50</option>
+                    <option value="100">100</option>
+                </select>
+                条记录
+            </label>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="tb-filter">
+            <label>Search:
+                <input type="search" class="form-control ow4" placeholder="">
+            </label>
+        </div>
+    </div>
+</div>

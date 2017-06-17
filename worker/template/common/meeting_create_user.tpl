@@ -1,0 +1,1 @@
+Hi！{{username}}：{{initiator}}刚刚邀请你参加{{meeting_time}} {{place}}的{{meeting_type}}“{{meeting_topic}}”，查看详情请登陆speed。

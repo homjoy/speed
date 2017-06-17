@@ -1,0 +1,47 @@
+
+<div class="mail-wrapper">
+    <div class="title">
+        <p>Hi! {{username}}：</p>
+        <h3>你刚刚发起了一个会议。</h3>
+    </div>
+
+    <div class="section">
+        <ul class="introduce">
+            <li>
+                <span class="tt">会议类型：</span>
+                <span class="ct">{{meeting_type}}</span>
+            </li>
+            <li>
+                <span class="tt">会议主题：</span>
+                <span class="ct">{{meeting_topic}}</span>
+            </li>
+            <li>
+                <span class="tt">会议时间：</span>
+                <span class="ct">{{meeting_time}} {{meeting_week_day}}</span>
+            </li>
+        </ul>
+    </div>
+    <div class="line"></div>
+    <div class="section">
+        <ul class="place">
+            <li>
+                <span class="tt important">会议地点：</span>
+                <span class="ct">北京—第五大道（9层进门第1排）</span>
+            </li>
+            <li>
+                <span class="tt">参会人员：</span>
+                <span class="ct">刘隽,王伟,陈海龙,林华柱,王岩,李雍晨</span>
+            </li>
+        </ul>
+    </div>
+
+    <div class="btn-group">
+        <a href="#" class="btn btn-accept"><i class="icon icon-accept"></i>接受</a>
+        <a href="#" class="btn btn-decline"><i class="icon icon-decline"></i>拒绝</a>
+    </div>
+
+    <div class="footer">
+        <p class="tips">记得准时参加哦!</p>
+        <p class="go-speed">去<a href="http://speed.meilishuo.com/time" class="link-my-time">我的时间</a>看看</p>
+    </div>
+</div>

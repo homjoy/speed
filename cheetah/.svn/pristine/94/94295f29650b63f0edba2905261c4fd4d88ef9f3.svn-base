@@ -1,0 +1,39 @@
+select{height: 34px !important;}
+
+
+#department{
+  position:relative;
+}
+
+.ztree-wrap{
+  position: absolute;
+  top: 41px;
+  left: 8px;
+  width: 92%;
+  z-index: 101;
+  background-color: #FFF;
+  border:1px solid #e2e2e2;
+  display: none;
+  //height: 220px;
+  max-height: 300px;
+  overflow-y: scroll;
+}
+
+input[name=sTime],
+select[name=state],
+input[name=eTime]{
+  width:100px !important;
+}
+
+
+
+.query-form{
+  padding-top:15px;
+}
+
+#tb-filing-query{
+  tbody > tr > td:nth-child(6){
+    text-align: right;
+    padding:0 15px 0 0 !important;
+  }
+}

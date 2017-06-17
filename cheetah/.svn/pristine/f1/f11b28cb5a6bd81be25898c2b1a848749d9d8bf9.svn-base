@@ -1,0 +1,178 @@
+<script type="text/html" id="pay-detail-tpl">
+    <table class="table table-bordered table-printed">
+        <tr>
+            <th colspan="4">
+                <h3 class="text-center">
+                    付款申请单
+                    <span class="billStatus">{{contractPay.approveStateStr || 'null'}}</span>
+                </h3>
+            </th>
+        </tr>
+        <tr>
+            <td>
+                <label>单据编号</label>
+            </td>
+            <td>{{contractPay.cpbPayRequestCode || ''}} </td>
+            <td>
+                <label>填报日期</label>
+            </td>
+            <td>{{ contractPay.cpbApplyTimeStr || ''}}</td>
+        </tr>
+        <tr>
+            <td>
+                <label>申请人</label>
+            </td>
+            <td>{{contractPay.cpbPersonName || ''}} </td>
+            <td>
+                <label>申请部门</label>
+            </td>
+            <td>{{ contractPay.cpbDepartmentName || ''}}</td>
+        </tr>
+
+        <tr>
+            <td>
+                <label>业务线</label>
+            </td>
+            <td colspan="3" class="text-left">{{ contractPay.businesslineName || '无' }}</td>
+        </tr>
+
+        <tr>
+            <td>
+                <label>是否签订合同</label>
+            </td>
+            <td colspan="3" class="text-left">{{ contractPay.cpbContractFlag == 'yes' ? '是':'否' }}</td>
+        </tr>
+
+        {{if contractPay.cpbContractFlag == 'yes'}}
+        <tr>
+            <td>
+                <label>合同编号</label>
+            </td>
+            <td>{{contractPay.cpbContractCode || ''}} </td>
+            <td>
+                <label>合同签订时间</label>
+            </td>
+            <td>{{ contractPay.cpbContractSignTimeStr || ''}}</td>
+        </tr>
+
+
+        <tr>
+            <td>
+                <label>合同名称</label>
+            </td>
+            <td colspan="3" class="text-left">{{ contractPay.cpbContractName || ''}}</td>
+        </tr>
+
+
+        <tr>
+            <td>
+                <label>付款条件</label>
+            </td>
+            <td colspan="3" class="ueditor-content text-left">{{# contractPay.cpbContractPayterm || '' }}</td>
+        </tr>
+        {{/if}}
+        <tr>
+            <td>
+                <label>预算项目</label>
+            </td>
+            <td>{{ contractPay.cpbBugetitemId || '' }}</td>
+            <td>
+                <label>付款金额</label>
+            </td>
+            <tb>{{ contractPay.cpbMoney}}</tb>
+        </tr>
+
+        <tr>
+            <td>
+                <label>预算占用</label>
+            </td>
+            <td colspan="3" class="show-money">
+                <span>
+                <label>Q1</label>
+                {{ contractPay.budgetFirQua || '0.00'}}
+                </span>
+                <span>
+                <label>Q2</label>
+                {{ contractPay.budgetSecQua || '0.00'}}
+                </span>
+                <span>
+                <label>Q3</label>
+                {{ contractPay.budgetThiQua || '0.00'}}
+                </span>
+                <span>
+                <label>Q4</label>
+                {{ contractPay.budgetFourQua || '0.00'}}
+                </span>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <label>付款单位</label>
+            </td>
+            <td class="show-money">{{ contractPay.cpbMoney | currencyFormat}}</td>
+            <td colspan="3">{{contractPay.cpbContractCompany || ''}} </td>
+        </tr>
+
+        <tr>
+            <td>
+                <label>收款方式</label>
+            </td>
+            <td>{{ contractPay.cpbCollectTypeName}} </td>
+            <td>
+                <label>收款单位</label>
+            </td>
+            <td>{{ contractPay.cpbCustomerCompany || ''}}</td>
+        </tr>
+
+        <tr>
+            <td>
+                <label>收款银行</label>
+            </td>
+            <td>{{contractPay.cpbBank || ''}} </td>
+            <td>
+                <label>收款支行</label>
+            </td>
+            <td>{{ contractPay.cpbBranchBank || ''}}</td>
+        </tr>
+
+        <tr>
+            <td>
+                <label>收款账号</label>
+            </td>
+            <td>{{contractPay.cpbAccountNumber || ''}} </td>
+            <td>
+                <label>组织机构代码</label>
+            </td>
+            <td>{{ contractPay.cpbGroupSimplename || ''}}</td>
+        </tr>
+
+        <tr>
+            <td>
+                <label>预计付款日期</label>
+            </td>
+            <td>{{contractPay.cpbPayTimeStr || ''}} </td>
+            <td>
+                <label>付款对应服务周期</label>
+            </td>
+            <td>{{ contractPay.cpbServerTerm || ''}}</td>
+        </tr>
+
+        <tr>
+            <td>
+                <label>备注</label>
+            </td>
+            <td colspan="3" class="ueditor-content">{{# contractPay.cpbRemark  || ''}}</td>
+        </tr>
+
+        <tr class="hidden-print">
+            <td>
+                <label>付款附件</label>
+            </td>
+            <td colspan="3" class="text-left">
+                {{ each listAttach as item }}
+                <a href="/download/file/?cabid={{item.id}}" class="btn btn-defalut btn-download" target="_blank" download="{{item.fileName||''}}">{{item.fileName||''}}</a>
+                {{/each}}
+            </td>
+        </tr>
+    </table>
+</script>

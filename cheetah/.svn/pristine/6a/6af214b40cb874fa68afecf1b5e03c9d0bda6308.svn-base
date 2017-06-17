@@ -1,0 +1,92 @@
+"use strict";
+fml.use('component/menu', function (menu) {
+    "use strict";
+    menu.init();
+    menu.highlight();
+});
+
+fml.use('speed/meeting/checkin', function (checkin) {
+    $.post('/aj/meeting/getCheckIn', {}, function (resp) {
+        if (resp.code == 200) {
+            $.each(resp.data || [], function (i, value) {
+                checkin(value);
+            })
+        }
+    }, 'json');
+});
+
+fml.define('speed/common/base', ['jquery', 'plugin/cookie','component/notify'], function (require, exports) {
+    var $ = require('jquery');
+    var Cookies = require('plugin/cookie');
+    var notify = require('component/notify');
+
+    $.getJSON('/aj/check/check_all', function (ret) {
+        if (ret.code == 200) {
+            var data = ret.data;
+            var total = data.total;
+            if (total != 0) {
+                $('.badge').html(total);
+                var str = '';
+                for (var i = 0; i < data.data.length; i++) {
+                    str += '<li>' +
+                        '<a href="' + data.data[i].href + '" class="media" target="_Blank' + i + '">' +
+                        '<span class="media-left left" >' +
+                        data.data[i].name +
+                        '</span>' +
+                        '<span class=" label-success message_to_do right">' + data.data[i].count + '</span>' +
+                            // '<div class="media-body">'+
+                            //   '<div class="text-nowrap">Jackson sent you a message</div>'
+                            //   <small class="text-muted">Yesterday</small>
+                            // </div>
+                        '</a>' +
+                        '</li>';
+
+                }
+                $('.head-list-append').append(str).parent();
+            } else {
+                $('.head-list-append').parent().hide();
+            }
+        } else {
+            $('.head-list-append').parent().hide();
+        }
+    });
+
+    //$.niftyNoty({
+    //    type:"success",
+    //    icon:"laba",
+    //    title: '号外！号外！对于IM部分手机装不上的问题已经解决，受困扰的爱美丽们快去扫码下载吧～  如有问题，请联系<a href="http://speed.meilishuo.com/contacts/speedim/?u=MTQ=" target="_blank" class="open-speed-im">刘隽</a>',
+    //    message:"",
+    //    timer:99999999
+    //});
+    
+    //$(function(){
+    //    var timer = null;
+    //    $("#page-alert").on("click",function(){
+    //        if(timer){
+    //            clearTimeout(timer);
+    //        }
+    //        timer = setTimeout(function(){$('#download-client').addClass('open'); },300);
+    //    });
+    //});
+
+    if(SPEED.monitor && SPEED.monitor.message){
+        notify.warning(SPEED.monitor.message);
+    }
+
+
+    $("#mainnav-menu li a[href$=time]").on('click', function () {
+        //如果是第一次.
+        if (!Cookies.get('passMyTimeWizard')) {
+            window.location.href = '/time/my/';
+            return false;
+        }
+    });
+
+
+    var currentToken = Cookies.get('speed_token');
+    if(currentToken){
+        Cookies.remove('speed_token');
+        Cookies.remove('speed_token',{domain:'meilishuo.com'});
+        Cookies.set('speed_token',currentToken,{expires:7,domain:window.location.hostname});
+    }
+});

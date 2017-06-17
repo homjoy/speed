@@ -1,0 +1,110 @@
+input[name=sTime],
+select[name=state],
+input[name=eTime]{
+  width:100px !important;
+}
+
+
+.toolbar{
+
+  height: 60px;
+  padding:5px 0;
+
+  .left,
+  .right{
+    display: inline-block;
+    width:28%;
+  }
+
+
+
+  .left{
+    .line{
+      width: 1px;
+      height: 31px;
+      margin: 0 20px;
+      border-left: 2px solid #000;
+    }
+  }
+  .right{
+    float:right;
+    text-align: right;
+  }
+
+
+  .selected-condition{
+    display: inline-block;
+    width: 40%;
+  }
+}
+
+#form-filing{
+  overflow: scroll;
+}
+
+.table{
+  tbody{
+    .selected{
+
+      background-color: #eee;
+
+      .overSignDate{
+        background-color: #fff;
+        cursor:default;
+      }
+    }
+
+    > tr{
+      cursor: pointer;
+
+      > td{
+        min-width: 100px;
+        padding:5px 2px;
+
+
+        .min-wd{
+          width: 220px;
+          word-break: normal;
+        }
+        .min-160{
+          width: 160px;
+          word-break: normal;
+        }
+        [name="signDate"]{
+          width: 100px;
+        }
+        textarea{
+          height: 100%;
+        }
+
+      }
+    }
+  }
+}
+
+.dropzone{
+  min-height: 10px;
+  padding-bottom: 30px !important;
+
+  .dz-preview{
+    margin:0;
+    min-height: 0;
+    padding-right: 18px;
+
+
+    .dz-details{
+      min-height: 12px;
+      padding:3px 0;
+      .dz-size{
+        margin-bottom: 0;
+      }
+    }
+
+    .dz-remove{
+      position: absolute;
+      top: 1px;
+      right: 1px;
+      display: inline-block;
+    }
+  }
+}

@@ -1,0 +1,66 @@
+fml.define('fms/query/budget', ['jquery', 'plugin/bootstrap/datepicker', 'component/notify', 'component/TreeSelect', 'fms/common/SearchTable'], function (require, exports) {
+    var $ = require('jquery');
+    var notify = require('component/notify');
+    var SearchTable = require('fms/common/SearchTable');
+
+
+    /**
+     * 加载部门树.
+     */
+    $.post('/aj/query/depart', function (data) {
+        $("input[name=departmentId]").TreeSelect({
+            multiple: true,
+            data: data
+        });
+    }, 'json');
+    /**
+     * 日期控件.
+     */
+    $("#sTime,#eTime").datepicker({
+        'format': 'yyyy-mm-dd',
+        'autoclose': true,
+        'todayHighlight': true
+    });
+
+    /**
+     * 数据导出.
+     */
+    $('.btn-export').on('click', function () {
+        var queryParams = $('form').serialize();
+        $(this).attr('href', '/export/budget?' + queryParams);
+    });
+
+
+    var table = new SearchTable({
+        container: ".table-container",
+        searchForm: ".query-form",
+        ajax: {
+            url: '/aj/query/search_budget'
+        },
+        headers: [
+            '单据编号',
+            '预算年度',
+            '编制期间',
+            '申请人',
+            '所在部门',
+            '审批状态',
+            '申请日期'
+        ],
+        columns: [
+            'billNo',
+            'budgetyear',
+            'draftTerm',
+            'applyPersonName',
+            'applyDeptName',
+            'approvalState',
+            'applyDate',
+        ],
+        rowFormatter: function (columns, obj) {
+            var id = obj['billId'] || 0;
+            if(obj['budgetType'] == 'BA'){
+                return '<tr dbl-open="/budget/adjust/view?budgetId=' + id + '">' + columns + '</tr>';
+            }
+            return '<tr dbl-open="/budget/view/?budgetId=' + id + '">' + columns + '</tr>';
+        }
+    });
+});

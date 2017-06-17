@@ -1,0 +1,1 @@
+Hi! {{username}}：你的{{orderName}}被驳回了。{{memo}}

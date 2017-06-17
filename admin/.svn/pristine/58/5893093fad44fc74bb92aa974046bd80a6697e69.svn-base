@@ -1,0 +1,65 @@
+<?php
+namespace Admin\Modules\Mail;
+
+use Admin\Modules\Common\BaseModule;
+use Admin\Package\Common\Response;
+use Admin\Package\Mail\MailGroup;
+use Libs\Serviceclient\Api;
+/**
+ * 获取邮箱的列表直接读取胜男的接口
+ *
+ * @author guojiezhu@meilishuo.com
+ * @since  2016-03-08
+ */
+class MailGroupList extends BaseModule
+{
+
+    protected $errors = null;
+    private $params = null;
+    private $page_size = 20;
+
+    public function run()
+    {
+
+        $this->_init();
+
+        if(!empty($this->params['email'])){
+            $this->params['email'] = trim($this->params['email']);
+            $mail = explode('@',$this->params['email']);
+            $mail = current($mail);
+            $full_mail = $mail.'@meilishuo.com';
+            $query_params = array(
+                'act' =>'GetMemberByGroup',
+                'group_name' => $full_mail
+            );
+            $mail_info = MailGroup::getInstance()->getMailGroupMember($query_params);
+            if(!empty($mail_info) && isset($mail_info['data'])){
+                $return = Response::gen_success($mail_info['data']);
+                $return['group_name'] = $full_mail;
+            }
+
+        }
+        $return['group_name'] = '';
+
+        $return['search_params'] = $this->params;
+
+        return $this->app->response->setBody($return);
+
+    }
+
+
+
+    private function _init()
+    {
+
+        $this->rules = array(
+                'email'=>array(
+                    'type'=>'string',
+                ),
+
+        );
+        $this->params = $this->request()->safe();
+        $this->errors = $this->request()->getErrors();
+    }
+
+}

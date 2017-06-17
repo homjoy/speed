@@ -1,0 +1,269 @@
+fml.define('fms/budget/apply', ['jquery','plugin/bootstrap/validator', 'plugin/dropzone', 'fms/contract/validate', 'fms/common/common', 'component/notify', 'fms/common/utils', 'fms/common/contract','fms/query/selectTree'], function (require, exports) {
+    var $ = require('jquery');
+    var validate = require('fms/contract/validate');
+    var dropzone = require('plugin/dropzone');
+    var notify = require('component/notify');
+    var common = require('fms/common/common');
+    var utils = require('fms/common/utils');
+    var contract = require('fms/common/contract');
+    var treeSelect = require('fms/query/selectTree');
+
+    var remarkEditor = utils.UEditor('remark', true);
+
+
+
+    //预算项目查询
+    $.post('/aj/budget/budgetItem', function (data) {
+        treeSelect('input[name=budgetItem]', data);
+    }, 'json');
+
+
+    var isVal = $('.writeDay').val();
+    if (!isVal) {
+        var curDate = (new Date()).Format("yyyy-MM-dd");
+        $('.writeDay').val(curDate);
+    }
+
+
+
+    /**
+     * 格式化金额.
+     */
+    $('input[name=bpbMoney]').on('blur', function () {
+        validate.money($(this));
+    });
+
+
+    /**
+     * 增加项目/减少项目
+     */
+    $('#itemChange').delegate('.addItem','click', function () {
+        var $tBody=$('.budgetItems');
+        var $firstItem=$tBody.children().first();
+        $firstItem.clone().appendTo($tBody);
+    });
+
+    $('#itemChange').delegate('.removeItem','click', function () {
+        var $tBody=$('.budgetItems');
+        var rows=$tBody.children();
+        var last=rows.last();
+        if(rows.length!=1){
+            last.remove();
+        }
+    });
+
+
+
+
+
+
+
+
+    /**
+     * 全年合计
+     */
+
+    $('input[name=bpbMoney]').on('change keyup blur',function () {
+
+
+    });
+
+
+    /**
+     * 上传文件
+     * @type {Array}
+     */
+    var fileArr = []
+        ,fileMap = {},
+        fileOverArr = [],//获取已保存到数据库的文件的数组
+        delIdArr = [];//删除文件时候的id数组。
+    var zoneOptions = {
+        url: '/upload/file',
+        paramName: 'upload',
+        autoDiscover: false,
+        dictRemoveLinks: 'x',
+        dictCancelUpload: 'x',
+        dictDefaultMessage: '文件拖到或点击此处实现上传，支持pdf/doc/docx/xlsx/xls/ppt/pptx/rar/zip格式',
+        addRemoveLinks: true,
+        dictRemoveFile: '删除文件',
+        previewTemplate: common.dropzoneOption(),
+        maxFiles: 10,
+        dictMaxFilesExceeded: '不能超过2个',
+        autoProcessQueue: true,
+        acceptedFiles: 'application/pdf,.doc,.docx,.xlsx,.xls,.ppt,.pptx,.zip,.rar',
+        init: function () {
+            var zone = this;
+            var initFileList = $.parseJSON($('#fileZone').attr('data-init') || '[]');
+            if(initFileList && initFileList.length){
+                $.each(initFileList,function(index,file){
+                    //转换大小写.
+                    file.name = file.fileName;
+                    fileOverArr.push(file);
+                    zone.options.addedfile.call(zone,file);
+                });
+            }
+
+            this.on('success', function (file) {
+                var data = $.parseJSON(file.xhr.responseText);
+                notify.success(data.rmessage);
+                fileArr.push(data.filePath);
+                fileMap[file.name] = data.filePath;
+                //fileArr.join(',');
+                var str = fileArr.toString();
+                $('input[name=cpbFilePath]').val(str);
+            }).on("removedfile", function (file) {
+                if(file.id){
+                    delIdArr.push(file.id);
+                    //更新删除的附件
+                    $('input[name=delAttachId]').val(delIdArr.toString());
+                    console.log(file.id,delIdArr.toString());
+                }
+                for (var i = 0; i < fileArr.length; i++) {
+                    if (fileArr[i] == fileMap[file.name]) {
+                        fileArr.splice(i, 1);
+                    }
+                }
+                var str = fileArr.toString();
+                $('input[name=cpbFilePath]').val(str);
+                notify.success("已删除");
+            });
+        }
+    };
+    $('#fileZone').dropzone(zoneOptions);
+
+    /**
+     * 表单检查
+     * @param form
+     * @returns {boolean}
+     */
+    function checkForm(form) {
+        var failed = [];
+        $(form).find('[data-required]:not(textarea)').each(function () {
+            var self = $(this);
+            if (!self.val()) {
+                validate.redBorder(self);
+                failed.push(self);
+            } else {
+                validate.passBorder(self);
+            }
+        });
+
+        var payMoneyInput = $('input[name=cpbMoney]');
+        var payMoney = (payMoneyInput.val() || '').replace(/,/g, '') || 0;
+
+
+
+        if (failed.length > 0) {
+            notify.error('信息填写不完整,请检查一下!');
+            return false;
+        }
+
+
+        //if (!remarkEditor.getContent().trim()) {
+        //    notify.warning('请填写备注信息.');
+        //    return false;
+        //}
+
+        var filePathInput = $('input[name=cpbFilePath]', form);
+        var initJson = $('#fileZone').attr('data-init');
+        //没有上传过附件、并且没有新上传
+        if (!initJson && !filePathInput.val()) {
+            notify.error('请上传附件.');
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * 获取表单数据
+     * @param form
+     * @returns {*}
+     */
+    function getFormData(form) {
+        return utils.wrapFormFilter({
+            form: form,
+            prefix: '',
+            exclude: ['',''],
+            filter: function (field) {//去掉金额的千分符，向后台传数字
+                if (field.name == 'contractPay.cpbMoney') {
+                    field.value = field.value.replace(/,/g, '');
+                }
+                return field;
+            }
+        });
+    }
+
+    /**
+     * 提交预算申请单
+     */
+    $('.btn-submit').on('click', function (e) {
+        e.preventDefault();
+        var form = $('#formBudget'),
+            _this = this;
+
+        if (!checkForm(form)) {
+            $(_this).button('reset');
+            return;
+        }
+
+
+        $(_this).button('loading');
+        var formData = getFormData(form);
+        $.ajax({
+            type: "POST",
+            url: '/aj/budget/submit',
+            data: formData,
+            dataType: 'json',
+            success: function (data) {
+                if (data.rcode == 200) {
+                    window.location.href = '/myapply/budgetApply/';
+                } else {
+                    notify.error(data.rmessage);
+                }
+                $(_this).button('reset');
+            },
+            error: function () {
+                notify.error('提交失败');
+                $(_this).button('reset');
+            }
+        });
+    });
+
+
+    /**
+     * 保存草稿 无需控制字段
+     */
+    $('.btn-save-drafts').on('click', function () {
+
+        var form = $('#formBudget'),
+            _this = this;
+        var formData = getFormData(form);
+        $(_this).button('loading');
+        $.ajax({
+            type: "POST",
+            url: '/aj/budget/drafts',
+            data: formData,
+            dataType: 'json',
+            success: function (data) {
+                if (data.rcode == 200) {
+                    notify.success(data.rmessage);
+                    setTimeout(function(){
+                        window.location.href = '/myapply/budgetApply/';
+                    },1500);
+                } else {
+                    notify.error(data.rmessage);
+                }
+                $(_this).button('reset');
+            },
+            error: function () {
+                notify.error('提交失败');
+                $(_this).button('reset');
+            }
+        });
+    });
+
+
+});
+
+

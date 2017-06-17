@@ -1,0 +1,56 @@
+fml.define('fms/common/common', ['jquery','fms/common/utils'], function (require, exports) {
+    var $ = require('jquery');
+    var utils = require('fms/common/utils');
+
+
+// 格式化日期   已经使用moment插件替换了该功能 目前没有使用
+    Date.prototype.Format = function (fmt) { //author: meizz
+        var o = {
+            "M+": this.getMonth() + 1, //月份
+            "d+": this.getDate(), //日
+            "h+": this.getHours(), //小时
+            "m+": this.getMinutes(), //分
+            "s+": this.getSeconds(), //秒
+            "q+": Math.floor((this.getMonth() + 3) / 3), //季度
+            "S": this.getMilliseconds() //毫秒
+        };
+        if (/(y+)/.test(fmt))
+            fmt = fmt.replace(RegExp.$1, (this.getFullYear() + "").substr(4 - RegExp.$1.length));
+        for (var k in o)
+            if (new RegExp("(" + k + ")").test(fmt))
+                fmt = fmt.replace(RegExp.$1, (RegExp.$1.length == 1) ? (o[k]) : (("00" + o[k]).substr(("" + o[k]).length)));
+        return fmt;
+    };
+
+    $.fn.getId = function () {
+        var id = $(this).parents('tr').data('id');
+        return id;
+    };
+    $.fn.getType = function () {
+        var type = $(this).parents('tr').data('type');
+        return type;
+    };
+    /**
+     * 合同跳到合同-view页面
+     * myApproval 中待审批标签页 跳到vipView页面。方便审批人点进去查看并审批
+     * 两个页面的区别是。一个有同意、驳回的按钮，一个没有。
+     * 以后可能还要根据curtype判断  跳到不同种类的-view页面。比如  付款的、报销单的。
+     * 此处没有做query.html中的view
+     */
+    function dropzoneOption(){
+        var previewTemplate='<div class="dz-preview dz-file-preview">'
+        +'<div class="dz-details">'
+        +'<div class="dz-filename"><span data-dz-name></span></div>'
+        +'<div class="dz-progress"><span class="dz-upload" data-dz-uploadprogress></span></div>'
+        +'<div class="dz-success-mark"><span>✔</span></div>'
+        +'<div class="dz-error-mark"><span>✘</span></div>'
+        +'<div class="dz-error-message"><span data-dz-errormessage></span></div>'
+        +'</div>';
+        return previewTemplate;
+    }
+
+    return {
+        dropzoneOption:dropzoneOption
+    };
+
+});

@@ -1,0 +1,32 @@
+<?php
+namespace WorkFlowAtom\Modules\Tree;
+
+use WorkFlowAtom\Package\Tree\TreePermissions as TreeObj;
+use Libs\Util\ArrayUtilities;
+use Libs\Util\Format;
+use WorkFlowAtom\Package\Common\Response;
+
+class TreePermissions extends \WorkFlowAtom\Modules\Common\BaseModule{
+
+     public function run() {
+        // if (!$this->_init()) {
+        //     return FALSE;
+        // }
+        $this->sample = TreeObj::getInstance()->getFields();
+        $parentId = array();
+        $data = TreeObj::getInstance()->getDataList();
+
+        if($data === FALSE) {
+            $return = Response::gen_error(50001);
+        }else if(empty($data)){
+            $return = Response::gen_error(30001);
+        }else {
+            $return = Response::gen_success(Format::outputData($data, $this->sample, true));
+        }
+        $this->app->response->setBody($return);
+    }
+
+    private function _init(){
+        return true;
+    }
+}

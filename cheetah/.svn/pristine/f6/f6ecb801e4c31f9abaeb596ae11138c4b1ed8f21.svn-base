@@ -1,0 +1,30 @@
+function user() {
+	return this;
+}
+var controlFns = {
+	'index' : function(){
+		//this.user()
+	}
+	,'login' : function(){
+		var php = {
+			//'' : ''
+		};
+        this.bindDefault(php);
+		this.bridgeMuch(php);
+		this.listenOver(function(data){
+			data._CSSLinks = ['fms/user/login'];
+			this.render('user/login.html' , data);
+		})
+	}
+	,'logout' : function(){
+		var php = {
+			'logout' : '/logout'
+		};
+        this.bindDefault(php);
+		this.bridgeMuch(php);
+		this.listenOver(function(data){
+			return this.redirectTo(data.domain.speed);
+		})
+	}
+};
+exports.__create = controller.__create(user, controlFns);

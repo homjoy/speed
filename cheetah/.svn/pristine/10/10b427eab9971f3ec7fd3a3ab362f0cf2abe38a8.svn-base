@@ -1,0 +1,12 @@
+.search-form{
+
+
+
+}
+
+.input-daterange{
+  .form-control{
+    display: inline-block;
+    width: 100px;
+  }
+}
